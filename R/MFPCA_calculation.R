@@ -232,26 +232,21 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), bo
     if(all(c("scores", "functions") %in% names(uniExpansions[[j]])))
     {
       tmp <- uniExpansions[[j]]
+      type <- "user"
     }
     else
     {
-      if(all(names(uniExpansions[[j]]) == "type")) # i.e. all other values are defaults
-        args <- list(funDataObject = mFData[[j]], NULL)
-      else
-      {
-        args <- uniExpansions[[j]][names(uniExpansions[[j]]) != "type"]
-        args$funDataObject <- mFData[[j]]
-      }
-
       tmp <- switch(uniExpansions[[j]]$type,
-                    "uFPCA" = do.call(PACE, args = args),
-                    "splines" = do.call(univBasisExpansion,  args = c(args, pen = FALSE)),
-                    "splinesPen" = do.call(univBasisExpansion,  args = c(args, pen = TRUE)),
+                    "uFPCA" = do.call(PACE, args = findUniArgs(uniExpansions[[j]], mFData[[j]])),
+                    "splines" = do.call(univBasisExpansion,  args = c(findUniArgs(uniExpansions[[j]], mFData[[j]]), pen = FALSE)),
+                    "splinesPen" = do.call(univBasisExpansion,  args = c(findUniArgs(uniExpansions[[j]], mFData[[j]]), pen = TRUE)),
                     stop("Function MFPCA: uniExpansions type must be either 'uFPCA', 'splines' or 'splinesPen'")
       )
+
+      type <- uniExpansions[[j]]$type
     }
 
-    uniBasis[[j]] <- list(scores = tmp$scores, functions = tmp$functions@X)
+    uniBasis[[j]] <- list(type = type, scores = tmp$scores, functions = tmp$functions@X)
 
     if(dimSupp[j] == 2)
       uniBasis[[j]]$basisLong <- tmp$basisLong
@@ -270,7 +265,7 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), bo
 
   for(j in 1:p) # calculate block-wise
   {
-    if(uniExpansions[[j]]$type == "eigen") # ONB -> matrix of scalar products is just the identity
+    if(uniExpansions[[j]]$type == "uFPCA") # ONB -> matrix of scalar products is just the identity
       B[tmp[j]+ 1: npc[j], tmp[j] + 1:npc[j]] <- diag(npc[j])
     else # calculate scalar products
       B[tmp[j]+ 1: npc[j], tmp[j] + 1:npc[j]] <- .calcBasisIntegrals(uniBasis[[j]]$functions, npc[j], dimSupp[j], mFData[[j]]@xVal)
@@ -308,7 +303,7 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), bo
     # normalize
     eFuns <- Re(diag(1/sqrt(C$values[1:M] * normFactors)) %*% eFuns)
 
-    # truncated Karhunen-Lo\`{e}ve representation (reconstruction)
+    # truncated Karhunen-Loève representation (reconstruction)
     recons <-  scores %*%  eFuns
 
     # for two-dimensional functions: reshape eigenfunctions and reconstruction to image
@@ -340,8 +335,26 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), bo
     {
       bootObs <- sample(N, replace = TRUE)
 
+      bootBasis <- vector("list", p)
+
+      for(j in 1:p)
+      {
+        if(uniBasis[[j]]$type == "uFPCA") # re-estimate scores AND functions
+        {
+          bootFPCA <- do.call(PACE, args = findUniArgs(uniExpansions[[j]], extractObs(mFData[[j]], obs = bootObs)))
+
+          bootBasis[[j]] <- list(scores = bootFPCA$scores, functions = bootFPCA$functions@X)
+        }
+        else # resample scores (functions are given and scores can simply be resampled)
+        {
+          bootBasis[[j]] <- list(scores = uniBasis[[j]]$scores[bootObs, ], functions = uniBasis[[j]]$functions)
+        }
+      }
+
+      ### calculate MFPCA -> the same as above for uniBasis now for bootBasis (no Yhat)
+
       # combine all scores of bootstrap observations
-      bootScores <- foreach::foreach(j = 1:p, .combine = "cbind")%do%{uniBasis[[j]]$scores[bootObs, ]}
+      bootScores <- foreach::foreach(j = 1:p, .combine = "cbind")%do%{bootBasis[[j]]$scores}
 
       Z <- cov(bootScores) * sqrt(outer(allWeights, allWeights, "*")) # and then calculate covariance for each combination, component-wise multiplication with weights
 
@@ -357,9 +370,9 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), bo
       {
         # calculate eigenfunctions
         if(dimSupp[j] == 1) # one-dimensional function
-          eFuns <-  1/sqrt(weights[j]) * t(Z[tmp[j]+1:npc[j], ] %*% C$vectors[, 1:M]) %*% uniBasis[[j]]$functions
+          eFuns <-  1/sqrt(weights[j]) * t(Z[tmp[j]+1:npc[j], ] %*% C$vectors[, 1:M]) %*% bootBasis[[j]]$functions
         else # two-dimensional function (otherwise function stops before!)
-          eFuns <-  1/sqrt(weights[j]) * t(uniBasis[[j]]$basisLong %*% Z[tmp[j]+1:npc[j], ] %*% C$vectors[, 1:M])
+          eFuns <-  1/sqrt(weights[j]) * t(bootBasis[[j]]$basisLong %*% Z[tmp[j]+1:npc[j], ] %*% C$vectors[, 1:M])
 
         # normalize
         eFuns <- Re(diag(1/sqrt(C$values[1:M] * normFactors)) %*% eFuns)
@@ -384,4 +397,34 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), bo
   }
 
   return(res)
+}
+
+
+#' Utility function for defining arguments of univariate basis expansion
+#'
+#' This is a utility function that defines the arguments
+#' of\code{\link{univBasisExpansion}} in \code{\link{MFPCA}}. This is used as an
+#' internal function in \code{\link{MFPCA}}.
+#'
+#' @param uniExpansion A list corresponding to one univariate expansion as
+#'   described in \code{\link{MFPCA}}.
+#' @param funDataObject An object of class \code{\link[funData]{funData}},
+#'   representing the (univariate) functional data, for which the expansion will
+#'   be calculated
+#'
+#' @return \item{args}{A list of parameters to be passed to
+#'   \code{\link{univBasisExpansion}}}.
+#'
+#' @keywords internal
+findUniArgs <- function(uniExpansion, funDataObject)
+{
+  if(all(names(uniExpansion) == "type")) # i.e. all other values are defaults
+    args <- list(funDataObject = funDataObject, NULL)
+  else
+  {
+    args <- uniExpansion[names(uniExpansion) != "type"]
+    args$funDataObject <- funDataObject
+  }
+
+  return(args)
 }
