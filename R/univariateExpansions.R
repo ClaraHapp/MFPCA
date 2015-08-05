@@ -409,8 +409,7 @@ splineBasis2Dpen <- function(funDataObject, bs, m, k)
 #'   containing the observed functional data, for which the bases representation
 #'   is calculated.
 #' @param bs A character string, the type of basis functions to be used. Defaults to p-Splines
-#'   (\code{"ps"}) for functions on one-dimensional domain and to thin plate
-#'   regression splines (\code{"tp"}) in case of two-dimensional support. Please
+#'   (\code{"ps"}) or tensor products of p-splines in case of two-dimensional support. Please
 #'   refer to \code{\link[mgcv]{smooth.terms}} for a list of possible basis
 #'   functions.
 #' @param m An array (or a single character), the order of the spline basis.
@@ -460,7 +459,7 @@ splineBasis2Dpen <- function(funDataObject, bs, m, k)
 #'
 #' par(oldPar)
 univBasisExpansion <- function(funDataObject,
-                               bs = NULL, # default (see later) 1D: p-Splines, 2D: Tensor Product Splines (Thin Plate)
+                               bs = "ps", # default: p-Splines
                                m = rep(2, dimSupp(funDataObject)), # gam/bam defaults
                                k = rep(-1, dimSupp(funDataObject)), # gam/bam defaults,
                                pen = FALSE) # use penalization to induce smoothing?
@@ -474,9 +473,6 @@ univBasisExpansion <- function(funDataObject,
 
   if(length(k) == 1)
     k <- rep(k, dimSupp(funDataObject))
-
-  if(is.null(bs)) # default
-    bs <- ifelse(dimSupp(funDataObject)==1, "ps", "tp")
 
   ### check correct dimensions
   if(any(c(length(m), length(k)) != dimSupp(funDataObject)))

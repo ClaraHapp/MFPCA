@@ -348,6 +348,7 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), bo
 
           # PACE is implemented for one-dimensional functions only -> no basisLong
           bootBasis[[j]] <- list(scores = bootFPCA$scores, functions = bootFPCA$functions@X)
+         
         }
         else # resample scores (functions are given and scores can simply be resampled)
         {
@@ -391,6 +392,7 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), bo
         else # two-dimensional function: reshape
           booteFuns[[j]][n,,,] <- funData:::.flipObs(eFunctions[[j]]@X,
                                            array(eFuns, dim = c(M,length(mFData[[j]]@xVal[[1]]), length(mFData[[j]]@xVal[[2]]))))
+          
       }
     }
 
