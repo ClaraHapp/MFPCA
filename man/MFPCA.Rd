@@ -6,7 +6,7 @@
 Different (Dimensional) Domains}
 \usage{
 MFPCA(mFData, M, uniExpansions, weights = rep(1, length(mFData)),
-  bootstrap = FALSE, nBootstrap = NULL)
+  bootstrap = FALSE, nBootstrap = NULL, bootstrapAlpha = 0.05)
 }
 \arguments{
 \item{mFData}{A  \code{\link[funData]{multiFunData}} object containing the
@@ -19,31 +19,33 @@ calculate.}
 \item{uniExpansions}{A list characterizing the (univariate) expansion that is
 calculated for each element. See Details.}
 
-\item{weights}{An optional vector of weights, defaults to 1 for each element. See Details.}
+\item{weights}{An optional vector of weights, defaults to 1 for each element.
+See Details.}
 
 \item{bootstrap}{Logical. If \code{TRUE}, pointwise bootstrap confidence
 bands are calculated for the multivariate functional principal components.
 Defaults to \code{FALSE}. See Details.}
 
 \item{nBootstrap}{The number of bootstrap iterations to use. Defaults to
-  \code{NULL}, which leads to an error, if \code{bootstrap = TRUE}.}
+\code{NULL}, which leads to an error, if \code{bootstrap = TRUE}.}
+
+\item{bootstrapAlpha}{A vector of numerics (or a single number) giving the
+  significance level for bootstrap intervals. Defaults to 0.05.}
 }
 \value{
-\item{values}{A vector of estimated eigenvalues \eqn{\hat
-  \nu_1 , \ldots , \hat \nu_M}.} \item{functions}{A
+\item{values}{A vector of estimated eigenvalues \eqn{\hat \nu_1 ,
+  \ldots , \hat \nu_M}.} \item{functions}{A
   \code{\link[funData]{multiFunData}} object containing the estimated
-  multivariate functional principal components \eqn{\hat \psi_1, \ldots,
-  \hat \psi_M}.} \item{scores}{ A matrix of dimension \code{N x M}
-  containing the estimated scores \eqn{\hat \rho_{im}}.} \item{Yhat}{A
+  multivariate functional principal components \eqn{\hat \psi_1, \ldots, \hat
+  \psi_M}.} \item{scores}{ A matrix of dimension \code{N x M} containing the
+  estimated scores \eqn{\hat \rho_{im}}.} \item{Yhat}{A
   \code{\link[funData]{multiFunData}} object containing estimated
   trajectories for each observation based on the truncated Karhunen-Lo\`{e}ve
-  representation and the estimated scores and eigenfunctions.}
-  \item{CI_lower}{A \code{\link[funData]{multiFunData}} object corresponding
-  to the pointwise lower bounds of the bootstrap confidence intervals (only
-  if \code{bootstrap = TRUE}).} \item{CI_upper}{A
-  \code{\link[funData]{multiFunData}} object corresponding to the pointwise
-  upper bounds of the bootstrap confidence intervals (only if \code{bootstrap
-  = TRUE}).}
+  representation and the estimated scores and eigenfunctions.} \item{CI}{A
+  list of the same length as \code{bootstrapAlpha}, containing the pointwise
+  lower and upper bootstrap confidence bands for each significance level in
+  form of \code{\link[funData]{multiFunData}} objects (only if
+  \code{bootstrap = TRUE}).}
 }
 \description{
 This function calculates a multivariate fuctional principal component
@@ -81,23 +83,22 @@ principal components \eqn{\hat \psi_1, \ldots, \hat \psi_M}{\hat \psi_1,
 \ldots, \hat \psi_M}.}
 
 \subsection{Univariate Expansions:}{The multivariate functional principal
-  component analysis relies on a univariate basis expansion for each element
-  \eqn{X^{(j)}}{X^(j)}. It can be supplied in several forms: \itemize{ \item
-  Univariate functional principal component analysis. Then
-  \code{uniExpansions = list(type = "uFPCA", nbasis, pve, npc, makePD)},
-  where \code{nbasis, pve, npc, makePD} are parameters passed to the
-  \code{\link{PACE}} function for calculating the univariate functional
-  principal component analysis. \item Spline basis functions (not penalized).
-  Then \code{uniExpansions = list(type = "splines", bs, m, k)}, where
-  \code{bs, m, k} are passed to the function
-  \code{\link{univBasisExpansion}}. \item Spline basis functions (with
-  smoothness penalty). Then \code{uniExpansions = list(type = "splinesPen",
-  bs, m, k)}, where \code{bs, m, k} are passed to the function
-  \code{\link{univBasisExpansion}}. \item General basis functions. Then
-  \code{uniExpansions = list(functions, scores)}, where \code{functions} is a
-  \code{\link[funData]{multiFunData}} object containing the basis functions
-  and \code{scores} is an array of dimensions \code{N x M_1 x \ldots x M_j}
-  with the corresponding basis weights.}}
+component analysis relies on a univariate basis expansion for each element
+\eqn{X^{(j)}}{X^(j)}. It can be supplied in several forms: \itemize{ \item
+Univariate functional principal component analysis. Then \code{uniExpansions
+= list(type = "uFPCA", nbasis, pve, npc, makePD)}, where \code{nbasis, pve,
+npc, makePD} are parameters passed to the \code{\link{PACE}} function for
+calculating the univariate functional principal component analysis. \item
+Spline basis functions (not penalized). Then \code{uniExpansions = list(type
+= "splines", bs, m, k)}, where \code{bs, m, k} are passed to the function
+\code{\link{univBasisExpansion}}. \item Spline basis functions (with
+smoothness penalty). Then \code{uniExpansions = list(type = "splinesPen", bs,
+m, k)}, where \code{bs, m, k} are passed to the function
+\code{\link{univBasisExpansion}}. \item General basis functions. Then
+\code{uniExpansions = list(functions, scores)}, where \code{functions} is a
+\code{\link[funData]{multiFunData}} object containing the basis functions and
+\code{scores} is an array of dimensions \code{N x M_1 x \ldots x M_j} with
+the corresponding basis weights.}}
 }
 \examples{
 oldPar <- par(no.readonly = TRUE)

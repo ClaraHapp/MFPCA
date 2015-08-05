@@ -89,23 +89,22 @@ NULL
 #'
 #'
 #' \subsection{Univariate Expansions:}{The multivariate functional principal
-#'   component analysis relies on a univariate basis expansion for each element
-#'   \eqn{X^{(j)}}{X^(j)}. It can be supplied in several forms: \itemize{ \item
-#'   Univariate functional principal component analysis. Then
-#'   \code{uniExpansions = list(type = "uFPCA", nbasis, pve, npc, makePD)},
-#'   where \code{nbasis, pve, npc, makePD} are parameters passed to the
-#'   \code{\link{PACE}} function for calculating the univariate functional
-#'   principal component analysis. \item Spline basis functions (not penalized).
-#'   Then \code{uniExpansions = list(type = "splines", bs, m, k)}, where
-#'   \code{bs, m, k} are passed to the function
-#'   \code{\link{univBasisExpansion}}. \item Spline basis functions (with
-#'   smoothness penalty). Then \code{uniExpansions = list(type = "splinesPen",
-#'   bs, m, k)}, where \code{bs, m, k} are passed to the function
-#'   \code{\link{univBasisExpansion}}. \item General basis functions. Then
-#'   \code{uniExpansions = list(functions, scores)}, where \code{functions} is a
-#'   \code{\link[funData]{multiFunData}} object containing the basis functions
-#'   and \code{scores} is an array of dimensions \code{N x M_1 x \ldots x M_j}
-#'   with the corresponding basis weights.}}
+#' component analysis relies on a univariate basis expansion for each element
+#' \eqn{X^{(j)}}{X^(j)}. It can be supplied in several forms: \itemize{ \item
+#' Univariate functional principal component analysis. Then \code{uniExpansions
+#' = list(type = "uFPCA", nbasis, pve, npc, makePD)}, where \code{nbasis, pve,
+#' npc, makePD} are parameters passed to the \code{\link{PACE}} function for
+#' calculating the univariate functional principal component analysis. \item
+#' Spline basis functions (not penalized). Then \code{uniExpansions = list(type
+#' = "splines", bs, m, k)}, where \code{bs, m, k} are passed to the function
+#' \code{\link{univBasisExpansion}}. \item Spline basis functions (with
+#' smoothness penalty). Then \code{uniExpansions = list(type = "splinesPen", bs,
+#' m, k)}, where \code{bs, m, k} are passed to the function
+#' \code{\link{univBasisExpansion}}. \item General basis functions. Then
+#' \code{uniExpansions = list(functions, scores)}, where \code{functions} is a
+#' \code{\link[funData]{multiFunData}} object containing the basis functions and
+#' \code{scores} is an array of dimensions \code{N x M_1 x \ldots x M_j} with
+#' the corresponding basis weights.}}
 #'
 #' @param mFData A  \code{\link[funData]{multiFunData}} object containing the
 #'   observations \eqn{x_i = (x_i^{(1)}, \ldots , x_i^{(p)}),~ i = 1 , \ldots,
@@ -114,28 +113,29 @@ NULL
 #'   calculate.
 #' @param uniExpansions A list characterizing the (univariate) expansion that is
 #'   calculated for each element. See Details.
-#' @param weights An optional vector of weights, defaults to 1 for each element. See Details.
+#' @param weights An optional vector of weights, defaults to 1 for each element.
+#'   See Details.
 #' @param bootstrap Logical. If \code{TRUE}, pointwise bootstrap confidence
 #'   bands are calculated for the multivariate functional principal components.
 #'   Defaults to \code{FALSE}. See Details.
 #' @param nBootstrap The number of bootstrap iterations to use. Defaults to
 #'   \code{NULL}, which leads to an error, if \code{bootstrap = TRUE}.
+#' @param bootstrapAlpha A vector of numerics (or a single number) giving the
+#'   significance level for bootstrap intervals. Defaults to 0.05.
 #'
-#' @return \item{values}{A vector of estimated eigenvalues \eqn{\hat
-#'   \nu_1 , \ldots , \hat \nu_M}.} \item{functions}{A
+#' @return \item{values}{A vector of estimated eigenvalues \eqn{\hat \nu_1 ,
+#'   \ldots , \hat \nu_M}.} \item{functions}{A
 #'   \code{\link[funData]{multiFunData}} object containing the estimated
-#'   multivariate functional principal components \eqn{\hat \psi_1, \ldots,
-#'   \hat \psi_M}.} \item{scores}{ A matrix of dimension \code{N x M}
-#'   containing the estimated scores \eqn{\hat \rho_{im}}.} \item{Yhat}{A
+#'   multivariate functional principal components \eqn{\hat \psi_1, \ldots, \hat
+#'   \psi_M}.} \item{scores}{ A matrix of dimension \code{N x M} containing the
+#'   estimated scores \eqn{\hat \rho_{im}}.} \item{Yhat}{A
 #'   \code{\link[funData]{multiFunData}} object containing estimated
 #'   trajectories for each observation based on the truncated Karhunen-Lo\`{e}ve
-#'   representation and the estimated scores and eigenfunctions.}
-#'   \item{CI_lower}{A \code{\link[funData]{multiFunData}} object corresponding
-#'   to the pointwise lower bounds of the bootstrap confidence intervals (only
-#'   if \code{bootstrap = TRUE}).} \item{CI_upper}{A
-#'   \code{\link[funData]{multiFunData}} object corresponding to the pointwise
-#'   upper bounds of the bootstrap confidence intervals (only if \code{bootstrap
-#'   = TRUE}).}
+#'   representation and the estimated scores and eigenfunctions.} \item{CI}{A
+#'   list of the same length as \code{bootstrapAlpha}, containing the pointwise
+#'   lower and upper bootstrap confidence bands for each significance level in
+#'   form of \code{\link[funData]{multiFunData}} objects (only if
+#'   \code{bootstrap = TRUE}).}
 #'
 #' @export MFPCA
 #'
@@ -203,7 +203,7 @@ NULL
 #' legend("bottomleft", c("True", "MFPCA"), lty = 1:2, lwd = c(2,1))
 #' }
 #' par(oldPar)
-MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), bootstrap = FALSE, nBootstrap = NULL)
+MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), bootstrap = FALSE, nBootstrap = NULL, bootstrapAlpha = 0.05)
 {
   # number of components
   p <- length(mFData)
@@ -217,7 +217,11 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), bo
   if(bootstrap)
   {
     if(is.null(nBootstrap))
-      stop("Specity number of bootstrap iterations")
+      stop("Specify number of bootstrap iterations")
+
+    if(any(!(0 < bootstrapAlpha & bootstrapAlpha < 1)))
+      stop("Significance level for bootstrap confidence bands must be in (0,1).")
+
   }
 
   # dimension for each component
@@ -326,7 +330,6 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), bo
   if(bootstrap)
   {
     booteFuns <- vector("list", p)
-    bootCI_lower <- bootCI_upper <-  vector("list", p)
 
     for(j in 1:p)
       booteFuns[[j]] <- array(NA, dim  = c(nBootstrap, M, sapply(mFData[[j]]@xVal, length)))
@@ -343,11 +346,16 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), bo
         {
           bootFPCA <- do.call(PACE, args = findUniArgs(uniExpansions[[j]], extractObs(mFData[[j]], obs = bootObs)))
 
+          # PACE is implemented for one-dimensional functions only -> no basisLong
           bootBasis[[j]] <- list(scores = bootFPCA$scores, functions = bootFPCA$functions@X)
         }
         else # resample scores (functions are given and scores can simply be resampled)
         {
-          bootBasis[[j]] <- list(scores = uniBasis[[j]]$scores[bootObs, ], functions = uniBasis[[j]]$functions)
+          if(dimSupp[j] == 1)
+            bootBasis[[j]] <- list(scores = uniBasis[[j]]$scores[bootObs, ], functions = uniBasis[[j]]$functions)
+          else # dimSupp[j] == 2
+            bootBasis[[j]] <- list(scores = uniBasis[[j]]$scores[bootObs, ], functions = uniBasis[[j]]$functions,
+                                   basisLong = uniBasis[[j]]$basisLong)
         }
       }
 
@@ -386,14 +394,26 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), bo
       }
     }
 
-    for(j in 1:p)
+    CI <- vector("list", length(bootstrapAlpha))
+
+    for(alpha in 1:length(bootstrapAlpha))
     {
-      bootCI_lower[[j]] <- funData(mFData[[j]]@xVal, apply(booteFuns[[j]], 2:length(dim(booteFuns[[j]])), quantile, 0.025))
-      bootCI_upper[[j]] <- funData(mFData[[j]]@xVal, apply(booteFuns[[j]],  2:length(dim(booteFuns[[j]])), quantile, 0.975))
+      bootCI_lower <- bootCI_upper <-  vector("list", p)
+      for(j in 1:p)
+      {
+        bootCI_lower[[j]] <- funData(mFData[[j]]@xVal, apply(booteFuns[[j]], 2:length(dim(booteFuns[[j]])),
+                                                             quantile, bootstrapAlpha[alpha]/2))
+        bootCI_upper[[j]] <- funData(mFData[[j]]@xVal, apply(booteFuns[[j]],  2:length(dim(booteFuns[[j]])),
+                                                             quantile, 1 - bootstrapAlpha[alpha]/2))
+      }
+
+      CI[[alpha]]$lower <- multiFunData(bootCI_lower)
+      CI[[alpha]]$upper <- multiFunData(bootCI_upper)
+
+      names(CI)[alpha] <- paste("alpha", bootstrapAlpha[alpha], sep = "_")
     }
 
-    res$CI_lower <- multiFunData(bootCI_lower)
-    res$CI_upper <- multiFunData(bootCI_upper)
+    res$CI <- CI
   }
 
   return(res)
