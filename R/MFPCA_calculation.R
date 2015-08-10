@@ -330,6 +330,7 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), bo
   if(bootstrap)
   {
     booteFuns <- vector("list", p)
+    tmpFuns <- vector("list", p)
 
     for(j in 1:p)
       booteFuns[[j]] <- array(NA, dim  = c(nBootstrap, M, sapply(mFData[[j]]@xVal, length)))
@@ -348,7 +349,7 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), bo
 
           # PACE is implemented for one-dimensional functions only -> no basisLong
           bootBasis[[j]] <- list(scores = bootFPCA$scores, functions = bootFPCA$functions@X)
-         
+
         }
         else # resample scores (functions are given and scores can simply be resampled)
         {
@@ -386,13 +387,25 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), bo
         # normalize
         eFuns <- Re(diag(1/sqrt(C$values[1:M] * normFactors)) %*% eFuns)
 
-        # flip and save in bootstrap samples (for two-dimensional functions: reshape eigenfunctions and reconstruction to image)
+        # save in temporary list (must check for flipping before final save)
         if(dimSupp[j] == 1)
-          booteFuns[[j]][n,,] <- funData:::.flipObs(eFunctions[[j]]@X, eFuns)
+          tmpFuns[[j]] <- funData(mFData[[j]]@xVal, eFuns)
         else # two-dimensional function: reshape
-          booteFuns[[j]][n,,,] <- funData:::.flipObs(eFunctions[[j]]@X,
-                                           array(eFuns, dim = c(M,length(mFData[[j]]@xVal[[1]]), length(mFData[[j]]@xVal[[2]]))))
-          
+          tmpFuns[[j]] <- funData(mFData[[j]]@xVal,
+                                  array(eFuns, dim = c(M,length(mFData[[j]]@xVal[[1]]), length(mFData[[j]]@xVal[[2]]))))
+
+      }
+
+      # flip bootstrap estimates if necessary
+      tmpFuns <- flipFuns(res$functions, multiFunData(tmpFuns))
+
+      # save in booteFuns
+      for(j in 1:p)
+      {
+        if(dimSupp[j] == 1)
+          booteFuns[[j]][n,,] <- tmpFuns[[j]]@X
+        else # two-dimensional function
+          booteFuns[[j]][n,,,] <- tmpFuns[[j]]@X
       }
     }
 

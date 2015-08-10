@@ -4,7 +4,7 @@
 \alias{univBasisExpansion}
 \title{Calculate a univariate spline basis expansion for a functional data object}
 \usage{
-univBasisExpansion(funDataObject, bs = NULL, m = rep(2,
+univBasisExpansion(funDataObject, bs = "ps", m = rep(2,
   dimSupp(funDataObject)), k = rep(-1, dimSupp(funDataObject)), pen = FALSE)
 }
 \arguments{
@@ -13,8 +13,7 @@ containing the observed functional data, for which the bases representation
 is calculated.}
 
 \item{bs}{A character string, the type of basis functions to be used. Defaults to p-Splines
-(\code{"ps"}) for functions on one-dimensional domain and to thin plate
-regression splines (\code{"tp"}) in case of two-dimensional support. Please
+(\code{"ps"}) or tensor products of p-splines in case of two-dimensional support. Please
 refer to \code{\link[mgcv]{smooth.terms}} for a list of possible basis
 functions.}
 
