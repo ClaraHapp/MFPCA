@@ -90,7 +90,7 @@ splineBasis1D <- function(funDataObject, bs, m, k)
   scores <- t(apply(funDataObject@X, 1, function(f, dM){lm(f ~ dM - 1)$coef}, dM = desMat))
 
   return(list(scores = scores,
-              B = .calcBasisIntegrals(t(desMat), k, 1, funDataObject@xVal),
+              B = .calcBasisIntegrals(t(desMat), 1, funDataObject@xVal),
               ortho = FALSE,
               functions = NULL
   ))
@@ -155,7 +155,7 @@ splineBasis1Dpen <- function(funDataObject, bs, m, k, parallel = FALSE)
   scores <- rbind(scores, g$coef)
 
   return(list(scores = scores,
-              B = .calcBasisIntegrals(t(model.matrix(g)), k, 1, funDataObject@xVal),
+              B = .calcBasisIntegrals(t(model.matrix(g)), 1, funDataObject@xVal),
               ortho = FALSE,
               functions = NULL
   ))

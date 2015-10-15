@@ -10,17 +10,18 @@ NULL
 #' @section Warning: This function is implemented only for functions on one- or two-dimensional domains.
 #'
 #' @param basisFunctions Array of \code{npc} basis functions of dimensions \code{npc x M1} or \code{npc x M1 x M2}.
-#'        npc The number of basis functions
-#'        dimSupp: dimension of the support of the basis functions (1 or 2)
-#'        xVal List of corresponding x-values.
+#' @param dimSupp dimension of the support of the basis functions (1 or 2)
+#' @param xVal List of corresponding x-values.
 #'
 #' @return A matrix containing the scalar product of all combinations of basis functions (matrix \eqn{B^{(j)}})
 #'
 #' @seealso \code{\link{MFPCA}}, \code{\link[funData]{dimSupp}}.
 #'
 #' @keywords internal
-.calcBasisIntegrals <- function(basisFunctions, npc, dimSupp, xVal)
+.calcBasisIntegrals <- function(basisFunctions, dimSupp, xVal)
 {
+  npc <- dim(basisFunctions)[1]
+
   #  integral basis matrix
   B <- array(0, dim = c(npc, npc))
 
@@ -272,7 +273,7 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), bo
     if(uniExpansions[[j]]$type == "uFPCA") # ONB -> matrix of scalar products is just the identity
       B[tmp[j]+ 1: npc[j], tmp[j] + 1:npc[j]] <- diag(npc[j])
     else # calculate scalar products
-      B[tmp[j]+ 1: npc[j], tmp[j] + 1:npc[j]] <- .calcBasisIntegrals(uniBasis[[j]]$functions, npc[j], dimSupp[j], mFData[[j]]@xVal)
+      B[tmp[j]+ 1: npc[j], tmp[j] + 1:npc[j]] <- .calcBasisIntegrals(uniBasis[[j]]$functions, dimSupp[j], mFData[[j]]@xVal)
   }
 
   # combine all scores
