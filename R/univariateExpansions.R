@@ -307,3 +307,47 @@ univBasisExpansion <- function(funDataObject,
 
   return(uniBasis)
 }
+
+
+######## New stuff
+
+#' Calculate a univariate basis expansion
+#'
+#' This function calculates a univariate basis expansion based on given scores
+#' (coefficients) and basis functions.
+#'
+#' This function calculates functional data \eqn{X_i(t), i= 1 \ldots N} that is
+#' represented as a linear combination of basis functions \eqn{b_k(t)}
+#' \deqn{X_i(t) = \sum_{k = 1}^K \theta_{ik} b_k(t), i = 1, \ldots, N.} The
+#' basis functions may be prespecified (such as spline basis functions or
+#' Fourier bases) or can be estimated from observed data (e.g. by functional
+#' principal component analysis)
+#'
+#' @param type A character string, specifying the basis for which the
+#'   decomposition is to be calculated.
+#' @param scores A matrix of scores (coefficients) for each observation based on
+#'   the given basis functions.
+#' @param functions A functional data object, representing the basis functions.
+#'   Can be \code{NULL} if the basis functions are not estimated from observed
+#'   data, but have a predefined form. See Details.
+#' @param params A list containing the parameters for the particular basis to
+#'   use.
+#'
+#' @return A functional data object, representing the linear combinations of the
+#'   basis functions based on the given scores.
+univExpansion(type, scores, functions, params)
+{
+  res <- switch(type,
+                "uFPCA" = ...,
+                "splines1D" = ...,
+                "splines1Dpen" = ...,
+                "splines2D" = ...,
+                "splines2Dpen" = ...,
+                "DCT2D" = ...,
+                stop("Univariate Decomposition for 'type' = ", type, " not defined!")
+  )
+
+  return(res$functions)
+}
+
+
