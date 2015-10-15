@@ -335,7 +335,7 @@ univBasisExpansion <- function(funDataObject,
 #'
 #' @return A functional data object, representing the linear combinations of the
 #'   basis functions based on the given scores.
-univExpansion(type, scores, functions, params)
+univExpansion <- function(type, scores, functions, params)
 {
   res <- switch(type,
                 "uFPCA" = ...,
