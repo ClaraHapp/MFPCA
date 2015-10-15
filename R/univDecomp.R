@@ -1,0 +1,54 @@
+#' Univariate Basis Decomposition
+#'
+#' This function calculates a univariate basis decomposition for a (univariate)
+#' functional data object \code{data}.
+#'
+#' Functional data \eqn{X_i(t)} can often be approximated by a linear
+#' combination of basis functions \eqn{b_k(t)} \deqn{X_i(t) = \sum_{k = 1}^K
+#' \theta_{ik} b_k(t), i = 1, \ldots, N.} The basis functions may be
+#' prespecified (such as spline basis functions or Fourier bases) or can be
+#' estimated from the data (e.g. by functional principal component analysis) and
+#' are the same for all observations \eqn{X_1(t), \ldots, X_n(t)}. The
+#' coefficients (or scores) \eqn{\theta_{ik}} reflect the weight of each
+#' basis function \eqn{b_k(t)} for the observed function \eqn{X_i(t)} and can be
+#' used to characterize the individual observations.
+#'
+#' @param type A character string, specifying the basis for which the
+#'   decomposition is to be calculated.
+#' @param data A \code{funData} object, representing the (univariate) functional
+#'   data samples.
+#' @param params A list containing the parameters for the particular basis to
+#'   use.
+#'
+#' @return \item{scores}{A matrix of scores (coefficients) for each observation
+#'   based on the prespecified basis functions.} \item{B}{A matrix containing
+#'   the scalar products of the basis functions. Can be \code{NULL} if the basis
+#'   functions are orthonormal.} \item{ortho}{Logical. If \code{TRUE}, the
+#'   basis functions are all orthonormal.} \item{functions}{A functional data
+#'   object, representing the basis functions. Can be \code{NULL} if the basis
+#'   functions are not estimated from the data, but have a predefined form. See
+#'   Details.}
+univDecomp <- function(type, data, params)
+{
+  res <- switch(type,
+                "uFPCA" = ...,
+                "splines1D" = ...,
+                "splines1Dpen" = ...,
+                "splines2D" = ...,
+                "splines2Dpen" = ...,
+                "DCT2D" = ...,
+                stop("Univariate Decomposition for 'type' = ", type, " not defined!")
+  )
+
+  if(res$ortho == FALSE & is.null(res$B))
+    stop("UnivDecomp: must provide integral matrix B for non-orthonormal basis functions.")
+
+  return(list(scores = res$scores,
+              B = ifelse(res$ortho == TRUE, NULL, res$B),
+              ortho = res$ortho,
+              functions = ifelse(type == "uFPCA", res$functions, NULL)
+  ))
+}
+
+
+
