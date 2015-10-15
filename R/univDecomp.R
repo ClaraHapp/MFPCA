@@ -33,11 +33,11 @@ univDecomp <- function(type, data, params)
   params$funDataObject <- data
 
   res <- switch(type,
-                "uFPCA" = ...,
+                "uFPCA" = do.call(),
                 "splines1D" = do.call(splineBasis1D, params),
                 "splines1Dpen" = do.call(splineBasis1Dpen, params),
-                "splines2D" = ...,
-                "splines2Dpen" = ...,
+                "splines2D" = do.call(splineBasis2D, params),
+                "splines2Dpen" = do.call(splineBasis2Dpen, params),
                 "DCT2D" = ...,
                 stop("Univariate Decomposition for 'type' = ", type, " not defined!")
   )
@@ -159,3 +159,133 @@ splineBasis1Dpen <- function(funDataObject, bs, m, k, parallel = FALSE)
               ortho = FALSE,
               functions = NULL
   ))
+}
+
+
+#' Calculate an unpenalized spline basis representation for functional data on
+#' two-dimensional domains
+#'
+#' This function calculates an unpenalized tensor product spline basis
+#' representation for functional data on two-dimensional domains based on the
+#' \link[mgcv]{gam} function in the \pkg{mgcv} package.
+#'
+#' @param funDataObject An object of class \code{\link[funData]{funData}}
+#'   containing the observed functional data samples and for which the bases
+#'   representation is calculated.
+#' @param bs An array (or a single character), the type of basis functions to be
+#'   used. Please refer to \code{\link[mgcv]{te}} for a list of possible basis
+#'   functions.
+#' @param m An array (or a single character), the order of the spline basis. See
+#'   \code{\link[mgcv]{s}} for details.
+#' @param k An array (or a single character), the number of basis functions
+#'   used.  See  \code{\link[mgcv]{s}} for details.
+#'
+#' @return \item{scores}{A matrix of weights with dimension \code{N x K},
+#'   reflecting the weights for each basis function in each observation, where
+#'   \code{K} is the total number of basis functions used.}
+#'    \item{B}{A matrix
+#'   containing the scalar product of all pairs of basis functions.}
+#'   \item{ortho}{Logical, set to \code{FALSE}, as basis functions are not
+#'   orthogonal.} \item{functions}{\code{NULL}, as basis functions are known.}
+#'
+#' @importFrom foreach %do%
+#' @importFrom mgcv gam
+splineBasis2D <- function(funDataObject, bs, m, k)
+{
+  N <- nObs(funDataObject)
+
+  coord <- expand.grid(x = funDataObject@xVal[[1]], y = funDataObject@xVal[[2]])
+
+  # spline design matrix via bam
+  desMat <- mgcv::gam(as.vector(funDataObject@X[1,,]) ~ te(coord$x, coord$y, bs = bs, m = m, k = k), fit = FALSE)$X
+
+  # weights via lm -> no penalization
+  scores <- t(apply(funDataObject@X, 1, function(f, dM){lm(as.vector(f) ~ dM - 1)$coef}, dM = desMat))
+
+  # extract basis functions (in the correct dimensions)
+  tmp <-foreach::foreach(i = 1:dim(desMat)[2], .combine = function(x, y){abind::abind(x, y, along = 3)})%do%{
+    matrix(desMat[, i], nrow = length(funDataObject@xVal[[1]]), ncol = length(funDataObject@xVal[[2]]))}
+
+  return(list(scores = scores,
+              B = .calcBasisIntegrals(aperm(tmp, c(3,1,2)), 2, funDataObject@xVal),
+              ortho = FALSE,
+              functions = NULL
+  ))
+}
+
+#' Calculate a penalized spline basis representation for functional data on
+#' two-dimensional domains
+#'
+#' This function calculates a penalized tensor product spline basis
+#' representation for functional data on two-dimensional domains based on the
+#' \link[mgcv]{bam} function in the \pkg{mgcv} package (for large GAMs).
+#'
+#' @param funDataObject An object of class \code{\link[funData]{funData}}
+#'   containing the observed functional data samples and for which the bases
+#'   representation is calculated.
+#' @param bs An array (or a single character), the type of basis functions to be
+#'   used. Please refer to \code{\link[mgcv]{te}} for a list of possible basis
+#'   functions.
+#' @param m An array (or a single character), the order of the spline basis. See
+#'   \code{\link[mgcv]{s}} for details.
+#' @param k An array (or a single character), the number of basis functions
+#'   used.  See  \code{\link[mgcv]{s}} for details.
+#' @param parallel Logical. If \code{TRUE}, the coefficients for the basis
+#'   functions are calculated in parallel. The implementation is based on the
+#'   \code{\link[foreach]{foreach}} function and requires a parallel backend
+#'   that must be registered before. See \code{\link[foreach]{foreach}} for
+#'   details.
+#'
+#' @return \item{scores}{A matrix of weights with dimension \code{N x K},
+#'   reflecting the weights for each basis function in each observation, where
+#'   \code{K} is the total number of basis functions used.}
+#'   \item{B}{A matrix containing the scalar product of all pairs of basis
+#'   functions.} \item{ortho}{Logical, set to \code{FALSE}, as basis functions
+#'   are not orthogonal} \item{functions}{\code{NULL}, as basis functions are
+#'   known}
+#'
+#' @importFrom foreach %do%
+#' @importFrom foreach %dopar%
+#' @importFrom mgcv bam
+splineBasis2Dpen <- function(funDataObject, bs, m, k, parallel = FALSE)
+{
+  N <- nObs(funDataObject)
+
+  coord <- expand.grid(x = funDataObject@xVal[[1]], y = funDataObject@xVal[[2]])
+
+  if(parallel)
+  {
+    scores <- foreach::foreach(i = 1:(N-1), .combine = "rbind")%dopar%{
+      g <- mgcv::bam(as.vector(funDataObject@X[i, , ]) ~ te(coord$x, coord$y, bs = bs, m = m, k = k), method = "REML")
+      g$coef
+    }
+  }
+  else
+  {
+    scores <- foreach::foreach(i = 1:(N-1), .combine = "rbind")%do%{
+      g <- mgcv::bam(as.vector(funDataObject@X[i, , ]) ~ te(coord$x, coord$y, bs = bs, m = m, k = k), method = "REML")
+      g$coef
+    }
+  }
+
+  # fit the last one extra in order to extract model matrix
+  g <- mgcv::bam(as.vector(funDataObject@X[N, , ]) ~ te(coord$x, coord$y, bs = bs, m = m, k = k), method = "REML")
+
+  scores <- rbind(scores, g$coef)
+
+  basisLong <- model.matrix(g)
+
+  # extract basis functions (in the correct dimensions)
+  if(parallel)
+    tmp <-foreach::foreach(i = 1:prod(k), .combine = function(x, y){abind::abind(x, y, along = 3)})%dopar%{
+      matrix(basisLong[, i], nrow = length(funDataObject@xVal[[1]]), ncol = length(funDataObject@xVal[[2]]))}
+  else
+    tmp <-foreach::foreach(i = 1:prod(k), .combine = function(x, y){abind::abind(x, y, along = 3)})%do%{
+      matrix(basisLong[, i], nrow = length(funDataObject@xVal[[1]]), ncol = length(funDataObject@xVal[[2]]))}
+
+  return(list(scores = scores,
+              B = .calcBasisIntegrals(aperm(tmp, c(3,1,2)), 2, funDataObject@xVal),
+              ortho = FALSE,
+              functions = NULL
+  ))
+}
