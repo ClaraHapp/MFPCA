@@ -195,10 +195,12 @@ splineBasis2D <- function(funDataObject, bs, m, k)
   N <- nObs(funDataObject)
 
   coord <- expand.grid(x = funDataObject@xVal[[1]], y = funDataObject@xVal[[2]])
-
-  # spline design matrix via bam
-  desMat <- mgcv::gam(as.vector(funDataObject@X[1,,]) ~ te(coord$x, coord$y, bs = bs, m = m, k = k), fit = FALSE)$X
-
+  
+  browser()
+  
+  # spline design matrix via gam
+  desMat <- mgcv::gam(as.vector(funDataObject@X[1,,]) ~ te(coord$x, coord$y, bs = bs, m = m, k = k), data = coord, fit = FALSE)$X
+  
   # weights via lm -> no penalization
   scores <- t(apply(funDataObject@X, 1, function(f, dM){lm(as.vector(f) ~ dM - 1)$coef}, dM = desMat))
 
@@ -256,21 +258,21 @@ splineBasis2Dpen <- function(funDataObject, bs, m, k, parallel = FALSE)
   if(parallel)
   {
     scores <- foreach::foreach(i = 1:(N-1), .combine = "rbind")%dopar%{
-      g <- mgcv::bam(as.vector(funDataObject@X[i, , ]) ~ te(coord$x, coord$y, bs = bs, m = m, k = k), method = "REML")
+      g <- mgcv::bam(as.vector(funDataObject@X[i, , ]) ~ te(coord$x, coord$y, bs = bs, m = m, k = k), data = coord, method = "REML")
       g$coef
     }
   }
   else
   {
     scores <- foreach::foreach(i = 1:(N-1), .combine = "rbind")%do%{
-      g <- mgcv::bam(as.vector(funDataObject@X[i, , ]) ~ te(coord$x, coord$y, bs = bs, m = m, k = k), method = "REML")
+      g <- mgcv::bam(as.vector(funDataObject@X[i, , ]) ~ te(coord$x, coord$y, bs = bs, m = m, k = k), data = coord, method = "REML")
       g$coef
     }
   }
 
   # fit the last one extra in order to extract model matrix
-  g <- mgcv::bam(as.vector(funDataObject@X[N, , ]) ~ te(coord$x, coord$y, bs = bs, m = m, k = k), method = "REML")
-
+  g <- mgcv::bam(as.vector(funDataObject@X[N, , ]) ~ te(coord$x, coord$y, bs = bs, m = m, k = k), data = coord, method = "REML")
+  
   scores <- rbind(scores, g$coef)
 
   basisLong <- model.matrix(g)
