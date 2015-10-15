@@ -136,8 +136,15 @@ univBasisExpansion <- function(funDataObject,
 #'
 #' @return A functional data object, representing the linear combinations of the
 #'   basis functions based on the given scores.
-univExpansion <- function(type, scores, functions, params)
+univExpansion <- function(type, scores, xVal, functions, params)
 {
+  params$scores <- scores
+  
+  if(is.numeric(xVal))
+    xVal <- list(xVal)
+  
+  param$xVal <- xVal
+  
   res <- switch(type,
                 "uFPCA" = ...,
                 "splines1D" = ...,
@@ -145,10 +152,88 @@ univExpansion <- function(type, scores, functions, params)
                 "splines2D" = ...,
                 "splines2Dpen" = ...,
                 "DCT2D" = ...,
-                stop("Univariate Decomposition for 'type' = ", type, " not defined!")
+                stop("Univariate Expansion for 'type' = ", type, " not defined!")
   )
 
   return(res$functions)
 }
 
+#' Calculate linear combinations of spline basis functions on one-dimensional 
+#' domains
+#' 
+#' Given scores (coefficients), this function calculates a linear combination of
+#' one-dimensional spline basis functions on one-dimensional domains based on the 
+#' \link[mgcv]{gam} function in the \pkg{mgcv} package.
+#' 
+#' @param scores A matrix of dimension \eqn{N x K}, representing the \eqn{K} 
+#'   scores (coefficients) for each observation \eqn{i = 1, \ldots, N}.
+#' @param xVal A list containing a vector of x-values.
+#' @param bs A character string, specifying the type of basis functions to be 
+#'   used. Please refer to \code{\link[mgcv]{smooth.terms}} for a list of 
+#'   possible basis functions.
+#' @param m A numeric, the order of the spline basis. See  \code{\link[mgcv]{s}}
+#'   for details.
+#' @param k A numeric, the number of basis functions used.  See 
+#'   \code{\link[mgcv]{s}} for details.
+#'   
+#' @result An object of class \code{funData} with \eqn{N} observations on \code{xVal}, 
+#'   corresponding to the linear combination of spline basis functions.
+#'   
+#' @importFrom mgcv gam
+splineFunction1D <- function(scores, xVal, bs, m, k)
+{
+  N <- dim(scores)[1]
+  
+  x <- xVal[[1]]
+  
+  # spline design matrix via gam
+  desMat <- mgcv::gam(rep(0, length(x)) ~ s(x, bs = bs, m = m, k = k), fit = FALSE)$X
+  
+  # calculate functions as linear combination of splines
+  res <- funData(xVal,
+                 scores %*% t(desMat))
+  
+  return(res)
+}
 
+
+#' Calculate linear combinations of spline basis functions on two-dimensional 
+#' domains
+#' 
+#' Given scores (coefficients), this function calculates a linear combination of
+#' two-dimensional spline tensor basis functions on one-dimensional domains
+#' based on the \link[mgcv]{gam} function in the \pkg{mgcv} package.
+#' 
+#' @param scores A matrix of dimension \eqn{N x K}, representing the \eqn{K} 
+#'   scores (coefficients) for each observation \eqn{i = 1, \ldots, N}.
+#' @param xVal A list containing a two numeric vectors, corresponding to the x-
+#'   and y-values.
+#' @param bs An vector of character strings (or a single character), the type of
+#'   basis functions to be used. Please refer to \code{\link[mgcv]{te}} for a 
+#'   list of possible basis functions.
+#' @param m A numeric vector (or a single number), the order of the spline 
+#'   basis. See \code{\link[mgcv]{s}} for details.
+#' @param k A numeric vector (or a single number), the number of basis functions
+#'   used.  See  \code{\link[mgcv]{s}} for details.
+#'   
+#' @result An object of class \code{funData} with \eqn{N} observations on the
+#'   tow-dimensional domain specified by \code{xVal}, corresponding to the
+#'   linear combination of spline basis functions.
+#'   
+#' @importFrom mgcv gam
+splineFunction2D <- function(scores, xVal, bs, m, k)
+{
+  N <- dim(scores)[1]
+  
+  coord <- expand.grid(x = xVal[[1]], y = xVal[[2]])
+  
+  # spline design matrix via gam
+  desMat <- mgcv::gam(rep(0, dim(coord)[1]) ~ te(coord$x, coord$y, bs = bs, m = m, k = k), data = coord, fit = FALSE)$X
+  
+  # calculate functions as linear combination of splines
+  res <- funData(xVal,
+                 array(scores %*% t(desMat),
+                       dim = c(N, length(xVal[[1]]), length(xVal[[2]]))))
+  
+  return(res)
+}
