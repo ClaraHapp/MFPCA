@@ -202,9 +202,6 @@ splineBasis2D <- function(funDataObject, bs, m, k)
   N <- nObs(funDataObject)
   
   coord <- expand.grid(x = funDataObject@xVal[[1]], y = funDataObject@xVal[[2]])
-  
-  browser()
-  
   # spline design matrix via gam
   desMat <- mgcv::gam(as.vector(funDataObject@X[1,,]) ~ te(coord$x, coord$y, bs = bs, m = m, k = k), data = coord, fit = FALSE)$X
   

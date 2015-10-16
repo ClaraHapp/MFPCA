@@ -182,8 +182,8 @@ univExpansion <- function(type, scores, xVal, functions, params)
 #' @importFrom mgcv gam
 splineFunction1D <- function(scores, xVal, bs, m, k)
 {
-  N <- dim(scores)[1]
-  
+  N <- nrow(scores)
+
   x <- xVal[[1]]
   
   # spline design matrix via gam
@@ -223,10 +223,10 @@ splineFunction1D <- function(scores, xVal, bs, m, k)
 #' @importFrom mgcv gam
 splineFunction2D <- function(scores, xVal, bs, m, k)
 {
-  N <- dim(scores)[1]
-  
+  N <- nrow(scores)
+
   coord <- expand.grid(x = xVal[[1]], y = xVal[[2]])
-  
+
   # spline design matrix via gam
   desMat <- mgcv::gam(rep(0, dim(coord)[1]) ~ te(coord$x, coord$y, bs = bs, m = m, k = k), data = coord, fit = FALSE)$X
   
