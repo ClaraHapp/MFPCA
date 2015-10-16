@@ -151,7 +151,7 @@ univExpansion <- function(type, scores, xVal, functions, params)
                 "splines1Dpen" = do.call(splineFunction1D, params),
                 "splines2D" = do.call(splineFunction2D, params),
                 "splines2Dpen" = do.call(splineFunction2Dpen, params),
-              #  "DCT2D" = ...,
+                "DCT2D" = do.call(dctFunction2D, params),
                 stop("Univariate Expansion for 'type' = ", type, " not defined!")
   )
 
@@ -286,4 +286,35 @@ splineFunction2Dpen <- function(scores, xVal, bs, m, k)
                        dim = c(N, length(xVal[[1]]), length(xVal[[2]]))))
 
   return(res)
+}
+
+
+#' @importFrom abind abind
+dctFunction2D <- function(scores, xVal, dim, parallel = FALSE)
+{
+  s <- summary(scores)
+
+  if(parallel)
+    res <- foreach(i = 1:max(s$i), .combine = function(x,y){abind(x,y, along = 0)}) %dopar%{
+      idct2D(s$x[s$i == i], s$j[s$i == i], dim = dim)
+    }
+  else
+    res <- foreach(i = 1:max(s$i), .combine =function(x,y){abind(x,y, along = 0)}) %do%{
+      idct2D(s$x[s$i == i], s$j[s$i == i], dim = dim)
+    }
+
+  return(funData(xVal, X = res))
+}
+
+
+#' @useDynLib MFPCA calcImage
+idct2D <- function(scores, ind, dim)
+{
+  full <- array(0, dim)
+  full[ind] <- scores
+
+  res <- .C("calcImage", M = as.integer(dim[1]), N = as.integer(dim[2]),
+            coefs = as.numeric(full), image = as.numeric(full*0))$image
+
+  return(array(res, dim))
 }

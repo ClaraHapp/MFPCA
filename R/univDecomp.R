@@ -37,7 +37,7 @@ univDecomp <- function(type, data, params)
                 "splines1Dpen" = do.call(splineBasis1Dpen, params),
                 "splines2D" = do.call(splineBasis2D, params),
                 "splines2Dpen" = do.call(splineBasis2Dpen, params),
-                "DCT2D" = ...,
+                "DCT2D" = do.call(dctBasis2D, params),
                 stop("Univariate Decomposition for 'type' = ", type, " not defined!")
   )
 
@@ -329,4 +329,44 @@ splineBasis2Dpen <- function(funDataObject, bs, m, k, parallel = FALSE)
               ortho = FALSE,
               functions = NULL
   ))
+}
+
+
+dctBasis2D <- function(funDataObject, qThresh, parallel = FALSE)
+{
+  if(dimSupp(funDataObject) != 2)
+    stop("dctBasis2D can handle only functional data on two-dimensional domains.")
+
+  if(parallel)
+    res <- foreach(i = 1:nObs(funDataObject), .combine = "rbind") %dopar% {
+      dct <- dct2D(funDataObject@X[i,,], qThresh)
+
+      data.frame(i = rep(i, length(dct$ind)), j = dct$ind, x = dct$val)
+    }
+  else
+    res <- foreach(i = 1:nObs(funDataObject), .combine = "rbind") %do% {
+      dct <- dct2D(funDataObject@X[i,,], qThresh)
+
+     data.frame(i = rep(i, length(dct$ind)), j = dct$ind, x = dct$val)
+    }
+
+  return(sparseMatrix(i = res$i, j = res$j, x = res$x))
+}
+
+
+#' @useDynLib MFPCA calcCoefs
+dct2D <- function(image, qThresh)
+{
+  res <- .C("calcCoefs", M = as.integer(nrow(image)), N = as.integer(ncol(image)),
+            image = as.numeric(image), coefs = as.numeric(image*0))$coefs
+
+  ind <- which(abs(res) > quantile(abs(res), qThresh))
+
+  return(list(ind = ind, val = res[ind]))
+}
+
+
+# clean up after unloading
+.onUnload <- function (libpath) {
+  library.dynam.unload("MFPCA", libpath)
 }
