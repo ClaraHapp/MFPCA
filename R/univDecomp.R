@@ -212,11 +212,10 @@ splineBasis2D <- function(funDataObject, bs, m, k)
   scores <- t(apply(funDataObject@X, 1, function(f, dM){lm(as.vector(f) ~ dM - 1)$coef}, dM = desMat))
   
   # extract basis functions (in the correct dimensions)
-  tmp <-foreach::foreach(i = 1:dim(desMat)[2], .combine = function(x, y){abind::abind(x, y, along = 3)})%do%{
-    matrix(desMat[, i], nrow = length(funDataObject@xVal[[1]]), ncol = length(funDataObject@xVal[[2]]))}
-  
+  B <- aperm(array(desMat, c(nObsPoints(funDataObject), ncol(scores))), c(3,1,2))
+
   return(list(scores = scores,
-              B = .calcBasisIntegrals(aperm(tmp, c(3,1,2)), 2, funDataObject@xVal),
+              B = .calcBasisIntegrals(B, 2, funDataObject@xVal),
               ortho = FALSE,
               functions = NULL
   ))
@@ -282,19 +281,12 @@ splineBasis2Dpen <- function(funDataObject, bs, m, k, parallel = FALSE)
   g <- mgcv::bam(as.vector(funDataObject@X[N, , ]) ~ te(coord$x, coord$y, bs = bs, m = m, k = k), data = coord, method = "REML")
   
   scores <- rbind(scores, g$coef)
-  
-  basisLong <- model.matrix(g)
-  
+
   # extract basis functions (in the correct dimensions)
-  if(parallel)
-    tmp <-foreach::foreach(i = 1:prod(k), .combine = function(x, y){abind::abind(x, y, along = 3)})%dopar%{
-      matrix(basisLong[, i], nrow = length(funDataObject@xVal[[1]]), ncol = length(funDataObject@xVal[[2]]))}
-  else
-    tmp <-foreach::foreach(i = 1:prod(k), .combine = function(x, y){abind::abind(x, y, along = 3)})%do%{
-      matrix(basisLong[, i], nrow = length(funDataObject@xVal[[1]]), ncol = length(funDataObject@xVal[[2]]))}
-  
+  B <- aperm(array(model.matrix(g), c(nObsPoints(funDataObject), ncol(scores))), c(3,1,2))
+
   return(list(scores = scores,
-              B = .calcBasisIntegrals(aperm(tmp, c(3,1,2)), 2, funDataObject@xVal),
+              B = .calcBasisIntegrals(B, 2, funDataObject@xVal),
               ortho = FALSE,
               functions = NULL
   ))
