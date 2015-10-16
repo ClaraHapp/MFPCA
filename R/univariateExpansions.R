@@ -139,12 +139,12 @@ univBasisExpansion <- function(funDataObject,
 univExpansion <- function(type, scores, xVal, functions, params)
 {
   params$scores <- scores
-  
+
   if(is.numeric(xVal))
     xVal <- list(xVal)
-  
+
   param$xVal <- xVal
-  
+
   res <- switch(type,
                 "uFPCA" = do.call(fpcaBasis, params),
                 "splines1D" = do.call(splineFunction1D, params),
@@ -182,66 +182,73 @@ fpcaFunction <- function(scores, xVal, functions)
 
 #' Calculate linear combinations of spline basis functions on one-dimensional
 #' domains
-#' 
+#'
 #' Given scores (coefficients), this function calculates a linear combination of
-#' one-dimensional spline basis functions on one-dimensional domains based on the 
+#' one-dimensional spline basis functions on one-dimensional domains based on the
 #' \link[mgcv]{gam} function in the \pkg{mgcv} package.
-#' 
-#' @param scores A matrix of dimension \eqn{N x K}, representing the \eqn{K} 
+#'
+#' @param scores A matrix of dimension \eqn{N x K}, representing the \eqn{K}
 #'   scores (coefficients) for each observation \eqn{i = 1, \ldots, N}.
 #' @param xVal A list containing a vector of x-values.
-#' @param bs A character string, specifying the type of basis functions to be 
-#'   used. Please refer to \code{\link[mgcv]{smooth.terms}} for a list of 
+#' @param bs A character string, specifying the type of basis functions to be
+#'   used. Please refer to \code{\link[mgcv]{smooth.terms}} for a list of
 #'   possible basis functions.
 #' @param m A numeric, the order of the spline basis. See  \code{\link[mgcv]{s}}
 #'   for details.
-#' @param k A numeric, the number of basis functions used.  See 
+#' @param k A numeric, the number of basis functions used.  See
 #'   \code{\link[mgcv]{s}} for details.
-#'   
-#' @result An object of class \code{funData} with \eqn{N} observations on \code{xVal}, 
+#'
+#' @return An object of class \code{funData} with \eqn{N} observations on \code{xVal},
 #'   corresponding to the linear combination of spline basis functions.
-#'   
+#'
+#'  @seealso univExpansion
+#'
 #' @importFrom mgcv gam
 splineFunction1D <- function(scores, xVal, bs, m, k)
 {
   N <- nrow(scores)
 
   x <- xVal[[1]]
-  
+
   # spline design matrix via gam
   desMat <- mgcv::gam(rep(0, length(x)) ~ s(x, bs = bs, m = m, k = k), fit = FALSE)$X
-  
+
   # calculate functions as linear combination of splines
   res <- funData(xVal,
                  scores %*% t(desMat))
-  
+
   return(res)
 }
 
 
-#' Calculate linear combinations of spline basis functions on two-dimensional 
+#' Calculate linear combinations of spline basis functions on two-dimensional
 #' domains
-#' 
+#'
 #' Given scores (coefficients), this function calculates a linear combination of
 #' two-dimensional spline tensor basis functions on one-dimensional domains
-#' based on the \link[mgcv]{gam} function in the \pkg{mgcv} package.
-#' 
-#' @param scores A matrix of dimension \eqn{N x K}, representing the \eqn{K} 
+#' based on the \link[mgcv]{gam} function in the \pkg{mgcv} package. If the
+#' scores have been calculated based on a penalized tensor spline basis, use
+#' \code{splineFunction2Dpen} instead (which runs \link[mgcv]{bam} instead of
+#' \link[mgcv]{gam}).
+#'
+#' @param scores A matrix of dimension \eqn{N x K}, representing the \eqn{K}
 #'   scores (coefficients) for each observation \eqn{i = 1, \ldots, N}.
 #' @param xVal A list containing a two numeric vectors, corresponding to the x-
 #'   and y-values.
 #' @param bs An vector of character strings (or a single character), the type of
-#'   basis functions to be used. Please refer to \code{\link[mgcv]{te}} for a 
+#'   basis functions to be used. Please refer to \code{\link[mgcv]{te}} for a
 #'   list of possible basis functions.
-#' @param m A numeric vector (or a single number), the order of the spline 
+#' @param m A numeric vector (or a single number), the order of the spline
 #'   basis. See \code{\link[mgcv]{s}} for details.
 #' @param k A numeric vector (or a single number), the number of basis functions
 #'   used.  See  \code{\link[mgcv]{s}} for details.
-#'   
-#' @result An object of class \code{funData} with \eqn{N} observations on the
+#'
+#' @return An object of class \code{funData} with \eqn{N} observations on the
 #'   tow-dimensional domain specified by \code{xVal}, corresponding to the
 #'   linear combination of spline basis functions.
-#'   
+#'
+#'  @seealso univExpansion
+#'
 #' @importFrom mgcv gam
 splineFunction2D <- function(scores, xVal, bs, m, k)
 {
@@ -251,7 +258,6 @@ splineFunction2D <- function(scores, xVal, bs, m, k)
 
   # spline design matrix via gam
   desMat <- mgcv::gam(rep(0, dim(coord)[1]) ~ te(coord$x, coord$y, bs = bs, m = m, k = k), data = coord, fit = FALSE)$X
-  
 
   # calculate functions as linear combination of splines
   res <- funData(xVal,

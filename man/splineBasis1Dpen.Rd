@@ -9,12 +9,12 @@ splineBasis1Dpen(funDataObject, bs, m, k, parallel = FALSE)
 }
 \arguments{
 \item{funDataObject}{An object of class \code{\link[funData]{funData}}
-containing the observed functional data samples and for which the bases
+containing the observed functional data samples and for which the basis
 representation is calculated.}
 
-\item{bs}{A character string, the type of basis functions to be used. Please
-refer to \code{\link[mgcv]{smooth.terms}} for a list of possible basis
-functions.}
+\item{bs}{A character string, specifying the type of basis functions to be
+used. Please refer to \code{\link[mgcv]{smooth.terms}} for a list of
+possible basis functions.}
 
 \item{m}{A numeric, the order of the spline basis. See  \code{\link[mgcv]{s}}
 for details.}
@@ -24,20 +24,24 @@ for details.}
 
 \item{parallel}{Logical. If \code{TRUE}, the coefficients for the basis
   functions are calculated in parallel. The implementation is based on the
-  \code{\link[foreach]{foreach}} function and requires a parallel backend that must
-  be registered before. See \code{\link[foreach]{foreach}} for details.}
+  \code{\link[foreach]{foreach}} function and requires a parallel backend
+  that must be registered before. See \code{\link[foreach]{foreach}} for
+  details.}
 }
 \value{
-\item{scores}{A matrix of weights with dimension \code{N x k},
+\item{scores}{A matrix of scores (coefficients) with dimension \code{N x k},
   reflecting the weights for each basis function in each observation.}
   \item{B}{A matrix containing the scalar product of all pairs of basis
   functions.} \item{ortho}{Logical, set to \code{FALSE}, as basis functions
-  are not orthogonal} \item{functions}{\code{NULL}, as basis functions are
+  are not orthonormal.} \item{functions}{\code{NULL}, as basis functions are
   known}
 }
 \description{
 This function calculates a penalized spline basis representation for
 functional data on one-dimensional domains based on the \link[mgcv]{gam}
 function in the \pkg{mgcv} package.
+}
+\seealso{
+univDecomp
 }
 
