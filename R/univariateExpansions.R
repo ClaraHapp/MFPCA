@@ -146,19 +146,41 @@ univExpansion <- function(type, scores, xVal, functions, params)
   param$xVal <- xVal
   
   res <- switch(type,
-                "uFPCA" = ...,
-                "splines1D" = ...,
-                "splines1Dpen" = ...,
-                "splines2D" = ...,
-                "splines2Dpen" = ...,
-                "DCT2D" = ...,
+                "uFPCA" = do.call(fpcaBasis, params),
+                "splines1D" = do.call(splineFunction1D, params),
+                "splines1Dpen" = do.call(splineFunction1D, params),
+                "splines2D" = do.call(splineFunction2D, params),
+                "splines2Dpen" = do.call(splineFunction2Dpen, params),
+              #  "DCT2D" = ...,
                 stop("Univariate Expansion for 'type' = ", type, " not defined!")
   )
 
   return(res$functions)
 }
 
-#' Calculate linear combinations of spline basis functions on one-dimensional 
+#' Calculate a linear combination of a functional principal component basis on
+#' one-dimensional domains
+#'
+#' This function calculates  a linear combination of functional principal
+#' component basis functions on one-dimensional domains.
+#'
+#' @param scores A matrix of dimension \eqn{N x K}, representing the \eqn{K}
+#'   scores (coefficients) for each observation \eqn{i = 1, \ldots, N}.
+#' @param xVal A list containing a vector of x-values.
+#' @param functions A \code{funData} object, representing the FPCA basis.
+#'
+#' @return An object of class \code{funData} with \eqn{N} observations on
+#'   \code{xVal}, corresponding to the linear combination of the functional
+#'   principal components.
+#'
+#' @seealso univExpansion
+fpcaFunction <- function(scores, xVal, functions)
+{
+  return(funData(xVal, scores %*% functions@X))
+}
+
+
+#' Calculate linear combinations of spline basis functions on one-dimensional
 #' domains
 #' 
 #' Given scores (coefficients), this function calculates a linear combination of

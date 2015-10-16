@@ -32,7 +32,7 @@ univDecomp <- function(type, data, params)
   params$funDataObject <- data
   
   res <- switch(type,
-                "uFPCA" = do.call(),
+                "uFPCA" = do.call(fpcaBasis, params),
                 "splines1D" = do.call(splineBasis1D, params),
                 "splines1Dpen" = do.call(splineBasis1Dpen, params),
                 "splines2D" = do.call(splineBasis2D, params),
@@ -51,8 +51,49 @@ univDecomp <- function(type, data, params)
   ))
 }
 
+#' Calculate a functional principal component basis representation for
+#' functional data on one-dimensional domains
+#'
+#' This function calculates functional principal component basis representation
+#' for functional data on one-dimensional domains. The FPCA is calculated via
+#' the \link{PACE} function which relies on \[refund]{fpca.sc} in the
+#' \pgk{refund} package.
+#'
+#' @param funDataObject An object of class \code{\link[funData]{funData}}
+#'   containing the observed functional data samples and for which the FPCA is
+#'   to be calculated.
+#' @param nbasis An integer, representing the number of  B-spline basis
+#'   functions used for estimation of the mean function and bivariate smoothing
+#'   of the covariance surface. Defaults to 10 (cf.
+#'   \code{\link[refund]{fpca.sc}}).
+#' @param pve A numeric value between 0 and 1, the proportion of variance
+#'   explained: used to choose the number of principal components. Defaults to
+#'   0.99 (cf. \code{\link[refund]{fpca.sc}}).
+#' @param npc An integer, giving a prespecified value for the number of
+#'   principal components. Defaults to \code{NULL}. If given, this overrides
+#'   \code{pve} (cf. \code{\link[refund]{fpca.sc}}).
+#' @param makePD Logical: should positive definiteness be enforced for the
+#'   covariance surface estimate? Defaults to \code{FALSE} (cf.
+#'   \code{\link[refund]{fpca.sc}}).
+#'
+#'   @return \item{scores}{A matrix of scores (coefficients) with dimension \code{N x k},
+#'   reflecting the weights for principal component in each observation.}
+#'   \item{B}{NULL (As functions are orthonormal)} \item{ortho}{Logical, set to \code{TRUE}, as basis functions
+#'   are orthonormal.} \item{functions}{A functional data object,
+#'   representing the functional principal component basis functions.}
+#' @seealso univDecomp
+fpcaBasis <- function(funDataObject, nbasis, pve, npc, makePD)
+{
+  FPCA <- PACE(funDataObject, predData = NULL, nbasis, pve, npc, makePD)
 
-#' Calculate an unpenalized spline basis decomposition for functional data on 
+  return(list(scores = FPCA$scores,
+              B = NULL,
+              ortho = TRUE,
+              functions = FPCA$functions
+  ))
+}
+
+#' Calculate an unpenalized spline basis decomposition for functional data on
 #' one-dimensional domains
 #' 
 #' This function calculates an unpenalized spline basis decomposition for 
