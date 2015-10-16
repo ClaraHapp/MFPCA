@@ -230,10 +230,32 @@ splineFunction2D <- function(scores, xVal, bs, m, k)
   # spline design matrix via gam
   desMat <- mgcv::gam(rep(0, dim(coord)[1]) ~ te(coord$x, coord$y, bs = bs, m = m, k = k), data = coord, fit = FALSE)$X
   
+
   # calculate functions as linear combination of splines
   res <- funData(xVal,
                  array(scores %*% t(desMat),
                        dim = c(N, length(xVal[[1]]), length(xVal[[2]]))))
-  
+
+  return(res)
+}
+
+
+#' @rdname splineFunction2D
+#'
+#' @importFrom mgcv gam
+splineFunction2Dpen <- function(scores, xVal, bs, m, k)
+{
+  N <- nrow(scores)
+
+  coord <- expand.grid(x = xVal[[1]], y = xVal[[2]])
+
+  # spline design matrix via gam
+  desMat <- mgcv::bam(rep(0, dim(coord)[1]) ~ te(coord$x, coord$y, bs = bs, m = m, k = k), data = coord, fit = FALSE)$X
+
+  # calculate functions as linear combination of splines
+  res <- funData(xVal,
+                 array(scores %*% t(desMat),
+                       dim = c(N, length(xVal[[1]]), length(xVal[[2]]))))
+
   return(res)
 }
