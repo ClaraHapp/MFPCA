@@ -126,6 +126,8 @@ univBasisExpansion <- function(funDataObject,
 #'
 #' @param type A character string, specifying the basis for which the
 #'   decomposition is to be calculated.
+#' @param xVal A list, representing the domain of the basis functions. See
+#'   \linkS4class{funData} for details.
 #' @param scores A matrix of scores (coefficients) for each observation based on
 #'   the given basis functions.
 #' @param functions A functional data object, representing the basis functions.
