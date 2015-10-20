@@ -1,0 +1,2 @@
+#rm ./src/dct2D.o
+#rm ./src/Makevars.in

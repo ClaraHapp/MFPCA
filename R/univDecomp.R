@@ -334,7 +334,7 @@ splineBasis2Dpen <- function(funDataObject, bs, m, k, parallel = FALSE)
 
 dctBasis2D <- function(funDataObject, qThresh, parallel = FALSE)
 {
-  if(dimSupp(funDataObject) != 2)
+   if(dimSupp(funDataObject) != 2)
     stop("dctBasis2D can handle only functional data on two-dimensional domains.")
 
   if(parallel)

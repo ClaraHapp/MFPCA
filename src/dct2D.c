@@ -1,6 +1,9 @@
 // compile with R CMD SHLIB dct.c -lfftw3
 
-#include <fftw3.h>
+# ifdef HAVE_FFTW
+# include <fftw3.h>
+# endif
+
 //#include <math.h>
 #include <R.h> 
 #include <Rmath.h>
@@ -10,6 +13,7 @@
 
 void calcCoefs(int* M, int* N, double* image, double* coefs)
 {	
+	# ifdef HAVE_FFTW
 	// make the plan
 	fftw_plan plan =  fftw_plan_r2r_2d(*M, *N, image, coefs,
 	                                   FFTW_REDFT10, FFTW_REDFT10,
@@ -25,6 +29,9 @@ void calcCoefs(int* M, int* N, double* image, double* coefs)
 		for(unsigned int j = 0; j < *N; j++)
 			coefs[i * (*N) + j] = c * rho(i) * rho(j) * coefs[i * (*N) + j];
 	}
+	# else
+		error("dctBasis2D requires C-library fftw3 to be installed. Check http://www.fftw.org/ for more information.");
+	# endif
 
 	return;
 }
@@ -32,6 +39,7 @@ void calcCoefs(int* M, int* N, double* image, double* coefs)
 
 void calcImage(int* M, int* N, double* coefs, double* image)
 {	
+	# ifdef HAVE_FFTW
 	// transform coefs
 	for(unsigned int i = 0; i < *M; i++)
 	{
@@ -53,6 +61,9 @@ void calcImage(int* M, int* N, double* coefs, double* image)
 		for(unsigned int j = 0; j < *N; j++)
 			image[i * (*N) + j] = image[i * (*N) + j] / M_PI;
 	}
+	# else
+		error("dctBasis2D requires C-library fftw3 to be installed. Check http://www.fftw.org/ for more information.");
+	# endif
 
 	return;
 }

@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# check if library fftw3 is installed
+if `dpkg -s libfftw3-dev >/dev/null 2>&1`; then 
+	# fftw3 is installed
+	FFTW_LIBS=-lfftw3
+	FFTW_CFLAGS="-D HAVE_FFTW" # define makro HAVE_FFTW
+else 
+	FFTW_LIBS=
+	echo "Warning: Library fftw3 not available. Package MFPCA is installed without Fourier/Cosine basis transformation. If you would like to enable this feature, please install fftw3 from http://www.fftw.org/ and reinstall MFPCA."	
+fi
+
+# Substitute FFTW_LIBS and FFTW_CFLAGS in Makevars.in
+sed -e "s/@FFTW_LIBS@/$FFTW_LIBS/g" -e "s/@FFTW_CFLAGS@/$FFTW_CFLAGS/g"  src/Makevars.in > src/Makevars
