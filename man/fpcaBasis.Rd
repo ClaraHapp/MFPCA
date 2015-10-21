@@ -30,16 +30,17 @@ principal components. Defaults to \code{NULL}. If given, this overrides
   \code{\link[refund]{fpca.sc}}).}
 }
 \value{
-\item{scores}{A matrix of scores (coefficients) with dimension \code{N x k},
-  reflecting the weights for principal component in each observation.}
-  \item{B}{NULL (As functions are orthonormal)} \item{ortho}{Logical, set to \code{TRUE}, as basis functions
-  are orthonormal.} \item{functions}{A functional data object,
-  representing the functional principal component basis functions.}
+\item{scores}{A matrix of scores (coefficients) with dimension
+  \code{N x k}, reflecting the weights for principal component in each
+  observation.} \item{B}{NULL, as functions are orthonormal.}
+  \item{ortho}{Logical, set to \code{TRUE}, as basis functions are
+  orthonormal.} \item{functions}{A functional data object, representing the
+  functional principal component basis functions.}
 }
 \description{
 This function calculates functional principal component basis representation
 for functional data on one-dimensional domains. The FPCA is calculated via
-the \link{PACE} function which relies on \[refund]{fpca.sc} in the
+the \link{PACE} function, which is built on \link[refund]{fpca.sc} in the
 \pkg{refund} package.
 }
 \seealso{

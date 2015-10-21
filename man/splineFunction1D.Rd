@@ -24,13 +24,14 @@ for details.}
   \code{\link[mgcv]{s}} for details.}
 }
 \value{
-An object of class \code{funData} with \eqn{N} observations on \code{xVal},
-  corresponding to the linear combination of spline basis functions.
+An object of class \code{funData} with \eqn{N} observations on
+  \code{xVal}, corresponding to the linear combination of spline basis
+  functions.
 }
 \description{
 Given scores (coefficients), this function calculates a linear combination of
-one-dimensional spline basis functions on one-dimensional domains based on the
-\link[mgcv]{gam} function in the \pkg{mgcv} package.
+one-dimensional spline basis functions on one-dimensional domains based on
+the \link[mgcv]{gam} function in the \pkg{mgcv} package.
 }
 \seealso{
 univExpansion

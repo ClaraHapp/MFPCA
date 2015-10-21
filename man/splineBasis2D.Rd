@@ -23,12 +23,13 @@ basis. See \code{\link[mgcv]{s}} for details.}
   functions used.  See  \code{\link[mgcv]{s}} for details.}
 }
 \value{
-\item{scores}{A matrix of scores (coefficients) with dimension \code{N x K},
-  reflecting the weights for each basis function in each observation, where
-  \code{K} is the total number of basis functions used.} \item{B}{A matrix
-  containing the scalar product of all pairs of basis functions.}
-  \item{ortho}{Logical, set to \code{FALSE}, as basis functions are not
-  orthonormal.} \item{functions}{\code{NULL}, as basis functions are known.}
+\item{scores}{A matrix of scores (coefficients) with dimension
+  \code{N x K}, reflecting the weights for each basis function in each
+  observation, where \code{K} is the total number of basis functions used.}
+  \item{B}{A matrix containing the scalar product of all pairs of basis
+  functions.} \item{ortho}{Logical, set to \code{FALSE}, as basis functions
+  are not orthonormal.} \item{functions}{\code{NULL}, as basis functions are
+  known.}
 }
 \description{
 This function calculates an unpenalized tensor product spline basis

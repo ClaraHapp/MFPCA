@@ -29,12 +29,12 @@ for details.}
   details.}
 }
 \value{
-\item{scores}{A matrix of scores (coefficients) with dimension \code{N x k},
-  reflecting the weights for each basis function in each observation.}
-  \item{B}{A matrix containing the scalar product of all pairs of basis
-  functions.} \item{ortho}{Logical, set to \code{FALSE}, as basis functions
-  are not orthonormal.} \item{functions}{\code{NULL}, as basis functions are
-  known}
+\item{scores}{A matrix of scores (coefficients) with dimension
+  \code{N x k}, reflecting the weights for each basis function in each
+  observation.} \item{B}{A matrix containing the scalar product of all pairs
+  of basis functions.} \item{ortho}{Logical, set to \code{FALSE}, as basis
+  functions are not orthonormal.} \item{functions}{\code{NULL}, as basis
+  functions are known}
 }
 \description{
 This function calculates a penalized spline basis representation for

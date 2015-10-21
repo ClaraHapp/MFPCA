@@ -40,4 +40,9 @@ coefficients (or scores) \eqn{\theta_{ik}} reflect the weight of each basis
 function \eqn{b_k(t)} for the observed function \eqn{X_i(t)} and can be used
 to characterize the individual observations.
 }
+\seealso{
+\link{MFPCA}, \link{fpcaBasis}, \link{splineBasis1D},
+  \link{splineBasis1Dpen}, \link{splineBasis2D}, \link{splineBasis2Dpen},
+  \link{dctBasis2D}
+}
 

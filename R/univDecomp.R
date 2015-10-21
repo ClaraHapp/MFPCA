@@ -27,6 +27,10 @@
 #'   functions are all orthonormal.} \item{functions}{A functional data object,
 #'   representing the basis functions. Can be \code{NULL} if the basis functions
 #'   are not estimated from the data, but have a predefined form. See Details.}
+#'
+#' @seealso \link{MFPCA}, \link{fpcaBasis}, \link{splineBasis1D},
+#'   \link{splineBasis1Dpen}, \link{splineBasis2D}, \link{splineBasis2Dpen},
+#'   \link{dctBasis2D}
 univDecomp <- function(type, data, params)
 {
   params$funDataObject <- data
@@ -56,7 +60,7 @@ univDecomp <- function(type, data, params)
 #'
 #' This function calculates functional principal component basis representation
 #' for functional data on one-dimensional domains. The FPCA is calculated via
-#' the \link{PACE} function which relies on \[refund]{fpca.sc} in the
+#' the \link{PACE} function, which is built on \link[refund]{fpca.sc} in the
 #' \pkg{refund} package.
 #'
 #' @param funDataObject An object of class \code{\link[funData]{funData}}
@@ -76,11 +80,13 @@ univDecomp <- function(type, data, params)
 #'   covariance surface estimate? Defaults to \code{FALSE} (cf.
 #'   \code{\link[refund]{fpca.sc}}).
 #'
-#'   @return \item{scores}{A matrix of scores (coefficients) with dimension \code{N x k},
-#'   reflecting the weights for principal component in each observation.}
-#'   \item{B}{NULL (As functions are orthonormal)} \item{ortho}{Logical, set to \code{TRUE}, as basis functions
-#'   are orthonormal.} \item{functions}{A functional data object,
-#'   representing the functional principal component basis functions.}
+#' @return \item{scores}{A matrix of scores (coefficients) with dimension
+#'   \code{N x k}, reflecting the weights for principal component in each
+#'   observation.} \item{B}{NULL, as functions are orthonormal.}
+#'   \item{ortho}{Logical, set to \code{TRUE}, as basis functions are
+#'   orthonormal.} \item{functions}{A functional data object, representing the
+#'   functional principal component basis functions.}
+#'
 #' @seealso univDecomp
 fpcaBasis <- function(funDataObject, nbasis, pve, npc, makePD)
 {
@@ -111,12 +117,12 @@ fpcaBasis <- function(funDataObject, nbasis, pve, npc, makePD)
 #' @param k A numeric, the number of basis functions used.  See
 #'   \code{\link[mgcv]{s}} for details.
 #'
-#' @return \item{scores}{A matrix of scores (coefficients) with dimension \code{N x k},
-#'   reflecting the weights for each basis function in each observation.}
-#'   \item{B}{A matrix containing the scalar product of all pairs of basis
-#'   functions.} \item{ortho}{Logical, set to \code{FALSE}, as basis functions
-#'   are not orthonormal.} \item{functions}{\code{NULL}, as basis functions are
-#'   known}
+#' @return \item{scores}{A matrix of scores (coefficients) with dimension
+#'   \code{N x k}, reflecting the weights for each basis function in each
+#'   observation.} \item{B}{A matrix containing the scalar product of all pairs
+#'   of basis functions.} \item{ortho}{Logical, set to \code{FALSE}, as basis
+#'   functions are not orthonormal.} \item{functions}{\code{NULL}, as basis
+#'   functions are known}
 #'
 #' @seealso univDecomp
 #'
@@ -163,12 +169,12 @@ splineBasis1D <- function(funDataObject, bs, m, k)
 #'   that must be registered before. See \code{\link[foreach]{foreach}} for
 #'   details.
 #'
-#' @return \item{scores}{A matrix of scores (coefficients) with dimension \code{N x k},
-#'   reflecting the weights for each basis function in each observation.}
-#'   \item{B}{A matrix containing the scalar product of all pairs of basis
-#'   functions.} \item{ortho}{Logical, set to \code{FALSE}, as basis functions
-#'   are not orthonormal.} \item{functions}{\code{NULL}, as basis functions are
-#'   known}
+#' @return \item{scores}{A matrix of scores (coefficients) with dimension
+#'   \code{N x k}, reflecting the weights for each basis function in each
+#'   observation.} \item{B}{A matrix containing the scalar product of all pairs
+#'   of basis functions.} \item{ortho}{Logical, set to \code{FALSE}, as basis
+#'   functions are not orthonormal.} \item{functions}{\code{NULL}, as basis
+#'   functions are known}
 #'
 #' @seealso univDecomp
 #'
@@ -227,16 +233,16 @@ splineBasis1Dpen <- function(funDataObject, bs, m, k, parallel = FALSE)
 #' @param k An numeric vector (or a single number), the number of basis
 #'   functions used.  See  \code{\link[mgcv]{s}} for details.
 #'
-#' @return \item{scores}{A matrix of scores (coefficients) with dimension \code{N x K},
-#'   reflecting the weights for each basis function in each observation, where
-#'   \code{K} is the total number of basis functions used.} \item{B}{A matrix
-#'   containing the scalar product of all pairs of basis functions.}
-#'   \item{ortho}{Logical, set to \code{FALSE}, as basis functions are not
-#'   orthonormal.} \item{functions}{\code{NULL}, as basis functions are known.}
+#' @return \item{scores}{A matrix of scores (coefficients) with dimension
+#'   \code{N x K}, reflecting the weights for each basis function in each
+#'   observation, where \code{K} is the total number of basis functions used.}
+#'   \item{B}{A matrix containing the scalar product of all pairs of basis
+#'   functions.} \item{ortho}{Logical, set to \code{FALSE}, as basis functions
+#'   are not orthonormal.} \item{functions}{\code{NULL}, as basis functions are
+#'   known.}
 #'
 #' @seealso univDecomp
 #'
-#' @importFrom foreach %do%
 #' @importFrom mgcv gam
 splineBasis2D <- function(funDataObject, bs, m, k)
 {
@@ -283,12 +289,13 @@ splineBasis2D <- function(funDataObject, bs, m, k)
 #'   that must be registered before. See \code{\link[foreach]{foreach}} for
 #'   details.
 #'
-#' @return \item{scores}{A matrix of scores (coefficients) with dimension \code{N x K},
-#'   reflecting the weights for each basis function in each observation, where
-#'   \code{K} is the total number of basis functions used.} \item{B}{A matrix
-#'   containing the scalar product of all pairs of basis functions.}
-#'   \item{ortho}{Logical, set to \code{FALSE}, as basis functions are not
-#'   orthonormal.} \item{functions}{\code{NULL}, as basis functions are known}
+#' @return \item{scores}{A matrix of scores (coefficients) with dimension
+#'   \code{N x K}, reflecting the weights for each basis function in each
+#'   observation, where \code{K} is the total number of basis functions used.}
+#'   \item{B}{A matrix containing the scalar product of all pairs of basis
+#'   functions.} \item{ortho}{Logical, set to \code{FALSE}, as basis functions
+#'   are not orthonormal.} \item{functions}{\code{NULL}, as basis functions are
+#'   known}
 #'
 #' @seealso univDecomp
 #'
@@ -332,9 +339,58 @@ splineBasis2Dpen <- function(funDataObject, bs, m, k, parallel = FALSE)
 }
 
 
+#' Calculate a cosine basis representation for functional data on
+#' two-dimensional domains
+#'
+#' This function calculates a tensor cosine basis representation for functional
+#' data on two-dimensional domains based on a discrete cosine transformation
+#' (DCT) using the C-library \code{fftw3} \url{http://www.fftw.org/}.
+#'
+#' Given the (discretized) observed functions \eqn{X_i}, this function
+#' calculates a basis representation \deqn{X_i(s,t) = \sum_{m = 0}^M \sum_{n =
+#' 0}^N \theta_{mn} f_{mn}(s,t)} in terms of (orthonormal) tensor cosine basis
+#' functions \deqn{f_{mn}(s,t) = c_m c_n \cos(ms) \cos(nt), \quad t \in [0,
+#' \pi]} with \eqn{c_m = \frac{1}{\sqrt{pi}}} for \eqn{m=0} and \eqn{c_m =
+#' \sqrt{\frac{2}{pi}}} for \eqn{m=1,2,\ldots} based on a discrete cosine
+#' transform (DCT).
+#'
+#' If not thresholded (\code{qThresh = 1}), the function returns all non-zero
+#' coefficients \eqn{\theta_{mn}} in the basis representation in a sparse matrix
+#' \code{scores}. Otherwise, coefficients with \deqn{|\theta_{mn}| <= q } are
+#' set to zero, where \eqn{q} is the \code{qThresh}-quantile of
+#' \eqn{|\theta_{mn}|}.
+#'
+#' @section Warning: If the C-library \code{fftw3} is not available when the
+#'   package \code{MFPCA} is installed, this function is disabled an will throw
+#'   an error. For full functionality install the C-library \code{fftw3} from
+#'   \url{http://www.fftw.org/} and reinstall \code{MFPCA}.
+#'
+#' @param funDataObject An object of class \code{\link[funData]{funData}}
+#'   containing the observed functional data samples and for which the basis
+#'   representation is calculated.
+#' @param qThresh A numeric with value in \eqn{[0,1]}, giving the quantile for
+#'   thresholding the coefficients. See Details.
+#' @param parallel Logical. If \code{TRUE}, the coefficients for the basis
+#'   functions are calculated in parallel. The implementation is based on the
+#'   \code{\link[foreach]{foreach}} function and requires a parallel backend
+#'   that must be registered before. See \code{\link[foreach]{foreach}} for
+#'   details.
+#'
+#' @return \item{scores}{A sparse matrix of scores (coefficients) with dimension
+#'   \code{N x K}, reflecting the weights \eqn{\theta_{mn}} for each basis
+#'   function in each observation, where \code{K} is the total number of basis
+#'   functions used.} \item{B}{NULL, as functions are orthonormal.}
+#'   \item{ortho}{Logical, set to \code{TRUE}, as basis functions are
+#'   orthonormal.} \item{functions}{\code{NULL}, as basis functions are known.}
+#'
+#' @seealso univDecomp
+#'
+#' @importFrom foreach %do%
+#' @importFrom foreach %dopar%
+#' @importFrom Matrix sparseMatrix
 dctBasis2D <- function(funDataObject, qThresh, parallel = FALSE)
 {
-   if(dimSupp(funDataObject) != 2)
+  if(dimSupp(funDataObject) != 2)
     stop("dctBasis2D can handle only functional data on two-dimensional domains.")
 
   if(parallel)
@@ -347,14 +403,41 @@ dctBasis2D <- function(funDataObject, qThresh, parallel = FALSE)
     res <- foreach(i = 1:nObs(funDataObject), .combine = "rbind") %do% {
       dct <- dct2D(funDataObject@X[i,,], qThresh)
 
-     data.frame(i = rep(i, length(dct$ind)), j = dct$ind, x = dct$val)
+      data.frame(i = rep(i, length(dct$ind)), j = dct$ind, x = dct$val)
     }
 
-  return(sparseMatrix(i = res$i, j = res$j, x = res$x))
+  return(list(scores = sparseMatrix(i = res$i, j = res$j, x = res$x),
+              B = NULL,
+              ortho = TRUE,
+              functions = NULL
+  ))
 }
 
 
+#' Calculate and threshold DCT for an image
+#'
+#' This function calculates the (orthonormal) discrete cosine transformation for
+#' an image and returns thresholded DCT coefficients using the C-library
+#' \code{fftw3} (see \url{http://www.fftw.org/}).
+#'
+#' @section Warning: If the C-library \code{fftw3} is not available when the
+#'   package \code{MFPCA} is installed, this function is disabled an will throw
+#'   an error. For full functionality install the C-library \code{fftw3} from
+#'   \url{http://www.fftw.org/} and reinstall \code{MFPCA}.
+#'
+#' @param image An image (a 2D matrix with real values).
+#' @param qThresh A numeric with value in \eqn{[0,1]}, giving the quantile for
+#'   thresholding the coefficients. See \link{dctBasis2D} for details.
+#'
+#' @return \item{ind}{An integer vector, containing the indices of
+#'   non-thresholded (hence non-zero) coefficients.} \item{val}{A numeric
+#'   vector, giving the values of the corresponding coefficients.}
+#'
+#' @seealso dctBasis2D
+#'
 #' @useDynLib MFPCA calcCoefs
+#'
+#' @keywords internal
 dct2D <- function(image, qThresh)
 {
   res <- .C("calcCoefs", M = as.integer(nrow(image)), N = as.integer(ncol(image)),
