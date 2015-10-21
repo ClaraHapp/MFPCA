@@ -29,12 +29,12 @@ basis. See \code{\link[mgcv]{s}} for details.}
 }
 \value{
 An object of class \code{funData} with \eqn{N} observations on the
-  tow-dimensional domain specified by \code{xVal}, corresponding to the
+  two-dimensional domain specified by \code{xVal}, corresponding to the
   linear combination of spline basis functions.
 }
 \description{
 Given scores (coefficients), this function calculates a linear combination of
-two-dimensional spline tensor basis functions on one-dimensional domains
+two-dimensional spline tensor basis functions on two-dimensional domains
 based on the \link[mgcv]{gam} function in the \pkg{mgcv} package. If the
 scores have been calculated based on a penalized tensor spline basis, use
 \code{splineFunction2Dpen} instead (which runs \link[mgcv]{bam} instead of

@@ -17,10 +17,10 @@ NULL
 #' @param funDataObject An object of class \code{\link[funData]{funData}}
 #'   containing the observed functional data, for which the bases representation
 #'   is calculated.
-#' @param bs A character string, the type of basis functions to be used. Defaults to p-Splines
-#'   (\code{"ps"}) or tensor products of p-splines in case of two-dimensional support. Please
-#'   refer to \code{\link[mgcv]{smooth.terms}} for a list of possible basis
-#'   functions.
+#' @param bs A character string, the type of basis functions to be used.
+#'   Defaults to p-Splines (\code{"ps"}) or tensor products of p-splines in case
+#'   of two-dimensional support. Please refer to
+#'   \code{\link[mgcv]{smooth.terms}} for a list of possible basis functions.
 #' @param m An array (or a single character), the order of the spline basis.
 #'   Defaults to \code{2}, as in \code{\link[mgcv]{gam}} /
 #'   \code{\link[mgcv]{bam}}. See \code{\link[mgcv]{s}} for details.
@@ -31,11 +31,11 @@ NULL
 #'   appropriate penalization term. Defaults to \code{FALSE}.
 #'
 #' @return \item{scores}{A matrix of weights with dimension \code{N x k},
-#' reflecting the weights for each basis function in each observation.}
-#' \item{functions}{A \code{\link[funData]{funData}} object representing the
-#' basis functions.} \item{basisLong}{A matrix representing the basis functions
-#' in vectorized form (only if \code{funDataobject} is defined on a
-#' two-dimensional domain).}
+#'   reflecting the weights for each basis function in each observation.}
+#'   \item{functions}{A \code{\link[funData]{funData}} object representing the
+#'   basis functions.} \item{basisLong}{A matrix representing the basis
+#'   functions in vectorized form (only if \code{funDataobject} is defined on a
+#'   two-dimensional domain).}
 #'
 #' @seealso \code{\link[mgcv]{gam}}, \code{\link[mgcv]{s}},
 #'   \code{\link[mgcv]{te}}, \code{\link{MFPCA}}, \code{\link{PACE}}.
@@ -138,6 +138,12 @@ univBasisExpansion <- function(funDataObject,
 #'
 #' @return A functional data object, representing the linear combinations of the
 #'   basis functions based on the given scores.
+#'
+#' @seealso \link{MFPCA}, \link{fpcaFunction}, \link{splineFunction1D}, \link{splineFunction2D}, \link{splineFunction2Dpen}, \link{dctFunction2D}
+#'
+#' @export univExpansion
+#'
+#' @examples ...
 univExpansion <- function(type, scores, xVal, functions, params)
 {
   params$scores <- scores
@@ -186,8 +192,8 @@ fpcaFunction <- function(scores, xVal, functions)
 #' domains
 #'
 #' Given scores (coefficients), this function calculates a linear combination of
-#' one-dimensional spline basis functions on one-dimensional domains based on the
-#' \link[mgcv]{gam} function in the \pkg{mgcv} package.
+#' one-dimensional spline basis functions on one-dimensional domains based on
+#' the \link[mgcv]{gam} function in the \pkg{mgcv} package.
 #'
 #' @param scores A matrix of dimension \eqn{N x K}, representing the \eqn{K}
 #'   scores (coefficients) for each observation \eqn{i = 1, \ldots, N}.
@@ -200,10 +206,11 @@ fpcaFunction <- function(scores, xVal, functions)
 #' @param k A numeric, the number of basis functions used.  See
 #'   \code{\link[mgcv]{s}} for details.
 #'
-#' @return An object of class \code{funData} with \eqn{N} observations on \code{xVal},
-#'   corresponding to the linear combination of spline basis functions.
+#' @return An object of class \code{funData} with \eqn{N} observations on
+#'   \code{xVal}, corresponding to the linear combination of spline basis
+#'   functions.
 #'
-#'  @seealso univExpansion
+#' @seealso univExpansion
 #'
 #' @importFrom mgcv gam
 splineFunction1D <- function(scores, xVal, bs, m, k)
@@ -227,7 +234,7 @@ splineFunction1D <- function(scores, xVal, bs, m, k)
 #' domains
 #'
 #' Given scores (coefficients), this function calculates a linear combination of
-#' two-dimensional spline tensor basis functions on one-dimensional domains
+#' two-dimensional spline tensor basis functions on two-dimensional domains
 #' based on the \link[mgcv]{gam} function in the \pkg{mgcv} package. If the
 #' scores have been calculated based on a penalized tensor spline basis, use
 #' \code{splineFunction2Dpen} instead (which runs \link[mgcv]{bam} instead of
@@ -246,10 +253,10 @@ splineFunction1D <- function(scores, xVal, bs, m, k)
 #'   used.  See  \code{\link[mgcv]{s}} for details.
 #'
 #' @return An object of class \code{funData} with \eqn{N} observations on the
-#'   tow-dimensional domain specified by \code{xVal}, corresponding to the
+#'   two-dimensional domain specified by \code{xVal}, corresponding to the
 #'   linear combination of spline basis functions.
 #'
-#'  @seealso univExpansion
+#' @seealso univExpansion
 #'
 #' @importFrom mgcv gam
 splineFunction2D <- function(scores, xVal, bs, m, k)
@@ -291,9 +298,41 @@ splineFunction2Dpen <- function(scores, xVal, bs, m, k)
 }
 
 
+#' Calculate linear combinations of orthonormal cosine basis functions on
+#' two-dimensional domains
+#'
+#' Given scores (coefficients), this function calculates a linear combination of
+#' two-dimensional cosine tensor basis functions on two-dimensional domains
+#' using the C-library \code{fftw3} (see \url{http://www.fftw.org/}).
+#'
+#' @section Warning: If the C-library \code{fftw3} is not available when the
+#'   package \code{MFPCA} is installed, this function is disabled an will throw
+#'   an error. For full functionality install the C-library \code{fftw3} from
+#'   \url{http://www.fftw.org/} and reinstall \code{MFPCA}.
+#'
+#' @param  scores A sparse matrix of dimension \eqn{N x K}, representing the
+#'   \eqn{K} scores (coefficients) for each observation \eqn{i = 1, \ldots, N}.
+#' @param xVal A list containing a two numeric vectors, corresponding to the x-
+#'   and y-values.
+#' @param parallel Logical. If \code{TRUE}, the coefficients for the basis
+#'   functions are calculated in parallel. The implementation is based on the
+#'   \code{\link[foreach]{foreach}} function and requires a parallel backend
+#'   that must be registered before. See \code{\link[foreach]{foreach}} for
+#'   details.
+#'
+#' @return An object of class \code{funData} with \eqn{N} observations on the
+#'   two-dimensional domain specified by \code{xVal}, corresponding to the
+#'   linear combination of orthonormal cosine basis functions.
+#'
+#' @seealso univExpansion
+#'
 #' @importFrom abind abind
-dctFunction2D <- function(scores, xVal, dim, parallel = FALSE)
+dctFunction2D <- function(scores, xVal, parallel = FALSE)
 {
+  # dimension of the image
+  dim <- sapply(xVal, length)
+
+  # get indices of sparse matrix
   s <- summary(scores)
 
   if(parallel)
@@ -309,7 +348,33 @@ dctFunction2D <- function(scores, xVal, dim, parallel = FALSE)
 }
 
 
+#' Calculate an inverse DCT for an image
+#'
+#' This function calculates an inverse (orthonormal) discrete cosine
+#' transformation for given coefficients in two dimensions using the C-library
+#' \code{fftw3} (see \url{http://www.fftw.org/}). As many coefficients are
+#' expected to be zero, the values are given in compressed format (indices and
+#' values only of non-zero coefficients).
+#'
+#' @section Warning: If the C-library \code{fftw3} is not available when the
+#'   package \code{MFPCA} is installed, this function is disabled an will throw
+#'   an error. For full functionality install the C-library \code{fftw3} from
+#'   \url{http://www.fftw.org/} and reinstall \code{MFPCA}.
+#'
+#' @param scores A numeric vector, containing the non-zero coefficients.
+#' @param ind An integer vector, containing the indices of the non-zero
+#'   coefficients.
+#' @param dim A numeric vector of length 2, giving the resulting image
+#'   dimensions.
+#'
+#' @return A matrix of dimensions \code{dim}, which is a linear combination of
+#'   cosine tensor basis functions with the given coefficients.
+#'
+#' @seealso dctBasis2D
+#'
 #' @useDynLib MFPCA calcImage
+#'
+#' @keywords internal
 idct2D <- function(scores, ind, dim)
 {
   full <- array(0, dim)

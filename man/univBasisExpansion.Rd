@@ -12,10 +12,10 @@ univBasisExpansion(funDataObject, bs = "ps", m = rep(2,
 containing the observed functional data, for which the bases representation
 is calculated.}
 
-\item{bs}{A character string, the type of basis functions to be used. Defaults to p-Splines
-(\code{"ps"}) or tensor products of p-splines in case of two-dimensional support. Please
-refer to \code{\link[mgcv]{smooth.terms}} for a list of possible basis
-functions.}
+\item{bs}{A character string, the type of basis functions to be used.
+Defaults to p-Splines (\code{"ps"}) or tensor products of p-splines in case
+of two-dimensional support. Please refer to
+\code{\link[mgcv]{smooth.terms}} for a list of possible basis functions.}
 
 \item{m}{An array (or a single character), the order of the spline basis.
 Defaults to \code{2}, as in \code{\link[mgcv]{gam}} /
@@ -30,11 +30,11 @@ used.  Defaults to \code{-1}, as in \code{\link[mgcv]{gam}} /
 }
 \value{
 \item{scores}{A matrix of weights with dimension \code{N x k},
-reflecting the weights for each basis function in each observation.}
-\item{functions}{A \code{\link[funData]{funData}} object representing the
-basis functions.} \item{basisLong}{A matrix representing the basis functions
-in vectorized form (only if \code{funDataobject} is defined on a
-two-dimensional domain).}
+  reflecting the weights for each basis function in each observation.}
+  \item{functions}{A \code{\link[funData]{funData}} object representing the
+  basis functions.} \item{basisLong}{A matrix representing the basis
+  functions in vectorized form (only if \code{funDataobject} is defined on a
+  two-dimensional domain).}
 }
 \description{
 This function calculates a univariate spline basis expansion for a functional

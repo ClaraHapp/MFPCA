@@ -39,4 +39,10 @@ basis functions may be prespecified (such as spline basis functions or
 Fourier bases) or can be estimated from observed data (e.g. by functional
 principal component analysis)
 }
+\examples{
+...
+}
+\seealso{
+\link{MFPCA}, \link{fpcaFunction}, \link{splineFunction1D}, \link{splineFunction2D}, \link{splineFunction2Dpen}, \link{dctFunction2D}
+}
 
