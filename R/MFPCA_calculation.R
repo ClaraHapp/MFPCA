@@ -229,52 +229,56 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), bo
   dimSupp <- dimSupp(mFData)
 
   # calculate univariate basis expansion for all components (if necessary)
-  uniBasis <- vector("list", p)
+#   uniBasis <- vector("list", p)
 
   # for each component: find univariate basis expansion
-  for(j in 1:p)
-  {
-    if(all(c("scores", "functions") %in% names(uniExpansions[[j]])))
-    {
-      tmp <- uniExpansions[[j]]
-      type <- "user"
-    }
-    else
-    {
-      tmp <- switch(uniExpansions[[j]]$type,
-                    "uFPCA" = do.call(PACE, args = findUniArgs(uniExpansions[[j]], mFData[[j]])),
-                    "splines" = do.call(univBasisExpansion,  args = c(findUniArgs(uniExpansions[[j]], mFData[[j]]), pen = FALSE)),
-                    "splinesPen" = do.call(univBasisExpansion,  args = c(findUniArgs(uniExpansions[[j]], mFData[[j]]), pen = TRUE)),
-                    stop("Function MFPCA: uniExpansions type must be either 'uFPCA', 'splines' or 'splinesPen'")
-      )
+#   for(j in 1:p)
+#   {
+#     if(all(c("scores", "functions") %in% names(uniExpansions[[j]])))
+#     {
+#       tmp <- uniExpansions[[j]]
+#       type <- "user"
+#     }
+#     else
+#     {
+#       tmp <- switch(uniExpansions[[j]]$type,
+#                     "uFPCA" = do.call(PACE, args = findUniArgs(uniExpansions[[j]], mFData[[j]])),
+#                     "splines" = do.call(univBasisExpansion,  args = c(findUniArgs(uniExpansions[[j]], mFData[[j]]), pen = FALSE)),
+#                     "splinesPen" = do.call(univBasisExpansion,  args = c(findUniArgs(uniExpansions[[j]], mFData[[j]]), pen = TRUE)),
+#                     stop("Function MFPCA: uniExpansions type must be either 'uFPCA', 'splines' or 'splinesPen'")
+#       )
+#
+#       type <- uniExpansions[[j]]$type
+#     }
+#
+#     uniBasis[[j]] <- list(type = type, scores = tmp$scores, functions = tmp$functions@X)
+#
+#     if(dimSupp[j] == 2)
+#       uniBasis[[j]]$basisLong <- tmp$basisLong
+#   }
 
-      type <- uniExpansions[[j]]$type
-    }
-
-    uniBasis[[j]] <- list(type = type, scores = tmp$scores, functions = tmp$functions@X)
-
-    if(dimSupp[j] == 2)
-      uniBasis[[j]]$basisLong <- tmp$basisLong
-  }
+  uniBasis <- lapply(uniExpansion, function(l){univDecomp(type = l$type, data = l$data, params = l$params)})
 
   # Multivariate FPCA
-  npc <- sapply(uniBasis, function(x){prod(dim(x$scores)[2])}) # get number of univariate basis functions
+  npc <- sapply(uniBasis, function(x){dim(x$scores)[2]}) # get number of univariate basis functions
 
   if(M > sum(npc))
     stop("Function MFPCA_multidim: total number of univariate basis functions must be greater or equal M!")
 
-  tmp <- cumsum(c(0, npc))
+#   tmp <- cumsum(c(0, npc))
+#
+#   #  Block matrix of scalar products for each basis
+#   B <- array(0, dim = c(sum(npc), sum(npc)))
+#
+#   for(j in 1:p) # calculate block-wise
+#   {
+#     if(uniExpansions[[j]]$type == "uFPCA") # ONB -> matrix of scalar products is just the identity
+#       B[tmp[j]+ 1: npc[j], tmp[j] + 1:npc[j]] <- diag(npc[j])
+#     else # calculate scalar products
+#       B[tmp[j]+ 1: npc[j], tmp[j] + 1:npc[j]] <- .calcBasisIntegrals(uniBasis[[j]]$functions, dimSupp[j], mFData[[j]]@xVal)
+#   }
 
-  #  Block matrix of scalar products for each basis
-  B <- array(0, dim = c(sum(npc), sum(npc)))
-
-  for(j in 1:p) # calculate block-wise
-  {
-    if(uniExpansions[[j]]$type == "uFPCA") # ONB -> matrix of scalar products is just the identity
-      B[tmp[j]+ 1: npc[j], tmp[j] + 1:npc[j]] <- diag(npc[j])
-    else # calculate scalar products
-      B[tmp[j]+ 1: npc[j], tmp[j] + 1:npc[j]] <- .calcBasisIntegrals(uniBasis[[j]]$functions, dimSupp[j], mFData[[j]]@xVal)
-  }
+  B <- bdiag(lapply(uniBasis), function(l){ifelse(l$ortho, Diagonal(ncol(l$scores)), l$B)})
 
   # combine all scores
   allScores <- foreach::foreach(j = 1:p, .combine = "cbind")%do%{uniBasis[[j]]$scores}
