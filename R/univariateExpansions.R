@@ -330,21 +330,21 @@ splineFunction2Dpen <- function(scores, xVal, bs, m, k)
 dctFunction2D <- function(scores, xVal, parallel = FALSE)
 {
   # dimension of the image
-  dim <- sapply(xVal, length)
+  dim <-sapply(xVal, length)
 
   # get indices of sparse matrix
-  s <- summary(scores)
+  scores <- as(scores, "dgTMatrix") # uncompressed format
 
   if(parallel)
-    res <- foreach(i = 1:max(s$i), .combine = function(x,y){abind(x,y, along = 0)}) %dopar%{
-      idct2D(s$x[s$i == i], s$j[s$i == i], dim = dim)
+    res <- foreach::foreach(i = 0:max(scores@i), .combine = function(x,y){abind(x,y, along = 3)}) %dopar%{
+      idct2D(scores@x[scores@i == i], 1 + scores@j[scores@i == i], dim = dim) # 0-indexing!
     }
   else
-    res <- foreach(i = 1:max(s$i), .combine =function(x,y){abind(x,y, along = 0)}) %do%{
-      idct2D(s$x[s$i == i], s$j[s$i == i], dim = dim)
+    res <- foreach::foreach(i = 0:max(scores@i), .combine =function(x,y){abind(x,y, along = 3)}) %do%{
+      idct2D(scores@x[scores@i == i], 1 + scores@j[scores@i == i], dim = dim) # 0-indexing!
     }
 
-  return(funData(xVal, X = res))
+  return(funData(xVal, X = aperm(res, c(3,1,2))))
 }
 
 

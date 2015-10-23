@@ -5,7 +5,8 @@
 \title{Calculate a functional principal component basis representation for
 functional data on one-dimensional domains}
 \usage{
-fpcaBasis(funDataObject, nbasis, pve, npc, makePD)
+fpcaBasis(funDataObject, nbasis = 10, pve = 0.99, npc = NULL,
+  makePD = FALSE)
 }
 \arguments{
 \item{funDataObject}{An object of class \code{\link[funData]{funData}}
@@ -32,8 +33,7 @@ principal components. Defaults to \code{NULL}. If given, this overrides
 \value{
 \item{scores}{A matrix of scores (coefficients) with dimension
   \code{N x k}, reflecting the weights for principal component in each
-  observation.} \item{B}{NULL, as functions are orthonormal.}
-  \item{ortho}{Logical, set to \code{TRUE}, as basis functions are
+  observation.} \item{ortho}{Logical, set to \code{TRUE}, as basis functions are
   orthonormal.} \item{functions}{A functional data object, representing the
   functional principal component basis functions.}
 }

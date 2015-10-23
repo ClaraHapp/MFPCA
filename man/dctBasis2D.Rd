@@ -25,9 +25,9 @@ thresholding the coefficients. See Details.}
 \item{scores}{A sparse matrix of scores (coefficients) with dimension
   \code{N x K}, reflecting the weights \eqn{\theta_{mn}} for each basis
   function in each observation, where \code{K} is the total number of basis
-  functions used.} \item{B}{NULL, as functions are orthonormal.}
-  \item{ortho}{Logical, set to \code{TRUE}, as basis functions are
-  orthonormal.} \item{functions}{\code{NULL}, as basis functions are known.}
+  functions used.} \item{ortho}{Logical, set to \code{TRUE}, as basis
+  functions are orthonormal.} \item{functions}{\code{NULL}, as basis
+  functions are known.}
 }
 \description{
 This function calculates a tensor cosine basis representation for functional
