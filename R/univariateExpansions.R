@@ -287,7 +287,8 @@ splineFunction2Dpen <- function(scores, xVal, bs, m, k)
   coord <- expand.grid(x = xVal[[1]], y = xVal[[2]])
 
   # spline design matrix via gam
-  desMat <- mgcv::bam(rep(0, dim(coord)[1]) ~ te(coord$x, coord$y, bs = bs, m = m, k = k), data = coord, fit = FALSE)$X
+  desMat <- mgcv::bam(rep(0, dim(coord)[1]) ~ te(coord$x, coord$y, bs = bs, m = m, k = k), data = coord, fit = FALSE,
+                      chunk.size = nrow(coord))$X # use exactly the given grid, no chunks
 
   # calculate functions as linear combination of splines
   res <- funData(xVal,
