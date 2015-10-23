@@ -5,22 +5,26 @@
 \title{Calculate a penalized spline basis representation for functional data on
 two-dimensional domains}
 \usage{
-splineBasis2Dpen(funDataObject, bs, m, k, parallel = FALSE)
+splineBasis2Dpen(funDataObject, bs = "ps", m = NA, k = -1,
+  parallel = FALSE)
 }
 \arguments{
 \item{funDataObject}{An object of class \code{\link[funData]{funData}}
 containing the observed functional data samples and for which the basis
 representation is calculated.}
 
-\item{bs}{An vector of character strings (or a single character), the type of
-basis functions to be used. Please refer to \code{\link[mgcv]{te}} for a
-list of possible basis functions.}
+\item{bs}{A vector of character strings (or a single character string),
+specifying the type of basis functions to be used. Defaults to "ps"
+(P-spline functions). Please refer to \code{\link[mgcv]{te}} for a list of
+possible basis functions.}
 
 \item{m}{A numeric vector (or a single number), the order of the spline
-basis. See \code{\link[mgcv]{s}} for details.}
+basis. Defaults to NA, i.e. the order is chosen automatically.  See
+\code{\link[mgcv]{s}} for details.}
 
-\item{k}{A numeric vector (or a single number), the number of basis functions
-used.  See  \code{\link[mgcv]{s}} for details.}
+\item{k}{An numeric vector (or a single number), the number of basis
+functions used.  Defaults to -1, i.e. the number of basis functions is
+chosen automatically.   See  \code{\link[mgcv]{s}} for details.}
 
 \item{parallel}{Logical. If \code{TRUE}, the coefficients for the basis
   functions are calculated in parallel. The implementation is based on the
@@ -35,7 +39,9 @@ used.  See  \code{\link[mgcv]{s}} for details.}
   \item{B}{A matrix containing the scalar product of all pairs of basis
   functions.} \item{ortho}{Logical, set to \code{FALSE}, as basis functions
   are not orthonormal.} \item{functions}{\code{NULL}, as basis functions are
-  known}
+  known.} \item{settings}{A list with entries \code{bs},
+  \code{m} and \code{k}, giving the actual parameters used for generating the
+  spline basis functions.}
 }
 \description{
 This function calculates a penalized tensor product spline basis

@@ -5,7 +5,7 @@
 \title{Calculate an unpenalized spline basis decomposition for functional data on
 one-dimensional domains}
 \usage{
-splineBasis1D(funDataObject, bs, m, k)
+splineBasis1D(funDataObject, bs = "ps", m = NA, k = -1)
 }
 \arguments{
 \item{funDataObject}{An object of class \code{\link[funData]{funData}}
@@ -13,13 +13,14 @@ containing the observed functional data samples and for which the basis
 decomposition is calculated.}
 
 \item{bs}{A character string, specifying the type of basis functions to be
-used. Please refer to \code{\link[mgcv]{smooth.terms}} for a list of
-possible basis functions.}
+used. Defaults to "ps" (B-spline functions). Please refer to
+\code{\link[mgcv]{smooth.terms}} for a list of possible basis functions.}
 
-\item{m}{A numeric, the order of the spline basis. See  \code{\link[mgcv]{s}}
-for details.}
+\item{m}{A numeric, the order of the spline basis. Defaults to NA, i.e. the
+order is chosen automatically. See  \code{\link[mgcv]{s}} for details.}
 
-\item{k}{A numeric, the number of basis functions used.  See
+\item{k}{A numeric, the number of basis functions used. Defaults to -1, i.e.
+  the number of basis functions is chosen automatically. See
   \code{\link[mgcv]{s}} for details.}
 }
 \value{
@@ -28,7 +29,9 @@ for details.}
   observation.} \item{B}{A matrix containing the scalar product of all pairs
   of basis functions.} \item{ortho}{Logical, set to \code{FALSE}, as basis
   functions are not orthonormal.} \item{functions}{\code{NULL}, as basis
-  functions are known}
+  functions are known} \item{settings}{A list with entries \code{bs},
+  \code{m} and \code{k}, giving the actual parameters used for generating the
+  spline basis functions.}
 }
 \description{
 This function calculates an unpenalized spline basis decomposition for

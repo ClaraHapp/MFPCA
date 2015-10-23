@@ -199,11 +199,10 @@ fpcaFunction <- function(scores, xVal, functions)
 #'   scores (coefficients) for each observation \eqn{i = 1, \ldots, N}.
 #' @param xVal A list containing a vector of x-values.
 #' @param bs A character string, specifying the type of basis functions to be
-#'   used. Please refer to \code{\link[mgcv]{smooth.terms}} for a list of
-#'   possible basis functions.
-#' @param m A numeric, the order of the spline basis. See  \code{\link[mgcv]{s}}
-#'   for details.
-#' @param k A numeric, the number of basis functions used.  See
+#'   used. Please refer to
+#'   \code{\link[mgcv]{smooth.terms}} for a list of possible basis functions.
+#' @param m A numeric, the order of the spline basis. See  \code{\link[mgcv]{s}} for details.
+#' @param k A numeric, the number of basis functions used. See
 #'   \code{\link[mgcv]{s}} for details.
 #'
 #' @return An object of class \code{funData} with \eqn{N} observations on

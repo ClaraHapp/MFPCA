@@ -48,11 +48,7 @@ univDecomp <- function(type, data, params)
   if(res$ortho == FALSE & is.null(res$B))
     stop("UnivDecomp: must provide integral matrix B for non-orthonormal basis functions.")
 
-  return(list(scores = res$scores,
-              B = ifelse(res$ortho == TRUE, NULL, res$B),
-              ortho = res$ortho,
-              functions = ifelse(type == "uFPCA", res$functions, NULL)
-  ))
+  return(res)
 }
 
 #' Calculate a functional principal component basis representation for
@@ -82,18 +78,16 @@ univDecomp <- function(type, data, params)
 #'
 #' @return \item{scores}{A matrix of scores (coefficients) with dimension
 #'   \code{N x k}, reflecting the weights for principal component in each
-#'   observation.} \item{B}{NULL, as functions are orthonormal.}
-#'   \item{ortho}{Logical, set to \code{TRUE}, as basis functions are
+#'   observation.} \item{ortho}{Logical, set to \code{TRUE}, as basis functions are
 #'   orthonormal.} \item{functions}{A functional data object, representing the
 #'   functional principal component basis functions.}
 #'
 #' @seealso univDecomp
-fpcaBasis <- function(funDataObject, nbasis, pve, npc, makePD)
+fpcaBasis <- function(funDataObject, nbasis = 10, pve = 0.99, npc = NULL, makePD = FALSE)
 {
   FPCA <- PACE(funDataObject, predData = NULL, nbasis, pve, npc, makePD)
 
   return(list(scores = FPCA$scores,
-              B = NULL,
               ortho = TRUE,
               functions = FPCA$functions
   ))
@@ -110,11 +104,12 @@ fpcaBasis <- function(funDataObject, nbasis, pve, npc, makePD)
 #'   containing the observed functional data samples and for which the basis
 #'   decomposition is calculated.
 #' @param bs A character string, specifying the type of basis functions to be
-#'   used. Please refer to \code{\link[mgcv]{smooth.terms}} for a list of
-#'   possible basis functions.
-#' @param m A numeric, the order of the spline basis. See  \code{\link[mgcv]{s}}
-#'   for details.
-#' @param k A numeric, the number of basis functions used.  See
+#'   used. Defaults to "ps" (B-spline functions). Please refer to
+#'   \code{\link[mgcv]{smooth.terms}} for a list of possible basis functions.
+#' @param m A numeric, the order of the spline basis. Defaults to NA, i.e. the
+#'   order is chosen automatically. See  \code{\link[mgcv]{s}} for details.
+#' @param k A numeric, the number of basis functions used. Defaults to -1, i.e.
+#'   the number of basis functions is chosen automatically. See
 #'   \code{\link[mgcv]{s}} for details.
 #'
 #' @return \item{scores}{A matrix of scores (coefficients) with dimension
@@ -122,19 +117,24 @@ fpcaBasis <- function(funDataObject, nbasis, pve, npc, makePD)
 #'   observation.} \item{B}{A matrix containing the scalar product of all pairs
 #'   of basis functions.} \item{ortho}{Logical, set to \code{FALSE}, as basis
 #'   functions are not orthonormal.} \item{functions}{\code{NULL}, as basis
-#'   functions are known}
+#'   functions are known} \item{settings}{A list with entries \code{bs},
+#'   \code{m} and \code{k}, giving the actual parameters used for generating the
+#'   spline basis functions.}
 #'
 #' @seealso univDecomp
 #'
 #' @importFrom mgcv gam
-splineBasis1D <- function(funDataObject, bs, m, k)
+splineBasis1D <- function(funDataObject, bs = "ps", m = NA, k = -1)
 {
   N <- nObs(funDataObject)
 
   x <- funDataObject@xVal[[1]]
 
   # spline design matrix via gam
-  desMat <- mgcv::gam(funDataObject@X[1, ] ~ s(x, bs = bs, m = m, k = k), fit = FALSE)$X
+  g <- mgcv::gam(funDataObject@X[1, ] ~ s(x, bs = bs, m = m, k = k), fit = FALSE)
+  desMat <- g$X
+  k <- g$smooth[[1]]$bs.dim
+  m <- g$smooth[[1]]$p.order
 
   # weights via lm -> no penalization
   scores <- t(apply(funDataObject@X, 1, function(f, dM){lm(f ~ dM - 1)$coef}, dM = desMat))
@@ -142,7 +142,8 @@ splineBasis1D <- function(funDataObject, bs, m, k)
   return(list(scores = scores,
               B = .calcBasisIntegrals(t(desMat), 1, funDataObject@xVal),
               ortho = FALSE,
-              functions = NULL
+              functions = NULL,
+              settings = list(bs = bs, k = k, m = m)
   ))
 }
 
@@ -157,11 +158,12 @@ splineBasis1D <- function(funDataObject, bs, m, k)
 #'   containing the observed functional data samples and for which the basis
 #'   representation is calculated.
 #' @param bs A character string, specifying the type of basis functions to be
-#'   used. Please refer to \code{\link[mgcv]{smooth.terms}} for a list of
-#'   possible basis functions.
-#' @param m A numeric, the order of the spline basis. See  \code{\link[mgcv]{s}}
-#'   for details.
-#' @param k A numeric, the number of basis functions used.  See
+#'   used. Defaults to "ps" (P-spline functions). Please refer to
+#'   \code{\link[mgcv]{smooth.terms}} for a list of possible basis functions.
+#' @param m A numeric, the order of the spline basis. Defaults to NA, i.e. the
+#'   order is chosen automatically. See  \code{\link[mgcv]{s}} for details.
+#' @param k A numeric, the number of basis functions used. Defaults to -1, i.e.
+#'   the number of basis functions is chosen automatically. See
 #'   \code{\link[mgcv]{s}} for details.
 #' @param parallel Logical. If \code{TRUE}, the coefficients for the basis
 #'   functions are calculated in parallel. The implementation is based on the
@@ -174,14 +176,16 @@ splineBasis1D <- function(funDataObject, bs, m, k)
 #'   observation.} \item{B}{A matrix containing the scalar product of all pairs
 #'   of basis functions.} \item{ortho}{Logical, set to \code{FALSE}, as basis
 #'   functions are not orthonormal.} \item{functions}{\code{NULL}, as basis
-#'   functions are known}
+#'   functions are known} \item{settings}{A list with entries \code{bs},
+#'   \code{m} and \code{k}, giving the actual parameters used for generating the
+#'   spline basis functions.}
 #'
 #' @seealso univDecomp
 #'
 #' @importFrom foreach %do%
 #' @importFrom foreach %dopar%
 #' @importFrom mgcv gam
-splineBasis1Dpen <- function(funDataObject, bs, m, k, parallel = FALSE)
+splineBasis1Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel = FALSE)
 {
   N <- nObs(funDataObject)
 
@@ -204,13 +208,16 @@ splineBasis1Dpen <- function(funDataObject, bs, m, k, parallel = FALSE)
 
   # last extra to extract model matrix
   g <- mgcv::gam(funDataObject@X[N, ] ~ s(x, bs = bs, m = m, k = k), method = "REML")
+  k <- g$smooth[[1]]$bs.dim
+  m <- g$smooth[[1]]$p.order
 
   scores <- rbind(scores, g$coef)
 
   return(list(scores = scores,
               B = .calcBasisIntegrals(t(model.matrix(g)), 1, funDataObject@xVal),
               ortho = FALSE,
-              functions = NULL
+              functions = NULL,
+              settings = list(bs = bs, k = k, m = m)
   ))
 }
 
@@ -226,12 +233,15 @@ splineBasis1Dpen <- function(funDataObject, bs, m, k, parallel = FALSE)
 #'   containing the observed functional data samples and for which the basis
 #'   representation is calculated.
 #' @param bs A vector of character strings (or a single character string),
-#'   specifying the type of basis functions to be used. Please refer to
-#'   \code{\link[mgcv]{te}} for a list of possible basis functions.
+#'   specifying the type of basis functions to be used. Defaults to "ps"
+#'   (P-spline functions). Please refer to \code{\link[mgcv]{te}} for a list of
+#'   possible basis functions.
 #' @param m A numeric vector (or a single number), the order of the spline
-#'   basis. See \code{\link[mgcv]{s}} for details.
+#'   basis. Defaults to NA, i.e. the order is chosen automatically.  See
+#'   \code{\link[mgcv]{s}} for details.
 #' @param k An numeric vector (or a single number), the number of basis
-#'   functions used.  See  \code{\link[mgcv]{s}} for details.
+#'   functions used.  Defaults to -1, i.e. the number of basis functions is
+#'   chosen automatically.   See  \code{\link[mgcv]{s}} for details.
 #'
 #' @return \item{scores}{A matrix of scores (coefficients) with dimension
 #'   \code{N x K}, reflecting the weights for each basis function in each
@@ -239,19 +249,24 @@ splineBasis1Dpen <- function(funDataObject, bs, m, k, parallel = FALSE)
 #'   \item{B}{A matrix containing the scalar product of all pairs of basis
 #'   functions.} \item{ortho}{Logical, set to \code{FALSE}, as basis functions
 #'   are not orthonormal.} \item{functions}{\code{NULL}, as basis functions are
-#'   known.}
+#'   known.} \item{settings}{A list with entries \code{bs}, \code{m} and
+#'   \code{k}, giving the actual parameters used for generating the spline basis
+#'   functions.}
 #'
 #' @seealso univDecomp
 #'
 #' @importFrom mgcv gam
-splineBasis2D <- function(funDataObject, bs, m, k)
+splineBasis2D <- function(funDataObject, bs = "ps", m = NA, k = -1)
 {
   N <- nObs(funDataObject)
 
   coord <- expand.grid(x = funDataObject@xVal[[1]], y = funDataObject@xVal[[2]])
 
   # spline design matrix via gam
-  desMat <- mgcv::gam(as.vector(funDataObject@X[1,,]) ~ te(coord$x, coord$y, bs = bs, m = m, k = k), data = coord, fit = FALSE)$X
+  g <- mgcv::gam(as.vector(funDataObject@X[1,,]) ~ te(coord$x, coord$y, bs = bs, m = m, k = k), data = coord, fit = FALSE)
+  desMat <- g$X
+  k <- sapply(g$smooth[[1]]$margin, function(l){l$bs.dim})
+  m <- lapply(g$smooth[[1]]$margin, function(l){l$p.order})
 
   # weights via lm -> no penalization
   scores <- t(apply(funDataObject@X, 1, function(f, dM){lm(as.vector(f) ~ dM - 1)$coef}, dM = desMat))
@@ -262,7 +277,8 @@ splineBasis2D <- function(funDataObject, bs, m, k)
   return(list(scores = scores,
               B = .calcBasisIntegrals(B, 2, funDataObject@xVal),
               ortho = FALSE,
-              functions = NULL
+              functions = NULL,
+              settings = list(bs = bs, k = k, m = m)
   ))
 }
 
@@ -276,13 +292,16 @@ splineBasis2D <- function(funDataObject, bs, m, k)
 #' @param funDataObject An object of class \code{\link[funData]{funData}}
 #'   containing the observed functional data samples and for which the basis
 #'   representation is calculated.
-#' @param bs An vector of character strings (or a single character), the type of
-#'   basis functions to be used. Please refer to \code{\link[mgcv]{te}} for a
-#'   list of possible basis functions.
+#' @param bs A vector of character strings (or a single character string),
+#'   specifying the type of basis functions to be used. Defaults to "ps"
+#'   (P-spline functions). Please refer to \code{\link[mgcv]{te}} for a list of
+#'   possible basis functions.
 #' @param m A numeric vector (or a single number), the order of the spline
-#'   basis. See \code{\link[mgcv]{s}} for details.
-#' @param k A numeric vector (or a single number), the number of basis functions
-#'   used.  See  \code{\link[mgcv]{s}} for details.
+#'   basis. Defaults to NA, i.e. the order is chosen automatically.  See
+#'   \code{\link[mgcv]{s}} for details.
+#' @param k An numeric vector (or a single number), the number of basis
+#'   functions used.  Defaults to -1, i.e. the number of basis functions is
+#'   chosen automatically.   See  \code{\link[mgcv]{s}} for details.
 #' @param parallel Logical. If \code{TRUE}, the coefficients for the basis
 #'   functions are calculated in parallel. The implementation is based on the
 #'   \code{\link[foreach]{foreach}} function and requires a parallel backend
@@ -295,14 +314,16 @@ splineBasis2D <- function(funDataObject, bs, m, k)
 #'   \item{B}{A matrix containing the scalar product of all pairs of basis
 #'   functions.} \item{ortho}{Logical, set to \code{FALSE}, as basis functions
 #'   are not orthonormal.} \item{functions}{\code{NULL}, as basis functions are
-#'   known}
+#'   known.} \item{settings}{A list with entries \code{bs},
+#'   \code{m} and \code{k}, giving the actual parameters used for generating the
+#'   spline basis functions.}
 #'
 #' @seealso univDecomp
 #'
 #' @importFrom foreach %do%
 #' @importFrom foreach %dopar%
 #' @importFrom mgcv bam
-splineBasis2Dpen <- function(funDataObject, bs, m, k, parallel = FALSE)
+splineBasis2Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel = FALSE)
 {
   N <- nObs(funDataObject)
 
@@ -325,6 +346,8 @@ splineBasis2Dpen <- function(funDataObject, bs, m, k, parallel = FALSE)
 
   # fit the last one extra in order to extract model matrix
   g <- mgcv::bam(as.vector(funDataObject@X[N, , ]) ~ te(coord$x, coord$y, bs = bs, m = m, k = k), data = coord, method = "REML")
+  k <- sapply(g$smooth[[1]]$margin, function(l){l$bs.dim})
+  m <- lapply(g$smooth[[1]]$margin, function(l){l$p.order})
 
   scores <- rbind(scores, g$coef)
 
@@ -334,7 +357,8 @@ splineBasis2Dpen <- function(funDataObject, bs, m, k, parallel = FALSE)
   return(list(scores = scores,
               B = .calcBasisIntegrals(B, 2, funDataObject@xVal),
               ortho = FALSE,
-              functions = NULL
+              functions = NULL,
+              settings = list(bs = bs, k = k, m = m)
   ))
 }
 
@@ -379,9 +403,9 @@ splineBasis2Dpen <- function(funDataObject, bs, m, k, parallel = FALSE)
 #' @return \item{scores}{A sparse matrix of scores (coefficients) with dimension
 #'   \code{N x K}, reflecting the weights \eqn{\theta_{mn}} for each basis
 #'   function in each observation, where \code{K} is the total number of basis
-#'   functions used.} \item{B}{NULL, as functions are orthonormal.}
-#'   \item{ortho}{Logical, set to \code{TRUE}, as basis functions are
-#'   orthonormal.} \item{functions}{\code{NULL}, as basis functions are known.}
+#'   functions used.} \item{ortho}{Logical, set to \code{TRUE}, as basis
+#'   functions are orthonormal.} \item{functions}{\code{NULL}, as basis
+#'   functions are known.}
 #'
 #' @seealso univDecomp
 #'
@@ -394,20 +418,19 @@ dctBasis2D <- function(funDataObject, qThresh, parallel = FALSE)
     stop("dctBasis2D can handle only functional data on two-dimensional domains.")
 
   if(parallel)
-    res <- foreach(i = 1:nObs(funDataObject), .combine = "rbind") %dopar% {
+    res <- foreach::foreach(i = 1:nObs(funDataObject), .combine = "rbind") %dopar% {
       dct <- dct2D(funDataObject@X[i,,], qThresh)
 
       data.frame(i = rep(i, length(dct$ind)), j = dct$ind, x = dct$val)
     }
   else
-    res <- foreach(i = 1:nObs(funDataObject), .combine = "rbind") %do% {
+    res <- foreach::foreach(i = 1:nObs(funDataObject), .combine = "rbind") %do% {
       dct <- dct2D(funDataObject@X[i,,], qThresh)
 
       data.frame(i = rep(i, length(dct$ind)), j = dct$ind, x = dct$val)
     }
 
   return(list(scores = sparseMatrix(i = res$i, j = res$j, x = res$x),
-              B = NULL,
               ortho = TRUE,
               functions = NULL
   ))

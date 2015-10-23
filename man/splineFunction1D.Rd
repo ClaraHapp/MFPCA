@@ -14,13 +14,12 @@ scores (coefficients) for each observation \eqn{i = 1, \ldots, N}.}
 \item{xVal}{A list containing a vector of x-values.}
 
 \item{bs}{A character string, specifying the type of basis functions to be
-used. Please refer to \code{\link[mgcv]{smooth.terms}} for a list of
-possible basis functions.}
+used. Please refer to
+\code{\link[mgcv]{smooth.terms}} for a list of possible basis functions.}
 
-\item{m}{A numeric, the order of the spline basis. See  \code{\link[mgcv]{s}}
-for details.}
+\item{m}{A numeric, the order of the spline basis. See  \code{\link[mgcv]{s}} for details.}
 
-\item{k}{A numeric, the number of basis functions used.  See
+\item{k}{A numeric, the number of basis functions used. See
   \code{\link[mgcv]{s}} for details.}
 }
 \value{
