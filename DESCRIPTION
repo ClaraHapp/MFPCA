@@ -9,7 +9,7 @@ Maintainer: Clara Happ <clara.happ@stat.uni-muenchen.de>
 Description:  This package allows to calculate a multivariate functional principal component analysis for data observed on different dimensional domains. The estimation algorithm relies on univariate basis expansions for each element of the multivariate functional data. Multivariate and univariate functional data objects are represented by S4 classes for this type of data implemented in the package funData.
 License: GPL-2
 Imports: Matrix
-Depends: R (>= 3.1.0), methods, mgcv, funData, foreach
+Depends: R (>= 3.1.0), methods, mgcv, funData, foreach, abind
 Suggests: testthat
 NeedsCompilation: yes
 SystemRequirements: libfftw3 (>= 3.3.4)
