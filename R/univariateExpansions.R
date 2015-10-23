@@ -144,17 +144,18 @@ univBasisExpansion <- function(funDataObject,
 #' @export univExpansion
 #'
 #' @examples ...
-univExpansion <- function(type, scores, xVal, functions, params)
+univExpansion <- function(type, scores, xVal, functions, params = NULL)
 {
   params$scores <- scores
+  params$functions <- functions
 
   if(is.numeric(xVal))
     xVal <- list(xVal)
 
-  param$xVal <- xVal
+  params$xVal <- xVal
 
   res <- switch(type,
-                "uFPCA" = do.call(fpcaBasis, params),
+                "uFPCA" = do.call(fpcaFunction, params),
                 "splines1D" = do.call(splineFunction1D, params),
                 "splines1Dpen" = do.call(splineFunction1D, params),
                 "splines2D" = do.call(splineFunction2D, params),
@@ -163,7 +164,7 @@ univExpansion <- function(type, scores, xVal, functions, params)
                 stop("Univariate Expansion for 'type' = ", type, " not defined!")
   )
 
-  return(res$functions)
+  return(res)
 }
 
 #' Calculate a linear combination of a functional principal component basis on

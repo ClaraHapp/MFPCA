@@ -4,7 +4,7 @@
 \alias{univExpansion}
 \title{Calculate a univariate basis expansion}
 \usage{
-univExpansion(type, scores, xVal, functions, params)
+univExpansion(type, scores, xVal, functions, params = NULL)
 }
 \arguments{
 \item{type}{A character string, specifying the basis for which the
