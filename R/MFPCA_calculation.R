@@ -262,13 +262,14 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), Yh
 
   uniBasis <- lapply(uniExpansion, function(l){univDecomp(type = l$type, data = l$data, params = l$params)})
 
+  type <- sapply(uniExpansion, function(l){l$type})
+
   # Multivariate FPCA
   npc <- sapply(uniBasis, function(x){dim(x$scores)[2]}) # get number of univariate basis functions
 
   if(M > sum(npc))
-    stop("Function MFPCA_multidim: total number of univariate basis functions must be greater or equal M!")
+    stop("Function MFPCA: total number of univariate basis functions must be greater or equal M!")
 
-  npcCum <- cumsum(c(0, npc))
   #
   #   #  Block matrix of scalar products for each basis
   #   B <- array(0, dim = c(sum(npc), sum(npc)))
@@ -280,15 +281,6 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), Yh
   #     else # calculate scalar products
   #       B[tmp[j]+ 1: npc[j], tmp[j] + 1:npc[j]] <- .calcBasisIntegrals(uniBasis[[j]]$functions, dimSupp[j], mFData[[j]]@xVal)
   #   }
-
-  # combine all scores
-  allScores <- foreach::foreach(j = 1:p, .combine = "cBind")%do%{uniBasis[[j]]$scores}
-
-  # de-mean scores (column-wise)
-  allScores <- apply(allScores, 2, function(x){x - mean(x)})
-
-  # Block vector of weights
-  allWeights <- foreach::foreach(j = 1:p, .combine = "c")%do%{rep(weights[j], npc[j])}
 
 #   Z <- allScores %*% diag(allWeights)
 #
@@ -339,7 +331,8 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), Yh
 #   }
 
 
-
+  res <- calcMFPCA(N = N, p = p, Bchol = Bchol, M = M, type = type, weights = weights,
+                   npc = npc, xVal = getxVal(mFData), uniBasis = uniVasis, Yhat = Yhat)
 
   #   # and then calculate covariance for each combination, component-wise multiplication with weights
   #   Z <- cov(allScores) * sqrt(outer(allWeights, allWeights, "*"))
@@ -384,11 +377,11 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), Yh
 
 
 
+
   # bootstrap for eigenfunctions
   if(bootstrap)
   {
     booteFuns <- vector("list", p)
-    tmpFuns <- vector("list", p)
 
     for(j in 1:p)
       booteFuns[[j]] <- array(NA, dim  = c(nBootstrap, M, sapply(mFData[[j]]@xVal, length)))
@@ -401,61 +394,58 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), Yh
 
       for(j in 1:p)
       {
-        if(uniBasis[[j]]$type == "uFPCA") # re-estimate scores AND functions
-        {
-          bootFPCA <- do.call(PACE, args = findUniArgs(uniExpansions[[j]], extractObs(mFData[[j]], obs = bootObs)))
-
-          # PACE is implemented for one-dimensional functions only -> no basisLong
-          bootBasis[[j]] <- list(scores = bootFPCA$scores, functions = bootFPCA$functions@X)
-
-        }
+        if(uniExpansion[[j]]$type == "uFPCA") # re-estimate scores AND functions
+          bootBasis[[j]] <- univDecomp(type = uniExpansion[[j]]$type, data = extractObs(mFData, obs = bootObs), params = uniExpansion[[j]]$params)
         else # resample scores (functions are given and scores can simply be resampled)
-        {
-          if(dimSupp[j] == 1)
-            bootBasis[[j]] <- list(scores = uniBasis[[j]]$scores[bootObs, ], functions = uniBasis[[j]]$functions)
-          else # dimSupp[j] == 2
-            bootBasis[[j]] <- list(scores = uniBasis[[j]]$scores[bootObs, ], functions = uniBasis[[j]]$functions,
-                                   basisLong = uniBasis[[j]]$basisLong)
-        }
+          bootBasis[[j]] <- list(scores = uniBasis[[j]]$scores[bootObs, ], B = uniBasis[[j]]$B, ortho = uniBasis[[j]]$ortho, functions = uniBasis[[j]]$functions)
       }
 
-      ### calculate MFPCA -> the same as above for uniBasis now for bootBasis (no Yhat)
+      npcBoot <- sapply(bootBasis, function(x){dim(x$scores)[2]}) # get number of univariate basis functions
 
-      # combine all scores of bootstrap observations
-      bootScores <- foreach::foreach(j = 1:p, .combine = "cbind")%do%{bootBasis[[j]]$scores}
+      if(M > sum(npcBoot))
+        stop("Function MFPCA (bootstrap): total number of univariate basis functions must be greater or equal M!")
 
-      Z <- cov(bootScores) * sqrt(outer(allWeights, allWeights, "*")) # and then calculate covariance for each combination, component-wise multiplication with weights
+#       ### calculate MFPCA -> the same as above for uniBasis now for bootBasis (no Yhat)
+#
+#       # combine all scores of bootstrap observations
+#       bootScores <- foreach::foreach(j = 1:p, .combine = "cbind")%do%{bootBasis[[j]]$scores}
+#
+#       Z <- cov(bootScores) * sqrt(outer(allWeights, allWeights, "*")) # and then calculate covariance for each combination, component-wise multiplication with weights
+#
+#       # do eigendecomposition
+#       C <- eigen(B%*%Z)
+#
+#       # factors for normalizations
+#       normFactors <- diag(t(C$vectors) %*% Z %*% C$vectors)[1:M]
+#
+#       # calculate multivariate eigenfunctions for bootstrap sample
+#
+#       for(j in 1:p)
+#       {
+#         # calculate eigenfunctions
+#         if(dimSupp[j] == 1) # one-dimensional function
+#           eFuns <-  1/sqrt(weights[j]) * t(Z[tmp[j]+1:npc[j], ] %*% C$vectors[, 1:M]) %*% bootBasis[[j]]$functions
+#         else # two-dimensional function (otherwise function stops before!)
+#           eFuns <-  1/sqrt(weights[j]) * t(bootBasis[[j]]$basisLong %*% Z[tmp[j]+1:npc[j], ] %*% C$vectors[, 1:M])
+#
+#         # normalize
+#         eFuns <- Re(diag(1/sqrt(C$values[1:M] * normFactors)) %*% eFuns)
+#
+#         # save in temporary list (must check for flipping before final save)
+#         if(dimSupp[j] == 1)
+#           tmpFuns[[j]] <- funData(mFData[[j]]@xVal, eFuns)
+#         else # two-dimensional function: reshape
+#           tmpFuns[[j]] <- funData(mFData[[j]]@xVal,
+#                                   array(eFuns, dim = c(M,length(mFData[[j]]@xVal[[1]]), length(mFData[[j]]@xVal[[2]]))))
+#
+#       }
 
-      # do eigendecomposition
-      C <- eigen(B%*%Z)
-
-      # factors for normalizations
-      normFactors <- diag(t(C$vectors) %*% Z %*% C$vectors)[1:M]
-
-      # calculate multivariate eigenfunctions for bootstrap sample
-
-      for(j in 1:p)
-      {
-        # calculate eigenfunctions
-        if(dimSupp[j] == 1) # one-dimensional function
-          eFuns <-  1/sqrt(weights[j]) * t(Z[tmp[j]+1:npc[j], ] %*% C$vectors[, 1:M]) %*% bootBasis[[j]]$functions
-        else # two-dimensional function (otherwise function stops before!)
-          eFuns <-  1/sqrt(weights[j]) * t(bootBasis[[j]]$basisLong %*% Z[tmp[j]+1:npc[j], ] %*% C$vectors[, 1:M])
-
-        # normalize
-        eFuns <- Re(diag(1/sqrt(C$values[1:M] * normFactors)) %*% eFuns)
-
-        # save in temporary list (must check for flipping before final save)
-        if(dimSupp[j] == 1)
-          tmpFuns[[j]] <- funData(mFData[[j]]@xVal, eFuns)
-        else # two-dimensional function: reshape
-          tmpFuns[[j]] <- funData(mFData[[j]]@xVal,
-                                  array(eFuns, dim = c(M,length(mFData[[j]]@xVal[[1]]), length(mFData[[j]]@xVal[[2]]))))
-
-      }
+    # calculate MFPCA for bootstrap sample (Bchol must not be recalculated as uFPCA basis functions are orthonormal!)
+    tmpFuns <- calcMFPCA(N = N, p = p, Bchol = Bchol, M = M, type = type, weights = weights,
+                         npc = npcBoot, xVal = getxVal(mFData), uniBasis = bootBasis, Yhat = FALSE)$functions
 
       # flip bootstrap estimates if necessary
-      tmpFuns <- flipFuns(res$functions, multiFunData(tmpFuns))
+      tmpFuns <- flipFuns(res$functions, tmpFuns)
 
       # save in booteFuns
       for(j in 1:p)
@@ -495,11 +485,20 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), Yh
 #' Internal function that implements the MFPCA algorithm for given univariate decompositions
 #'
 #' @keywords internal
-calcMFPCA <- function(N, p, allScores, allWeights, Bchol, M, uniExpansion, weights, npc, npcCum, mFData, uniBasis, Yhat = FALSE)
+calcMFPCA <- function(N, p, Bchol, M, type, weights, npc, xVal, uniBasis, Yhat = FALSE)
 {
+  # combine all scores
+  allScores <- foreach::foreach(j = 1:p, .combine = "cBind")%do%{uniBasis[[j]]$scores}
+
+  # de-mean scores (column-wise)
+  allScores <- apply(allScores, 2, function(x){x - mean(x)})
+
+  # block vector of weights
+  allWeights <- foreach::foreach(j = 1:p, .combine = "c")%do%{rep(weights[j], npc[j])}
+
   Z <- allScores %*% diag(allWeights)
 
-  # check if non-orthonormal basis functions used
+  # check if non-orthonormal basis functions used and calculate PCA on scores
   if(is.null(Bchol))
   {
     tmpSVD <- irlba::irlba(1/sqrt(N-1) * Z, nv = M)
@@ -518,16 +517,18 @@ calcMFPCA <- function(N, p, allScores, allWeights, Bchol, M, uniExpansion, weigh
   # normalization factors
   normFactors <- 1/sqrt(diag(t(vectors) %*% crossprod(Z) %*% vectors)/(N-1))
 
-  # calculate scores
+  ### Calculate scores
   scores <- Z %*% vectors
   scores <- scores %*% diag(sqrt(values) * normFactors) # normalization
 
-  # calculate eigenfunctions (incl. normalization)
+  ### Calculate eigenfunctions (incl. normalization)
+  npcCum <- cumsum(c(0, npc)) # indices for blocks (-1)
+
   tmpWeights <- 1/(N-1) *  crossprod(Z) %*% vectors
   eFunctions <- foreach::foreach(j = 1:p){
-    univExpansion(type = uniExpansion[[j]]$type,
+    univExpansion(type = type[j],
                   scores = weights[j] * tmpWeights[npcCum[j]+1:npc[j],] %*%  diag(1/sqrt(values) * normFactors),
-                  xVal = mFData[[j]]$xVal,
+                  xVal = xVal[[j]],
                   functions = uniBasis[[j]]$functions,
                   params = uniBasis[[j]]$settings)
   }
@@ -540,9 +541,9 @@ calcMFPCA <- function(N, p, allScores, allWeights, Bchol, M, uniExpansion, weigh
   {
     # calculate truncated Karhunen-Loeve representation
     Yhat <- foreach::foreach(j = 1:p){
-      univExpansion(type = uniExpansion[[j]]$type,
+      univExpansion(type = type[j],
                     scores = scores[npcCum[j]+1:npc[j],],
-                    xVal = mFData[[j]]$xVal,
+                    xVal = xVal[[j]],
                     functions = uniBasis[[j]]$functions,
                     params = uniBasis[[j]]$settings)
     }
