@@ -260,9 +260,9 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), Yh
   #       uniBasis[[j]]$basisLong <- tmp$basisLong
   #   }
 
-  uniBasis <- lapply(uniExpansion, function(l){univDecomp(type = l$type, data = l$data, params = l$params)})
+  uniBasis <- lapply(uniExpansions, function(l){univDecomp(type = l$type, data = l$data, params = l$params)})
 
-  type <- sapply(uniExpansion, function(l){l$type})
+  type <- sapply(uniExpansions, function(l){l$type})
 
   # Multivariate FPCA
   npc <- sapply(uniBasis, function(x){dim(x$scores)[2]}) # get number of univariate basis functions
@@ -296,7 +296,7 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), Yh
    else
    {
 #     # Cholesky decomposition of B = block diagonal of Cholesky decompositions
-     Bchol <- bdiag(lapply(uniBasis), function(l){ifelse(l$ortho, Diagonal(n = ncol(l$scores)), chol(l$B)})
+     Bchol <- bdiag(lapply(uniBasis), function(l){ifelse(l$ortho, Diagonal(n = ncol(l$scores)), chol(l$B))})
 #
 #     tmpSVD <- irlba::irlba(1/sqrt(N-1) * Z %*% t(Bchol), nv = M)
 #
@@ -394,8 +394,8 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), Yh
 
       for(j in 1:p)
       {
-        if(uniExpansion[[j]]$type == "uFPCA") # re-estimate scores AND functions
-          bootBasis[[j]] <- univDecomp(type = uniExpansion[[j]]$type, data = extractObs(mFData, obs = bootObs), params = uniExpansion[[j]]$params)
+        if(uniExpansions[[j]]$type == "uFPCA") # re-estimate scores AND functions
+          bootBasis[[j]] <- univDecomp(type = uniExpansions[[j]]$type, data = extractObs(mFData, obs = bootObs), params = uniExpansions[[j]]$params)
         else # resample scores (functions are given and scores can simply be resampled)
           bootBasis[[j]] <- list(scores = uniBasis[[j]]$scores[bootObs, ], B = uniBasis[[j]]$B, ortho = uniBasis[[j]]$ortho, functions = uniBasis[[j]]$functions)
       }
@@ -525,7 +525,7 @@ calcMFPCA <- function(N, p, Bchol, M, type, weights, npc, xVal, uniBasis, Yhat =
   npcCum <- cumsum(c(0, npc)) # indices for blocks (-1)
 
   tmpWeights <- 1/(N-1) *  crossprod(Z) %*% vectors
-  eFunctions <- foreach::foreach(j = 1:p){
+  eFunctions <- foreach::foreach(j = 1:p) %do% {
     univExpansion(type = type[j],
                   scores = weights[j] * tmpWeights[npcCum[j]+1:npc[j],] %*%  diag(1/sqrt(values) * normFactors),
                   xVal = xVal[[j]],
@@ -540,7 +540,7 @@ calcMFPCA <- function(N, p, Bchol, M, type, weights, npc, xVal, uniBasis, Yhat =
   if(Yhat)
   {
     # calculate truncated Karhunen-Loeve representation
-    Yhat <- foreach::foreach(j = 1:p){
+    Yhat <- foreach::foreach(j = 1:p) %do% {
       univExpansion(type = type[j],
                     scores = scores[npcCum[j]+1:npc[j],],
                     xVal = xVal[[j]],
