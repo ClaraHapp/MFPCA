@@ -375,9 +375,9 @@ splineBasis2Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
 #'
 #' Given the (discretized) observed functions \eqn{X_i}, this function
 #' calculates a basis representation \deqn{X_i(s,t) = \sum_{m = 0}^M \sum_{n =
-#' 0}^N \theta_{mn} f_{mn}(s,t)} in terms of (orthonormal) tensor cosine basis
-#' functions \deqn{f_{mn}(s,t) = c_m c_n \cos(ms) \cos(nt), \quad t \in [0,
-#' \pi]} with \eqn{c_m = \frac{1}{\sqrt{pi}}} for \eqn{m=0} and \eqn{c_m =
+#' 0}^N \theta_{mn} f_{mn}(s,t)} in terms of (orthogonal) tensor cosine basis
+#' functions \deqn{f_{mn}(s,t) = c_m c_n \cos(ms) \cos(nt), \quad (s,t) \in
+#' \calT} with \eqn{c_m = \frac{1}{\sqrt{pi}}} for \eqn{m=0} and \eqn{c_m =
 #' \sqrt{\frac{2}{pi}}} for \eqn{m=1,2,\ldots} based on a discrete cosine
 #' transform (DCT).
 #'
@@ -406,9 +406,11 @@ splineBasis2Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
 #' @return \item{scores}{A sparse matrix of scores (coefficients) with dimension
 #'   \code{N x K}, reflecting the weights \eqn{\theta_{mn}} for each basis
 #'   function in each observation, where \code{K} is the total number of basis
-#'   functions used.} \item{ortho}{Logical, set to \code{TRUE}, as basis
-#'   functions are orthonormal.} \item{functions}{\code{NULL}, as basis
-#'   functions are known.}
+#'   functions used.} \item{B}{A diagonal matrix, giving the norms of the
+#'   different basis functions used (as they are orthogonal).}
+#'   \item{ortho}{Logical, set to \code{FALSE}, as basis functions are
+#'   orthogonal, but in genereal not orthonormal.} \item{functions}{\code{NULL},
+#'   as basis functions are known.}
 #'
 #' @seealso univDecomp
 #'
@@ -434,7 +436,8 @@ dctBasis2D <- function(funDataObject, qThresh, parallel = FALSE)
     }
 
   return(list(scores = sparseMatrix(i = res$i, j = res$j, x = res$x),
-              ortho = TRUE,
+              B = Matrix::Diagonal(n = max(res$j), x = prod(sapply(funDataObject@xVal, function(l){diff(range(l))}))/pi^2),
+              ortho = FALSE,
               functions = NULL
   ))
 }
