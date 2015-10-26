@@ -116,6 +116,9 @@ NULL
 #'   calculated for each element. See Details.
 #' @param weights An optional vector of weights, defaults to 1 for each element.
 #'   See Details.
+#' @param Yhat Logical. If \code{TRUE} a truncated multivariate
+#'   Karhunen-Lo\`{e}ve represenation for the data is calcualted based on the
+#'   estimated scores and eigenfunctions.
 #' @param bootstrap Logical. If \code{TRUE}, pointwise bootstrap confidence
 #'   bands are calculated for the multivariate functional principal components.
 #'   Defaults to \code{FALSE}. See Details.
@@ -204,7 +207,7 @@ NULL
 #' legend("bottomleft", c("True", "MFPCA"), lty = 1:2, lwd = c(2,1))
 #' }
 #' par(oldPar)
-MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), bootstrap = FALSE, nBootstrap = NULL, bootstrapAlpha = 0.05)
+MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), Yhat = FALSE, bootstrap = FALSE, nBootstrap = NULL, bootstrapAlpha = 0.05)
 {
   # number of components
   p <- length(mFData)
