@@ -33,6 +33,9 @@
 #'   \link{dctBasis2D}
 univDecomp <- function(type, data, params)
 {
+  if(is.null(params))
+    params <- list() # create empty list
+
   params$funDataObject <- data
 
   res <- switch(type,
