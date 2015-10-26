@@ -260,7 +260,8 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), Yh
   #       uniBasis[[j]]$basisLong <- tmp$basisLong
   #   }
 
-  uniBasis <- lapply(uniExpansions, function(l){univDecomp(type = l$type, data = l$data, params = l$params)})
+  uniBasis <- mapply(function(expansion, data){univDecomp(type = expansion$type, data = data, params = expansion$params)},
+                     expansion = uniExpansions, data = mFData, SIMPLIFY = FALSE)
 
   type <- sapply(uniExpansions, function(l){l$type})
 
@@ -285,7 +286,7 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), Yh
 #   Z <- allScores %*% diag(allWeights)
 #
 #   # check if non-orthonormal basis functions used
-   if(all(foreach::foreach(j = 1:p, .combine = "c")%do%{uniBasis$ortho}))
+   if(all(foreach::foreach(j = 1:p, .combine = "c")%do%{uniBasis[[j]]$ortho}))
    {
      Bchol = NULL
 #     tmpSVD <- irlba::irlba(1/sqrt(N-1) * Z, nv = M)
@@ -296,7 +297,13 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), Yh
    else
    {
 #     # Cholesky decomposition of B = block diagonal of Cholesky decompositions
-     Bchol <- bdiag(lapply(uniBasis), function(l){ifelse(l$ortho, Diagonal(n = ncol(l$scores)), chol(l$B))})
+     Bchol <- bdiag(lapply(uniBasis, function(l){
+       if(l$ortho)
+         res <- Diagonal(n = ncol(l$scores))
+       else
+         res <- chol(l$B)
+
+       return(res)}))
 #
 #     tmpSVD <- irlba::irlba(1/sqrt(N-1) * Z %*% t(Bchol), nv = M)
 #
@@ -332,7 +339,7 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), Yh
 
 
   res <- calcMFPCA(N = N, p = p, Bchol = Bchol, M = M, type = type, weights = weights,
-                   npc = npc, xVal = getxVal(mFData), uniBasis = uniVasis, Yhat = Yhat)
+                   npc = npc, xVal = getxVal(mFData), uniBasis = uniBasis, Yhat = Yhat)
 
   #   # and then calculate covariance for each combination, component-wise multiplication with weights
   #   Z <- cov(allScores) * sqrt(outer(allWeights, allWeights, "*"))
@@ -484,6 +491,10 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), Yh
 
 #' Internal function that implements the MFPCA algorithm for given univariate decompositions
 #'
+#' @importFrom Matrix t
+#' @importFrom foreach foreach
+#' @importFrom irlba irlba
+#'
 #' @keywords internal
 calcMFPCA <- function(N, p, Bchol, M, type, weights, npc, xVal, uniBasis, Yhat = FALSE)
 {
@@ -501,25 +512,25 @@ calcMFPCA <- function(N, p, Bchol, M, type, weights, npc, xVal, uniBasis, Yhat =
   # check if non-orthonormal basis functions used and calculate PCA on scores
   if(is.null(Bchol))
   {
-    tmpSVD <- irlba::irlba(1/sqrt(N-1) * Z, nv = M)
+    tmpSVD <- irlba::irlba(1/sqrt(N-1) * Z, nv = M, adjust = min(3, min(nrow(Z),ncol(Z)) - M))
 
     vectors <- tmpSVD$v
-    values <- tmpSVD$d
+    values <- tmpSVD$d[1:M]^2
   }
   else
   {
-    tmpSVD <- irlba::irlba(1/sqrt(N-1) * Z %*% t(Bchol), nv = M)
+    tmpSVD <- irlba::irlba(1/sqrt(N-1) * Z %*% Matrix::t(Bchol), nv = M)
 
-    vectors <- t(Bchol) %*% tmpSVD$v
-    values <- tmpSVD$d
+    vectors <- Matrix::t(Bchol) %*% tmpSVD$v
+    values <- tmpSVD$d[1:M]^2
   }
 
   # normalization factors
-  normFactors <- 1/sqrt(diag(t(vectors) %*% crossprod(Z) %*% vectors)/(N-1))
+  normFactors <- 1/sqrt(diag(as.matrix(Matrix::t(vectors) %*% Matrix::crossprod(Z) %*% vectors))/(N-1))
 
   ### Calculate scores
   scores <- Z %*% vectors
-  scores <- scores %*% diag(sqrt(values) * normFactors) # normalization
+  scores <- as.matrix(scores %*% diag(sqrt(values) * normFactors)) # normalization
 
   ### Calculate eigenfunctions (incl. normalization)
   npcCum <- cumsum(c(0, npc)) # indices for blocks (-1)
@@ -527,7 +538,7 @@ calcMFPCA <- function(N, p, Bchol, M, type, weights, npc, xVal, uniBasis, Yhat =
   tmpWeights <- 1/(N-1) *  crossprod(Z) %*% vectors
   eFunctions <- foreach::foreach(j = 1:p) %do% {
     univExpansion(type = type[j],
-                  scores = weights[j] * tmpWeights[npcCum[j]+1:npc[j],] %*%  diag(1/sqrt(values) * normFactors),
+                  scores = weights[j] * 1/sqrt(values) * normFactors * t(as.matrix(tmpWeights[npcCum[j]+1:npc[j],])),
                   xVal = xVal[[j]],
                   functions = uniBasis[[j]]$functions,
                   params = uniBasis[[j]]$settings)
@@ -541,11 +552,11 @@ calcMFPCA <- function(N, p, Bchol, M, type, weights, npc, xVal, uniBasis, Yhat =
   {
     # calculate truncated Karhunen-Loeve representation
     Yhat <- foreach::foreach(j = 1:p) %do% {
-      univExpansion(type = type[j],
-                    scores = scores[npcCum[j]+1:npc[j],],
+      univExpansion(type = "uFPCA",
+                    scores = scores,
                     xVal = xVal[[j]],
-                    functions = uniBasis[[j]]$functions,
-                    params = uniBasis[[j]]$settings)
+                    functions = eFunctions[[j]],
+                    params = NULL)
     }
     res$Yhat <- multiFunData(Yhat)
   }
