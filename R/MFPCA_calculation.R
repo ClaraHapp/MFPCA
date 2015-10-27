@@ -185,6 +185,7 @@ NULL
 #' ### simulate data (two- and one-dimensional domains)
 #' \donttest{
 #' ### ATTENTION: Takes long
+#' set.seed(2)
 #' sim <-  simMultiFunData(type = "weighted",
 #'                  xVal = list(list(seq(0,1,0.01), seq(-1,1,0.02)), list(seq(-0.5,0.5,0.01))),
 #'                  M = list(c(4,5), 20), eFunType = list(c("Fourier", "Fourier"), "Poly"),
@@ -235,35 +236,7 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), Yh
   # dimension for each component
   dimSupp <- dimSupp(mFData)
 
-  # calculate univariate basis expansion for all components (if necessary)
-  #   uniBasis <- vector("list", p)
-
-  # for each component: find univariate basis expansion
-  #   for(j in 1:p)
-  #   {
-  #     if(all(c("scores", "functions") %in% names(uniExpansions[[j]])))
-  #     {
-  #       tmp <- uniExpansions[[j]]
-  #       type <- "user"
-  #     }
-  #     else
-  #     {
-  #       tmp <- switch(uniExpansions[[j]]$type,
-  #                     "uFPCA" = do.call(PACE, args = findUniArgs(uniExpansions[[j]], mFData[[j]])),
-  #                     "splines" = do.call(univBasisExpansion,  args = c(findUniArgs(uniExpansions[[j]], mFData[[j]]), pen = FALSE)),
-  #                     "splinesPen" = do.call(univBasisExpansion,  args = c(findUniArgs(uniExpansions[[j]], mFData[[j]]), pen = TRUE)),
-  #                     stop("Function MFPCA: uniExpansions type must be either 'uFPCA', 'splines' or 'splinesPen'")
-  #       )
-  #
-  #       type <- uniExpansions[[j]]$type
-  #     }
-  #
-  #     uniBasis[[j]] <- list(type = type, scores = tmp$scores, functions = tmp$functions@X)
-  #
-  #     if(dimSupp[j] == 2)
-  #       uniBasis[[j]]$basisLong <- tmp$basisLong
-  #   }
-
+  # calculate univariate basis expansion for all components
   uniBasis <- mapply(function(expansion, data){univDecomp(type = expansion$type, data = data, params = expansion$params)},
                      expansion = uniExpansions, data = mFData, SIMPLIFY = FALSE)
 
@@ -275,119 +248,23 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), Yh
   if(M > sum(npc))
     stop("Function MFPCA: total number of univariate basis functions must be greater or equal M!")
 
-  #
-  #   #  Block matrix of scalar products for each basis
-  #   B <- array(0, dim = c(sum(npc), sum(npc)))
-  #
-  #   for(j in 1:p) # calculate block-wise
-  #   {
-  #     if(uniExpansions[[j]]$type == "uFPCA") # ONB -> matrix of scalar products is just the identity
-  #       B[tmp[j]+ 1: npc[j], tmp[j] + 1:npc[j]] <- diag(npc[j])
-  #     else # calculate scalar products
-  #       B[tmp[j]+ 1: npc[j], tmp[j] + 1:npc[j]] <- .calcBasisIntegrals(uniBasis[[j]]$functions, dimSupp[j], mFData[[j]]@xVal)
-  #   }
+  # check if non-orthonormal basis functions used
+  if(all(foreach::foreach(j = 1:p, .combine = "c")%do%{uniBasis[[j]]$ortho}))
+    Bchol = NULL
+  else
+  {
+    # Cholesky decomposition of B = block diagonal of Cholesky decompositions
+    Bchol <- bdiag(lapply(uniBasis, function(l){
+      if(l$ortho)
+        res <- Diagonal(n = ncol(l$scores))
+      else
+        res <- chol(l$B)
 
-#   Z <- allScores %*% diag(allWeights)
-#
-#   # check if non-orthonormal basis functions used
-   if(all(foreach::foreach(j = 1:p, .combine = "c")%do%{uniBasis[[j]]$ortho}))
-   {
-     Bchol = NULL
-#     tmpSVD <- irlba::irlba(1/sqrt(N-1) * Z, nv = M)
-#
-#     vectors <- tmpSVD$v
-#     values <- tmpSVD$d
-   }
-   else
-   {
-#     # Cholesky decomposition of B = block diagonal of Cholesky decompositions
-     Bchol <- bdiag(lapply(uniBasis, function(l){
-       if(l$ortho)
-         res <- Diagonal(n = ncol(l$scores))
-       else
-         res <- chol(l$B)
-
-       return(res)}))
-#
-#     tmpSVD <- irlba::irlba(1/sqrt(N-1) * Z %*% t(Bchol), nv = M)
-#
-#     vectors <- t(Bchol) %*% tmpSVD$v
-#     values <- tmpSVD$d
-   }
-#
-#   # normalization factors
-#   normFactors <- 1/sqrt(diag(t(vectors) %*% crossprod(Z) %*% vectors)/(N-1))
-#
-#   # calculate scores
-#   scores <- Z %*% vectors
-#   scores <- scores %*% diag(sqrt(values) * normFactors) # normalization
-#
-#   # calculate eigenfunctions (incl. normalization)
-#   tmpWeights <- 1/(N-1) *  crossprod(Z) %*% vectors
-#   eFunctions <- foreach::foreach(j = 1:p){
-#     univExpansion(type = uniExpansion[[j]]$type,
-#                   scores = weights[j] * tmpWeights[npcCum[j]+1:npc[j],] %*%  diag(1/sqrt(values) * normFactors),
-#                   xVal = mFData[[j]]$xVal,
-#                   functions = uniBasis[[j]]$functions,
-#                   params = uniBasis[[j]]$settings)
-#   }
-#
-#   # calculate truncated Karhunen-Loeve representation
-#   Yhat <- foreach::foreach(j = 1:p){
-#     univExpansion(type = uniExpansion[[j]]$type,
-#                   scores = scores[npcCum[j]+1:npc[j],],
-#                   xVal = mFData[[j]]$xVal,
-#                   functions = uniBasis[[j]]$functions,
-#                   params = uniBasis[[j]]$settings)
-#   }
-
+      return(res)}))
+  }
 
   res <- calcMFPCA(N = N, p = p, Bchol = Bchol, M = M, type = type, weights = weights,
                    npc = npc, xVal = getxVal(mFData), uniBasis = uniBasis, Yhat = Yhat, approx.eigen = approx.eigen)
-
-  #   # and then calculate covariance for each combination, component-wise multiplication with weights
-  #   Z <- cov(allScores) * sqrt(outer(allWeights, allWeights, "*"))
-  #
-  #   # do eigendecomposition
-  #   C <- eigen(B%*%Z)
-
-  # factors for normalizations
-#   normFactors <- diag(t(C$vectors) %*% Z %*% C$vectors)[1:M]
-#
-#   # calculate (multivariate) scores
-#   scores <- Re(allScores %*% diag(sqrt(allWeights)) %*% C$vectors[, 1:M] %*% diag(sqrt(C$values[1:M])/sqrt(normFactors)) )
-#
-#   # calculate multivariate eigenfunctions and truncated Karhunen-Lo\`{e}ve representation
-#   eFunctions <- vector("list", p)
-#   Yhat <- vector("list", p)
-#
-#   for(j in 1:p)
-#   {
-#     # calculate eigenfunctions
-#     if(dimSupp[j] == 1) # one-dimensional function
-#       eFuns <-  1/sqrt(weights[j]) * t(Z[tmp[j]+1:npc[j], ] %*% C$vectors[, 1:M]) %*% uniBasis[[j]]$functions
-#     else # two-dimesional function (otherwise function stops before!)
-#       eFuns <-  1/sqrt(weights[j]) * t(uniBasis[[j]]$basisLong %*% Z[tmp[j]+1:npc[j], ] %*% C$vectors[, 1:M])
-#
-#     # normalize
-#     eFuns <- Re(diag(1/sqrt(C$values[1:M] * normFactors)) %*% eFuns)
-#
-#     # truncated Karhunen-Loève representation (reconstruction)
-#     recons <-  scores %*%  eFuns
-#
-#     # for two-dimensional functions: reshape eigenfunctions and reconstruction to image
-#     if(dimSupp[j] == 2) # two-dimensional function: reshape
-#     {
-#       eFuns <- array(eFuns, dim = c(M,length(mFData[[j]]@xVal[[1]]), length(mFData[[j]]@xVal[[2]])))
-#       recons <-  array(recons, dim = c(N, length(mFData[[j]]@xVal[[1]]), length(mFData[[j]]@xVal[[2]])))
-#     }
-#
-#     eFunctions[[j]] <- funData(xVal = mFData[[j]]@xVal, X = eFuns)
-#     Yhat[[j]] <- funData(xVal = mFData[[j]]@xVal, X = recons)
-#   }
-
-
-
 
   # bootstrap for eigenfunctions
   if(bootstrap)
@@ -417,44 +294,9 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), Yh
       if(M > sum(npcBoot))
         stop("Function MFPCA (bootstrap): total number of univariate basis functions must be greater or equal M!")
 
-#       ### calculate MFPCA -> the same as above for uniBasis now for bootBasis (no Yhat)
-#
-#       # combine all scores of bootstrap observations
-#       bootScores <- foreach::foreach(j = 1:p, .combine = "cbind")%do%{bootBasis[[j]]$scores}
-#
-#       Z <- cov(bootScores) * sqrt(outer(allWeights, allWeights, "*")) # and then calculate covariance for each combination, component-wise multiplication with weights
-#
-#       # do eigendecomposition
-#       C <- eigen(B%*%Z)
-#
-#       # factors for normalizations
-#       normFactors <- diag(t(C$vectors) %*% Z %*% C$vectors)[1:M]
-#
-#       # calculate multivariate eigenfunctions for bootstrap sample
-#
-#       for(j in 1:p)
-#       {
-#         # calculate eigenfunctions
-#         if(dimSupp[j] == 1) # one-dimensional function
-#           eFuns <-  1/sqrt(weights[j]) * t(Z[tmp[j]+1:npc[j], ] %*% C$vectors[, 1:M]) %*% bootBasis[[j]]$functions
-#         else # two-dimensional function (otherwise function stops before!)
-#           eFuns <-  1/sqrt(weights[j]) * t(bootBasis[[j]]$basisLong %*% Z[tmp[j]+1:npc[j], ] %*% C$vectors[, 1:M])
-#
-#         # normalize
-#         eFuns <- Re(diag(1/sqrt(C$values[1:M] * normFactors)) %*% eFuns)
-#
-#         # save in temporary list (must check for flipping before final save)
-#         if(dimSupp[j] == 1)
-#           tmpFuns[[j]] <- funData(mFData[[j]]@xVal, eFuns)
-#         else # two-dimensional function: reshape
-#           tmpFuns[[j]] <- funData(mFData[[j]]@xVal,
-#                                   array(eFuns, dim = c(M,length(mFData[[j]]@xVal[[1]]), length(mFData[[j]]@xVal[[2]]))))
-#
-#       }
-
-    # calculate MFPCA for bootstrap sample (Bchol must not be recalculated as uFPCA basis functions are orthonormal!)
-    tmpFuns <- calcMFPCA(N = N, p = p, Bchol = Bchol, M = M, type = type, weights = weights,
-                         npc = npcBoot, xVal = getxVal(mFData), uniBasis = bootBasis, Yhat = FALSE, approx.eigen = approx.eigen)$functions
+      # calculate MFPCA for bootstrap sample (Bchol must not be recalculated as uFPCA basis functions are orthonormal!)
+      tmpFuns <- calcMFPCA(N = N, p = p, Bchol = Bchol, M = M, type = type, weights = weights,
+                           npc = npcBoot, xVal = getxVal(mFData), uniBasis = bootBasis, Yhat = FALSE, approx.eigen = approx.eigen)$functions
 
       # flip bootstrap estimates if necessary
       tmpFuns <- flipFuns(res$functions, tmpFuns)
@@ -536,10 +378,10 @@ calcMFPCA <- function(N, p, Bchol, M, type, weights, npc, xVal, uniBasis, Yhat =
   {
     if(approx.eigen)
     {
-    tmpSVD <- irlba::irlba(Z %*% Matrix::t(Bchol), nv = M)
+      tmpSVD <- irlba::irlba(Z %*% Matrix::t(Bchol), nv = M)
 
-    vectors <- Matrix::t(Bchol) %*% tmpSVD$v
-    values <- tmpSVD$d[1:M]^2
+      vectors <- Matrix::t(Bchol) %*% tmpSVD$v
+      values <- tmpSVD$d[1:M]^2
     }
     else
     {

@@ -6,7 +6,8 @@
 Different (Dimensional) Domains}
 \usage{
 MFPCA(mFData, M, uniExpansions, weights = rep(1, length(mFData)),
-  bootstrap = FALSE, nBootstrap = NULL, bootstrapAlpha = 0.05)
+  Yhat = FALSE, approx.eigen = TRUE, bootstrap = FALSE,
+  nBootstrap = NULL, bootstrapAlpha = 0.05)
 }
 \arguments{
 \item{mFData}{A  \code{\link[funData]{multiFunData}} object containing the
@@ -21,6 +22,14 @@ calculated for each element. See Details.}
 
 \item{weights}{An optional vector of weights, defaults to 1 for each element.
 See Details.}
+
+\item{Yhat}{Logical. If \code{TRUE}, a truncated multivariate
+Karhunen-Lo\`{e}ve representation for the data is calculated based on the
+estimated scores and eigenfunctions.}
+
+\item{approx.eigen}{Logical. If \code{TRUE}, the eigenanalysis problem for
+the estimated covariance matrix is solved approximately using the
+\pkg{irlba} package, which is much faster. Defaults to \code{TRUE}.}
 
 \item{bootstrap}{Logical. If \code{TRUE}, pointwise bootstrap confidence
 bands are calculated for the multivariate functional principal components.
@@ -114,8 +123,8 @@ sim <-  simMultiFunData(type = "split", xVal = list(seq(0,1,0.01), seq(-0.5,0.5,
                                                                   list(type = "uFPCA")))}
 
 # MFPCA based on univariate spline expansions
-splines <- MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "splines", k = 10),
-                                                          list(type = "splines", k = 10)))
+splines <- MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "splines1D", k = 10),
+                                                          list(type = "splines1D", k = 10)))
 
 # flip to make results more clear
 \donttest{uFPCA$functions <- flipFuns(sim$trueFuns, uFPCA$functions)}
@@ -134,13 +143,14 @@ legend("bottomleft", c("True", "uFPCA", "splines"), lty = 1:3, lwd = c(2,1,1))
 ### simulate data (two- and one-dimensional domains)
 \donttest{
 ### ATTENTION: Takes long
+set.seed(2)
 sim <-  simMultiFunData(type = "weighted",
                  xVal = list(list(seq(0,1,0.01), seq(-1,1,0.02)), list(seq(-0.5,0.5,0.01))),
                  M = list(c(4,5), 20), eFunType = list(c("Fourier", "Fourier"), "Poly"),
                  eValType = "exponential", N = 150)
 
 # MFPCA based on univariate spline expansions (for images) and univariate FPCA (for functions)
-pca <- MFPCA(sim$simData, M = 10, uniExpansions = list(list(type = "splines", k = c(10,12)),
+pca <- MFPCA(sim$simData, M = 10, uniExpansions = list(list(type = "splines2D", params = list(k = c(10,12))),
                                                        list(type = "uFPCA")))
 
 # flip to make results more clear
