@@ -401,10 +401,11 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), Yh
 
       for(j in 1:p)
       {
-        if(uniExpansions[[j]]$type == "uFPCA") # re-estimate scores AND functions
-          bootBasis[[j]] <- univDecomp(type = uniExpansions[[j]]$type, data = extractObs(mFData, obs = bootObs), params = uniExpansions[[j]]$params)
+        if(type[j] == "uFPCA") # re-estimate scores AND functions
+          bootBasis[[j]] <- univDecomp(type = type[j], data = extractObs(mFData, obs = bootObs)[[j]], params = uniExpansions[[j]]$params)
         else # resample scores (functions are given and scores can simply be resampled)
-          bootBasis[[j]] <- list(scores = uniBasis[[j]]$scores[bootObs, ], B = uniBasis[[j]]$B, ortho = uniBasis[[j]]$ortho, functions = uniBasis[[j]]$functions)
+          bootBasis[[j]] <- list(scores = uniBasis[[j]]$scores[bootObs, ], B = uniBasis[[j]]$B, ortho = uniBasis[[j]]$ortho, functions = uniBasis[[j]]$functions,
+                                 settings = uniBasis[[j]]$settings)
       }
 
       npcBoot <- sapply(bootBasis, function(x){dim(x$scores)[2]}) # get number of univariate basis functions
