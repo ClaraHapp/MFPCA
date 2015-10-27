@@ -259,7 +259,7 @@ splineBasis1Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
 #' @seealso univDecomp
 #'
 #' @importFrom mgcv gam
-splineBasis2D <- function(funDataObject, bs = "ps", m = NA, k = -1)
+# splineBasis2D <- function(funDataObject, bs = "ps", m = NA, k = -1)
 {
   N <- nObs(funDataObject)
 
@@ -275,7 +275,7 @@ splineBasis2D <- function(funDataObject, bs = "ps", m = NA, k = -1)
   scores <- t(apply(funDataObject@X, 1, function(f, dM){lm(as.vector(f) ~ dM - 1)$coef}, dM = desMat))
 
   # extract basis functions (in the correct dimensions)
-  B <- aperm(array(desMat, c(nObsPoints(funDataObject), ncol(scores))), c(3,1,2))
+  B <- aperm(array(desMat, c(funData::nObsPoints(funDataObject), ncol(scores))), c(3,1,2))
 
   return(list(scores = scores,
               B = .calcBasisIntegrals(B, 2, funDataObject@xVal),
