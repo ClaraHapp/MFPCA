@@ -116,8 +116,8 @@ NULL
 #'   calculated for each element. See Details.
 #' @param weights An optional vector of weights, defaults to 1 for each element.
 #'   See Details.
-#' @param Yhat Logical. If \code{TRUE} a truncated multivariate
-#'   Karhunen-Lo\`{e}ve represenation for the data is calcualted based on the
+#' @param Yhat Logical. If \code{TRUE}, a truncated multivariate
+#'   Karhunen-Lo\`{e}ve representation for the data is calculated based on the
 #'   estimated scores and eigenfunctions.
 #' @param bootstrap Logical. If \code{TRUE}, pointwise bootstrap confidence
 #'   bands are calculated for the multivariate functional principal components.
@@ -162,8 +162,8 @@ NULL
 #'                                                                   list(type = "uFPCA")))}
 #'
 #' # MFPCA based on univariate spline expansions
-#' splines <- MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "splines", k = 10),
-#'                                                           list(type = "splines", k = 10)))
+#' splines <- MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "splines1D", k = 10),
+#'                                                           list(type = "splines1D", k = 10)))
 #'
 #' # flip to make results more clear
 #' \donttest{uFPCA$functions <- flipFuns(sim$trueFuns, uFPCA$functions)}
@@ -188,7 +188,7 @@ NULL
 #'                  eValType = "exponential", N = 150)
 #'
 #' # MFPCA based on univariate spline expansions (for images) and univariate FPCA (for functions)
-#' pca <- MFPCA(sim$simData, M = 10, uniExpansions = list(list(type = "splines", k = c(10,12)),
+#' pca <- MFPCA(sim$simData, M = 10, uniExpansions = list(list(type = "splines2D", params = list(k = c(10,12))),
 #'                                                        list(type = "uFPCA")))
 #'
 #' # flip to make results more clear
