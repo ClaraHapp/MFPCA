@@ -119,6 +119,9 @@ NULL
 #' @param Yhat Logical. If \code{TRUE}, a truncated multivariate
 #'   Karhunen-Lo\`{e}ve representation for the data is calculated based on the
 #'   estimated scores and eigenfunctions.
+#' @param approx.eigen Logical. If \code{TRUE}, the eigenanalysis problem for
+#'   the estimated covariance matrix is solved approximately using the
+#'   \pkg{irlba} package, which is much faster. Defaults to \code{TRUE}.
 #' @param bootstrap Logical. If \code{TRUE}, pointwise bootstrap confidence
 #'   bands are calculated for the multivariate functional principal components.
 #'   Defaults to \code{FALSE}. See Details.
@@ -207,7 +210,8 @@ NULL
 #' legend("bottomleft", c("True", "MFPCA"), lty = 1:2, lwd = c(2,1))
 #' }
 #' par(oldPar)
-MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), Yhat = FALSE, bootstrap = FALSE, nBootstrap = NULL, bootstrapAlpha = 0.05)
+MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), Yhat = FALSE, approx.eigen = TRUE,
+                  bootstrap = FALSE, nBootstrap = NULL, bootstrapAlpha = 0.05)
 {
   # number of components
   p <- length(mFData)
@@ -339,7 +343,7 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), Yh
 
 
   res <- calcMFPCA(N = N, p = p, Bchol = Bchol, M = M, type = type, weights = weights,
-                   npc = npc, xVal = getxVal(mFData), uniBasis = uniBasis, Yhat = Yhat)
+                   npc = npc, xVal = getxVal(mFData), uniBasis = uniBasis, Yhat = Yhat, approx.eigen = approx.eigen)
 
   #   # and then calculate covariance for each combination, component-wise multiplication with weights
   #   Z <- cov(allScores) * sqrt(outer(allWeights, allWeights, "*"))
@@ -450,7 +454,7 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), Yh
 
     # calculate MFPCA for bootstrap sample (Bchol must not be recalculated as uFPCA basis functions are orthonormal!)
     tmpFuns <- calcMFPCA(N = N, p = p, Bchol = Bchol, M = M, type = type, weights = weights,
-                         npc = npcBoot, xVal = getxVal(mFData), uniBasis = bootBasis, Yhat = FALSE)$functions
+                         npc = npcBoot, xVal = getxVal(mFData), uniBasis = bootBasis, Yhat = FALSE, approx.eigen = approx.eigen)$functions
 
       # flip bootstrap estimates if necessary
       tmpFuns <- flipFuns(res$functions, tmpFuns)
@@ -497,7 +501,7 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), Yh
 #' @importFrom irlba irlba
 #'
 #' @keywords internal
-calcMFPCA <- function(N, p, Bchol, M, type, weights, npc, xVal, uniBasis, Yhat = FALSE)
+calcMFPCA <- function(N, p, Bchol, M, type, weights, npc, xVal, uniBasis, Yhat = FALSE, approx.eigen = TRUE)
 {
   # combine all scores
   allScores <- foreach::foreach(j = 1:p, .combine = "cBind")%do%{uniBasis[[j]]$scores}
@@ -510,17 +514,43 @@ calcMFPCA <- function(N, p, Bchol, M, type, weights, npc, xVal, uniBasis, Yhat =
   # check if non-orthonormal basis functions used and calculate PCA on scores
   if(is.null(Bchol))
   {
+    if(approx.eigen)
+    {
       tmpSVD <- irlba::irlba(Z, nv = M, adjust = min(3, min(nrow(Z),ncol(Z)) - M))
 
-    vectors <- tmpSVD$v
-    values <- tmpSVD$d[1:M]^2
+      vectors <- tmpSVD$v
+      values <- tmpSVD$d[1:M]^2
+    }
+    else
+    {
+      if(sum(npc) > 1000)
+        warning("MFPCA with > 1000 univariate eigenfunctions and approx.eigen = FALSE. This may take some time...")
+
+      e <- eigen(cov(allScores) * sqrt(outer(allWeights, allWeights, "*")))
+
+      values <- e$values[1:M]
+      vectors <- e$vectors[,1:M]
+    }
   }
   else
   {
+    if(approx.eigen)
+    {
     tmpSVD <- irlba::irlba(Z %*% Matrix::t(Bchol), nv = M)
 
     vectors <- Matrix::t(Bchol) %*% tmpSVD$v
     values <- tmpSVD$d[1:M]^2
+    }
+    else
+    {
+      if(sum(npc) > 1000)
+        warning("MFPCA with > 1000 univariate eigenfunctions and approx.eigen = FALSE. This may take some time...")
+
+      e <- eigen(Matrix::crossprod(Bchol) %*% cov(allScores) * sqrt(outer(allWeights, allWeights, "*")))
+
+      values <- Re(e$values[1:M])
+      vectors <- Re(e$vectors[,1:M])
+    }
   }
 
   # normalization factors
