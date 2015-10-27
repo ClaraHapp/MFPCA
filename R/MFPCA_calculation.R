@@ -505,26 +505,26 @@ calcMFPCA <- function(N, p, Bchol, M, type, weights, npc, xVal, uniBasis, Yhat =
   # block vector of weights
   allWeights <- foreach::foreach(j = 1:p, .combine = "c")%do%{rep(sqrt(weights[j]), npc[j])}
 
-  Z <- apply(allScores, 2, function(x){x - mean(x)}) %*% diag(allWeights) # de-mean scores (column-wise)
+  Z <- apply(allScores, 2, function(x){x - mean(x)}) %*% diag(allWeights) / sqrt(N-1) # de-mean scores (column-wise)
 
   # check if non-orthonormal basis functions used and calculate PCA on scores
   if(is.null(Bchol))
   {
-    tmpSVD <- irlba::irlba(1/sqrt(N-1) * Z, nv = M, adjust = min(3, min(nrow(Z),ncol(Z)) - M))
+      tmpSVD <- irlba::irlba(Z, nv = M, adjust = min(3, min(nrow(Z),ncol(Z)) - M))
 
     vectors <- tmpSVD$v
     values <- tmpSVD$d[1:M]^2
   }
   else
   {
-    tmpSVD <- irlba::irlba(1/sqrt(N-1) * Z %*% Matrix::t(Bchol), nv = M)
+    tmpSVD <- irlba::irlba(Z %*% Matrix::t(Bchol), nv = M)
 
     vectors <- Matrix::t(Bchol) %*% tmpSVD$v
     values <- tmpSVD$d[1:M]^2
   }
 
   # normalization factors
-  normFactors <- 1/sqrt(diag(as.matrix(Matrix::t(vectors) %*% Matrix::crossprod(Z) %*% vectors))/(N-1))
+  normFactors <- 1/sqrt(diag(as.matrix(Matrix::t(vectors) %*% Matrix::crossprod(Z) %*% vectors)))
 
   ### Calculate scores
   scores <- allScores %*% diag(allWeights) %*% vectors
@@ -533,7 +533,7 @@ calcMFPCA <- function(N, p, Bchol, M, type, weights, npc, xVal, uniBasis, Yhat =
   ### Calculate eigenfunctions (incl. normalization)
   npcCum <- cumsum(c(0, npc)) # indices for blocks (-1)
 
-  tmpWeights <- 1/(N-1) *  crossprod(Z) %*% vectors
+  tmpWeights <- crossprod(Z) %*% vectors
   eFunctions <- foreach::foreach(j = 1:p) %do% {
     univExpansion(type = type[j],
                   scores = weights[j] * 1/sqrt(values) * normFactors * t(as.matrix(tmpWeights[npcCum[j]+1:npc[j],])),
