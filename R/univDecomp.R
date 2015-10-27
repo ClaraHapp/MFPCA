@@ -259,7 +259,7 @@ splineBasis1Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
 #' @seealso univDecomp
 #'
 #' @importFrom mgcv gam
-# splineBasis2D <- function(funDataObject, bs = "ps", m = NA, k = -1)
+splineBasis2D <- function(funDataObject, bs = "ps", m = NA, k = -1)
 {
   N <- nObs(funDataObject)
 
