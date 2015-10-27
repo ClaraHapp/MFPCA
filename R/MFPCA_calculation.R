@@ -502,13 +502,10 @@ calcMFPCA <- function(N, p, Bchol, M, type, weights, npc, xVal, uniBasis, Yhat =
   # combine all scores
   allScores <- foreach::foreach(j = 1:p, .combine = "cBind")%do%{uniBasis[[j]]$scores}
 
-  # de-mean scores (column-wise)
-  allScores <- apply(allScores, 2, function(x){x - mean(x)})
-
   # block vector of weights
-  allWeights <- foreach::foreach(j = 1:p, .combine = "c")%do%{rep(weights[j], npc[j])}
+  allWeights <- foreach::foreach(j = 1:p, .combine = "c")%do%{rep(sqrt(weights[j]), npc[j])}
 
-  Z <- allScores %*% diag(allWeights)
+  Z <- apply(allScores, 2, function(x){x - mean(x)}) %*% diag(allWeights) # de-mean scores (column-wise)
 
   # check if non-orthonormal basis functions used and calculate PCA on scores
   if(is.null(Bchol))
@@ -530,7 +527,7 @@ calcMFPCA <- function(N, p, Bchol, M, type, weights, npc, xVal, uniBasis, Yhat =
   normFactors <- 1/sqrt(diag(as.matrix(Matrix::t(vectors) %*% Matrix::crossprod(Z) %*% vectors))/(N-1))
 
   ### Calculate scores
-  scores <- Z %*% vectors
+  scores <- allScores %*% diag(allWeights) %*% vectors
   scores <- as.matrix(scores %*% diag(sqrt(values) * normFactors)) # normalization
 
   ### Calculate eigenfunctions (incl. normalization)
