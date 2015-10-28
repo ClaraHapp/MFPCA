@@ -422,7 +422,7 @@ calcMFPCA <- function(N, p, Bchol, M, type, weights, npc, xVal, uniBasis, Yhat =
   {
     # calculate truncated Karhunen-Loeve representation
     Yhat <- foreach::foreach(j = 1:p) %do% {
-      univExpansion(type = "uFPCA",
+      univExpansion(type = "default", # calculate linear combination of multivariate basis functions
                     scores = scores,
                     xVal = xVal[[j]],
                     functions = eFunctions[[j]],

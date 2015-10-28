@@ -37,12 +37,16 @@ represented as a linear combination of basis functions \eqn{b_k(t)}
 \deqn{X_i(t) = \sum_{k = 1}^K \theta_{ik} b_k(t), i = 1, \ldots, N.} The
 basis functions may be prespecified (such as spline basis functions or
 Fourier bases) or can be estimated from observed data (e.g. by functional
-principal component analysis)
+principal component analysis). If \code{type = "default"} (i.e. a linear
+combination of arbitrary basis functions is to be calculated), the scores and
+basis functions must be supplied.
 }
 \examples{
 ...
 }
 \seealso{
-\link{MFPCA}, \link{fpcaFunction}, \link{splineFunction1D}, \link{splineFunction2D}, \link{splineFunction2Dpen}, \link{dctFunction2D}
+\link{MFPCA}, \link{fpcaFunction}, \link{splineFunction1D},
+  \link{splineFunction2D}, \link{splineFunction2Dpen}, \link{dctFunction2D},
+  \link{defaultFunction}
 }
 

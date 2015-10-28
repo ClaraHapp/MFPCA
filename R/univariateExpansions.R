@@ -122,7 +122,9 @@ univBasisExpansion <- function(funDataObject,
 #' \deqn{X_i(t) = \sum_{k = 1}^K \theta_{ik} b_k(t), i = 1, \ldots, N.} The
 #' basis functions may be prespecified (such as spline basis functions or
 #' Fourier bases) or can be estimated from observed data (e.g. by functional
-#' principal component analysis)
+#' principal component analysis). If \code{type = "default"} (i.e. a linear
+#' combination of arbitrary basis functions is to be calculated), the scores and
+#' basis functions must be supplied.
 #'
 #' @param type A character string, specifying the basis for which the
 #'   decomposition is to be calculated.
@@ -139,7 +141,9 @@ univBasisExpansion <- function(funDataObject,
 #' @return A functional data object, representing the linear combinations of the
 #'   basis functions based on the given scores.
 #'
-#' @seealso \link{MFPCA}, \link{fpcaFunction}, \link{splineFunction1D}, \link{splineFunction2D}, \link{splineFunction2Dpen}, \link{dctFunction2D}
+#' @seealso \link{MFPCA}, \link{fpcaFunction}, \link{splineFunction1D},
+#'   \link{splineFunction2D}, \link{splineFunction2Dpen}, \link{dctFunction2D},
+#'   \link{defaultFunction}
 #'
 #' @export univExpansion
 #'
@@ -161,10 +165,38 @@ univExpansion <- function(type, scores, xVal, functions, params = NULL)
                 "splines2D" = do.call(splineFunction2D, params),
                 "splines2Dpen" = do.call(splineFunction2Dpen, params),
                 "DCT2D" = do.call(dctFunction2D, params),
+                "default" = do.call(defaultFunction, params),
                 stop("Univariate Expansion for 'type' = ", type, " not defined!")
   )
 
   return(res)
+}
+
+
+#' Calculate a linear combination of arbitrary basis function
+#'
+#' This function calculates a linear combination of arbitrary basis funtions on
+#' domains with arbitrary dimension.
+#'
+#' @param scores A matrix of dimension \eqn{N x K}, representing the \eqn{K}
+#'   scores (coefficients) for each observation \eqn{i = 1, \ldots, N}.
+#' @param xVal A list containing a vector of x-values, representing a  \eqn{M_1
+#'   x ...x M_p} dimensional interval.
+#' @param functions A \code{funData} object, representing \eqn{K} basis
+#'   functions on a \eqn{M_1 x ...x M_p} dimensional domain.
+#'
+#' @return An object of class \code{funData} with \eqn{N} observations on
+#'   \code{xVal}, corresponding to the linear combination of the basis
+#'   functions.
+#'
+#' @seealso univExpansion
+defaultFunction <- function(scores, xVal, functions)
+{
+  d <- dim(functions@X)
+
+  # collapse higher-dimensional functions and resize the result
+  return(funData(xVal, array(scores %*% array(functions@X, dim = c(d[1], prod(d[-1]))),
+                             dim = c(dim(scores)[1],d[-1]))) )
 }
 
 #' Calculate a linear combination of a functional principal component basis on
