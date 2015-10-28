@@ -62,19 +62,20 @@ NULL
 #' L^2(\mathcal{T}_j)}{X^(j) in L^2(calT_j)} defined on a domain
 #' \eqn{\mathcal{T}_j \subset IR^{d_j}}{calT_j of IR^{d_j}}. In particular, the
 #' elements can be defined on different (dimensional) domains. The results
-#' contain the estimated multivariate functional principal components \eqn{\hat
-#' \psi_1, \ldots, \hat \psi_M} (having the same structure as \eqn{x_i}), the
-#' associated eigenvalues \eqn{\hat \nu_1 \geq \ldots \geq \hat \nu_M > 0} and
-#' the individual scores \eqn{\hat \rho_{im} = \widehat{<x_i, \psi_m>}}{\hat
-#' \rho_{im} = \hat{<x_i, \psi_m>}}. Moreover, estimated trajectories for each
-#' observation based on the truncated Karhunen-Lo\`{e}ve representation
-#' \deqn{\hat x_i = \sum_{m = 1}^M \hat \rho_{im} \hat \psi_m}{\hat x_i =
-#' \sum_{m = 1}^M \hat \rho_{im} \hat \psi_m} are given. The implementation of
-#' the  observations \eqn{x_i = (x_i^{(1)}, \ldots , x_i^{(p)}),~ i = 1 ,
-#' \ldots, N}{x_i = (x_i^(1), \ldots , x_i^(p)), i = 1 , \ldots, N} and
-#' multivariate functional principal components \eqn{\hat \psi_1, \ldots, \hat
-#' \psi_M} uses the \code{\link[funData]{multiFunData}} class, which is defined
-#' in the package \pkg{funData}.
+#' contain the mean function, the estimated multivariate functional principal
+#' components \eqn{\hat \psi_1, \ldots, \hat \psi_M} (having the same structure
+#' as \eqn{x_i}), the associated eigenvalues \eqn{\hat \nu_1 \geq \ldots \geq
+#' \hat \nu_M > 0} and the individual scores \eqn{\hat \rho_{im} =
+#' \widehat{<x_i, \psi_m>}}{\hat \rho_{im} = \hat{<x_i, \psi_m>}}. Moreover,
+#' estimated trajectories for each observation based on the truncated
+#' Karhunen-Lo\`{e}ve representation \deqn{\hat x_i = \sum_{m = 1}^M \hat
+#' \rho_{im} \hat \psi_m}{\hat x_i = \sum_{m = 1}^M \hat \rho_{im} \hat \psi_m}
+#' are given if desired (\code{Yhat = TRUE}). The implementation of the
+#' observations \eqn{x_i = (x_i^{(1)}, \ldots , x_i^{(p)}),~ i = 1 , \ldots,
+#' N}{x_i = (x_i^(1), \ldots , x_i^(p)), i = 1 , \ldots, N}, the mean function
+#' and multivariate functional principal components \eqn{\hat \psi_1, \ldots,
+#' \hat \psi_M} uses the \code{\link[funData]{multiFunData}} class, which is
+#' defined in the package \pkg{funData}.
 #'
 #' \subsection{Weighted MFPCA:}{If the elements vary considerably in domain,
 #' range or variation, a weight vector \eqn{w_1 , \ldots, w_p} can be supplied
@@ -135,7 +136,9 @@ NULL
 #'   \code{\link[funData]{multiFunData}} object containing the estimated
 #'   multivariate functional principal components \eqn{\hat \psi_1, \ldots, \hat
 #'   \psi_M}.} \item{scores}{ A matrix of dimension \code{N x M} containing the
-#'   estimated scores \eqn{\hat \rho_{im}}.} \item{Yhat}{A
+#'   estimated scores \eqn{\hat \rho_{im}}.} \item{meanFunction}{A multivaraite
+#'   functional data object, corresponding to the mean function. The MFPCA is
+#'   applied to the de-meaned functions in \code{mFData}.}\item{Yhat}{A
 #'   \code{\link[funData]{multiFunData}} object containing estimated
 #'   trajectories for each observation based on the truncated Karhunen-Lo\`{e}ve
 #'   representation and the estimated scores and eigenfunctions.} \item{CI}{A
@@ -233,6 +236,10 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), Yh
 
   }
 
+  #de-mean functions -> coefficients are also de-meaned!
+  m <- meanFunction(mFData)
+  mFData <- mFData - m
+
   # dimension for each component
   dimSupp <- dimSupp(mFData)
 
@@ -258,13 +265,14 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), Yh
       if(l$ortho)
         res <- Diagonal(n = ncol(l$scores))
       else
-        res <- chol(l$B)
+        res <- Matrix::chol(l$B)
 
       return(res)}))
   }
 
   res <- calcMFPCA(N = N, p = p, Bchol = Bchol, M = M, type = type, weights = weights,
                    npc = npc, xVal = getxVal(mFData), uniBasis = uniBasis, Yhat = Yhat, approx.eigen = approx.eigen)
+  res$meanFunction <- m # return mean function, too
 
   # bootstrap for eigenfunctions
   if(bootstrap)
@@ -351,7 +359,7 @@ calcMFPCA <- function(N, p, Bchol, M, type, weights, npc, xVal, uniBasis, Yhat =
   # block vector of weights
   allWeights <- foreach::foreach(j = 1:p, .combine = "c")%do%{rep(sqrt(weights[j]), npc[j])}
 
-  Z <- apply(allScores, 2, function(x){x - mean(x)}) %*% diag(allWeights) / sqrt(N-1) # de-mean scores (column-wise)
+  Z <- allScores %*% Matrix::Diagonal(x = allWeights) / sqrt(N-1)
 
   # check if non-orthonormal basis functions used and calculate PCA on scores
   if(is.null(Bchol))
@@ -399,13 +407,13 @@ calcMFPCA <- function(N, p, Bchol, M, type, weights, npc, xVal, uniBasis, Yhat =
   normFactors <- 1/sqrt(diag(as.matrix(Matrix::t(vectors) %*% Matrix::crossprod(Z) %*% vectors)))
 
   ### Calculate scores
-  scores <- allScores %*% diag(allWeights) %*% vectors
+  scores <- Z %*% vectors * sqrt(N-1) # see defintion of Z above!
   scores <- as.matrix(scores %*% diag(sqrt(values) * normFactors)) # normalization
 
   ### Calculate eigenfunctions (incl. normalization)
   npcCum <- cumsum(c(0, npc)) # indices for blocks (-1)
 
-  tmpWeights <- crossprod(Z) %*% vectors
+  tmpWeights <- Matrix::crossprod(Z) %*% vectors
   eFunctions <- foreach::foreach(j = 1:p) %do% {
     univExpansion(type = type[j],
                   scores = weights[j] * 1/sqrt(values) * normFactors * t(as.matrix(tmpWeights[npcCum[j]+1:npc[j],])),

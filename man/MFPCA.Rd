@@ -47,7 +47,9 @@ Defaults to \code{FALSE}. See Details.}
   \code{\link[funData]{multiFunData}} object containing the estimated
   multivariate functional principal components \eqn{\hat \psi_1, \ldots, \hat
   \psi_M}.} \item{scores}{ A matrix of dimension \code{N x M} containing the
-  estimated scores \eqn{\hat \rho_{im}}.} \item{Yhat}{A
+  estimated scores \eqn{\hat \rho_{im}}.} \item{meanFunction}{A multivaraite
+  functional data object, corresponding to the mean function. The MFPCA is
+  applied to the de-meaned functions in \code{mFData}.}\item{Yhat}{A
   \code{\link[funData]{multiFunData}} object containing estimated
   trajectories for each observation based on the truncated Karhunen-Lo\`{e}ve
   representation and the estimated scores and eigenfunctions.} \item{CI}{A
@@ -64,19 +66,20 @@ X^{(p)})}{X = X^(1), \ldots, X^(p)} with elements \eqn{X^{(j)} \in
 L^2(\mathcal{T}_j)}{X^(j) in L^2(calT_j)} defined on a domain
 \eqn{\mathcal{T}_j \subset IR^{d_j}}{calT_j of IR^{d_j}}. In particular, the
 elements can be defined on different (dimensional) domains. The results
-contain the estimated multivariate functional principal components \eqn{\hat
-\psi_1, \ldots, \hat \psi_M} (having the same structure as \eqn{x_i}), the
-associated eigenvalues \eqn{\hat \nu_1 \geq \ldots \geq \hat \nu_M > 0} and
-the individual scores \eqn{\hat \rho_{im} = \widehat{<x_i, \psi_m>}}{\hat
-\rho_{im} = \hat{<x_i, \psi_m>}}. Moreover, estimated trajectories for each
-observation based on the truncated Karhunen-Lo\`{e}ve representation
-\deqn{\hat x_i = \sum_{m = 1}^M \hat \rho_{im} \hat \psi_m}{\hat x_i =
-\sum_{m = 1}^M \hat \rho_{im} \hat \psi_m} are given. The implementation of
-the  observations \eqn{x_i = (x_i^{(1)}, \ldots , x_i^{(p)}),~ i = 1 ,
-\ldots, N}{x_i = (x_i^(1), \ldots , x_i^(p)), i = 1 , \ldots, N} and
-multivariate functional principal components \eqn{\hat \psi_1, \ldots, \hat
-\psi_M} uses the \code{\link[funData]{multiFunData}} class, which is defined
-in the package \pkg{funData}.
+contain the mean function, the estimated multivariate functional principal
+components \eqn{\hat \psi_1, \ldots, \hat \psi_M} (having the same structure
+as \eqn{x_i}), the associated eigenvalues \eqn{\hat \nu_1 \geq \ldots \geq
+\hat \nu_M > 0} and the individual scores \eqn{\hat \rho_{im} =
+\widehat{<x_i, \psi_m>}}{\hat \rho_{im} = \hat{<x_i, \psi_m>}}. Moreover,
+estimated trajectories for each observation based on the truncated
+Karhunen-Lo\`{e}ve representation \deqn{\hat x_i = \sum_{m = 1}^M \hat
+\rho_{im} \hat \psi_m}{\hat x_i = \sum_{m = 1}^M \hat \rho_{im} \hat \psi_m}
+are given if desired (\code{Yhat = TRUE}). The implementation of the
+observations \eqn{x_i = (x_i^{(1)}, \ldots , x_i^{(p)}),~ i = 1 , \ldots,
+N}{x_i = (x_i^(1), \ldots , x_i^(p)), i = 1 , \ldots, N}, the mean function
+and multivariate functional principal components \eqn{\hat \psi_1, \ldots,
+\hat \psi_M} uses the \code{\link[funData]{multiFunData}} class, which is
+defined in the package \pkg{funData}.
 }
 \details{
 \subsection{Weighted MFPCA:}{If the elements vary considerably in domain,
