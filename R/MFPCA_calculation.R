@@ -404,7 +404,7 @@ calcMFPCA <- function(N, p, Bchol, M, type, weights, npc, xVal, uniBasis, Yhat =
   }
 
   # normalization factors
-  normFactors <- 1/sqrt(diag(as.matrix(Matrix::t(vectors) %*% Matrix::crossprod(Z) %*% vectors)))
+  normFactors <- 1/sqrt(diag(as.matrix(Matrix::crossprod(Z %*% vectors))))
 
   ### Calculate scores
   scores <- Z %*% vectors * sqrt(N-1) # see defintion of Z above!
