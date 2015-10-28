@@ -413,10 +413,10 @@ calcMFPCA <- function(N, p, Bchol, M, type, weights, npc, xVal, uniBasis, Yhat =
   ### Calculate eigenfunctions (incl. normalization)
   npcCum <- cumsum(c(0, npc)) # indices for blocks (-1)
 
-  tmpWeights <- Matrix::crossprod(Z) %*% vectors
+  tmpWeights <- as.matrix(Matrix::crossprod(Z, Z %*%vectors))
   eFunctions <- foreach::foreach(j = 1:p) %do% {
     univExpansion(type = type[j],
-                  scores = weights[j] * 1/sqrt(values) * normFactors * t(as.matrix(tmpWeights[npcCum[j]+1:npc[j],])),
+                  scores = weights[j] * 1/sqrt(values) * normFactors * t(tmpWeights[npcCum[j]+1:npc[j],]),
                   xVal = xVal[[j]],
                   functions = uniBasis[[j]]$functions,
                   params = uniBasis[[j]]$settings)
