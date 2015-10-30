@@ -140,7 +140,7 @@ splineBasis1D <- function(funDataObject, bs = "ps", m = NA, k = -1)
   m <- g$smooth[[1]]$p.order
 
   # weights via lm -> no penalization
-  scores <- t(apply(funDataObject@X, 1, function(f, dM){lm(f ~ dM)$coef}, dM = desMat))
+  scores <- t(apply(funDataObject@X, 1, function(f, dM){lm(f ~ dM - 1)$coef}, dM = desMat)) # design matrix already includes intercept!
 
   return(list(scores = scores,
               B = .calcBasisIntegrals(t(desMat), 1, funDataObject@xVal),
