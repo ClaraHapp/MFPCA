@@ -45,6 +45,7 @@ univDecomp <- function(type, data, params)
                 "splines2D" = do.call(splineBasis2D, params),
                 "splines2Dpen" = do.call(splineBasis2Dpen, params),
                 "DCT2D" = do.call(dctBasis2D, params),
+                "DCT3D" = do.call(dctBasis3D, params),
                 stop("Univariate Decomposition for 'type' = ", type, " not defined!")
   )
 
@@ -470,6 +471,118 @@ dctBasis2D <- function(funDataObject, qThresh, parallel = FALSE)
 dct2D <- function(image, qThresh)
 {
   res <- .C("calcCoefs", M = as.integer(nrow(image)), N = as.integer(ncol(image)),
+            image = as.numeric(image), coefs = as.numeric(image*0))$coefs
+
+  ind <- which(abs(res) > quantile(abs(res), qThresh))
+
+  return(list(ind = ind, val = res[ind]))
+}
+
+
+#' Calculate a cosine basis representation for functional data on
+#' three-dimensional domains
+#'
+#' This function calculates a tensor cosine basis representation for functional
+#' data on three-dimensional domains based on a discrete cosine transformation
+#' (DCT) using the C-library \code{fftw3} \url{http://www.fftw.org/}.
+#'
+#' Given the (discretized) observed functions \eqn{X_i}, this function
+#' calculates a basis representation \deqn{X_i(s,t, u) = \sum_{m = 0}^{M-1}
+#' \sum_{n = 0}^{N-1} \sum_{k = 0}^{K-1} \theta_{mnk}  f_{mnk}(s,t,u)} in terms
+#' of (orthogonal) tensor cosine basis functions \deqn{f_{mnk}(s,t,u) = c_m c_n
+#' c_k \cos(ms) \cos(nt) \cps(ku), \quad (s,t,u) \in \calT} with \eqn{c_m =
+#' \frac{1}{\sqrt{pi}}} for \eqn{m=0} and \eqn{c_m = \sqrt{\frac{2}{pi}}} for
+#' \eqn{m=1,2,\ldots} based on a discrete cosine transform (DCT).
+#'
+#' If not thresholded (\code{qThresh = 0}), the function returns all non-zero
+#' coefficients \eqn{\theta_{mnk}} in the basis representation in a sparse
+#' matrix \code{scores}. Otherwise, coefficients with \deqn{|\theta_{mnk}| <= q
+#' } are set to zero, where \eqn{q} is the \code{qThresh}-quantile of
+#' \eqn{|\theta_{mnk}|}.
+#'
+#' @section Warning: If the C-library \code{fftw3} is not available when the
+#'   package \code{MFPCA} is installed, this function is disabled an will throw
+#'   an error. For full functionality install the C-library \code{fftw3} from
+#'   \url{http://www.fftw.org/} and reinstall \code{MFPCA}.
+#'
+#' @param funDataObject An object of class \code{\link[funData]{funData}}
+#'   containing the observed functional data samples and for which the basis
+#'   representation is calculated.
+#' @param qThresh A numeric with value in \eqn{[0,1]}, giving the quantile for
+#'   thresholding the coefficients. See Details.
+#' @param parallel Logical. If \code{TRUE}, the coefficients for the basis
+#'   functions are calculated in parallel. The implementation is based on the
+#'   \code{\link[foreach]{foreach}} function and requires a parallel backend
+#'   that must be registered before. See \code{\link[foreach]{foreach}} for
+#'   details.
+#'
+#' @return \item{scores}{A sparse matrix of scores (coefficients) with dimension
+#'   \code{N x L}, reflecting the weights \eqn{\theta_{mnk}} for each basis
+#'   function in each observation, where \code{L} is the total number of basis
+#'   functions used.} \item{B}{A diagonal matrix, giving the norms of the
+#'   different basis functions used (as they are orthogonal).}
+#'   \item{ortho}{Logical, set to \code{FALSE}, as basis functions are
+#'   orthogonal, but in genereal not orthonormal.} \item{functions}{\code{NULL},
+#'   as basis functions are known.}
+#'
+#' @seealso univDecomp
+#'
+#' @importFrom foreach %do%
+#' @importFrom foreach %dopar%
+#' @importFrom Matrix sparseMatrix
+dctBasis3D <- function(funDataObject, qThresh, parallel = FALSE)
+{
+  if(dimSupp(funDataObject) != 3)
+    stop("dctBasis2D can handle only functional data on three-dimensional domains.")
+
+  if(parallel)
+    res <- foreach::foreach(i = 1:nObs(funDataObject), .combine = "rbind") %dopar% {
+      dct <- dct3D(funDataObject@X[i,,,], qThresh)
+
+      data.frame(i = rep(i, length(dct$ind)), j = dct$ind, x = dct$val)
+    }
+  else
+    res <- foreach::foreach(i = 1:nObs(funDataObject), .combine = "rbind") %do% {
+      dct <- dct3D(funDataObject@X[i,,,], qThresh)
+
+      data.frame(i = rep(i, length(dct$ind)), j = dct$ind, x = dct$val)
+    }
+
+  return(list(scores = sparseMatrix(i = res$i, j = res$j, x = res$x),
+              B = Matrix::Diagonal(n = max(res$j), x = prod(sapply(funDataObject@xVal, function(l){diff(range(l))}))/pi^3),
+              ortho = FALSE,
+              functions = NULL
+  ))
+}
+
+
+#' Calculate and threshold DCT for an 3D image
+#'
+#' This function calculates the (orthonormal) discrete cosine transformation for
+#' a 3D image and returns thresholded DCT coefficients using the C-library
+#' \code{fftw3} (see \url{http://www.fftw.org/}).
+#'
+#' @section Warning: If the C-library \code{fftw3} is not available when the
+#'   package \code{MFPCA} is installed, this function is disabled an will throw
+#'   an error. For full functionality install the C-library \code{fftw3} from
+#'   \url{http://www.fftw.org/} and reinstall \code{MFPCA}.
+#'
+#' @param image A 3D image (a 3D array with real values).
+#' @param qThresh A numeric with value in \eqn{[0,1]}, giving the quantile for
+#'   thresholding the coefficients. See \link{dctBasis3D} for details.
+#'
+#' @return \item{ind}{An integer vector, containing the indices of
+#'   non-thresholded (hence non-zero) coefficients.} \item{val}{A numeric
+#'   vector, giving the values of the corresponding coefficients.}
+#'
+#' @seealso dctBasis3D
+#'
+#' @useDynLib MFPCA calcCoefs3D
+#'
+#' @keywords internal
+dct3D <- function(image, qThresh)
+{
+  res <- .C("calcCoefs3D", dim = as.integer(dim(image)),
             image = as.numeric(image), coefs = as.numeric(image*0))$coefs
 
   ind <- which(abs(res) > quantile(abs(res), qThresh))

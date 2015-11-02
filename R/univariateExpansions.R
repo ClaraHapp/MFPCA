@@ -165,6 +165,7 @@ univExpansion <- function(type, scores, xVal, functions, params = NULL)
                 "splines2D" = do.call(splineFunction2D, params),
                 "splines2Dpen" = do.call(splineFunction2Dpen, params),
                 "DCT2D" = do.call(dctFunction2D, params),
+                "DCT3D" = do.call(dctFunction3D, params),
                 "default" = do.call(defaultFunction, params),
                 stop("Univariate Expansion for 'type' = ", type, " not defined!")
   )
@@ -414,6 +415,95 @@ idct2D <- function(scores, ind, dim)
   full[ind] <- scores
 
   res <- .C("calcImage", M = as.integer(dim[1]), N = as.integer(dim[2]),
+            coefs = as.numeric(full), image = as.numeric(full*0))$image
+
+  return(array(res, dim))
+}
+
+
+#' Calculate linear combinations of orthonormal cosine basis functions on
+#' three-dimensional domains
+#'
+#' Given scores (coefficients), this function calculates a linear combination of
+#' threse-dimensional cosine tensor basis functions on three-dimensional domains
+#' using the C-library \code{fftw3} (see \url{http://www.fftw.org/}).
+#'
+#' @section Warning: If the C-library \code{fftw3} is not available when the
+#'   package \code{MFPCA} is installed, this function is disabled an will throw
+#'   an error. For full functionality install the C-library \code{fftw3} from
+#'   \url{http://www.fftw.org/} and reinstall \code{MFPCA}.
+#'
+#' @param  scores A sparse matrix of dimension \eqn{N x L}, representing the
+#'   \eqn{L} scores (coefficients) for each observation \eqn{i = 1, \ldots, N}.
+#' @param xVal A list containing a two numeric vectors, corresponding to the x-
+#'   and y-values.
+#' @param parallel Logical. If \code{TRUE}, the coefficients for the basis
+#'   functions are calculated in parallel. The implementation is based on the
+#'   \code{\link[foreach]{foreach}} function and requires a parallel backend
+#'   that must be registered before. See \code{\link[foreach]{foreach}} for
+#'   details.
+#'
+#' @return An object of class \code{funData} with \eqn{N} observations on the
+#'   two-dimensional domain specified by \code{xVal}, corresponding to the
+#'   linear combination of orthonormal cosine basis functions.
+#'
+#' @seealso univExpansion
+#'
+#' @importFrom abind abind
+dctFunction3D <- function(scores, xVal, parallel = FALSE)
+{
+  # dimension of the image
+  dim <-sapply(xVal, length)
+
+  # get indices of sparse matrix
+  scores <- as(scores, "dgTMatrix") # uncompressed format
+
+  if(parallel)
+    res <- foreach::foreach(i = 0:max(scores@i), .combine = function(x,y){abind(x,y, along = 4)}) %dopar%{
+      idct3D(scores@x[scores@i == i], 1 + scores@j[scores@i == i], dim = dim) # 0-indexing!
+    }
+  else
+    res <- foreach::foreach(i = 0:max(scores@i), .combine =function(x,y){abind(x,y, along = 4)}) %do%{
+      idct3D(scores@x[scores@i == i], 1 + scores@j[scores@i == i], dim = dim) # 0-indexing!
+    }
+
+  return(funData(xVal, X = aperm(res, c(4,1,2,3))))
+}
+
+
+#' Calculate an inverse DCT for a 3D image
+#'
+#' This function calculates an inverse (orthonormal) discrete cosine
+#' transformation for given coefficients in three dimensions using the C-library
+#' \code{fftw3} (see \url{http://www.fftw.org/}). As many coefficients are
+#' expected to be zero, the values are given in compressed format (indices and
+#' values only of non-zero coefficients).
+#'
+#' @section Warning: If the C-library \code{fftw3} is not available when the
+#'   package \code{MFPCA} is installed, this function is disabled an will throw
+#'   an error. For full functionality install the C-library \code{fftw3} from
+#'   \url{http://www.fftw.org/} and reinstall \code{MFPCA}.
+#'
+#' @param scores A numeric vector, containing the non-zero coefficients.
+#' @param ind An integer vector, containing the indices of the non-zero
+#'   coefficients.
+#' @param dim A numeric vector of length 3, giving the resulting image
+#'   dimensions.
+#'
+#' @return A matrix of dimensions \code{dim}, which is a linear combination of
+#'   cosine tensor basis functions with the given coefficients.
+#'
+#' @seealso dctBasis3D
+#'
+#' @useDynLib MFPCA calcImage3D
+#'
+#' @keywords internal
+idct3D <- function(scores, ind, dim)
+{
+  full <- array(0, dim)
+  full[ind] <- scores
+
+  res <- .C("calcImage3D", dim = as.integer(dim),
             coefs = as.numeric(full), image = as.numeric(full*0))$image
 
   return(array(res, dim))
