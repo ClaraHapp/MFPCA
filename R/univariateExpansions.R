@@ -343,8 +343,8 @@ splineFunction2Dpen <- function(scores, xVal, bs, m, k)
 #'   an error. For full functionality install the C-library \code{fftw3} from
 #'   \url{http://www.fftw.org/} and reinstall \code{MFPCA}.
 #'
-#' @param  scores A sparse matrix of dimension \eqn{N x K}, representing the
-#'   \eqn{K} scores (coefficients) for each observation \eqn{i = 1, \ldots, N}.
+#' @param  scores A sparse matrix of dimension \eqn{N x L}, representing the
+#'   \eqn{L} scores (coefficients) for each observation \eqn{i = 1, \ldots, N}.
 #' @param xVal A list containing a two numeric vectors, corresponding to the x-
 #'   and y-values.
 #' @param parallel Logical. If \code{TRUE}, the coefficients for the basis

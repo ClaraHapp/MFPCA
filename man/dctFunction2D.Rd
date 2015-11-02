@@ -8,8 +8,8 @@ two-dimensional domains}
 dctFunction2D(scores, xVal, parallel = FALSE)
 }
 \arguments{
-\item{scores}{A sparse matrix of dimension \eqn{N x K}, representing the
-\eqn{K} scores (coefficients) for each observation \eqn{i = 1, \ldots, N}.}
+\item{scores}{A sparse matrix of dimension \eqn{N x L}, representing the
+\eqn{L} scores (coefficients) for each observation \eqn{i = 1, \ldots, N}.}
 
 \item{xVal}{A list containing a two numeric vectors, corresponding to the x-
 and y-values.}

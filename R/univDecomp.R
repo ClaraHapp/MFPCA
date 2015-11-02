@@ -381,7 +381,7 @@ splineBasis2Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
 #' \sqrt{\frac{2}{pi}}} for \eqn{m=1,2,\ldots} based on a discrete cosine
 #' transform (DCT).
 #'
-#' If not thresholded (\code{qThresh = 1}), the function returns all non-zero
+#' If not thresholded (\code{qThresh = 0}), the function returns all non-zero
 #' coefficients \eqn{\theta_{mn}} in the basis representation in a sparse matrix
 #' \code{scores}. Otherwise, coefficients with \deqn{|\theta_{mn}| <= q } are
 #' set to zero, where \eqn{q} is the \code{qThresh}-quantile of
@@ -404,8 +404,8 @@ splineBasis2Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
 #'   details.
 #'
 #' @return \item{scores}{A sparse matrix of scores (coefficients) with dimension
-#'   \code{N x K}, reflecting the weights \eqn{\theta_{mn}} for each basis
-#'   function in each observation, where \code{K} is the total number of basis
+#'   \code{N x L}, reflecting the weights \eqn{\theta_{mn}} for each basis
+#'   function in each observation, where \code{L} is the total number of basis
 #'   functions used.} \item{B}{A diagonal matrix, giving the norms of the
 #'   different basis functions used (as they are orthogonal).}
 #'   \item{ortho}{Logical, set to \code{FALSE}, as basis functions are
