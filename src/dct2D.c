@@ -4,7 +4,6 @@
 # include <fftw3.h>
 # endif
 
-//#include <math.h>
 #include <R.h> 
 #include <Rmath.h>
 
