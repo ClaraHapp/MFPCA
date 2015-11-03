@@ -237,7 +237,7 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), Yh
   }
 
   #de-mean functions -> coefficients are also de-meaned!
-  m <- meanFunction(mFData)
+  m <- meanFunction(mFData, na.rm = TRUE) # ignore NAs in data
   mFData <- mFData - m
 
   # dimension for each component
