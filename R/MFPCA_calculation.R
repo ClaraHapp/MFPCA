@@ -314,8 +314,10 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), Yh
       {
         if(dimSupp[j] == 1)
           booteFuns[[j]][n,,] <- tmpFuns[[j]]@X
-        else # two-dimensional function
+        if(dimSupp[j] == 2)
           booteFuns[[j]][n,,,] <- tmpFuns[[j]]@X
+        if(dimSupp[j] == 3)
+          booteFuns[[j]][n,,,,] <- tmpFuns[[j]]@X
       }
     }
 
