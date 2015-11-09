@@ -7,7 +7,7 @@ Different (Dimensional) Domains}
 \usage{
 MFPCA(mFData, M, uniExpansions, weights = rep(1, length(mFData)),
   Yhat = FALSE, approx.eigen = TRUE, bootstrap = FALSE,
-  nBootstrap = NULL, bootstrapAlpha = 0.05)
+  nBootstrap = NULL, bootstrapAlpha = 0.05, verbose = options()$verbose)
 }
 \arguments{
 \item{mFData}{A  \code{\link[funData]{multiFunData}} object containing the
@@ -39,7 +39,11 @@ Defaults to \code{FALSE}. See Details.}
 \code{NULL}, which leads to an error, if \code{bootstrap = TRUE}.}
 
 \item{bootstrapAlpha}{A vector of numerics (or a single number) giving the
-  significance level for bootstrap intervals. Defaults to 0.05.}
+significance level for bootstrap intervals. Defaults to 0.05.}
+
+\item{vebose}{Logical. If \code{TRUE}, the function reports extra-information
+  about the progress (incl. timestamps). Defaults to
+  \code{options()$verbose}.}
 }
 \value{
 \item{values}{A vector of estimated eigenvalues \eqn{\hat \nu_1 ,

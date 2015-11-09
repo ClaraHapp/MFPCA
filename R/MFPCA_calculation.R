@@ -130,6 +130,9 @@ NULL
 #'   \code{NULL}, which leads to an error, if \code{bootstrap = TRUE}.
 #' @param bootstrapAlpha A vector of numerics (or a single number) giving the
 #'   significance level for bootstrap intervals. Defaults to 0.05.
+#' @param vebose Logical. If \code{TRUE}, the function reports extra-information
+#'   about the progress (incl. timestamps). Defaults to
+#'   \code{options()$verbose}.
 #'
 #' @return \item{values}{A vector of estimated eigenvalues \eqn{\hat \nu_1 ,
 #'   \ldots , \hat \nu_M}.} \item{functions}{A
@@ -215,7 +218,7 @@ NULL
 #' }
 #' par(oldPar)
 MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), Yhat = FALSE, approx.eigen = TRUE,
-                  bootstrap = FALSE, nBootstrap = NULL, bootstrapAlpha = 0.05)
+                  bootstrap = FALSE, nBootstrap = NULL, bootstrapAlpha = 0.05, verbose = options()$verbose)
 {
   # number of components
   p <- length(mFData)
@@ -242,6 +245,9 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), Yh
 
   # dimension for each component
   dimSupp <- dimSupp(mFData)
+
+  if(verbose)
+    cat("Calculating univariate basis expansions (", format(Sys.time(), "%T"), ")\n", sep = "")
 
   # calculate univariate basis expansion for all components
   uniBasis <- mapply(function(expansion, data){univDecomp(type = expansion$type, data = data, params = expansion$params)},
@@ -270,6 +276,9 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), Yh
       return(res)}))
   }
 
+  if(verbose)
+    cat("Calculating MFPCA (", format(Sys.time(), "%T"), ")\n", sep = "")
+
   res <- calcMFPCA(N = N, p = p, Bchol = Bchol, M = M, type = type, weights = weights,
                    npc = npc, xVal = getxVal(mFData), uniBasis = uniBasis, Yhat = Yhat, approx.eigen = approx.eigen)
   res$meanFunction <- m # return mean function, too
@@ -277,6 +286,9 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), Yh
   # bootstrap for eigenfunctions
   if(bootstrap)
   {
+    if(verbose)
+      cat("Bootstrapping results:\n")
+
     booteFuns <- vector("list", p)
 
     for(j in 1:p)
@@ -284,6 +296,12 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), Yh
 
     for(n in 1:nBootstrap)
     {
+      if(verbose)
+      {
+        if(n %% 10 == 0)
+          cat("\t n = ", n, " (", format(Sys.time(), "%T"), ")\n", sep = "")
+      }
+
       bootObs <- sample(N, replace = TRUE)
 
       bootBasis <- vector("list", p)
@@ -325,6 +343,9 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), Yh
 
     for(alpha in 1:length(bootstrapAlpha))
     {
+      if(verbose)
+        cat("Calculating bootstrap quantiles for alpha = ", bootstrapAlpha[alpha], " (", format(Sys.time(), "%T"), ")\n", sep = "")
+
       bootCI_lower <- bootCI_upper <-  vector("list", p)
       for(j in 1:p)
       {
