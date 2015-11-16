@@ -130,7 +130,7 @@ NULL
 #'   \code{NULL}, which leads to an error, if \code{bootstrap = TRUE}.
 #' @param bootstrapAlpha A vector of numerics (or a single number) giving the
 #'   significance level for bootstrap intervals. Defaults to 0.05.
-#' @param vebose Logical. If \code{TRUE}, the function reports extra-information
+#' @param verbose Logical. If \code{TRUE}, the function reports extra-information
 #'   about the progress (incl. timestamps). Defaults to
 #'   \code{options()$verbose}.
 #'
