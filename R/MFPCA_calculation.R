@@ -399,7 +399,7 @@ calcMFPCA <- function(N, p, Bchol, M, type, weights, npc, xVal, uniBasis, Yhat =
       if(sum(npc) > 1000)
         warning("MFPCA with > 1000 univariate eigenfunctions and approx.eigen = FALSE. This may take some time...")
 
-      e <- eigen(cov(allScores) * sqrt(outer(allWeights, allWeights, "*")))
+      e <- eigen(cov(allScores) * outer(allWeights, allWeights, "*"))
 
       values <- e$values[1:M]
       vectors <- e$vectors[,1:M]
@@ -419,7 +419,7 @@ calcMFPCA <- function(N, p, Bchol, M, type, weights, npc, xVal, uniBasis, Yhat =
       if(sum(npc) > 1000)
         warning("MFPCA with > 1000 univariate eigenfunctions and approx.eigen = FALSE. This may take some time...")
 
-      e <- eigen(Matrix::crossprod(Bchol) %*% cov(allScores) * sqrt(outer(allWeights, allWeights, "*")))
+      e <- eigen(Matrix::crossprod(Bchol) %*% (cov(allScores) * outer(allWeights, allWeights, "*")))
 
       values <- Re(e$values[1:M])
       vectors <- Re(e$vectors[,1:M])
@@ -439,7 +439,7 @@ calcMFPCA <- function(N, p, Bchol, M, type, weights, npc, xVal, uniBasis, Yhat =
   tmpWeights <- as.matrix(Matrix::crossprod(Z, Z %*%vectors))
   eFunctions <- foreach::foreach(j = 1:p) %do% {
     univExpansion(type = type[j],
-                  scores = weights[j] * 1/sqrt(values) * normFactors * t(tmpWeights[npcCum[j]+1:npc[j],]),
+                  scores = 1/sqrt(weights[j] * values) * normFactors * t(tmpWeights[npcCum[j]+1:npc[j],]),
                   xVal = xVal[[j]],
                   functions = uniBasis[[j]]$functions,
                   params = uniBasis[[j]]$settings)
