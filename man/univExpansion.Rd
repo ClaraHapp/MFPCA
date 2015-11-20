@@ -41,9 +41,6 @@ principal component analysis). If \code{type = "default"} (i.e. a linear
 combination of arbitrary basis functions is to be calculated), the scores and
 basis functions must be supplied.
 }
-\examples{
-...
-}
 \seealso{
 \link{MFPCA}, \link{fpcaFunction}, \link{splineFunction1D},
   \link{splineFunction2D}, \link{splineFunction2Dpen}, \link{dctFunction2D},

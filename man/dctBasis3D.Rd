@@ -41,7 +41,8 @@ Given the (discretized) observed functions \eqn{X_i}, this function
 calculates a basis representation \deqn{X_i(s,t, u) = \sum_{m = 0}^{M-1}
 \sum_{n = 0}^{N-1} \sum_{k = 0}^{K-1} \theta_{mnk}  f_{mnk}(s,t,u)} in terms
 of (orthogonal) tensor cosine basis functions \deqn{f_{mnk}(s,t,u) = c_m c_n
-c_k \cos(ms) \cos(nt) \cps(ku), \quad (s,t,u) \in \calT} with \eqn{c_m =
+c_k \cos(ms) \cos(nt) \cos(ku), \quad (s,t,u) \in \mathcal{T}}{f_{mnk}(s,t,u) = c_m c_n
+c_k \cos(ms) \cos(nt) \cos(ku), \quad (s,t,u) \in \calT} with \eqn{c_m =
 \frac{1}{\sqrt{pi}}} for \eqn{m=0} and \eqn{c_m = \sqrt{\frac{2}{pi}}} for
 \eqn{m=1,2,\ldots} based on a discrete cosine transform (DCT).
 

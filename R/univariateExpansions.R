@@ -38,8 +38,6 @@ NULL
 #'   \link{defaultFunction}
 #'
 #' @export univExpansion
-#'
-#' @examples ...
 univExpansion <- function(type, scores, xVal, functions, params = NULL)
 {
   params$scores <- scores
