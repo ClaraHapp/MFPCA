@@ -141,8 +141,8 @@ globalVariables('j')
 #'   \code{NULL}, which leads to an error, if \code{bootstrap = TRUE}.
 #' @param bootstrapAlpha A vector of numerics (or a single number) giving the
 #'   significance level for bootstrap intervals. Defaults to 0.05.
-#' @param verbose Logical. If \code{TRUE}, the function reports extra-information
-#'   about the progress (incl. timestamps). Defaults to
+#' @param verbose Logical. If \code{TRUE}, the function reports
+#'   extra-information about the progress (incl. timestamps). Defaults to
 #'   \code{options()$verbose}.
 #'
 #' @return \item{values}{A vector of estimated eigenvalues \eqn{\hat \nu_1 ,
@@ -209,8 +209,10 @@ globalVariables('j')
 #'                  eValType = "exponential", N = 150)
 #'
 #' # MFPCA based on univariate spline expansions (for images) and univariate FPCA (for functions)
-#' pca <- MFPCA(sim$simData, M = 10, uniExpansions = list(list(type = "splines2D", params = list(k = c(10,12))),
-#'                                                        list(type = "uFPCA")))
+#' pca <- MFPCA(sim$simData, M = 10,
+#'              uniExpansions = list(list(type = "splines2D", params = list(k = c(10,12))),
+#'                              list(type = "uFPCA"))
+#'              )
 #'
 #' # flip to make results more clear
 #' pca$functions <- flipFuns(extractObs(sim$trueFuns, obs = 1:10), pca$functions)
@@ -476,3 +478,4 @@ calcMFPCA <- function(N, p, Bchol, M, type, weights, npc, xVal, uniBasis, Yhat =
 
   return(res)
 }
+

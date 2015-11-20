@@ -41,8 +41,8 @@ Defaults to \code{FALSE}. See Details.}
 \item{bootstrapAlpha}{A vector of numerics (or a single number) giving the
 significance level for bootstrap intervals. Defaults to 0.05.}
 
-\item{verbose}{Logical. If \code{TRUE}, the function reports extra-information
-  about the progress (incl. timestamps). Defaults to
+\item{verbose}{Logical. If \code{TRUE}, the function reports
+  extra-information about the progress (incl. timestamps). Defaults to
   \code{options()$verbose}.}
 }
 \value{
@@ -102,19 +102,27 @@ principal components \eqn{\hat \psi_1, \ldots, \hat \psi_M}{\hat \psi_1,
 component analysis relies on a univariate basis expansion for each element
 \eqn{X^{(j)}}{X^(j)}. It can be supplied in several forms: \itemize{ \item
 Univariate functional principal component analysis. Then \code{uniExpansions
-= list(type = "uFPCA", nbasis, pve, npc, makePD)}, where \code{nbasis, pve,
-npc, makePD} are parameters passed to the \code{\link{PACE}} function for
-calculating the univariate functional principal component analysis. \item
-Spline basis functions (not penalized). Then \code{uniExpansions = list(type
-= "splines", bs, m, k)}, where \code{bs, m, k} are passed to the function
-\code{\link{univBasisExpansion}}. \item Spline basis functions (with
-smoothness penalty). Then \code{uniExpansions = list(type = "splinesPen", bs,
-m, k)}, where \code{bs, m, k} are passed to the function
-\code{\link{univBasisExpansion}}. \item General basis functions. Then
-\code{uniExpansions = list(functions, scores)}, where \code{functions} is a
-\code{\link[funData]{multiFunData}} object containing the basis functions and
-\code{scores} is an array of dimensions \code{N x M_1 x \ldots x M_j} with
-the corresponding basis weights.}}
+= list(type = "uFPCA", params = list(nbasis, pve, npc, makePD))}, where
+\code{nbasis, pve, npc, makePD} are parameters passed to the
+\code{\link{PACE}} function for calculating the univariate functional
+principal component analysis. \item Spline basis functions (not penalized).
+Then \code{uniExpansions = list(type = "splines1D", params = list(bs, m,
+k))}, where \code{bs, m, k} are passed to the functions \code{\link{univDecomp}} and
+\code{\link{univExpansion}}. For two-dimensional tensor product splines,
+use \code{type = "splines2D"}. \item Spline basis functions (with smoothness
+penalty). Then \code{uniExpansions = list(type = "splines1DPen", params =
+list(bs, m, k))}, where \code{bs, m, k} are passed to the functions\code{\link{univDecomp}} and
+\code{\link{univExpansion}}. Analogously to the unpenalized case, use
+\code{type = "splines2Dpen"} for 2D penalized tensor product splines. \item
+Cosine basis functons. Use \code{uniExpansions = list(type = "DCT2D", params
+= list(qThresh, parallel )} for functions one two-dimensional domains
+(images) and \code{type = "DCT3D"} for 3D images. The calculation is based on
+the discrete cosine transform (DCT) implemented in the C-library
+\code{fftw3}. If this library is not available, the function will throw  a
+warning. \code{qThresh} gives the quantiel for hard thresholding the basis
+coefficients based on their absolute value. If \code{parallel = TRUE}, the
+coefficients for different images are calcualated in parallel.}
+See \link{univDecomp} and \link{univExpansion} for Details.}
 }
 \examples{
 oldPar <- par(no.readonly = TRUE)
@@ -157,8 +165,10 @@ sim <-  simMultiFunData(type = "weighted",
                  eValType = "exponential", N = 150)
 
 # MFPCA based on univariate spline expansions (for images) and univariate FPCA (for functions)
-pca <- MFPCA(sim$simData, M = 10, uniExpansions = list(list(type = "splines2D", params = list(k = c(10,12))),
-                                                       list(type = "uFPCA")))
+pca <- MFPCA(sim$simData, M = 10,
+             uniExpansions = list(list(type = "splines2D", params = list(k = c(10,12))),
+                             list(type = "uFPCA"))
+             )
 
 # flip to make results more clear
 pca$functions <- flipFuns(extractObs(sim$trueFuns, obs = 1:10), pca$functions)
@@ -178,7 +188,7 @@ legend("bottomleft", c("True", "MFPCA"), lty = 1:2, lwd = c(2,1))
 par(oldPar)
 }
 \seealso{
-\code{\link[funData]{multiFunData}}, \code{\link{PACE}},
-  \code{\link{univBasisExpansion}}.
+\code{\link[funData]{multiFunData}}, \code{\link{PACE}}, \code{\link{univDecomp}},
+  \code{\link{univExpansion}}.
 }
 
