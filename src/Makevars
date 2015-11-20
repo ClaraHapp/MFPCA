@@ -1,3 +1,0 @@
-PKG_LIBS=-lfftw3
-PKG_CFLAGS=-D HAVE_FFTW
-
