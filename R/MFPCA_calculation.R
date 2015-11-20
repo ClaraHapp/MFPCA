@@ -1,6 +1,9 @@
 #' @import funData
 NULL
 
+# define global variable j, used by the foreach package and confusing R CMD CHECK
+globalVariables('j')
+
 #' Utility function that calculates matrix of basis-scalar products (one dimension)
 #'
 #' If the element \eqn{X^{(j)}}{X^{(j)}} is expanded in basis functions \eqn{b_i^{(j)}(t),~ i = 1, \ldots, K_j}{b_i(t)},
@@ -275,9 +278,9 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), Yh
   else
   {
     # Cholesky decomposition of B = block diagonal of Cholesky decompositions
-    Bchol <- bdiag(lapply(uniBasis, function(l){
+    Bchol <- Matrix::bdiag(lapply(uniBasis, function(l){
       if(l$ortho)
-        res <- Diagonal(n = ncol(l$scores))
+        res <- Matrix::Diagonal(n = ncol(l$scores))
       else
         res <- Matrix::chol(l$B)
 
@@ -378,6 +381,7 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), Yh
 #' Internal function that implements the MFPCA algorithm for given univariate decompositions
 #'
 #' @importFrom Matrix t
+#' @importFrom Matrix cBind
 #' @importFrom foreach foreach
 #' @importFrom irlba irlba
 #'
