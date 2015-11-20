@@ -94,19 +94,27 @@ NULL
 #' component analysis relies on a univariate basis expansion for each element
 #' \eqn{X^{(j)}}{X^(j)}. It can be supplied in several forms: \itemize{ \item
 #' Univariate functional principal component analysis. Then \code{uniExpansions
-#' = list(type = "uFPCA", nbasis, pve, npc, makePD)}, where \code{nbasis, pve,
-#' npc, makePD} are parameters passed to the \code{\link{PACE}} function for
-#' calculating the univariate functional principal component analysis. \item
-#' Spline basis functions (not penalized). Then \code{uniExpansions = list(type
-#' = "splines", bs, m, k)}, where \code{bs, m, k} are passed to the function
-#' \code{\link{univBasisExpansion}}. \item Spline basis functions (with
-#' smoothness penalty). Then \code{uniExpansions = list(type = "splinesPen", bs,
-#' m, k)}, where \code{bs, m, k} are passed to the function
-#' \code{\link{univBasisExpansion}}. \item General basis functions. Then
-#' \code{uniExpansions = list(functions, scores)}, where \code{functions} is a
-#' \code{\link[funData]{multiFunData}} object containing the basis functions and
-#' \code{scores} is an array of dimensions \code{N x M_1 x \ldots x M_j} with
-#' the corresponding basis weights.}}
+#' = list(type = "uFPCA", params = list(nbasis, pve, npc, makePD))}, where
+#' \code{nbasis, pve, npc, makePD} are parameters passed to the
+#' \code{\link{PACE}} function for calculating the univariate functional
+#' principal component analysis. \item Spline basis functions (not penalized).
+#' Then \code{uniExpansions = list(type = "splines1D", params = list(bs, m,
+#' k))}, where \code{bs, m, k} are passed to the functions \code{\link{univDecomp}} and
+#' \code{\link{univExpansion}}. For two-dimensional tensor product splines,
+#' use \code{type = "splines2D"}. \item Spline basis functions (with smoothness
+#' penalty). Then \code{uniExpansions = list(type = "splines1DPen", params =
+#' list(bs, m, k))}, where \code{bs, m, k} are passed to the functions\code{\link{univDecomp}} and
+#' \code{\link{univExpansion}}. Analogously to the unpenalized case, use
+#' \code{type = "splines2Dpen"} for 2D penalized tensor product splines. \item
+#' Cosine basis functons. Use \code{uniExpansions = list(type = "DCT2D", params
+#' = list(qThresh, parallel )} for functions one two-dimensional domains
+#' (images) and \code{type = "DCT3D"} for 3D images. The calculation is based on
+#' the discrete cosine transform (DCT) implemented in the C-library
+#' \code{fftw3}. If this library is not available, the function will throw  a
+#' warning. \code{qThresh} gives the quantiel for hard thresholding the basis
+#' coefficients based on their absolute value. If \code{parallel = TRUE}, the
+#' coefficients for different images are calcualated in parallel.}
+#' See \link{univDecomp} and \link{univExpansion} for Details.}
 #'
 #' @param mFData A  \code{\link[funData]{multiFunData}} object containing the
 #'   observations \eqn{x_i = (x_i^{(1)}, \ldots , x_i^{(p)}),~ i = 1 , \ldots,
@@ -154,8 +162,8 @@ NULL
 #'
 #' @importFrom foreach %do%
 #'
-#' @seealso \code{\link[funData]{multiFunData}}, \code{\link{PACE}},
-#'   \code{\link{univBasisExpansion}}.
+#' @seealso \code{\link[funData]{multiFunData}}, \code{\link{PACE}}, \code{\link{univDecomp}},
+#'   \code{\link{univExpansion}}.
 #'
 #' @examples
 #' oldPar <- par(no.readonly = TRUE)
@@ -463,34 +471,4 @@ calcMFPCA <- function(N, p, Bchol, M, type, weights, npc, xVal, uniBasis, Yhat =
   }
 
   return(res)
-}
-
-
-#' Utility function for defining arguments of univariate basis expansion
-#'
-#' This is a utility function that defines the arguments
-#' of\code{\link{univBasisExpansion}} in \code{\link{MFPCA}}. This is used as an
-#' internal function in \code{\link{MFPCA}}.
-#'
-#' @param uniExpansion A list corresponding to one univariate expansion as
-#'   described in \code{\link{MFPCA}}.
-#' @param funDataObject An object of class \code{\link[funData]{funData}},
-#'   representing the (univariate) functional data, for which the expansion will
-#'   be calculated
-#'
-#' @return \item{args}{A list of parameters to be passed to
-#'   \code{\link{univBasisExpansion}}}.
-#'
-#' @keywords internal
-findUniArgs <- function(uniExpansion, funDataObject)
-{
-  if(all(names(uniExpansion) == "type")) # i.e. all other values are defaults
-    args <- list(funDataObject = funDataObject, NULL)
-  else
-  {
-    args <- uniExpansion[names(uniExpansion) != "type"]
-    args$funDataObject <- funDataObject
-  }
-
-  return(args)
 }
