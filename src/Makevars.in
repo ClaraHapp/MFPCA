@@ -1,9 +1,2 @@
-all: $(SHLIB)
-ifeq (@HAVE_FFTW@, TRUE)
-	PKG_CPPFLAGS=@CPPFLAGS@ @FFTW_CFLAGS@
-	PKG_LIBS=@LIBS@ @FFTW_LIBS@
-else
-	@echo "Did not find library fftw, installing package without fftw functions."
-endif
-
-
+PKG_LIBS=@FFTW_LIBS@
+PKG_CFLAGS=@FFTW_CFLAGS@
