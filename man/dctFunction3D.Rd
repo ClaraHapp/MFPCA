@@ -5,13 +5,13 @@
 \title{Calculate linear combinations of orthonormal cosine basis functions on
 three-dimensional domains}
 \usage{
-dctFunction3D(scores, xVal, parallel = FALSE)
+dctFunction3D(scores, argvals, parallel = FALSE)
 }
 \arguments{
 \item{scores}{A sparse matrix of dimension \eqn{N x L}, representing the
 \eqn{L} scores (coefficients) for each observation \eqn{i = 1, \ldots, N}.}
 
-\item{xVal}{A list containing a two numeric vectors, corresponding to the x-
+\item{argvals}{A list containing a two numeric vectors, corresponding to the x-
 and y-values.}
 
 \item{parallel}{Logical. If \code{TRUE}, the coefficients for the basis
@@ -22,7 +22,7 @@ and y-values.}
 }
 \value{
 An object of class \code{funData} with \eqn{N} observations on the
-  two-dimensional domain specified by \code{xVal}, corresponding to the
+  two-dimensional domain specified by \code{argvals}, corresponding to the
   linear combination of orthonormal cosine basis functions.
 }
 \description{

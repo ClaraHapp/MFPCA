@@ -5,13 +5,13 @@
 \title{Calculate linear combinations of spline basis functions on one-dimensional
 domains}
 \usage{
-splineFunction1D(scores, xVal, bs, m, k)
+splineFunction1D(scores, argvals, bs, m, k)
 }
 \arguments{
 \item{scores}{A matrix of dimension \eqn{N x K}, representing the \eqn{K}
 scores (coefficients) for each observation \eqn{i = 1, \ldots, N}.}
 
-\item{xVal}{A list containing a vector of x-values.}
+\item{argvals}{A list containing a vector of x-values.}
 
 \item{bs}{A character string, specifying the type of basis functions to be
 used. Please refer to
@@ -24,7 +24,7 @@ used. Please refer to
 }
 \value{
 An object of class \code{funData} with \eqn{N} observations on
-  \code{xVal}, corresponding to the linear combination of spline basis
+  \code{argvals}, corresponding to the linear combination of spline basis
   functions.
 }
 \description{

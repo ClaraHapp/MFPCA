@@ -4,10 +4,10 @@
 \alias{efPoly}
 \title{Legendre Polynomials of degree 0,...,M-1}
 \usage{
-efPoly(xVal, M)
+efPoly(argvals, M)
 }
 \arguments{
-\item{xVal}{A vector, defining a (fine) grid on the interval for which the
+\item{argvals}{A vector, defining a (fine) grid on the interval for which the
 Legendre polynomials are computed.}
 
 \item{M}{An integer, specifying the number (and hence the degree) of

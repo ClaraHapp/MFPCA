@@ -66,7 +66,7 @@ analysis by smoothed covariance based on code from \link[refund]{fpca.sc}
   oldPar <- par(no.readonly = TRUE)
 
   # simulate data
-  sim <- simFunData(xVal = seq(-1,1, 0.01), M = 5, eFunType = "Poly",
+  sim <- simFunData(argvals = seq(-1,1, 0.01), M = 5, eFunType = "Poly",
                     eValType = "exponential", N = 100)
 
   # calculate univariate FPCA

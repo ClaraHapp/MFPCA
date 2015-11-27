@@ -4,7 +4,7 @@
 \alias{simMultiWeight}
 \title{Simulate multivariate eigenfunctions based on weighted orthonormal bases}
 \usage{
-simMultiWeight(xVal, M, eFunType, ignoreDeg = NULL, eValType, N)
+simMultiWeight(argvals, M, eFunType, ignoreDeg = NULL, eValType, N)
 }
 \description{
 Simulate multivariate eigenfunctions based on weighted orthonormal bases

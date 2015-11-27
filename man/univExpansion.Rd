@@ -4,7 +4,7 @@
 \alias{univExpansion}
 \title{Calculate a univariate basis expansion}
 \usage{
-univExpansion(type, scores, xVal, functions, params = NULL)
+univExpansion(type, scores, argvals, functions, params = NULL)
 }
 \arguments{
 \item{type}{A character string, specifying the basis for which the
@@ -13,7 +13,7 @@ decomposition is to be calculated.}
 \item{scores}{A matrix of scores (coefficients) for each observation based on
 the given basis functions.}
 
-\item{xVal}{A list, representing the domain of the basis functions. See
+\item{argvals}{A list, representing the domain of the basis functions. See
 \linkS4class{funData} for details.}
 
 \item{functions}{A functional data object, representing the basis functions.

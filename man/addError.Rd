@@ -30,7 +30,7 @@ oldPar <- par(no.readonly = TRUE)
 set.seed(1)
 
 # Univariate functional data
-plain <- simFunData(xVal = seq(0,1, 0.01), M = 10, eFunType = "Fourier",
+plain <- simFunData(argvals = seq(0,1, 0.01), M = 10, eFunType = "Fourier",
                     eValType = "linear", N = 1)$simData
 noisy <- addError(plain , sd = 0.5)
 veryNoisy <- addError(plain, sd = 2)
@@ -41,7 +41,7 @@ plot(veryNoisy, type = "p", pch = 4, add = TRUE)
 legend("topright", c("Plain", "Noisy", "Very Noisy"), lty=  c(1, NA, NA), pch = c(NA, 20 ,4))
 
 # Multivariate functional data
-plain <- simMultiFunData(type = "split", xVal = list(seq(0,1, 0.01), seq(-.5,.5, 0.02)), M = 10,
+plain <- simMultiFunData(type = "split", argvals = list(seq(0,1, 0.01), seq(-.5,.5, 0.02)), M = 10,
                         eFunType = "Fourier", eValType = "linear", N = 1)$simData
 noisy <- addError(plain , sd = 0.5)
 veryNoisy <- addError(plain, sd = 2)

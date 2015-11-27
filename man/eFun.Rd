@@ -4,10 +4,10 @@
 \alias{eFun}
 \title{Generate orthonormal eigenfunctions}
 \usage{
-eFun(xVal, M, ignoreDeg = NULL, type)
+eFun(argvals, M, ignoreDeg = NULL, type)
 }
 \arguments{
-\item{xVal}{A vector of numerics, defining a (fine) grid on the interval for which the
+\item{argvals}{A vector of numerics, defining a (fine) grid on the interval for which the
 basis functions are computed.}
 
 \item{M}{An integer, specifying the number of functions that are
@@ -47,14 +47,14 @@ orthonormal eigenfunctions of the Wiener process. }
 \examples{
 oldPar <- par(no.readonly = TRUE)
 
-xVal <- seq(0,1,0.01)
+argvals <- seq(0,1,0.01)
 
 par(mfrow = c(3,2))
-plot(eFun(xVal, M = 4, type = "Poly"), main = "Poly", ylim = c(-3,3))
-plot(eFun(xVal, M = 4, ignoreDeg = 1:2, type = "PolyHigh"), main = "PolyHigh",  ylim = c(-3,3))
-plot(eFun(xVal, M = 4, type = "Fourier"), main = "Fourier", ylim = c(-3,3))
-plot(eFun(xVal, M = 4, type = "FourierLin"), main = "FourierLin", ylim = c(-3,3))
-plot(eFun(xVal, M = 4, type = "Wiener"), main = "Wiener",  ylim = c(-3,3))
+plot(eFun(argvals, M = 4, type = "Poly"), main = "Poly", ylim = c(-3,3))
+plot(eFun(argvals, M = 4, ignoreDeg = 1:2, type = "PolyHigh"), main = "PolyHigh",  ylim = c(-3,3))
+plot(eFun(argvals, M = 4, type = "Fourier"), main = "Fourier", ylim = c(-3,3))
+plot(eFun(argvals, M = 4, type = "FourierLin"), main = "FourierLin", ylim = c(-3,3))
+plot(eFun(argvals, M = 4, type = "Wiener"), main = "Wiener",  ylim = c(-3,3))
 par(oldPar)
 }
 \seealso{

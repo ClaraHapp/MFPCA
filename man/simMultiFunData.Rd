@@ -4,16 +4,16 @@
 \alias{simMultiFunData}
 \title{Simulate multivariate functional data}
 \usage{
-simMultiFunData(type, xVal, M, eFunType, ignoreDeg = NULL, eValType, N)
+simMultiFunData(type, argvals, M, eFunType, ignoreDeg = NULL, eValType, N)
 }
 \arguments{
 \item{type}{A character string, specifying the construction method for the
 multivariate eigenfunctions (either \code{"split"} or \code{"weighted"}).
 See Details.}
 
-\item{xVal}{A list, containing the observation points for each element of the
+\item{argvals}{A list, containing the observation points for each element of the
 multivariate functional data that is to be simulated. The length of
-\code{xVal} determines the number of elements in the resulting simulated
+\code{argvals} determines the number of elements in the resulting simulated
 multivariate functional data. See Details.}
 
 \item{M}{An integer (\code{type = "split"}) or a list of integers (\code{type
@@ -78,11 +78,11 @@ vector or \code{NULL}) are passed to the function \code{\link{eFun}} to
 generate a univariate orthornormal basis on a 'big' interval. Subsequently,
 the basis functions are split and translated, such that the \eqn{j}-th part
 of the split function is defined on the interval corresponding to
-\code{xVal[[j]]}. The elements of the multivariate basis functions are given
+\code{argvals[[j]]}. The elements of the multivariate basis functions are given
 by these split parts of the original basis functions multiplied by a random
 sign \eqn{\sigma_j \in \{-1,1\}}{\sigma_j in {-1,1}}.}
 
-\subsection{Weighted orthonormal bases:}{ The parameters \code{xVal, M,
+\subsection{Weighted orthonormal bases:}{ The parameters \code{argvals, M,
 eFunType} and \code{ignoreDeg} are all lists of a similar structure. They are
 passed element-wise to the function \code{\link{eFun}} to generate
 orthornormal basis functions for each element of the multivariate functional
@@ -91,7 +91,7 @@ corresponding basis functions are constructed as tensor products of
 orthonormal basis functions in each direction (x- and y-direction).
 
 If the \eqn{j}-th element of the simulated data should be defined on a
-one-dimensional domain, then \itemize{ \item \code{xVal[[j]]} is a list,
+one-dimensional domain, then \itemize{ \item \code{argvals[[j]]} is a list,
 containing one vector of observation points. \item \code{M[[j]]} is an
 integer, specifiying the number of basis functions to use for this entry.
 \item  \code{eFunType[[j]]} is a character string, specifying the type of
@@ -101,7 +101,7 @@ specifying the degrees to ignore when constructing the orthonormal basis
 functions. The default value is \code{NULL}. }
 
 If the \eqn{j}-th element of the simulated data should be defined on a
-two-dimensional domain, then \itemize{ \item \code{xVal[[j]]} is a list,
+two-dimensional domain, then \itemize{ \item \code{argvals[[j]]} is a list,
 containing two vector of observation points, one for each direction
 (observation points in x-direction and in y-direction). \item \code{M[[j]]}
 is a vector of two integers, giving the number of basis functions for each
@@ -120,7 +120,7 @@ total number of basis functions (i.e. the product of \code{M[[j]]} for all
 oldPar <- par(no.readonly = TRUE)
 
 # split
-split <- simMultiFunData(type = "split", xVal = list(seq(0,1,0.01), seq(-0.5,0.5,0.02)),
+split <- simMultiFunData(type = "split", argvals = list(seq(0,1,0.01), seq(-0.5,0.5,0.02)),
                  M = 5, eFunType = "Poly", eValType = "linear", N = 7)
 
 par(mfrow = c(1,2))
@@ -129,7 +129,7 @@ plot(split$simData, main = "Split: Simulated Data")
 
 # weighted (one-dimensional domains)
 weighted1D <- simMultiFunData(type = "weighted",
-                 xVal = list(list(seq(0,1,0.01)), list(seq(-0.5,0.5,0.02))),
+                 argvals = list(list(seq(0,1,0.01)), list(seq(-0.5,0.5,0.02))),
                  M = c(5,5), eFunType = c("Poly", "Fourier"), eValType = "linear", N = 7)
 
 plot(weighted1D$trueFuns, main = "Weighted (1D): True Eigenfunctions", ylim = c(-2,2))
@@ -137,7 +137,7 @@ plot(weighted1D$simData, main = "Weighted (1D): Simulated Data")
 
 # weighted (one- and two-dimensional domains)
 weighted <- simMultiFunData(type = "weighted",
-               xVal = list(list(seq(0,1,0.01), seq(0,10,0.1)), list(seq(-0.5,0.5,0.01))),
+               argvals = list(list(seq(0,1,0.01), seq(0,10,0.1)), list(seq(-0.5,0.5,0.01))),
                M = list(c(5,4), 20), eFunType = list(c("Poly", "Fourier"), "Wiener"),
                eValType = "linear", N = 7)
 

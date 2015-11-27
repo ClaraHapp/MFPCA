@@ -132,7 +132,7 @@ splineBasis1D <- function(funDataObject, bs = "ps", m = NA, k = -1)
 {
   N <- nObs(funDataObject)
 
-  x <- funDataObject@xVal[[1]]
+  x <- funDataObject@argvals[[1]]
 
   # spline design matrix via gam
   g <- mgcv::gam(funDataObject@X[1, ] ~ s(x, bs = bs, m = m, k = k), fit = FALSE)
@@ -144,7 +144,7 @@ splineBasis1D <- function(funDataObject, bs = "ps", m = NA, k = -1)
   scores <- t(apply(funDataObject@X, 1, function(f, dM){lm(f ~ dM - 1)$coef}, dM = desMat)) # design matrix already includes intercept!
 
   return(list(scores = scores,
-              B = .calcBasisIntegrals(t(desMat), 1, funDataObject@xVal),
+              B = .calcBasisIntegrals(t(desMat), 1, funDataObject@argvals),
               ortho = FALSE,
               functions = NULL,
               settings = list(bs = bs, k = k, m = m)
@@ -193,7 +193,7 @@ splineBasis1Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
 {
   N <- nObs(funDataObject)
 
-  x <- funDataObject@xVal[[1]]
+  x <- funDataObject@argvals[[1]]
 
   if(parallel)
   {
@@ -218,7 +218,7 @@ splineBasis1Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
   scores <- rbind(scores, g$coef)
 
   return(list(scores = scores,
-              B = .calcBasisIntegrals(t(model.matrix(g)), 1, funDataObject@xVal),
+              B = .calcBasisIntegrals(t(model.matrix(g)), 1, funDataObject@argvals),
               ortho = FALSE,
               functions = NULL,
               settings = list(bs = bs, k = k, m = m)
@@ -264,7 +264,7 @@ splineBasis2D <- function(funDataObject, bs = "ps", m = NA, k = -1)
 {
   N <- nObs(funDataObject)
 
-  coord <- expand.grid(x = funDataObject@xVal[[1]], y = funDataObject@xVal[[2]])
+  coord <- expand.grid(x = funDataObject@argvals[[1]], y = funDataObject@argvals[[2]])
 
   # spline design matrix via gam
   g <- mgcv::gam(as.vector(funDataObject@X[1,,]) ~ te(coord$x, coord$y, bs = bs, m = m, k = k), data = coord, fit = FALSE)
@@ -279,7 +279,7 @@ splineBasis2D <- function(funDataObject, bs = "ps", m = NA, k = -1)
   B <- aperm(array(desMat, c(funData::nObsPoints(funDataObject), ncol(scores))), c(3,1,2))
 
   return(list(scores = scores,
-              B = .calcBasisIntegrals(B, 2, funDataObject@xVal),
+              B = .calcBasisIntegrals(B, 2, funDataObject@argvals),
               ortho = FALSE,
               functions = NULL,
               settings = list(bs = bs, k = k, m = m)
@@ -331,7 +331,7 @@ splineBasis2Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
 {
   N <- nObs(funDataObject)
 
-  coord <- expand.grid(x = funDataObject@xVal[[1]], y = funDataObject@xVal[[2]])
+  coord <- expand.grid(x = funDataObject@argvals[[1]], y = funDataObject@argvals[[2]])
 
   if(parallel)
   {
@@ -359,7 +359,7 @@ splineBasis2Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
   B <- aperm(array(model.matrix(g), c(nObsPoints(funDataObject), ncol(scores))), c(3,1,2))
 
   return(list(scores = scores,
-              B = .calcBasisIntegrals(B, 2, funDataObject@xVal),
+              B = .calcBasisIntegrals(B, 2, funDataObject@argvals),
               ortho = FALSE,
               functions = NULL,
               settings = list(bs = bs, k = k, m = m)
@@ -438,7 +438,7 @@ dctBasis2D <- function(funDataObject, qThresh, parallel = FALSE)
     }
 
   return(list(scores = sparseMatrix(i = res$i, j = res$j, x = res$x),
-              B = Matrix::Diagonal(n = max(res$j), x = prod(sapply(funDataObject@xVal, function(l){diff(range(l))}))/pi^2),
+              B = Matrix::Diagonal(n = max(res$j), x = prod(sapply(funDataObject@argvals, function(l){diff(range(l))}))/pi^2),
               ortho = FALSE,
               functions = NULL
   ))
@@ -551,7 +551,7 @@ dctBasis3D <- function(funDataObject, qThresh, parallel = FALSE)
     }
 
   return(list(scores = sparseMatrix(i = res$i, j = res$j, x = res$x),
-              B = Matrix::Diagonal(n = max(res$j), x = prod(sapply(funDataObject@xVal, function(l){diff(range(l))}))/pi^3),
+              B = Matrix::Diagonal(n = max(res$j), x = prod(sapply(funDataObject@argvals, function(l){diff(range(l))}))/pi^3),
               ortho = FALSE,
               functions = NULL
   ))

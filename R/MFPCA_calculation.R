@@ -14,14 +14,14 @@ globalVariables('j')
 #'
 #' @param basisFunctions Array of \code{npc} basis functions of dimensions \code{npc x M1} or \code{npc x M1 x M2}.
 #' @param dimSupp dimension of the support of the basis functions (1 or 2)
-#' @param xVal List of corresponding x-values.
+#' @param argvals List of corresponding x-values.
 #'
 #' @return A matrix containing the scalar product of all combinations of basis functions (matrix \eqn{B^{(j)}})
 #'
 #' @seealso \code{\link{MFPCA}}, \code{\link[funData]{dimSupp}}.
 #'
 #' @keywords internal
-.calcBasisIntegrals <- function(basisFunctions, dimSupp, xVal)
+.calcBasisIntegrals <- function(basisFunctions, dimSupp, argvals)
 {
   npc <- dim(basisFunctions)[1]
 
@@ -31,7 +31,7 @@ globalVariables('j')
 
   if(dimSupp == 1) # one-dimensional domain
   {
-    w <- funData:::.intWeights(xVal[[1]])
+    w <- funData:::.intWeights(argvals[[1]])
 
     for(m in 1:npc)
     {
@@ -41,8 +41,8 @@ globalVariables('j')
   }
   else # two-dimesional domain (otherwise function stops before!)
   {
-    w1 <- t(funData:::.intWeights(xVal[[1]]))
-    w2 <- funData:::.intWeights(xVal[[2]])
+    w1 <- t(funData:::.intWeights(argvals[[1]]))
+    w2 <- funData:::.intWeights(argvals[[2]])
 
     for(m in 1:npc)
     {
@@ -73,7 +73,7 @@ globalVariables('j')
 #' estimated trajectories for each observation based on the truncated
 #' Karhunen-Lo\`{e}ve representation \deqn{\hat x_i = \sum_{m = 1}^M \hat
 #' \rho_{im} \hat \psi_m}{\hat x_i = \sum_{m = 1}^M \hat \rho_{im} \hat \psi_m}
-#' are given if desired (\code{Yhat = TRUE}). The implementation of the
+#' are given if desired (\code{fit = TRUE}). The implementation of the
 #' observations \eqn{x_i = (x_i^{(1)}, \ldots , x_i^{(p)}),~ i = 1 , \ldots,
 #' N}{x_i = (x_i^(1), \ldots , x_i^(p)), i = 1 , \ldots, N}, the mean function
 #' and multivariate functional principal components \eqn{\hat \psi_1, \ldots,
@@ -128,7 +128,7 @@ globalVariables('j')
 #'   calculated for each element. See Details.
 #' @param weights An optional vector of weights, defaults to 1 for each element.
 #'   See Details.
-#' @param Yhat Logical. If \code{TRUE}, a truncated multivariate
+#' @param fit Logical. If \code{TRUE}, a truncated multivariate
 #'   Karhunen-Lo\`{e}ve representation for the data is calculated based on the
 #'   estimated scores and eigenfunctions.
 #' @param approx.eigen Logical. If \code{TRUE}, the eigenanalysis problem for
@@ -152,7 +152,7 @@ globalVariables('j')
 #'   \psi_M}.} \item{scores}{ A matrix of dimension \code{N x M} containing the
 #'   estimated scores \eqn{\hat \rho_{im}}.} \item{meanFunction}{A multivaraite
 #'   functional data object, corresponding to the mean function. The MFPCA is
-#'   applied to the de-meaned functions in \code{mFData}.}\item{Yhat}{A
+#'   applied to the de-meaned functions in \code{mFData}.}\item{fit}{A
 #'   \code{\link[funData]{multiFunData}} object containing estimated
 #'   trajectories for each observation based on the truncated Karhunen-Lo\`{e}ve
 #'   representation and the estimated scores and eigenfunctions.} \item{CI}{A
@@ -174,7 +174,7 @@ globalVariables('j')
 #' set.seed(1)
 #'
 #' ### simulate data (one-dimensional domains)
-#' sim <-  simMultiFunData(type = "split", xVal = list(seq(0,1,0.01), seq(-0.5,0.5,0.02)),
+#' sim <-  simMultiFunData(type = "split", argvals = list(seq(0,1,0.01), seq(-0.5,0.5,0.02)),
 #'                         M = 5, eFunType = "Poly", eValType = "linear", N = 100)
 #'
 #' # MFPCA based on univariate FPCA
@@ -204,7 +204,7 @@ globalVariables('j')
 #' ### ATTENTION: Takes long
 #' set.seed(2)
 #' sim <-  simMultiFunData(type = "weighted",
-#'                  xVal = list(list(seq(0,1,0.01), seq(-1,1,0.02)), list(seq(-0.5,0.5,0.01))),
+#'                  argvals = list(list(seq(0,1,0.01), seq(-1,1,0.02)), list(seq(-0.5,0.5,0.01))),
 #'                  M = list(c(4,5), 20), eFunType = list(c("Fourier", "Fourier"), "Poly"),
 #'                  eValType = "exponential", N = 150)
 #'
@@ -230,7 +230,7 @@ globalVariables('j')
 #' legend("bottomleft", c("True", "MFPCA"), lty = 1:2, lwd = c(2,1))
 #' }
 #' par(oldPar)
-MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), Yhat = FALSE, approx.eigen = TRUE,
+MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fit = FALSE, approx.eigen = TRUE,
                   bootstrap = FALSE, nBootstrap = NULL, bootstrapAlpha = 0.05, verbose = options()$verbose)
 {
   # number of components
@@ -293,7 +293,7 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), Yh
     cat("Calculating MFPCA (", format(Sys.time(), "%T"), ")\n", sep = "")
 
   res <- calcMFPCA(N = N, p = p, Bchol = Bchol, M = M, type = type, weights = weights,
-                   npc = npc, xVal = getxVal(mFData), uniBasis = uniBasis, Yhat = Yhat, approx.eigen = approx.eigen)
+                   npc = npc, argvals = getArgvals(mFData), uniBasis = uniBasis, fit = fit, approx.eigen = approx.eigen)
   res$meanFunction <- m # return mean function, too
 
   # bootstrap for eigenfunctions
@@ -305,7 +305,7 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), Yh
     booteFuns <- vector("list", p)
 
     for(j in 1:p)
-      booteFuns[[j]] <- array(NA, dim  = c(nBootstrap, M, sapply(mFData[[j]]@xVal, length)))
+      booteFuns[[j]] <- array(NA, dim  = c(nBootstrap, M, sapply(mFData[[j]]@argvals, length)))
 
     for(n in 1:nBootstrap)
     {
@@ -335,7 +335,7 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), Yh
 
       # calculate MFPCA for bootstrap sample (Bchol must not be recalculated as uFPCA basis functions are orthonormal!)
       tmpFuns <- calcMFPCA(N = N, p = p, Bchol = Bchol, M = M, type = type, weights = weights,
-                           npc = npcBoot, xVal = getxVal(mFData), uniBasis = bootBasis, Yhat = FALSE, approx.eigen = approx.eigen)$functions
+                           npc = npcBoot, argvals = getArgvals(mFData), uniBasis = bootBasis, fit = FALSE, approx.eigen = approx.eigen)$functions
 
       # flip bootstrap estimates if necessary
       tmpFuns <- flipFuns(res$functions, tmpFuns)
@@ -362,9 +362,9 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), Yh
       bootCI_lower <- bootCI_upper <-  vector("list", p)
       for(j in 1:p)
       {
-        bootCI_lower[[j]] <- funData(mFData[[j]]@xVal, apply(booteFuns[[j]], 2:length(dim(booteFuns[[j]])),
+        bootCI_lower[[j]] <- funData(mFData[[j]]@argvals, apply(booteFuns[[j]], 2:length(dim(booteFuns[[j]])),
                                                              quantile, bootstrapAlpha[alpha]/2))
-        bootCI_upper[[j]] <- funData(mFData[[j]]@xVal, apply(booteFuns[[j]],  2:length(dim(booteFuns[[j]])),
+        bootCI_upper[[j]] <- funData(mFData[[j]]@argvals, apply(booteFuns[[j]],  2:length(dim(booteFuns[[j]])),
                                                              quantile, 1 - bootstrapAlpha[alpha]/2))
       }
 
@@ -388,7 +388,7 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), Yh
 #' @importFrom irlba irlba
 #'
 #' @keywords internal
-calcMFPCA <- function(N, p, Bchol, M, type, weights, npc, xVal, uniBasis, Yhat = FALSE, approx.eigen = TRUE)
+calcMFPCA <- function(N, p, Bchol, M, type, weights, npc, argvals, uniBasis, fit = FALSE, approx.eigen = TRUE)
 {
   # combine all scores
   allScores <- foreach::foreach(j = 1:p, .combine = "cBind")%do%{uniBasis[[j]]$scores}
@@ -454,7 +454,7 @@ calcMFPCA <- function(N, p, Bchol, M, type, weights, npc, xVal, uniBasis, Yhat =
   eFunctions <- foreach::foreach(j = 1:p) %do% {
     univExpansion(type = type[j],
                   scores = 1/sqrt(weights[j] * values) * normFactors * t(tmpWeights[npcCum[j]+1:npc[j],]),
-                  xVal = xVal[[j]],
+                  argvals = argvals[[j]],
                   functions = uniBasis[[j]]$functions,
                   params = uniBasis[[j]]$settings)
   }
@@ -463,17 +463,17 @@ calcMFPCA <- function(N, p, Bchol, M, type, weights, npc, xVal, uniBasis, Yhat =
               functions = multiFunData(eFunctions),
               scores = scores)
 
-  if(Yhat)
+  if(fit)
   {
     # calculate truncated Karhunen-Loeve representation
-    Yhat <- foreach::foreach(j = 1:p) %do% {
+    fit <- foreach::foreach(j = 1:p) %do% {
       univExpansion(type = "default", # calculate linear combination of multivariate basis functions
                     scores = scores,
-                    xVal = xVal[[j]],
+                    argvals = argvals[[j]],
                     functions = eFunctions[[j]],
                     params = NULL)
     }
-    res$Yhat <- multiFunData(Yhat)
+    res$fit <- multiFunData(fit)
   }
 
   return(res)

@@ -6,15 +6,15 @@
 \title{Calculate linear combinations of spline basis functions on two-dimensional
 domains}
 \usage{
-splineFunction2D(scores, xVal, bs, m, k)
+splineFunction2D(scores, argvals, bs, m, k)
 
-splineFunction2Dpen(scores, xVal, bs, m, k)
+splineFunction2Dpen(scores, argvals, bs, m, k)
 }
 \arguments{
 \item{scores}{A matrix of dimension \eqn{N x K}, representing the \eqn{K}
 scores (coefficients) for each observation \eqn{i = 1, \ldots, N}.}
 
-\item{xVal}{A list containing a two numeric vectors, corresponding to the x-
+\item{argvals}{A list containing a two numeric vectors, corresponding to the x-
 and y-values.}
 
 \item{bs}{An vector of character strings (or a single character), the type of
@@ -29,7 +29,7 @@ basis. See \code{\link[mgcv]{s}} for details.}
 }
 \value{
 An object of class \code{funData} with \eqn{N} observations on the
-  two-dimensional domain specified by \code{xVal}, corresponding to the
+  two-dimensional domain specified by \code{argvals}, corresponding to the
   linear combination of spline basis functions.
 }
 \description{

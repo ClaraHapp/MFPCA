@@ -4,10 +4,10 @@
 \alias{efFourier}
 \title{Calculate the first M Fourier basis functions}
 \usage{
-efFourier(xVal, M, linear = F)
+efFourier(argvals, M, linear = F)
 }
 \arguments{
-\item{xVal}{A vector, defining a (fine) grid on the interval for which the
+\item{argvals}{A vector, defining a (fine) grid on the interval for which the
 Fourier basis functions are computed.}
 
 \item{M}{An integer, specifying the number of basis functions that are
@@ -30,7 +30,7 @@ an arbitrary interval.
 If \code{linear}, the last basis function does not belong to the  Fourier
 basis, but is the linear function orthogonalized to all previous Fourier
 basis functions via the Gram-Schmidt method. This is implemented only if
-\code{xVals} is a grid defining the unit interval \eqn{[0,1]}.
+\code{argvalss} is a grid defining the unit interval \eqn{[0,1]}.
 }
 \seealso{
 \code{\link[funData]{funData}}, \code{\link{simFunData}}, \code{\link{simMultiFunData}}.

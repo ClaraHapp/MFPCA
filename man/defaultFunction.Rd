@@ -4,13 +4,13 @@
 \alias{defaultFunction}
 \title{Calculate a linear combination of arbitrary basis function}
 \usage{
-defaultFunction(scores, xVal, functions)
+defaultFunction(scores, argvals, functions)
 }
 \arguments{
 \item{scores}{A matrix of dimension \eqn{N x K}, representing the \eqn{K}
 scores (coefficients) for each observation \eqn{i = 1, \ldots, N}.}
 
-\item{xVal}{A list containing a vector of x-values, representing a  \eqn{M_1
+\item{argvals}{A list containing a vector of x-values, representing a  \eqn{M_1
 x ...x M_p} dimensional interval.}
 
 \item{functions}{A \code{funData} object, representing \eqn{K} basis
@@ -18,7 +18,7 @@ x ...x M_p} dimensional interval.}
 }
 \value{
 An object of class \code{funData} with \eqn{N} observations on
-  \code{xVal}, corresponding to the linear combination of the basis
+  \code{argvals}, corresponding to the linear combination of the basis
   functions.
 }
 \description{

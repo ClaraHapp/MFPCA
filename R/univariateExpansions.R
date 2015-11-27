@@ -20,7 +20,7 @@ NULL
 #'
 #' @param type A character string, specifying the basis for which the
 #'   decomposition is to be calculated.
-#' @param xVal A list, representing the domain of the basis functions. See
+#' @param argvals A list, representing the domain of the basis functions. See
 #'   \linkS4class{funData} for details.
 #' @param scores A matrix of scores (coefficients) for each observation based on
 #'   the given basis functions.
@@ -38,15 +38,15 @@ NULL
 #'   \link{defaultFunction}
 #'
 #' @export univExpansion
-univExpansion <- function(type, scores, xVal, functions, params = NULL)
+univExpansion <- function(type, scores, argvals, functions, params = NULL)
 {
   params$scores <- scores
   params$functions <- functions
 
-  if(is.numeric(xVal))
-    xVal <- list(xVal)
+  if(is.numeric(argvals))
+    argvals <- list(argvals)
 
-  params$xVal <- xVal
+  params$argvals <- argvals
 
   res <- switch(type,
                 "uFPCA" = do.call(fpcaFunction, params),
@@ -71,22 +71,22 @@ univExpansion <- function(type, scores, xVal, functions, params = NULL)
 #'
 #' @param scores A matrix of dimension \eqn{N x K}, representing the \eqn{K}
 #'   scores (coefficients) for each observation \eqn{i = 1, \ldots, N}.
-#' @param xVal A list containing a vector of x-values, representing a  \eqn{M_1
+#' @param argvals A list containing a vector of x-values, representing a  \eqn{M_1
 #'   x ...x M_p} dimensional interval.
 #' @param functions A \code{funData} object, representing \eqn{K} basis
 #'   functions on a \eqn{M_1 x ...x M_p} dimensional domain.
 #'
 #' @return An object of class \code{funData} with \eqn{N} observations on
-#'   \code{xVal}, corresponding to the linear combination of the basis
+#'   \code{argvals}, corresponding to the linear combination of the basis
 #'   functions.
 #'
 #' @seealso univExpansion
-defaultFunction <- function(scores, xVal, functions)
+defaultFunction <- function(scores, argvals, functions)
 {
   d <- dim(functions@X)
 
   # collapse higher-dimensional functions and resize the result
-  return(funData(xVal, array(scores %*% array(functions@X, dim = c(d[1], prod(d[-1]))),
+  return(funData(argvals, array(scores %*% array(functions@X, dim = c(d[1], prod(d[-1]))),
                              dim = c(dim(scores)[1],d[-1]))) )
 }
 
@@ -98,17 +98,17 @@ defaultFunction <- function(scores, xVal, functions)
 #'
 #' @param scores A matrix of dimension \eqn{N x K}, representing the \eqn{K}
 #'   scores (coefficients) for each observation \eqn{i = 1, \ldots, N}.
-#' @param xVal A list containing a vector of x-values.
+#' @param argvals A list containing a vector of x-values.
 #' @param functions A \code{funData} object, representing the FPCA basis.
 #'
 #' @return An object of class \code{funData} with \eqn{N} observations on
-#'   \code{xVal}, corresponding to the linear combination of the functional
+#'   \code{argvals}, corresponding to the linear combination of the functional
 #'   principal components.
 #'
 #' @seealso univExpansion
-fpcaFunction <- function(scores, xVal, functions)
+fpcaFunction <- function(scores, argvals, functions)
 {
-  return(funData(xVal, scores %*% functions@X))
+  return(funData(argvals, scores %*% functions@X))
 }
 
 
@@ -121,7 +121,7 @@ fpcaFunction <- function(scores, xVal, functions)
 #'
 #' @param scores A matrix of dimension \eqn{N x K}, representing the \eqn{K}
 #'   scores (coefficients) for each observation \eqn{i = 1, \ldots, N}.
-#' @param xVal A list containing a vector of x-values.
+#' @param argvals A list containing a vector of x-values.
 #' @param bs A character string, specifying the type of basis functions to be
 #'   used. Please refer to
 #'   \code{\link[mgcv]{smooth.terms}} for a list of possible basis functions.
@@ -130,23 +130,23 @@ fpcaFunction <- function(scores, xVal, functions)
 #'   \code{\link[mgcv]{s}} for details.
 #'
 #' @return An object of class \code{funData} with \eqn{N} observations on
-#'   \code{xVal}, corresponding to the linear combination of spline basis
+#'   \code{argvals}, corresponding to the linear combination of spline basis
 #'   functions.
 #'
 #' @seealso univExpansion
 #'
 #' @importFrom mgcv gam
-splineFunction1D <- function(scores, xVal, bs, m, k)
+splineFunction1D <- function(scores, argvals, bs, m, k)
 {
   N <- nrow(scores)
 
-  x <- xVal[[1]]
+  x <- argvals[[1]]
 
   # spline design matrix via gam
   desMat <- mgcv::gam(rep(0, length(x)) ~ s(x, bs = bs, m = m, k = k), fit = FALSE)$X
 
   # calculate functions as linear combination of splines
-  res <- funData(xVal,
+  res <- funData(argvals,
                  scores %*% t(desMat))
 
   return(res)
@@ -165,7 +165,7 @@ splineFunction1D <- function(scores, xVal, bs, m, k)
 #'
 #' @param scores A matrix of dimension \eqn{N x K}, representing the \eqn{K}
 #'   scores (coefficients) for each observation \eqn{i = 1, \ldots, N}.
-#' @param xVal A list containing a two numeric vectors, corresponding to the x-
+#' @param argvals A list containing a two numeric vectors, corresponding to the x-
 #'   and y-values.
 #' @param bs An vector of character strings (or a single character), the type of
 #'   basis functions to be used. Please refer to \code{\link[mgcv]{te}} for a
@@ -176,25 +176,25 @@ splineFunction1D <- function(scores, xVal, bs, m, k)
 #'   used.  See  \code{\link[mgcv]{s}} for details.
 #'
 #' @return An object of class \code{funData} with \eqn{N} observations on the
-#'   two-dimensional domain specified by \code{xVal}, corresponding to the
+#'   two-dimensional domain specified by \code{argvals}, corresponding to the
 #'   linear combination of spline basis functions.
 #'
 #' @seealso univExpansion
 #'
 #' @importFrom mgcv gam
-splineFunction2D <- function(scores, xVal, bs, m, k)
+splineFunction2D <- function(scores, argvals, bs, m, k)
 {
   N <- nrow(scores)
 
-  coord <- expand.grid(x = xVal[[1]], y = xVal[[2]])
+  coord <- expand.grid(x = argvals[[1]], y = argvals[[2]])
 
   # spline design matrix via gam
   desMat <- mgcv::gam(rep(0, dim(coord)[1]) ~ te(coord$x, coord$y, bs = bs, m = m, k = k), data = coord, fit = FALSE)$X
 
   # calculate functions as linear combination of splines
-  res <- funData(xVal,
+  res <- funData(argvals,
                  array(scores %*% t(desMat),
-                       dim = c(N, length(xVal[[1]]), length(xVal[[2]]))))
+                       dim = c(N, length(argvals[[1]]), length(argvals[[2]]))))
 
   return(res)
 }
@@ -203,20 +203,20 @@ splineFunction2D <- function(scores, xVal, bs, m, k)
 #' @rdname splineFunction2D
 #'
 #' @importFrom mgcv gam
-splineFunction2Dpen <- function(scores, xVal, bs, m, k)
+splineFunction2Dpen <- function(scores, argvals, bs, m, k)
 {
   N <- nrow(scores)
 
-  coord <- expand.grid(x = xVal[[1]], y = xVal[[2]])
+  coord <- expand.grid(x = argvals[[1]], y = argvals[[2]])
 
   # spline design matrix via gam
   desMat <- mgcv::bam(rep(0, dim(coord)[1]) ~ te(coord$x, coord$y, bs = bs, m = m, k = k), data = coord, fit = FALSE,
                       chunk.size = nrow(coord))$X # use exactly the given grid, no chunks
 
   # calculate functions as linear combination of splines
-  res <- funData(xVal,
+  res <- funData(argvals,
                  array(scores %*% t(desMat),
-                       dim = c(N, length(xVal[[1]]), length(xVal[[2]]))))
+                       dim = c(N, length(argvals[[1]]), length(argvals[[2]]))))
 
   return(res)
 }
@@ -236,7 +236,7 @@ splineFunction2Dpen <- function(scores, xVal, bs, m, k)
 #'
 #' @param  scores A sparse matrix of dimension \eqn{N x L}, representing the
 #'   \eqn{L} scores (coefficients) for each observation \eqn{i = 1, \ldots, N}.
-#' @param xVal A list containing a two numeric vectors, corresponding to the x-
+#' @param argvals A list containing a two numeric vectors, corresponding to the x-
 #'   and y-values.
 #' @param parallel Logical. If \code{TRUE}, the coefficients for the basis
 #'   functions are calculated in parallel. The implementation is based on the
@@ -245,16 +245,16 @@ splineFunction2Dpen <- function(scores, xVal, bs, m, k)
 #'   details.
 #'
 #' @return An object of class \code{funData} with \eqn{N} observations on the
-#'   two-dimensional domain specified by \code{xVal}, corresponding to the
+#'   two-dimensional domain specified by \code{argvals}, corresponding to the
 #'   linear combination of orthonormal cosine basis functions.
 #'
 #' @seealso univExpansion
 #'
 #' @importFrom abind abind
-dctFunction2D <- function(scores, xVal, parallel = FALSE)
+dctFunction2D <- function(scores, argvals, parallel = FALSE)
 {
   # dimension of the image
-  dim <-sapply(xVal, length)
+  dim <-sapply(argvals, length)
 
   # get indices of sparse matrix
   scores <- as(scores, "dgTMatrix") # uncompressed format
@@ -268,7 +268,7 @@ dctFunction2D <- function(scores, xVal, parallel = FALSE)
       idct2D(scores@x[scores@i == i], 1 + scores@j[scores@i == i], dim = dim) # 0-indexing!
     }
 
-  return(funData(xVal, X = aperm(res, c(3,1,2))))
+  return(funData(argvals, X = aperm(res, c(3,1,2))))
 }
 
 
@@ -325,7 +325,7 @@ idct2D <- function(scores, ind, dim)
 #'
 #' @param  scores A sparse matrix of dimension \eqn{N x L}, representing the
 #'   \eqn{L} scores (coefficients) for each observation \eqn{i = 1, \ldots, N}.
-#' @param xVal A list containing a two numeric vectors, corresponding to the x-
+#' @param argvals A list containing a two numeric vectors, corresponding to the x-
 #'   and y-values.
 #' @param parallel Logical. If \code{TRUE}, the coefficients for the basis
 #'   functions are calculated in parallel. The implementation is based on the
@@ -334,16 +334,16 @@ idct2D <- function(scores, ind, dim)
 #'   details.
 #'
 #' @return An object of class \code{funData} with \eqn{N} observations on the
-#'   two-dimensional domain specified by \code{xVal}, corresponding to the
+#'   two-dimensional domain specified by \code{argvals}, corresponding to the
 #'   linear combination of orthonormal cosine basis functions.
 #'
 #' @seealso univExpansion
 #'
 #' @importFrom abind abind
-dctFunction3D <- function(scores, xVal, parallel = FALSE)
+dctFunction3D <- function(scores, argvals, parallel = FALSE)
 {
   # dimension of the image
-  dim <-sapply(xVal, length)
+  dim <-sapply(argvals, length)
 
   # get indices of sparse matrix
   scores <- as(scores, "dgTMatrix") # uncompressed format
@@ -357,7 +357,7 @@ dctFunction3D <- function(scores, xVal, parallel = FALSE)
       idct3D(scores@x[scores@i == i], 1 + scores@j[scores@i == i], dim = dim) # 0-indexing!
     }
 
-  return(funData(xVal, X = aperm(res, c(4,1,2,3))))
+  return(funData(argvals, X = aperm(res, c(4,1,2,3))))
 }
 
 

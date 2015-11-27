@@ -53,7 +53,7 @@ NULL
 #' set.seed(1)
 #'
 #' # univariate functional data
-#' full <- simFunData(xVal = seq(0,1, 0.01), M = 10, eFunType = "Fourier",
+#' full <- simFunData(argvals = seq(0,1, 0.01), M = 10, eFunType = "Fourier",
 #'                    eValType = "linear", N = 3)$simData
 #' sparse <- sparsify(full, minObs = 4, maxObs = 10)
 #'
@@ -62,7 +62,7 @@ NULL
 #' legend("topright", c("Full", "Sparse"), lty=  c(1, NA), pch = c(NA, 20))
 #'
 #' # Multivariate
-#' full <- simMultiFunData(type = "split", xVal = list(seq(0,1, 0.01), seq(-.5,.5, 0.02)),
+#' full <- simMultiFunData(type = "split", argvals = list(seq(0,1, 0.01), seq(-.5,.5, 0.02)),
 #'                         M = 10, eFunType = "Fourier", eValType = "linear", N = 3)$simData
 #' sparse <- sparsify(full, minObs = c(4, 30), maxObs = c(10, 40))
 #'
@@ -85,7 +85,7 @@ setMethod("sparsify", signature = "funData",
           function(funDataObject, minObs, maxObs){
             sparseData <- funDataObject
 
-            n <- length(sparseData@xVal[[1]]) # total number of observation points
+            n <- length(sparseData@argvals[[1]]) # total number of observation points
 
             for(i in 1:nObs(sparseData)) # for all observed functions
             {
@@ -133,7 +133,7 @@ setMethod("sparsify", signature = "multiFunData",
 #' set.seed(1)
 #'
 #' # Univariate functional data
-#' plain <- simFunData(xVal = seq(0,1, 0.01), M = 10, eFunType = "Fourier",
+#' plain <- simFunData(argvals = seq(0,1, 0.01), M = 10, eFunType = "Fourier",
 #'                     eValType = "linear", N = 1)$simData
 #' noisy <- addError(plain , sd = 0.5)
 #' veryNoisy <- addError(plain, sd = 2)
@@ -144,7 +144,7 @@ setMethod("sparsify", signature = "multiFunData",
 #' legend("topright", c("Plain", "Noisy", "Very Noisy"), lty=  c(1, NA, NA), pch = c(NA, 20 ,4))
 #'
 #' # Multivariate functional data
-#' plain <- simMultiFunData(type = "split", xVal = list(seq(0,1, 0.01), seq(-.5,.5, 0.02)), M = 10,
+#' plain <- simMultiFunData(type = "split", argvals = list(seq(0,1, 0.01), seq(-.5,.5, 0.02)), M = 10,
 #'                         eFunType = "Fourier", eValType = "linear", N = 1)$simData
 #' noisy <- addError(plain , sd = 0.5)
 #' veryNoisy <- addError(plain, sd = 2)
@@ -170,7 +170,7 @@ setMethod("addError", signature = "funData",
           function(funDataObject, sd){
             ME <- array(rnorm(prod(dim(funDataObject@X)), mean = 0, sd = sd),  dim(funDataObject@X))
 
-            return(funDataObject + funData(funDataObject@xVal, ME))
+            return(funDataObject + funData(funDataObject@argvals, ME))
           })
 
 #' Add gaussian white noise to multivariate functional data
@@ -187,7 +187,7 @@ setMethod("addError", signature = "multiFunData",
 #' This function iteratively calculates orthonormal Legendre polynomials of
 #' degree 0,...,M-1 on an arbitrary interval.
 #'
-#' @param xVal A vector, defining a (fine) grid on the interval for which the
+#' @param argvals A vector, defining a (fine) grid on the interval for which the
 #'   Legendre polynomials are computed.
 #' @param M An integer, specifying the number (and hence the degree) of
 #'   polynomials that are calculcated.
@@ -198,26 +198,26 @@ setMethod("addError", signature = "multiFunData",
 #' @seealso \code{\link[funData]{funData}}, \code{\link{simFunData}}, \code{\link{simMultiFunData}}.
 #'
 #' @keywords internal
-efPoly <- function(xVal, M)
+efPoly <- function(argvals, M)
 {
-  Phi <- matrix(NA, ncol = length(xVal), nrow = M)
+  Phi <- matrix(NA, ncol = length(argvals), nrow = M)
 
   Phi[1, ] <- 1
   if(M == 1)
-    return(funData(xVal, Phi))
+    return(funData(argvals, Phi))
 
-  Phi[2, ] <- (2*(xVal-min(xVal))/diff(range(xVal))-1)
+  Phi[2, ] <- (2*(argvals-min(argvals))/diff(range(argvals))-1)
 
   if(M > 2)
   {
     for(m in 3:M) # for each function
-      Phi[m, ] <- (2*m-3)/(m-1)*(2*(xVal-min(xVal))/diff(range(xVal))-1)*Phi[m-1, ]- (m-2)/(m-1)*Phi[m-2, ]
+      Phi[m, ] <- (2*m-3)/(m-1)*(2*(argvals-min(argvals))/diff(range(argvals))-1)*Phi[m-1, ]- (m-2)/(m-1)*Phi[m-2, ]
   }
 
   for(m in 1:M) # normalize
-    Phi[m, ] <- sqrt((2*m-1)/diff(range(xVal)))*Phi[m, ]
+    Phi[m, ] <- sqrt((2*m-1)/diff(range(argvals)))*Phi[m, ]
 
-  return(funData(xVal, Phi))
+  return(funData(argvals, Phi))
 }
 
 
@@ -229,9 +229,9 @@ efPoly <- function(xVal, M)
 #' If \code{linear}, the last basis function does not belong to the  Fourier
 #' basis, but is the linear function orthogonalized to all previous Fourier
 #' basis functions via the Gram-Schmidt method. This is implemented only if
-#' \code{xVals} is a grid defining the unit interval \eqn{[0,1]}.
+#' \code{argvalss} is a grid defining the unit interval \eqn{[0,1]}.
 #'
-#' @param xVal A vector, defining a (fine) grid on the interval for which the
+#' @param argvals A vector, defining a (fine) grid on the interval for which the
 #'   Fourier basis functions are computed.
 #' @param M An integer, specifying the number of basis functions that are
 #'   calculcated.
@@ -246,35 +246,35 @@ efPoly <- function(xVal, M)
 #' @seealso \code{\link[funData]{funData}}, \code{\link{simFunData}}, \code{\link{simMultiFunData}}.
 #'
 #' @keywords internal
-efFourier <- function(xVal, M, linear=F)
+efFourier <- function(argvals, M, linear=F)
 {
-  Phi <- matrix(NA, nrow = M, ncol = length(xVal))
+  Phi <- matrix(NA, nrow = M, ncol = length(argvals))
 
-  Phi[1,] <- sqrt(1/diff(range(xVal)))
+  Phi[1,] <- sqrt(1/diff(range(argvals)))
 
   if(M == 1)
-    return(funData(xVal, Phi))
+    return(funData(argvals, Phi))
 
   for(m in 2:M)
   {
     if(m%%2 == 0) # m even
-      Phi[m, ] <- sqrt(2/diff(range(xVal)))*cos((m%/%2)*(2*pi*(xVal-min(xVal))/diff(range(xVal))-pi))
+      Phi[m, ] <- sqrt(2/diff(range(argvals)))*cos((m%/%2)*(2*pi*(argvals-min(argvals))/diff(range(argvals))-pi))
     else # m odd
-      Phi[m, ] <- sqrt(2/diff(range(xVal)))*sin((m%/%2)*(2*pi*(xVal-min(xVal))/diff(range(xVal))-pi))
+      Phi[m, ] <- sqrt(2/diff(range(argvals)))*sin((m%/%2)*(2*pi*(argvals-min(argvals))/diff(range(argvals))-pi))
   }
 
   if(linear) # overwrite Phi[M, ], add linear function and orthonormalize (Gram-Schmidt)
   {
-    if(!all.equal(range(xVal) , c(0,1)))
-      stop("efFourier, option linear: not yet implemented for xVals != [0,1]!")
+    if(!all.equal(range(argvals) , c(0,1)))
+      stop("efFourier, option linear: not yet implemented for argvalss != [0,1]!")
 
     # orthogonalize (exact function)
-    Phi[M, ] <- xVal - 1/2  + rowSums(apply(matrix(1:((M-1)%/%2)), 1, function(k) (-1)^k/(pi*k)*sin(k*(2*pi*xVal-pi))))
+    Phi[M, ] <- argvals - 1/2  + rowSums(apply(matrix(1:((M-1)%/%2)), 1, function(k) (-1)^k/(pi*k)*sin(k*(2*pi*argvals-pi))))
     # normalize
     Phi[M, ] <-  Phi[M, ]/sqrt(1/3-1/4 -1/(2*pi^2)* sum( 1/(1:((M-1)%/%2))^2 ))
   }
 
-  return(funData(xVal, Phi))
+  return(funData(argvals, Phi))
 }
 
 
@@ -283,7 +283,7 @@ efFourier <- function(xVal, M, linear=F)
 #' This function calculates the first M (orthonormal) eigenfunctions of the
 #' Wiener process on an arbitrary interval.
 #'
-#' @param xVal A vector, defining a (fine) grid on the interval for which the
+#' @param argvals A vector, defining a (fine) grid on the interval for which the
 #'   eigenfunctions are computed.
 #' @param M An integer, specifying the number of eigenfunctions that are
 #'   calculcated.
@@ -295,11 +295,11 @@ efFourier <- function(xVal, M, linear=F)
 #' @seealso \code{\link[funData]{funData}}, \code{\link{simFunData}}, \code{\link{simMultiFunData}}.
 #'
 #' @keywords internal
-efWiener <- function(xVal, M)
+efWiener <- function(argvals, M)
 {
-  Phi <- sapply(1:M, function(m,t){sqrt(2/diff(range(t)))*sin( (pi/2) * (2*m - 1) * (t-min(t))/diff(range(t)))}, t=xVal)
+  Phi <- sapply(1:M, function(m,t){sqrt(2/diff(range(t)))*sin( (pi/2) * (2*m - 1) * (t-min(t))/diff(range(t)))}, t=argvals)
 
-  return(funData(xVal, t(Phi)))
+  return(funData(argvals, t(Phi)))
 }
 
 
@@ -323,7 +323,7 @@ efWiener <- function(xVal, M)
 #' unit interval \eqn{[0,1]} only. \item \code{"Wiener"}: Calculate the first \eqn{M}
 #' orthonormal eigenfunctions of the Wiener process. }
 #'
-#' @param xVal A vector of numerics, defining a (fine) grid on the interval for which the
+#' @param argvals A vector of numerics, defining a (fine) grid on the interval for which the
 #'   basis functions are computed.
 #' @param M An integer, specifying the number of functions that are
 #'   calculated.
@@ -343,28 +343,28 @@ efWiener <- function(xVal, M)
 #'  @examples
 #' oldPar <- par(no.readonly = TRUE)
 #'
-#' xVal <- seq(0,1,0.01)
+#' argvals <- seq(0,1,0.01)
 #'
 #' par(mfrow = c(3,2))
-#' plot(eFun(xVal, M = 4, type = "Poly"), main = "Poly", ylim = c(-3,3))
-#' plot(eFun(xVal, M = 4, ignoreDeg = 1:2, type = "PolyHigh"), main = "PolyHigh",  ylim = c(-3,3))
-#' plot(eFun(xVal, M = 4, type = "Fourier"), main = "Fourier", ylim = c(-3,3))
-#' plot(eFun(xVal, M = 4, type = "FourierLin"), main = "FourierLin", ylim = c(-3,3))
-#' plot(eFun(xVal, M = 4, type = "Wiener"), main = "Wiener",  ylim = c(-3,3))
+#' plot(eFun(argvals, M = 4, type = "Poly"), main = "Poly", ylim = c(-3,3))
+#' plot(eFun(argvals, M = 4, ignoreDeg = 1:2, type = "PolyHigh"), main = "PolyHigh",  ylim = c(-3,3))
+#' plot(eFun(argvals, M = 4, type = "Fourier"), main = "Fourier", ylim = c(-3,3))
+#' plot(eFun(argvals, M = 4, type = "FourierLin"), main = "FourierLin", ylim = c(-3,3))
+#' plot(eFun(argvals, M = 4, type = "Wiener"), main = "Wiener",  ylim = c(-3,3))
 #' par(oldPar)
-eFun <- function(xVal, M, ignoreDeg = NULL, type)
+eFun <- function(argvals, M, ignoreDeg = NULL, type)
 {
   ret <- switch(type,
-                Poly = efPoly(xVal, M),
+                Poly = efPoly(argvals, M),
                 PolyHigh ={
                   if(is.null(ignoreDeg ))
                     stop("eFun, type = PolyHigh: specify ignoreDeg !")
 
-                  extractObs(efPoly(xVal, M+length(ignoreDeg)), obs = -ignoreDeg)
+                  extractObs(efPoly(argvals, M+length(ignoreDeg)), obs = -ignoreDeg)
                 },
-                Fourier = efFourier(xVal, M, linear = FALSE),
-                FourierLin = efFourier(xVal, M, linear = TRUE),
-                Wiener = efWiener(xVal, M),
+                Fourier = efFourier(argvals, M, linear = FALSE),
+                FourierLin = efFourier(argvals, M, linear = TRUE),
+                Wiener = efWiener(argvals, M),
                 stop("eFun: choose either Poly, PolyHigh, Fourier, FourierLin or Wiener"))
   return(ret)
 }
@@ -409,7 +409,7 @@ eVal <- function(M, type)
 #' independently from a normal distribution with zero mean and decreasing
 #' variance based on the \code{\link{eVal}} function.
 #'
-#' @param xVal A numeric vector, containing the observation points (a fine grid
+#' @param argvals A numeric vector, containing the observation points (a fine grid
 #'   on a real interval) of the functional data that is to be simulated.
 #' @param M An integer, giving the number of unvariate basis functions to use.
 #'   See Details.
@@ -462,17 +462,17 @@ eVal <- function(M, type)
 #' plot(test_noBoth$trueFuns, main = "Neither linear nor constant basis function")
 #'
 #' par(oldPar)
-simFunData <- function(xVal, M, eFunType, ignoreDeg = NULL, eValType, N)
+simFunData <- function(argvals, M, eFunType, ignoreDeg = NULL, eValType, N)
 {
   # generate eigenfunctions
-  trueFuns <-  eFun(xVal, M, ignoreDeg = ignoreDeg, type = eFunType)
+  trueFuns <-  eFun(argvals, M, ignoreDeg = ignoreDeg, type = eFunType)
 
   # generate eigenvalues and scores
   trueVals <- eVal(M, eValType)
   scores <- t(replicate(N, rnorm(M, sd = sqrt(eVal(M, eValType)))))
 
   # truncated Karhunen-Lo\`{e}ve representation
-  simData <- funData(xVal, scores %*% trueFuns@X)
+  simData <- funData(argvals, scores %*% trueFuns@X)
 
   return(list(simData = simData,
               trueFuns = trueFuns,
@@ -514,11 +514,11 @@ simFunData <- function(xVal, M, eFunType, ignoreDeg = NULL, eValType, N)
 #' generate a univariate orthornormal basis on a 'big' interval. Subsequently,
 #' the basis functions are split and translated, such that the \eqn{j}-th part
 #' of the split function is defined on the interval corresponding to
-#' \code{xVal[[j]]}. The elements of the multivariate basis functions are given
+#' \code{argvals[[j]]}. The elements of the multivariate basis functions are given
 #' by these split parts of the original basis functions multiplied by a random
 #' sign \eqn{\sigma_j \in \{-1,1\}}{\sigma_j in {-1,1}}.}
 #'
-#' \subsection{Weighted orthonormal bases:}{ The parameters \code{xVal, M,
+#' \subsection{Weighted orthonormal bases:}{ The parameters \code{argvals, M,
 #' eFunType} and \code{ignoreDeg} are all lists of a similar structure. They are
 #' passed element-wise to the function \code{\link{eFun}} to generate
 #' orthornormal basis functions for each element of the multivariate functional
@@ -527,7 +527,7 @@ simFunData <- function(xVal, M, eFunType, ignoreDeg = NULL, eValType, N)
 #' orthonormal basis functions in each direction (x- and y-direction).
 #'
 #' If the \eqn{j}-th element of the simulated data should be defined on a
-#' one-dimensional domain, then \itemize{ \item \code{xVal[[j]]} is a list,
+#' one-dimensional domain, then \itemize{ \item \code{argvals[[j]]} is a list,
 #' containing one vector of observation points. \item \code{M[[j]]} is an
 #' integer, specifiying the number of basis functions to use for this entry.
 #' \item  \code{eFunType[[j]]} is a character string, specifying the type of
@@ -537,7 +537,7 @@ simFunData <- function(xVal, M, eFunType, ignoreDeg = NULL, eValType, N)
 #' functions. The default value is \code{NULL}. }
 #'
 #' If the \eqn{j}-th element of the simulated data should be defined on a
-#' two-dimensional domain, then \itemize{ \item \code{xVal[[j]]} is a list,
+#' two-dimensional domain, then \itemize{ \item \code{argvals[[j]]} is a list,
 #' containing two vector of observation points, one for each direction
 #' (observation points in x-direction and in y-direction). \item \code{M[[j]]}
 #' is a vector of two integers, giving the number of basis functions for each
@@ -555,9 +555,9 @@ simFunData <- function(xVal, M, eFunType, ignoreDeg = NULL, eValType, N)
 #' @param type A character string, specifying the construction method for the
 #'   multivariate eigenfunctions (either \code{"split"} or \code{"weighted"}).
 #'   See Details.
-#' @param xVal A list, containing the observation points for each element of the
+#' @param argvals A list, containing the observation points for each element of the
 #'   multivariate functional data that is to be simulated. The length of
-#'   \code{xVal} determines the number of elements in the resulting simulated
+#'   \code{argvals} determines the number of elements in the resulting simulated
 #'   multivariate functional data. See Details.
 #' @param M An integer (\code{type = "split"}) or a list of integers (\code{type
 #'   = "weighted"}), giving the number of unvariate basis functions to use. See
@@ -593,7 +593,7 @@ simFunData <- function(xVal, M, eFunType, ignoreDeg = NULL, eValType, N)
 #' oldPar <- par(no.readonly = TRUE)
 #'
 #' # split
-#' split <- simMultiFunData(type = "split", xVal = list(seq(0,1,0.01), seq(-0.5,0.5,0.02)),
+#' split <- simMultiFunData(type = "split", argvals = list(seq(0,1,0.01), seq(-0.5,0.5,0.02)),
 #'                  M = 5, eFunType = "Poly", eValType = "linear", N = 7)
 #'
 #' par(mfrow = c(1,2))
@@ -602,7 +602,7 @@ simFunData <- function(xVal, M, eFunType, ignoreDeg = NULL, eValType, N)
 #'
 #' # weighted (one-dimensional domains)
 #' weighted1D <- simMultiFunData(type = "weighted",
-#'                  xVal = list(list(seq(0,1,0.01)), list(seq(-0.5,0.5,0.02))),
+#'                  argvals = list(list(seq(0,1,0.01)), list(seq(-0.5,0.5,0.02))),
 #'                  M = c(5,5), eFunType = c("Poly", "Fourier"), eValType = "linear", N = 7)
 #'
 #' plot(weighted1D$trueFuns, main = "Weighted (1D): True Eigenfunctions", ylim = c(-2,2))
@@ -610,7 +610,7 @@ simFunData <- function(xVal, M, eFunType, ignoreDeg = NULL, eValType, N)
 #'
 #' # weighted (one- and two-dimensional domains)
 #' weighted <- simMultiFunData(type = "weighted",
-#'                xVal = list(list(seq(0,1,0.01), seq(0,10,0.1)), list(seq(-0.5,0.5,0.01))),
+#'                argvals = list(list(seq(0,1,0.01), seq(0,10,0.1)), list(seq(-0.5,0.5,0.01))),
 #'                M = list(c(5,4), 20), eFunType = list(c("Poly", "Fourier"), "Wiener"),
 #'                eValType = "linear", N = 7)
 #'
@@ -620,12 +620,12 @@ simFunData <- function(xVal, M, eFunType, ignoreDeg = NULL, eValType, N)
 #' plot(weighted$simData, main = "Weighted: Simulated Data (2nd observation)", obs = 2)
 #'
 #' par(oldPar)
-simMultiFunData <- function(type, xVal, M, eFunType, ignoreDeg = NULL, eValType, N)
+simMultiFunData <- function(type, argvals, M, eFunType, ignoreDeg = NULL, eValType, N)
 {
   # generate eigenfunctions
   trueFuns <- switch(type,
-                split = simMultiSplit(xVal, M, eFunType, ignoreDeg, eValType, N),
-                weighted = simMultiWeight(xVal, M, eFunType, ignoreDeg, eValType, N),
+                split = simMultiSplit(argvals, M, eFunType, ignoreDeg, eValType, N),
+                weighted = simMultiWeight(argvals, M, eFunType, ignoreDeg, eValType, N),
                 stop("simMultiFunData: choose either 'split' or 'weighted' for the simulation of multivariate functional data.")
                 )
 
@@ -644,7 +644,7 @@ simMultiFunData <- function(type, xVal, M, eFunType, ignoreDeg = NULL, eValType,
 
   for(j in 1:p)
   {
-    simData[[j]] <- funData(trueFuns[[j]]@xVal, array(0, dim = c(N, dim(trueFuns[[j]]@X)[-1])))
+    simData[[j]] <- funData(trueFuns[[j]]@argvals, array(0, dim = c(N, dim(trueFuns[[j]]@X)[-1])))
 
     if(dimSupp(trueFuns[[j]]) == 1)
       simData[[j]]@X <- scores %*% trueFuns[[j]]@X
@@ -667,26 +667,26 @@ simMultiFunData <- function(type, xVal, M, eFunType, ignoreDeg = NULL, eValType,
 #' Simulate multivariate eigenfunctions based on a split 'big' ONB
 #'
 #' @keywords internal
-simMultiSplit <- function(xVal, M, eFunType, ignoreDeg = NULL, eValType, N)
+simMultiSplit <- function(argvals, M, eFunType, ignoreDeg = NULL, eValType, N)
 {
   # consistency check
   if(any( c(length(M), length(eFunType), length(eValType)) != 1) )
-    stop("simMultiSplit: xVal, M, eFunType, eValType must all be of length 1!")
+    stop("simMultiSplit: argvals, M, eFunType, eValType must all be of length 1!")
 
   # number of elements
-  p <- length(xVal)
+  p <- length(argvals)
 
-  # "rearrange" xVals
-  x <- vector("list", length = length(xVal))
-  splitVals <- rep(NA, length(xVal)+1)
+  # "rearrange" argvalss
+  x <- vector("list", length = length(argvals))
+  splitVals <- rep(NA, length(argvals)+1)
 
-  x[[1]] <- unlist(xVal[[1]]) # convert to vector, if xVal[[1]] is a list
+  x[[1]] <- unlist(argvals[[1]]) # convert to vector, if argvals[[1]] is a list
   splitVals[1:2] <- c(0, length(x[[1]]))
 
   for(i in 2:p)
   {
-    x[[i]] <- unlist(xVal[[i]]) # convert to vector, if xVal[[i]] is a list
-    x[[i]] <- xVal[[i]] - min(xVal[[i]]) + max(x[[i-1]])
+    x[[i]] <- unlist(argvals[[i]]) # convert to vector, if argvals[[i]] is a list
+    x[[i]] <- argvals[[i]] - min(argvals[[i]]) + max(x[[i-1]])
     splitVals[i+1] <- splitVals[i]+length(x[[i]])
   }
 
@@ -700,7 +700,7 @@ simMultiSplit <- function(xVal, M, eFunType, ignoreDeg = NULL, eValType, N)
   trueFuns  <- vector("list", p)
 
   for(j in 1:p)
-    trueFuns[[j]] <- funData(xVal[[j]],  s[j] * f@X[,(1+splitVals[j]):splitVals[j+1]])
+    trueFuns[[j]] <- funData(argvals[[j]],  s[j] * f@X[,(1+splitVals[j]):splitVals[j+1]])
 
   return(multiFunData(trueFuns))
 }
@@ -713,12 +713,12 @@ simMultiSplit <- function(xVal, M, eFunType, ignoreDeg = NULL, eValType, N)
 #'@importFrom foreach %do%
 #'
 #' @keywords internal
-simMultiWeight <- function(xVal, M, eFunType, ignoreDeg = NULL, eValType, N)
+simMultiWeight <- function(argvals, M, eFunType, ignoreDeg = NULL, eValType, N)
 {
-  p <- length(xVal)
+  p <- length(argvals)
 
   # dimension for each component
-  dimsSupp <- foreach::foreach(j = 1:p, .combine = "c")%do%{length(xVal[[j]])}
+  dimsSupp <- foreach::foreach(j = 1:p, .combine = "c")%do%{length(argvals[[j]])}
 
   if(any(dimsSupp > 2))
     stop("Function simMultiWeight: method is not implemented for objects of dimension > 2!")
@@ -748,15 +748,15 @@ simMultiWeight <- function(xVal, M, eFunType, ignoreDeg = NULL, eValType, N)
   {
     if(dimsSupp[j] == 1) # one-dimensional
     {
-      basis[[j]] <- weight[j]*eFun(xVal[[j]][[1]], M = M[[j]], ignoreDeg = ignoreDeg[[j]], type = eFunType[[j]])@X
+      basis[[j]] <- weight[j]*eFun(argvals[[j]][[1]], M = M[[j]], ignoreDeg = ignoreDeg[[j]], type = eFunType[[j]])@X
     }
     else # dimsSupp[j] == 2, i.e. two-dimensional
     {
       # image basis
-      y1 <- eFun(xVal[[j]][[1]], M = M[[j]][1], ignoreDeg = ignoreDeg[[j]][[1]], type = eFunType[[j]][1])@X
-      y2 <- eFun(xVal[[j]][[2]], M = M[[j]][2], ignoreDeg = ignoreDeg[[j]][[2]], type = eFunType[[j]][2])@X
+      y1 <- eFun(argvals[[j]][[1]], M = M[[j]][1], ignoreDeg = ignoreDeg[[j]][[1]], type = eFunType[[j]][1])@X
+      y2 <- eFun(argvals[[j]][[2]], M = M[[j]][2], ignoreDeg = ignoreDeg[[j]][[2]], type = eFunType[[j]][2])@X
 
-      basis[[j]] <- array(0, c(prod(M[[j]]), length(xVal[[j]][[1]]), length(xVal[[j]][[2]])))
+      basis[[j]] <- array(0, c(prod(M[[j]]), length(argvals[[j]][[1]]), length(argvals[[j]][[2]])))
 
       for(l in 1:M[[j]][1])
       {
@@ -769,7 +769,7 @@ simMultiWeight <- function(xVal, M, eFunType, ignoreDeg = NULL, eValType, N)
   trueFuns <- vector("list", p)
 
   for(j in 1:p)
-    trueFuns[[j]] <- funData(xVal[[j]], basis[[j]])
+    trueFuns[[j]] <- funData(argvals[[j]], basis[[j]])
 
   return(multiFunData(trueFuns))
 }

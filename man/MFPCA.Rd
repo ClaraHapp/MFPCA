@@ -6,7 +6,7 @@
 Different (Dimensional) Domains}
 \usage{
 MFPCA(mFData, M, uniExpansions, weights = rep(1, length(mFData)),
-  Yhat = FALSE, approx.eigen = TRUE, bootstrap = FALSE,
+  fit = FALSE, approx.eigen = TRUE, bootstrap = FALSE,
   nBootstrap = NULL, bootstrapAlpha = 0.05, verbose = options()$verbose)
 }
 \arguments{
@@ -23,7 +23,7 @@ calculated for each element. See Details.}
 \item{weights}{An optional vector of weights, defaults to 1 for each element.
 See Details.}
 
-\item{Yhat}{Logical. If \code{TRUE}, a truncated multivariate
+\item{fit}{Logical. If \code{TRUE}, a truncated multivariate
 Karhunen-Lo\`{e}ve representation for the data is calculated based on the
 estimated scores and eigenfunctions.}
 
@@ -53,7 +53,7 @@ significance level for bootstrap intervals. Defaults to 0.05.}
   \psi_M}.} \item{scores}{ A matrix of dimension \code{N x M} containing the
   estimated scores \eqn{\hat \rho_{im}}.} \item{meanFunction}{A multivaraite
   functional data object, corresponding to the mean function. The MFPCA is
-  applied to the de-meaned functions in \code{mFData}.}\item{Yhat}{A
+  applied to the de-meaned functions in \code{mFData}.}\item{fit}{A
   \code{\link[funData]{multiFunData}} object containing estimated
   trajectories for each observation based on the truncated Karhunen-Lo\`{e}ve
   representation and the estimated scores and eigenfunctions.} \item{CI}{A
@@ -78,7 +78,7 @@ as \eqn{x_i}), the associated eigenvalues \eqn{\hat \nu_1 \geq \ldots \geq
 estimated trajectories for each observation based on the truncated
 Karhunen-Lo\`{e}ve representation \deqn{\hat x_i = \sum_{m = 1}^M \hat
 \rho_{im} \hat \psi_m}{\hat x_i = \sum_{m = 1}^M \hat \rho_{im} \hat \psi_m}
-are given if desired (\code{Yhat = TRUE}). The implementation of the
+are given if desired (\code{fit = TRUE}). The implementation of the
 observations \eqn{x_i = (x_i^{(1)}, \ldots , x_i^{(p)}),~ i = 1 , \ldots,
 N}{x_i = (x_i^(1), \ldots , x_i^(p)), i = 1 , \ldots, N}, the mean function
 and multivariate functional principal components \eqn{\hat \psi_1, \ldots,
@@ -130,7 +130,7 @@ oldPar <- par(no.readonly = TRUE)
 set.seed(1)
 
 ### simulate data (one-dimensional domains)
-sim <-  simMultiFunData(type = "split", xVal = list(seq(0,1,0.01), seq(-0.5,0.5,0.02)),
+sim <-  simMultiFunData(type = "split", argvals = list(seq(0,1,0.01), seq(-0.5,0.5,0.02)),
                         M = 5, eFunType = "Poly", eValType = "linear", N = 100)
 
 # MFPCA based on univariate FPCA
@@ -160,7 +160,7 @@ legend("bottomleft", c("True", "uFPCA", "splines"), lty = 1:3, lwd = c(2,1,1))
 ### ATTENTION: Takes long
 set.seed(2)
 sim <-  simMultiFunData(type = "weighted",
-                 xVal = list(list(seq(0,1,0.01), seq(-1,1,0.02)), list(seq(-0.5,0.5,0.01))),
+                 argvals = list(list(seq(0,1,0.01), seq(-1,1,0.02)), list(seq(-0.5,0.5,0.01))),
                  M = list(c(4,5), 20), eFunType = list(c("Fourier", "Fourier"), "Poly"),
                  eValType = "exponential", N = 150)
 

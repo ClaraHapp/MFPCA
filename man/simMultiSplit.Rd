@@ -4,7 +4,7 @@
 \alias{simMultiSplit}
 \title{Simulate multivariate eigenfunctions based on a split 'big' ONB}
 \usage{
-simMultiSplit(xVal, M, eFunType, ignoreDeg = NULL, eValType, N)
+simMultiSplit(argvals, M, eFunType, ignoreDeg = NULL, eValType, N)
 }
 \description{
 Simulate multivariate eigenfunctions based on a split 'big' ONB

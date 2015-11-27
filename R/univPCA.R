@@ -63,7 +63,7 @@
   D.inv = diag(1/evalues, nrow = npc, ncol = npc)
   Z = efunctions
   Y.tilde = Y.pred - matrix(mu, I.pred, D, byrow = TRUE)
-  Yhat = matrix(0, nrow = I.pred, ncol = D)
+  fit = matrix(0, nrow = I.pred, ncol = D)
   scores = matrix(NA, nrow = I.pred, ncol = npc)
   # no calculation of confidence bands, no variance matrix
   for (i.subj in 1:I.pred) {
@@ -75,10 +75,10 @@
                   ncol = dim(Z)[2])
     ZtZ_sD.inv = solve(crossprod(Zcur) + sigma2 * D.inv)
     scores[i.subj, ] = ZtZ_sD.inv %*% t(Zcur) %*% (Y.tilde[i.subj, obs.points])
-    Yhat[i.subj, ] = t(as.matrix(mu)) + scores[i.subj, ] %*%
+    fit[i.subj, ] = t(as.matrix(mu)) + scores[i.subj, ] %*%
       t(efunctions)
   }
-  ret.objects = c("Yhat", "scores", "mu", "efunctions", "evalues",
+  ret.objects = c("fit", "scores", "mu", "efunctions", "evalues",
                   "npc", "sigma2") # add sigma2 to output
   ret = lapply(1:length(ret.objects), function(u) get(ret.objects[u]))
   names(ret) = ret.objects
@@ -141,7 +141,7 @@
 #'   oldPar <- par(no.readonly = TRUE)
 #'
 #'   # simulate data
-#'   sim <- simFunData(xVal = seq(-1,1, 0.01), M = 5, eFunType = "Poly",
+#'   sim <- simFunData(argvals = seq(-1,1, 0.01), M = 5, eFunType = "Poly",
 #'                     eValType = "exponential", N = 100)
 #'
 #'   # calculate univariate FPCA
@@ -167,7 +167,7 @@ PACE <- function(funDataObject, predData = NULL, nbasis = 10, pve = 0.99, npc = 
 
   if(!is.null(predData))
   {
-    if(!isTRUE(all.equal(funDataObject@xVal, predData@xVal)))
+    if(!isTRUE(all.equal(funDataObject@argvals, predData@argvals)))
       stop("PACE: funDataObject and predData must be defined on the same domains!")
 
     Y.pred = predData@X
@@ -177,12 +177,12 @@ PACE <- function(funDataObject, predData = NULL, nbasis = 10, pve = 0.99, npc = 
     Y.pred = NULL # use only funDataObject
   }
 
-  res <- .PACE(X = funDataObject@xVal[[1]], funDataObject@X, Y.pred = Y.pred, nbasis = nbasis, pve = pve, npc = npc, makePD = makePD)
+  res <- .PACE(X = funDataObject@argvals[[1]], funDataObject@X, Y.pred = Y.pred, nbasis = nbasis, pve = pve, npc = npc, makePD = makePD)
 
-  return(list(fit = funData(funDataObject@xVal, res$Yhat),
+  return(list(fit = funData(funDataObject@argvals, res$fit),
               scores = res$scores,
-              mu = funData(funDataObject@xVal, matrix(res$mu, nrow = 1)),
-              functions = funData(funDataObject@xVal, t(res$efunctions)),
+              mu = funData(funDataObject@argvals, matrix(res$mu, nrow = 1)),
+              functions = funData(funDataObject@argvals, t(res$efunctions)),
               values = res$evalues,
               npc = res$npc,
               sigma2 = res$sigma2

@@ -4,10 +4,10 @@
 \alias{simFunData}
 \title{Simulate univariate functional data}
 \usage{
-simFunData(xVal, M, eFunType, ignoreDeg = NULL, eValType, N)
+simFunData(argvals, M, eFunType, ignoreDeg = NULL, eValType, N)
 }
 \arguments{
-\item{xVal}{A numeric vector, containing the observation points (a fine grid
+\item{argvals}{A numeric vector, containing the observation points (a fine grid
 on a real interval) of the functional data that is to be simulated.}
 
 \item{M}{An integer, giving the number of unvariate basis functions to use.

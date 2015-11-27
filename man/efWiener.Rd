@@ -4,10 +4,10 @@
 \alias{efWiener}
 \title{Calculate the first M eigenfunctions of the Wiener process}
 \usage{
-efWiener(xVal, M)
+efWiener(argvals, M)
 }
 \arguments{
-\item{xVal}{A vector, defining a (fine) grid on the interval for which the
+\item{argvals}{A vector, defining a (fine) grid on the interval for which the
 eigenfunctions are computed.}
 
 \item{M}{An integer, specifying the number of eigenfunctions that are

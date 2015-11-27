@@ -5,19 +5,19 @@
 \title{Calculate a linear combination of a functional principal component basis on
 one-dimensional domains}
 \usage{
-fpcaFunction(scores, xVal, functions)
+fpcaFunction(scores, argvals, functions)
 }
 \arguments{
 \item{scores}{A matrix of dimension \eqn{N x K}, representing the \eqn{K}
 scores (coefficients) for each observation \eqn{i = 1, \ldots, N}.}
 
-\item{xVal}{A list containing a vector of x-values.}
+\item{argvals}{A list containing a vector of x-values.}
 
 \item{functions}{A \code{funData} object, representing the FPCA basis.}
 }
 \value{
 An object of class \code{funData} with \eqn{N} observations on
-  \code{xVal}, corresponding to the linear combination of the functional
+  \code{argvals}, corresponding to the linear combination of the functional
   principal components.
 }
 \description{
