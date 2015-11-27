@@ -187,6 +187,11 @@ legend("bottomleft", c("True", "MFPCA"), lty = 1:2, lwd = c(2,1))
 }
 par(oldPar)
 }
+\references{
+C. Happ, S. Greven (2015): Multivariate Functional Principal
+  Component Analysis for Data Observed on Different (Dimensional) Domains.
+  Preprint on arXiv: \url{http://arxiv.org/abs/1509.02029}
+}
 \seealso{
 \code{\link[funData]{multiFunData}}, \code{\link{PACE}}, \code{\link{univDecomp}},
   \code{\link{univExpansion}}.

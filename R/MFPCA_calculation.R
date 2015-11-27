@@ -165,6 +165,10 @@ globalVariables('j')
 #'
 #' @importFrom foreach %do%
 #'
+#' @references C. Happ, S. Greven (2015): Multivariate Functional Principal
+#'   Component Analysis for Data Observed on Different (Dimensional) Domains.
+#'   Preprint on arXiv: \url{http://arxiv.org/abs/1509.02029}
+#'
 #' @seealso \code{\link[funData]{multiFunData}}, \code{\link{PACE}}, \code{\link{univDecomp}},
 #'   \code{\link{univExpansion}}.
 #'

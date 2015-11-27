@@ -11,8 +11,8 @@ simMultiFunData(type, argvals, M, eFunType, ignoreDeg = NULL, eValType, N)
 multivariate eigenfunctions (either \code{"split"} or \code{"weighted"}).
 See Details.}
 
-\item{argvals}{A list, containing the observation points for each element of the
-multivariate functional data that is to be simulated. The length of
+\item{argvals}{A list, containing the observation points for each element of
+the multivariate functional data that is to be simulated. The length of
 \code{argvals} determines the number of elements in the resulting simulated
 multivariate functional data. See Details.}
 
@@ -47,16 +47,17 @@ based on the truncated Karhunen-Lo\`{e}ve representation. See
 }
 \description{
 This function provides a unified simulation structure for multivariate
-functional data \eqn{f_1, \ldots, f_N} on one- or two-dimensional domains, based on a truncated
-multivariate Karhunen-Lo\`{e}ve representation: \deqn{f_i(t) = \sum_{m = 1}^M
-\rho_{i,m} \psi_m(t).} The multivariate eigenfunctions (basis functions)
-\eqn{\psi_m}  are constructed from univariate orthonormal bases. There are two
-different concepts for the construction, that can be chosen by the parameter
-\code{type}: A split orthonormal basis (\code{split}, only one-dimensional
-domains) and weighted univariate orthonormal bases (\code{weighted}, one- and
-two-dimensional domains). The scores \eqn{\rho_{i,m}} in the
-Karhunen-Lo\`{e}ve representation are simulated independently from a normal
-distribution with zero mean and decreasing variance. See Details.
+functional data \eqn{f_1, \ldots, f_N} on one- or two-dimensional domains,
+based on a truncated multivariate Karhunen-Lo\`{e}ve representation:
+\deqn{f_i(t) = \sum_{m = 1}^M \rho_{i,m} \psi_m(t).} The multivariate
+eigenfunctions (basis functions) \eqn{\psi_m}  are constructed from
+univariate orthonormal bases. There are two different concepts for the
+construction, that can be chosen by the parameter \code{type}: A split
+orthonormal basis (\code{split}, only one-dimensional domains) and weighted
+univariate orthonormal bases (\code{weighted}, one- and two-dimensional
+domains). The scores \eqn{\rho_{i,m}} in the Karhunen-Lo\`{e}ve
+representation are simulated independently from a normal distribution with
+zero mean and decreasing variance. See Details.
 }
 \details{
 The parameter \code{type} defines how the eigenfunction basis for the
@@ -78,9 +79,9 @@ vector or \code{NULL}) are passed to the function \code{\link{eFun}} to
 generate a univariate orthornormal basis on a 'big' interval. Subsequently,
 the basis functions are split and translated, such that the \eqn{j}-th part
 of the split function is defined on the interval corresponding to
-\code{argvals[[j]]}. The elements of the multivariate basis functions are given
-by these split parts of the original basis functions multiplied by a random
-sign \eqn{\sigma_j \in \{-1,1\}}{\sigma_j in {-1,1}}.}
+\code{argvals[[j]]}. The elements of the multivariate basis functions are
+given by these split parts of the original basis functions multiplied by a
+random sign \eqn{\sigma_j \in \{-1,1\}}{\sigma_j in {-1,1}}.}
 
 \subsection{Weighted orthonormal bases:}{ The parameters \code{argvals, M,
 eFunType} and \code{ignoreDeg} are all lists of a similar structure. They are
@@ -147,6 +148,11 @@ plot(weighted$simData, main = "Weighted: Simulated Data (1st observation)", obs 
 plot(weighted$simData, main = "Weighted: Simulated Data (2nd observation)", obs = 2)
 
 par(oldPar)
+}
+\references{
+C. Happ, S. Greven (2015): Multivariate Functional Principal
+  Component Analysis for Data Observed on Different (Dimensional) Domains.
+  Preprint on arXiv: \url{http://arxiv.org/abs/1509.02029}
 }
 \seealso{
 \code{\link[funData]{multiFunData}}, \code{\link{eFun}},
