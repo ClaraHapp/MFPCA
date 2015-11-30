@@ -1,9 +1,9 @@
 # MFPCA
-`MFPCA` is an `R`-package for calculating a PCA for multivariate functional data observed on different domains, that may also differ in dimension. The estimation algorithm relies on univariate basis expansions for each element of the multivariate functional data. Multivariate and univariate functional data objects are represented by S4 classes for this type of data implemented in the `R`-package [`funData`](https://github.com/ClaraHapp/funData).
+`MFPCA` is an `R`-package for calculating a PCA for multivariate functional data observed on different domains, that may also differ in dimension. The estimation algorithm relies on univariate basis expansions for each element of the multivariate functional data.
 
 ## Highlights ##
 
-`MFPCA` allows to calculate a principal component analysis for combined functional data on up to three-dimensional domains:
+`MFPCA` allows to calculate a principal component analysis for multivariate (i.e. combined) functional data on up to three-dimensional domains:
 
 * Standard functional data defined on a (one-dimensional) interval
 * Functional data with two-dimensional domains (images)
@@ -20,7 +20,7 @@ The representation of the data is based on the object-oriented [`funData`](https
 
 ## Installation ##
 
-To install the latest version directly from Github, please use `devtools::install_github("ClaraHapp/MFPCA")` (install [`devtools`](https://github.com/hadley/devtools) before).
+To install the latest version directly from GitHub, please use `devtools::install_github("ClaraHapp/MFPCA")` (install [`devtools`](https://github.com/hadley/devtools) before).
 
 If you would like to use the cosine bases make sure that the `C`-library [`fftw3`](http://www.fftw.org/) is installed on your computer before you install `MFPCA`. Otherwise, `MFPCA` is installed without the cosine bases and will throw a warning if you attempt to use functions that need `fftw3`.
 
