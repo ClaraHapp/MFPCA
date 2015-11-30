@@ -12,7 +12,7 @@
 It implements various univariate bases:
 
 * Univariate functional PCA (only one-dimensional domains)
-* Spline bases (with optional smoothing penalty, one- and two-dimensional domains)
+* Spline bases (one- and two-dimensional domains; with optional smoothing penalty)
 * Cosine bases (two- and three-dimensional domains; fast implementation built on DCT)
 
 The representation of the data is based on the object-oriented [`funData`](https://github.com/ClaraHapp/funData) package, hence all functionalities for plotting, arithmetics etc. included therein may be used.
