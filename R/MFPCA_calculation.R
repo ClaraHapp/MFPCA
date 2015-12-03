@@ -55,154 +55,160 @@ globalVariables('j')
 }
 
 
-#' Multivariate Fuctional Principal Component Analysis for Functions on
+#' Multivariate Functional Principal Component Analysis for Functions on 
 #' Different (Dimensional) Domains
-#'
-#' This function calculates a multivariate fuctional principal component
-#' analysis (MFPCA) based on iid. observations \eqn{x_1, \ldots, x_N} of a
-#' multivariate functional data-generating process \eqn{X = (X^{(1)}, \ldots
-#' X^{(p)})}{X = X^(1), \ldots, X^(p)} with elements \eqn{X^{(j)} \in
-#' L^2(\mathcal{T}_j)}{X^(j) in L^2(calT_j)} defined on a domain
-#' \eqn{\mathcal{T}_j \subset IR^{d_j}}{calT_j of IR^{d_j}}. In particular, the
-#' elements can be defined on different (dimensional) domains. The results
-#' contain the mean function, the estimated multivariate functional principal
-#' components \eqn{\hat \psi_1, \ldots, \hat \psi_M} (having the same structure
-#' as \eqn{x_i}), the associated eigenvalues \eqn{\hat \nu_1 \geq \ldots \geq
-#' \hat \nu_M > 0} and the individual scores \eqn{\hat \rho_{im} =
-#' \widehat{<x_i, \psi_m>}}{\hat \rho_{im} = \hat{<x_i, \psi_m>}}. Moreover,
-#' estimated trajectories for each observation based on the truncated
-#' Karhunen-Lo\`{e}ve representation \deqn{\hat x_i = \sum_{m = 1}^M \hat
-#' \rho_{im} \hat \psi_m}{\hat x_i = \sum_{m = 1}^M \hat \rho_{im} \hat \psi_m}
-#' are given if desired (\code{fit = TRUE}). The implementation of the
-#' observations \eqn{x_i = (x_i^{(1)}, \ldots , x_i^{(p)}),~ i = 1 , \ldots,
-#' N}{x_i = (x_i^(1), \ldots , x_i^(p)), i = 1 , \ldots, N}, the mean function
-#' and multivariate functional principal components \eqn{\hat \psi_1, \ldots,
-#' \hat \psi_M} uses the \code{\link[funData]{multiFunData}} class, which is
+#' 
+#' This function calculates a multivariate fuctional principal component 
+#' analysis (MFPCA) based on iid. observations \eqn{x_1, \ldots, x_N} of a 
+#' multivariate functional data-generating process \eqn{X = (X^{(1)}, \ldots 
+#' X^{(p)})}{X = X^(1), \ldots, X^(p)} with elements \eqn{X^{(j)} \in 
+#' L^2(\mathcal{T}_j)}{X^(j) in L^2(calT_j)} defined on a domain 
+#' \eqn{\mathcal{T}_j \subset IR^{d_j}}{calT_j of IR^{d_j}}. In particular, the 
+#' elements can be defined on different (dimensional) domains. The results 
+#' contain the mean function, the estimated multivariate functional principal 
+#' components \eqn{\hat \psi_1, \ldots, \hat \psi_M} (having the same structure 
+#' as \eqn{x_i}), the associated eigenvalues \eqn{\hat \nu_1 \geq \ldots \geq 
+#' \hat \nu_M > 0} and the individual scores \eqn{\hat \rho_{im} = 
+#' \widehat{<x_i, \psi_m>}}{\hat \rho_{im} = \hat{<x_i, \psi_m>}}. Moreover, 
+#' estimated trajectories for each observation based on the truncated 
+#' Karhunen-Lo\`{e}ve representation \deqn{\hat x_i = \sum_{m = 1}^M \hat 
+#' \rho_{im} \hat \psi_m}{\hat x_i = \sum_{m = 1}^M \hat \rho_{im} \hat \psi_m} 
+#' are given if desired (\code{fit = TRUE}). The implementation of the 
+#' observations \eqn{x_i = (x_i^{(1)}, \ldots , x_i^{(p)}),~ i = 1 , \ldots, 
+#' N}{x_i = (x_i^(1), \ldots , x_i^(p)), i = 1 , \ldots, N}, the mean function 
+#' and multivariate functional principal components \eqn{\hat \psi_1, \ldots, 
+#' \hat \psi_M} uses the \code{\link[funData]{multiFunData}} class, which is 
 #' defined in the package \pkg{funData}.
-#'
-#' \subsection{Weighted MFPCA:}{If the elements vary considerably in domain,
-#' range or variation, a weight vector \eqn{w_1 , \ldots, w_p} can be supplied
-#' and the MFPCA is based on the weighted scalar product \deqn{<<f,g>>_w =
-#' \sum_{j = 1}^p w_j \int_{\mathcal{T_j}} f^{(j)}(t) g^{(j)}(t) \mathrm{d}
+#' 
+#' \subsection{Weighted MFPCA:}{If the elements vary considerably in domain, 
+#' range or variation, a weight vector \eqn{w_1 , \ldots, w_p} can be supplied 
+#' and the MFPCA is based on the weighted scalar product \deqn{<<f,g>>_w = 
+#' \sum_{j = 1}^p w_j \int_{\mathcal{T_j}} f^{(j)}(t) g^{(j)}(t) \mathrm{d} 
 #' t}{<<f,g>>_w = \sum_{j = 1}^p w_j \int_\calT_j f^(j)(t) g^(j)(t) d t} and the
 #' corresponding weighted covariance operator \eqn{\Gamma_w}.}
-#'
+#' 
 #' \subsection{Pointwise bootstrap confidence bands:}{Optionally, 95\% pointwise
-#' bootstrap confidence bands are generated for the multivariate functional
-#' principal components \eqn{\hat \psi_1, \ldots, \hat \psi_M}{\hat \psi_1,
+#' bootstrap confidence bands are generated for the multivariate functional 
+#' principal components \eqn{\hat \psi_1, \ldots, \hat \psi_M}{\hat \psi_1, 
 #' \ldots, \hat \psi_M}.}
-#'
-#'
-#' \subsection{Univariate Expansions:}{The multivariate functional principal
-#' component analysis relies on a univariate basis expansion for each element
-#' \eqn{X^{(j)}}{X^(j)}. It can be supplied in several forms: \itemize{ \item
-#' Univariate functional principal component analysis. Then \code{uniExpansions
-#' = list(type = "uFPCA", params = list(nbasis, pve, npc, makePD))}, where
-#' \code{nbasis, pve, npc, makePD} are parameters passed to the
-#' \code{\link{PACE}} function for calculating the univariate functional
-#' principal component analysis. \item Spline basis functions (not penalized).
-#' Then \code{uniExpansions = list(type = "splines1D", params = list(bs, m,
-#' k))}, where \code{bs, m, k} are passed to the functions \code{\link{univDecomp}} and
-#' \code{\link{univExpansion}}. For two-dimensional tensor product splines,
-#' use \code{type = "splines2D"}. \item Spline basis functions (with smoothness
-#' penalty). Then \code{uniExpansions = list(type = "splines1DPen", params =
-#' list(bs, m, k))}, where \code{bs, m, k} are passed to the functions\code{\link{univDecomp}} and
-#' \code{\link{univExpansion}}. Analogously to the unpenalized case, use
-#' \code{type = "splines2Dpen"} for 2D penalized tensor product splines. \item
-#' Cosine basis functons. Use \code{uniExpansions = list(type = "DCT2D", params
-#' = list(qThresh, parallel )} for functions one two-dimensional domains
-#' (images) and \code{type = "DCT3D"} for 3D images. The calculation is based on
-#' the discrete cosine transform (DCT) implemented in the C-library
-#' \code{fftw3}. If this library is not available, the function will throw  a
-#' warning. \code{qThresh} gives the quantiel for hard thresholding the basis
-#' coefficients based on their absolute value. If \code{parallel = TRUE}, the
-#' coefficients for different images are calcualated in parallel.}
-#' See \link{univDecomp} and \link{univExpansion} for Details.}
-#'
-#' @param mFData A  \code{\link[funData]{multiFunData}} object containing the
-#'   observations \eqn{x_i = (x_i^{(1)}, \ldots , x_i^{(p)}),~ i = 1 , \ldots,
+#' 
+#' 
+#' \subsection{Univariate Expansions:}{The multivariate functional principal 
+#' component analysis relies on a univariate basis expansion for each element 
+#' \eqn{X^{(j)}}{X^(j)}. It can be supplied in several forms: \itemize{ \item 
+#' Univariate functional principal component analysis. Then \code{uniExpansions 
+#' = list(type = "uFPCA", params = list(nbasis, pve, npc, makePD))}, where 
+#' \code{nbasis, pve, npc, makePD} are parameters passed to the 
+#' \code{\link{PACE}} function for calculating the univariate functional 
+#' principal component analysis. \item Spline basis functions (not penalized). 
+#' Then \code{uniExpansions = list(type = "splines1D", params = list(bs, m, 
+#' k))}, where \code{bs, m, k} are passed to the functions 
+#' \code{\link{univDecomp}} and \code{\link{univExpansion}}. For two-dimensional
+#' tensor product splines, use \code{type = "splines2D"}. \item Spline basis 
+#' functions (with smoothness penalty). Then \code{uniExpansions = list(type = 
+#' "splines1DPen", params = list(bs, m, k))}, where \code{bs, m, k} are passed 
+#' to the functions\code{\link{univDecomp}} and \code{\link{univExpansion}}. 
+#' Analogously to the unpenalized case, use \code{type = "splines2Dpen"} for 2D 
+#' penalized tensor product splines. \item Cosine basis functons. Use 
+#' \code{uniExpansions = list(type = "DCT2D", params = list(qThresh, parallel )}
+#' for functions one two-dimensional domains (images) and \code{type = "DCT3D"} 
+#' for 3D images. The calculation is based on the discrete cosine transform 
+#' (DCT) implemented in the C-library \code{fftw3}. If this library is not 
+#' available, the function will throw  a warning. \code{qThresh} gives the 
+#' quantiel for hard thresholding the basis coefficients based on their absolute
+#' value. If \code{parallel = TRUE}, the coefficients for different images are 
+#' calcualated in parallel.} See \link{univDecomp} and \link{univExpansion} for 
+#' Details.}
+#' 
+#' @param mFData A  \code{\link[funData]{multiFunData}} object containing the 
+#'   observations \eqn{x_i = (x_i^{(1)}, \ldots , x_i^{(p)}),~ i = 1 , \ldots, 
 #'   N}{x_i = (x_i^(1), \ldots , x_i^(p)), i = 1 , \ldots, N}.
-#' @param M The number of multivariate functional principal components to
+#' @param M The number of multivariate functional principal components to 
 #'   calculate.
 #' @param uniExpansions A list characterizing the (univariate) expansion that is
 #'   calculated for each element. See Details.
 #' @param weights An optional vector of weights, defaults to 1 for each element.
 #'   See Details.
-#' @param fit Logical. If \code{TRUE}, a truncated multivariate
-#'   Karhunen-Lo\`{e}ve representation for the data is calculated based on the
+#' @param fit Logical. If \code{TRUE}, a truncated multivariate 
+#'   Karhunen-Lo\`{e}ve representation for the data is calculated based on the 
 #'   estimated scores and eigenfunctions.
-#' @param approx.eigen Logical. If \code{TRUE}, the eigenanalysis problem for
-#'   the estimated covariance matrix is solved approximately using the
-#'   \pkg{irlba} package, which is much faster. Defaults to \code{TRUE}.
-#' @param bootstrap Logical. If \code{TRUE}, pointwise bootstrap confidence
-#'   bands are calculated for the multivariate functional principal components.
+#' @param approx.eigen Logical. If \code{TRUE}, the eigenanalysis problem for 
+#'   the estimated covariance matrix is solved approximately using the 
+#'   \pkg{irlba} package, which is much faster. Defaults to \code{TRUE}. If the 
+#'   number \code{M} of eigenvalues that should be estimated is high with 
+#'   respect to the number of observations in \code{mFData} or the number of 
+#'   estimated univariate eigenfunctions, the approximation may be 
+#'   inappropriate. In this case, approx.eigen is set to \code{FALSE} and the
+#'   function throws a warning.
+#' @param bootstrap Logical. If \code{TRUE}, pointwise bootstrap confidence 
+#'   bands are calculated for the multivariate functional principal components. 
 #'   Defaults to \code{FALSE}. See Details.
-#' @param nBootstrap The number of bootstrap iterations to use. Defaults to
+#' @param nBootstrap The number of bootstrap iterations to use. Defaults to 
 #'   \code{NULL}, which leads to an error, if \code{bootstrap = TRUE}.
-#' @param bootstrapAlpha A vector of numerics (or a single number) giving the
+#' @param bootstrapAlpha A vector of numerics (or a single number) giving the 
 #'   significance level for bootstrap intervals. Defaults to 0.05.
-#' @param verbose Logical. If \code{TRUE}, the function reports
-#'   extra-information about the progress (incl. timestamps). Defaults to
+#' @param verbose Logical. If \code{TRUE}, the function reports 
+#'   extra-information about the progress (incl. timestamps). Defaults to 
 #'   \code{options()$verbose}.
-#'
-#' @return \item{values}{A vector of estimated eigenvalues \eqn{\hat \nu_1 ,
-#'   \ldots , \hat \nu_M}.} \item{functions}{A
-#'   \code{\link[funData]{multiFunData}} object containing the estimated
+#'   
+#' @return \item{values}{A vector of estimated eigenvalues \eqn{\hat \nu_1 , 
+#'   \ldots , \hat \nu_M}.} \item{functions}{A 
+#'   \code{\link[funData]{multiFunData}} object containing the estimated 
 #'   multivariate functional principal components \eqn{\hat \psi_1, \ldots, \hat
-#'   \psi_M}.} \item{scores}{ A matrix of dimension \code{N x M} containing the
-#'   estimated scores \eqn{\hat \rho_{im}}.} \item{meanFunction}{A multivaraite
-#'   functional data object, corresponding to the mean function. The MFPCA is
-#'   applied to the de-meaned functions in \code{mFData}.}\item{fit}{A
-#'   \code{\link[funData]{multiFunData}} object containing estimated
+#'   \psi_M}.} \item{scores}{ A matrix of dimension \code{N x M} containing the 
+#'   estimated scores \eqn{\hat \rho_{im}}.} \item{meanFunction}{A multivaraite 
+#'   functional data object, corresponding to the mean function. The MFPCA is 
+#'   applied to the de-meaned functions in \code{mFData}.}\item{fit}{A 
+#'   \code{\link[funData]{multiFunData}} object containing estimated 
 #'   trajectories for each observation based on the truncated Karhunen-Lo\`{e}ve
-#'   representation and the estimated scores and eigenfunctions.} \item{CI}{A
-#'   list of the same length as \code{bootstrapAlpha}, containing the pointwise
-#'   lower and upper bootstrap confidence bands for each significance level in
-#'   form of \code{\link[funData]{multiFunData}} objects (only if
+#'   representation and the estimated scores and eigenfunctions.} \item{CI}{A 
+#'   list of the same length as \code{bootstrapAlpha}, containing the pointwise 
+#'   lower and upper bootstrap confidence bands for each significance level in 
+#'   form of \code{\link[funData]{multiFunData}} objects (only if 
 #'   \code{bootstrap = TRUE}).}
-#'
+#'   
 #' @export MFPCA
-#'
+#'   
 #' @importFrom foreach %do%
-#'
-#' @references C. Happ, S. Greven (2015): Multivariate Functional Principal
-#'   Component Analysis for Data Observed on Different (Dimensional) Domains.
+#'   
+#' @references C. Happ, S. Greven (2015): Multivariate Functional Principal 
+#'   Component Analysis for Data Observed on Different (Dimensional) Domains. 
 #'   Preprint on arXiv: \url{http://arxiv.org/abs/1509.02029}
-#'
-#' @seealso \code{\link[funData]{multiFunData}}, \code{\link{PACE}}, \code{\link{univDecomp}},
-#'   \code{\link{univExpansion}}.
-#'
+#'   
+#' @seealso \code{\link[funData]{multiFunData}}, \code{\link{PACE}}, 
+#'   \code{\link{univDecomp}}, \code{\link{univExpansion}}.
+#'   
 #' @examples
 #' oldPar <- par(no.readonly = TRUE)
-#'
+#' 
 #' set.seed(1)
-#'
+#' 
 #' ### simulate data (one-dimensional domains)
 #' sim <-  simMultiFunData(type = "split", argvals = list(seq(0,1,0.01), seq(-0.5,0.5,0.02)),
 #'                         M = 5, eFunType = "Poly", eValType = "linear", N = 100)
-#'
-#' # MFPCA based on univariate FPCA
+#' 
+#' # MFPCA based on univariate FPCA (throws a warning, as default approx.eigen=TRUE is inappropriate)
 #' \donttest{uFPCA <- MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "uFPCA"),
 #'                                                                   list(type = "uFPCA")))}
-#'
+#' 
 #' # MFPCA based on univariate spline expansions
 #' splines <- MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "splines1D", k = 10),
 #'                                                           list(type = "splines1D", k = 10)))
-#'
+#' 
 #' # flip to make results more clear
 #' \donttest{uFPCA$functions <- flipFuns(sim$trueFuns, uFPCA$functions)}
 #' splines$functions <- flipFuns(sim$trueFuns, splines$functions)
-#'
+#' 
 #' par(mfrow = c(1,2))
 #' plot(sim$trueFuns[[1]], main = "Eigenfunctions", lwd = 2)
 #' \donttest{plot(uFPCA$functions[[1]], lty = 2, add = TRUE)}
 #' plot(splines$functions[[1]], lty = 3, add = TRUE)
-#'
+#' 
 #' plot(sim$trueFuns[[2]], main = "Eigenfunctions", lwd = 2)
 #' \donttest{plot(uFPCA$functions[[2]], lty = 2, add = TRUE)}
 #' plot(splines$functions[[2]], lty = 3, add = TRUE)
 #' legend("bottomleft", c("True", "uFPCA", "splines"), lty = 1:3, lwd = c(2,1,1))
-#'
+#' 
 #' ### simulate data (two- and one-dimensional domains)
 #' \donttest{
 #' ### ATTENTION: Takes long
@@ -211,23 +217,23 @@ globalVariables('j')
 #'                  argvals = list(list(seq(0,1,0.01), seq(-1,1,0.02)), list(seq(-0.5,0.5,0.01))),
 #'                  M = list(c(4,5), 20), eFunType = list(c("Fourier", "Fourier"), "Poly"),
 #'                  eValType = "exponential", N = 150)
-#'
+#' 
 #' # MFPCA based on univariate spline expansions (for images) and univariate FPCA (for functions)
 #' pca <- MFPCA(sim$simData, M = 10,
 #'              uniExpansions = list(list(type = "splines2D", params = list(k = c(10,12))),
 #'                              list(type = "uFPCA"))
 #'              )
-#'
+#' 
 #' # flip to make results more clear
 #' pca$functions <- flipFuns(extractObs(sim$trueFuns, obs = 1:10), pca$functions)
-#'
+#' 
 #' par(mfrow = c(5,2), mar = rep(2,4))
 #' for(m in 2:6) # for m = 1, image.plot (used in plot(funData)) produces an error...
 #' {
 #'   plot(sim$trueFuns[[1]], main = paste("True, m = ", m), obs = m)
 #'   plot(pca$functions[[1]], main = paste("Estimate, m = ", m), obs = m)
 #' }
-#'
+#' 
 #' par(mfrow = c(1,1))
 #' plot(sim$trueFuns[[2]], main = "Eigenfunctions", lwd = 2, obs=  1:5)
 #' plot(pca$functions[[2]], lty = 2, add = TRUE, obs=  1:5)
@@ -249,7 +255,7 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fi
   if(bootstrap)
   {
     if(is.null(nBootstrap))
-      stop("Specify number of bootstrap iterations")
+      stop("Specify number of bootstrap iterations.")
 
     if(any(!(0 < bootstrapAlpha & bootstrapAlpha < 1)))
       stop("Significance level for bootstrap confidence bands must be in (0,1).")
@@ -401,13 +407,21 @@ calcMFPCA <- function(N, p, Bchol, M, type, weights, npc, argvals, uniBasis, fit
   allWeights <- foreach::foreach(j = 1:p, .combine = "c")%do%{rep(sqrt(weights[j]), npc[j])}
 
   Z <- allScores %*% Matrix::Diagonal(x = allWeights) / sqrt(N-1)
+  
+  # check if approximation is appropriate (cf. irlba)
+  if(approx.eigen & (M > min(N, sum(npc))/2))
+  {
+    warning("Calculating a large percentage of principal components, approximation may not be appropriate.
+            'approx.eigen' set to FALSE.")
+    approx.eigen = FALSE
+  }
 
   # check if non-orthonormal basis functions used and calculate PCA on scores
   if(is.null(Bchol))
   {
     if(approx.eigen)
     {
-      tmpSVD <- irlba::irlba(Z, nv = M, adjust = min(3, min(nrow(Z),ncol(Z)) - M))
+      tmpSVD <- irlba::irlba(Z, nv = M)
 
       vectors <- tmpSVD$v
       values <- tmpSVD$d[1:M]^2
