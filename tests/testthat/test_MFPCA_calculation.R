@@ -24,25 +24,41 @@ test_that("test .calcBasisIntegrals", {
 # rather plausibility checks
 test_that("test MFPCA main function", {
   # see also MFPCA examples
-  oldPar <- par(no.readonly = TRUE)
-  
   set.seed(1)
-  
-  ### simulate data (one-dimensional domains)
   sim <-  simMultiFunData(type = "split", argvals = list(seq(0,1,0.01), seq(-0.5,0.5,0.02)),
                           M = 5, eFunType = "Poly", eValType = "linear", N = 100)
   
-  # MFPCA based on univariate FPCA
-  uFPCA <- MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "uFPCA"),
-                                                          list(type = "uFPCA")))
+  # check errors
+  expect_error(MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "uFPCA"))), 
+                 "Function MFPCA_multidim: multivariate functional data object and univariate expansions must have the same length!")
+  expect_error(MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "uFPCA"), list(type = "uFPCA")), bootstrap = TRUE), 
+               "Specify number of bootstrap iterations.")
+  expect_error(MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "uFPCA"), list(type = "uFPCA")), 
+                     bootstrap = TRUE, nBootstrap = 10, bootstrapAlpha = -.1), 
+               "Significance level for bootstrap confidence bands must be in (0,1).")
+  expect_error(MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "uFPCA"), list(type = "uFPCA")), 
+                     bootstrap = TRUE, nBootstrap = 10, bootstrapAlpha = 1.5), 
+               "Significance level for bootstrap confidence bands must be in (0,1).")
   
-  # MFPCA based on univariate spline expansions
+  # check functionality
+  expect_warning(uFPCA <- MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "uFPCA"),
+                                                          list(type = "uFPCA"))), 
+                 "Calculating a large percentage of principal components, approximation may not be appropriate.
+            'approx.eigen' set to FALSE.")
   splines <- MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "splines1D", k = 10),
                                                             list(type = "splines1D", k = 10)))
   
-  # flip to make results more clear
-  uFPCA$functions <- flipFuns(sim$trueFuns, uFPCA$functions)
-  splines$functions <- flipFuns(sim$trueFuns, splines$functions)
+  # values
+  expect_identical(length(uFPCA$values), length(splines$values))
+  expect_equal(sum(uFPCA$values), sum(uFPCA$values))
+  expect_equal(uFPCA$values[1], 1.05175127)
+  expect_equal(splines$values[1], 1.05266096)
+  
+  # functions
+  expect_identical(nObs(uFPCA$functions), nObs(splines$functions))
+  expect_equal(norm(uFPCA$functions), norm(splines$functions))
+  expect_equal(norm(uFPCA$functions[[1]])[1], 0.57954971)
+  expect_equal(norm(splines$functions[[1]])[1], 0.57956679)
 })
 
 
@@ -50,34 +66,35 @@ test_that("test univariate decompositions 1D", {
   set.seed(1)
   f1 <- simFunData(seq(0,1,0.01), M = 10, eFunType = "Poly", eValType = "linear", N = 10)$simData
 
-  spline1D <- splineBasis1D(f1, bs = "ps", m = 3, k = 10)
-  expect_equal(dim(spline1D$scores), c(10,10))
-  expect_equal(mean(spline1D$scores),  -6.00325721, tolerance=1e-7) 
-  expect_equal(dim(spline1D$B), c(10,10))
-  expect_equal(mean(spline1D$B), 0.010153185, tolerance=1e-7)
+  spline1D <- MFPCA:::splineBasis1D(f1, bs = "ps", m = 3, k = 10)
+  expect_identical(dim(spline1D$scores), c(10,10))
+  expect_equal(mean(spline1D$scores),  17.22414491) 
+  expect_identical(dim(spline1D$B), c(10,10))
+  expect_equal(mean(spline1D$B), 0.0101531851)
   expect_false(spline1D$ortho)  
   expect_true(is.null(spline1D$functions))  
   expect_equal(spline1D$settings, list(bs = "ps", k = 10, m= c(3,3))) 
   
-  spline1Dpen <- splineBasis1Dpen(f1, bs = "ps", m = 3, k = 10)
-  expect_equal(dim(spline1Dpen$scores), c(10,10))
-  expect_equal(mean(spline1Dpen$scores),  -6.04131817, tolerance=1e-7) 
-  expect_equal(dim(spline1Dpen$B), c(10,10))
-  expect_equal(mean(spline1Dpen$B), 0.010153185, tolerance=1e-7)
+  spline1Dpen <- MFPCA:::splineBasis1Dpen(f1, bs = "ps", m = 3, k = 10)
+  expect_identical(dim(spline1Dpen$scores), c(10,10))
+  expect_equal(mean(spline1Dpen$scores),  17.19100716) 
+  expect_identical(dim(spline1Dpen$B), c(10,10))
+  expect_equal(mean(spline1Dpen$B), 0.0101531851)
   expect_false(spline1Dpen$ortho)  
   expect_true(is.null(spline1Dpen$functions))  
   expect_equal(spline1Dpen$settings, list(bs = "ps", k = 10, m= c(3,3))) 
   
   pca1D <- PACE(f1, pve = 0.95)
-  expect_equal(pca1D$npc, 6)
-  expect_equal(nObs(pca1D$fit), 10)
-  expect_equal(mean(norm(pca1D$fit)), 4.518176, tolerance = 1e-7)
-  expect_equal(dim(pca1D$scores), c(10,6))
-  expect_equal(mean(pca1D$scores), -0.004868896, tolerance = 1e-7)
-  expect_equal(nObs(pca1D$mu), 1)
-  expect_equal(norm(pca1D$mu), 0.4576708, tolerance = 1e-7)
-  expect_equal(nObs(pca1D$functions), 6)
-  expect_equal(norm(pca1D$functions), rep(1,6))
-  expect_equal(pca1D$values, c(1.69311466400647, 0.912435761461481, 0.742524381973502, 0.339119548289354, 0.128649288432991, 0.112615157127846))
-  expect_equal(pca1D$sigma2, 0.03328641, tolerance = 1e-7)
+  expect_identical(pca1D$npc, 5)
+  expect_identical(nObs(pca1D$fit), 10)
+  expect_equal(mean(norm(pca1D$fit)), 4.41694367)
+  expect_identical(dim(pca1D$scores), c(10,5))
+  expect_equal(mean(pca1D$scores), -0.0107182127)
+  expect_identical(nObs(pca1D$mu), 1)
+  expect_equal(norm(pca1D$mu), 0.54801585)
+  expect_identical(nObs(pca1D$functions), 5)
+  expect_equal(norm(pca1D$functions), rep(1,5))
+  expect_equal(sum(pca1D$values), 3.77553890)
+  expect_equal(pca1D$values[1], 1.35690262)
+  expect_equal(pca1D$sigma2, 0.0131059337)
 })
