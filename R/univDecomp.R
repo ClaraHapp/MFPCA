@@ -471,6 +471,9 @@ dctBasis2D <- function(funDataObject, qThresh, parallel = FALSE)
 #' @keywords internal
 dct2D <- function(image, qThresh)
 {
+  if(length(dim(image)) != 2)
+    stop("dct2D can handle only 2D images")
+  
   res <- .C("calcCoefs", M = as.integer(nrow(image)), N = as.integer(ncol(image)),
             image = as.numeric(image), coefs = as.numeric(image*0))$coefs
 
@@ -584,6 +587,9 @@ dctBasis3D <- function(funDataObject, qThresh, parallel = FALSE)
 #' @keywords internal
 dct3D <- function(image, qThresh)
 {
+  if(length(dim(image)) != 3)
+    stop("dct3D can handle only 3D images")
+  
   res <- .C("calcCoefs3D", dim = as.integer(dim(image)),
             image = as.numeric(image), coefs = as.numeric(image*0))$coefs
 
