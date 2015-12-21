@@ -84,6 +84,31 @@ test_that("test univariate decompositions 1D", {
   expect_null(spline1Dpen$functions) 
   expect_equal(spline1Dpen$settings, list(bs = "ps", k = 10, m= c(3,3))) 
   
+  fpca <- MFPCA:::fpcaBasis(f1, pve = 0.95)
+  expect_equal(dim(fpca$scores), c(10,5))
+  expect_equal(mean(fpca$scores), -0.0107182127) 
+  expect_null(fpca$B) 
+  expect_true(fpca$ortho)  
+  expect_false(is.null(fpca$functions))  
+  expect_equal(nObs(fpca$functions), 5)
+  expect_equal(norm(fpca$functions), rep(1,5))
+  
+  # wrapper function
+  decompSpline1D <- MFPCA:::univDecomp(type = "splines1D", data = f1, params = list(bs = "ps", m = 3, k = 10))
+  expect_equal(decompSpline1D, spline1D)
+  
+  decompSpline1Dpen <- MFPCA:::univDecomp(type = "splines1Dpen", data = f1, params = list(bs = "ps", m = 3, k = 10))
+  expect_equal(decompSpline1Dpen, spline1Dpen)
+  
+  decompFPCA1D <- MFPCA:::univDecomp(type = "uFPCA", data = f1, params = list(pve = 0.95))
+  expect_equal(decompFPCA1D, fpca)
+})
+
+test_that("PACE function", {
+  set.seed(1)
+  f1 <- simFunData(seq(0,1,0.01), M = 10, eFunType = "Poly", eValType = "linear", N = 10)$simData
+  
+  # see also 1D decompositions, fpcaBasis
   pca1D <- PACE(f1, pve = 0.95)
   expect_equal(pca1D$npc, 5)
   expect_equal(nObs(pca1D$fit), 10)
