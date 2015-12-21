@@ -301,6 +301,15 @@ dctFunction2D <- function(scores, argvals, parallel = FALSE)
 #' @keywords internal
 idct2D <- function(scores, ind, dim)
 {
+  if(length(dim) != 2)
+    stop("Function idct2D can handle only 2D images.")
+  
+  if(min(ind) < 1)
+    stop("Indices must be positive.")
+  
+  if(max(ind) > prod(dim))
+    stop("Index exceeds image dimensions.")
+  
   full <- array(0, dim)
   full[ind] <- scores
 
@@ -390,6 +399,15 @@ dctFunction3D <- function(scores, argvals, parallel = FALSE)
 #' @keywords internal
 idct3D <- function(scores, ind, dim)
 {
+  if(length(dim) != 3)
+    stop("Function idct3D can handle only 3D images.")
+  
+  if(min(ind) < 1)
+    stop("Indices must be positive.")
+  
+  if(max(ind) > prod(dim))
+    stop("Index exceeds image dimensions.")
+  
   full <- array(0, dim)
   full[ind] <- scores
 
