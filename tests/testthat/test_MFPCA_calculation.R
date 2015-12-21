@@ -158,6 +158,16 @@ test_that("test univariate decompositions 2D", {
   expect_equal(var(diff(dct2D$B@x)), 0)
   expect_false(dct2D$ortho)  
   expect_null(dct2D$functions)
+  
+  # wrapper function
+  decompSpline2D <- MFPCA:::univDecomp(type = "splines2D", data = f2, params = list(bs = "ps", m = c(2,3), k = c(8,10)))
+  expect_equal(decompSpline2D, spline2D)
+  
+  decompSpline2Dpen <- MFPCA:::univDecomp(type = "splines2Dpen", data = extractObs(f2,1:2), params = list(bs = "ps", m = c(2,3), k = c(8,10)))
+  expect_equal(decompSpline2Dpen, spline2Dpen)
+  
+  decompDCT2D<- MFPCA:::univDecomp(type = "DCT2D", data = f2, params = list(qThresh = 0.95))
+  expect_equal(decompDCT2D, dct2D)
 })
 
 
