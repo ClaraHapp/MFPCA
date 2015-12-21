@@ -35,7 +35,7 @@ test_that("test MFPCA main function", {
                "Specify number of bootstrap iterations.")
   expect_error(MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "uFPCA"), list(type = "uFPCA")), 
                      bootstrap = TRUE, nBootstrap = 10, bootstrapAlpha = -.1), 
-               "Significance level for bootstrap confidence bands must be in (0,1).")
+               'Significance level for bootstrap confidence bands must be in (0,1).')
   expect_error(MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "uFPCA"), list(type = "uFPCA")), 
                      bootstrap = TRUE, nBootstrap = 10, bootstrapAlpha = 1.5), 
                "Significance level for bootstrap confidence bands must be in (0,1).")
@@ -49,13 +49,13 @@ test_that("test MFPCA main function", {
                                                             list(type = "splines1D", k = 10)))
   
   # values
-  expect_identical(length(uFPCA$values), length(splines$values))
+  expect_equal(length(uFPCA$values), length(splines$values))
   expect_equal(sum(uFPCA$values), sum(uFPCA$values))
   expect_equal(uFPCA$values[1], 1.05175127)
   expect_equal(splines$values[1], 1.05266096)
   
   # functions
-  expect_identical(nObs(uFPCA$functions), nObs(splines$functions))
+  expect_equal(nObs(uFPCA$functions), nObs(splines$functions))
   expect_equal(norm(uFPCA$functions), norm(splines$functions))
   expect_equal(norm(uFPCA$functions[[1]])[1], 0.57954971)
   expect_equal(norm(splines$functions[[1]])[1], 0.57956679)
@@ -67,34 +67,33 @@ test_that("test univariate decompositions 1D", {
   f1 <- simFunData(seq(0,1,0.01), M = 10, eFunType = "Poly", eValType = "linear", N = 10)$simData
 
   spline1D <- MFPCA:::splineBasis1D(f1, bs = "ps", m = 3, k = 10)
-  expect_identical(dim(spline1D$scores), c(10,10))
+  expect_equal(dim(spline1D$scores), c(10,10))
   expect_equal(mean(spline1D$scores),  17.22414491) 
-  expect_identical(dim(spline1D$B), c(10,10))
+  expect_equal(dim(spline1D$B), c(10,10))
   expect_equal(mean(spline1D$B), 0.0101531851)
   expect_false(spline1D$ortho)  
-  expect_true(is.null(spline1D$functions))  
+  expect_null(spline1D$functions) 
   expect_equal(spline1D$settings, list(bs = "ps", k = 10, m= c(3,3))) 
   
   spline1Dpen <- MFPCA:::splineBasis1Dpen(f1, bs = "ps", m = 3, k = 10)
-  expect_identical(dim(spline1Dpen$scores), c(10,10))
+  expect_equal(dim(spline1Dpen$scores), c(10,10))
   expect_equal(mean(spline1Dpen$scores),  17.19100716) 
-  expect_identical(dim(spline1Dpen$B), c(10,10))
+  expect_equal(dim(spline1Dpen$B), c(10,10))
   expect_equal(mean(spline1Dpen$B), 0.0101531851)
   expect_false(spline1Dpen$ortho)  
-  expect_true(is.null(spline1Dpen$functions))  
+  expect_null(spline1Dpen$functions) 
   expect_equal(spline1Dpen$settings, list(bs = "ps", k = 10, m= c(3,3))) 
   
   pca1D <- PACE(f1, pve = 0.95)
-  expect_identical(pca1D$npc, 5)
-  expect_identical(nObs(pca1D$fit), 10)
+  expect_equal(pca1D$npc, 5)
+  expect_equal(nObs(pca1D$fit), 10)
   expect_equal(mean(norm(pca1D$fit)), 4.41694367)
-  expect_identical(dim(pca1D$scores), c(10,5))
+  expect_equal(dim(pca1D$scores), c(10,5))
   expect_equal(mean(pca1D$scores), -0.0107182127)
-  expect_identical(nObs(pca1D$mu), 1)
+  expect_equal(nObs(pca1D$mu), 1)
   expect_equal(norm(pca1D$mu), 0.54801585)
-  expect_identical(nObs(pca1D$functions), 5)
+  expect_equal(nObs(pca1D$functions), 5)
   expect_equal(norm(pca1D$functions), rep(1,5))
   expect_equal(sum(pca1D$values), 3.77553890)
   expect_equal(pca1D$values[1], 1.35690262)
   expect_equal(pca1D$sigma2, 0.0131059337)
-})
