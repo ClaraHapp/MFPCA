@@ -187,6 +187,10 @@ test_that("test univariate decompositions 3D", {
   expect_equal(var(diff(dct3D$B@x)), 0)
   expect_false(dct3D$ortho)  
   expect_null(dct3D$functions)
+  
+  # wrapper function
+  decompDCT3D<- MFPCA:::univDecomp(type = "DCT3D", data = f3, params = list(qThresh = 0.95))
+  expect_equal(decompDCT3D, dct3D)
 })
 
 test_that("Test fftw", {
