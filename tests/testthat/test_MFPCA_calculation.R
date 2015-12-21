@@ -122,3 +122,83 @@ test_that("PACE function", {
   expect_equal(sum(pca1D$values), 3.77553890)
   expect_equal(pca1D$values[1], 1.35690262)
   expect_equal(pca1D$sigma2, 0.0131059337)
+})
+
+test_that("test univariate decompositions 2D", {
+  set.seed(1)
+  x1 <- seq(0,1,length.out=50)
+  x2 <- seq(-1,1, length.out=75)
+  f2 <- funData(argvals = list(x1, x2),
+                X = aperm(replicate(10, outer(x1, cos(pi*x2))+matrix(rnorm(50*75, sd = 0.1), nrow = 50)), c(3,1,2)))
+  
+  spline2D <- MFPCA:::splineBasis2D(f2, bs = "ps", m = c(2,3), k = c(8,10))
+  expect_equal(dim(spline2D$scores), c(10,80))
+  expect_equal(mean(spline2D$scores),  -0.040453269) 
+  expect_equal(dim(spline2D$B), c(80,80))
+  expect_equal(sum(spline2D$B), 5.85240898)
+  expect_false(spline2D$ortho)  
+  expect_null(spline2D$functions)  
+  expect_equal(spline2D$settings, list(bs = "ps", k = c(8,10), m =list(c(2,2), c(3,3)))) 
+  
+  spline2Dpen <- MFPCA:::splineBasis2Dpen(extractObs(f2,1:2), bs = "ps", m = c(2,3), k = c(8,10))
+  expect_equal(dim(spline2Dpen$scores), c(2,80))
+  expect_equal(mean(spline2Dpen$scores),  -0.0501778768) 
+  expect_equal(dim(spline2Dpen$B), c(80,80))
+  expect_equal(sum(spline2Dpen$B), 2.00353973)
+  expect_false(spline2Dpen$ortho)  
+  expect_null(spline2Dpen$functions)
+  expect_equal(spline2Dpen$settings, list(bs = "ps", k = c(8,10), m =list(c(2,2), c(3,3)))) 
+  
+  dct2D <- MFPCA:::dctBasis2D(f2, qThresh = 0.95)
+  expect_equal(dim(dct2D$scores), c(10, 3750))
+  expect_equal(length(dct2D$scores@i),  1880) 
+  expect_equal(dct2D$scores@x[1],  -0.0196469613) 
+  expect_equal(dim(dct2D$B), c(3750, 3750))
+  expect_equal(dct2D$B@x[1], 0.202642367)
+  expect_equal(var(diff(dct2D$B@x)), 0)
+  expect_false(dct2D$ortho)  
+  expect_null(dct2D$functions)
+})
+
+
+test_that("test univariate decompositions 3D", {
+  set.seed(3)
+  x1 <- seq(0, 1, length.out = 40)
+  x2 <- seq(-1, 1, length.out = 30)
+  x3 <- seq(0, 0.5, length.out = 20)
+  f3 <- funData(argvals = list(x1, x2, x3), X = replicate(20, array(rnorm(10*40*30), dim = c(10, 40, 30))))
+  
+  dct3D <- MFPCA:::dctBasis3D(f3, qThresh = 0.95)
+  expect_equal(dim(dct3D$scores), c(10, 23998))
+  expect_equal(length(dct3D$scores@i),  12000) 
+  expect_equal(dct3D$scores@x[1],  -0.071277532) 
+  expect_equal(dim(dct3D$B), c(23998, 23998))
+  expect_equal(dct3D$B@x[1], 0.032251534)
+  expect_equal(var(diff(dct3D$B@x)), 0)
+  expect_false(dct3D$ortho)  
+  expect_null(dct3D$functions)
+})
+
+test_that("Test fftw", {
+  set.seed(4)
+  image2D <- outer(seq(0,1,0.01), sin(seq(-1,1,0.02))) + matrix(rnorm(101^2, sd = 0.2), nrow= 101)
+  image3D <- aperm(sapply(seq(0,10,0.5), 
+                          function(x){x*outer(seq(0,1,0.01), sin(seq(-1,1,0.02))) + matrix(rnorm(101^2, sd = 0.2), nrow= 101)}, 
+                          simplify = "array"), c(3,1,2))
+  
+  expect_error(MFPCA:::dct2D(image3D, qThresh = 0.9), "dct2D can handle only 2D images")
+  expect_error(MFPCA:::dct3D(image2D, qThresh = 0.9), "dct3D can handle only 3D images")
+  
+  fftw2D <- MFPCA:::dct2D(image2D, qThresh = 0.95)
+  expect_equal(length(fftw2D$ind), 510)
+  expect_equal(fftw2D$ind[1:3], c(2,92,102))
+  expect_equal(mean(fftw2D$val), -0.00049897171)
+  expect_equal(fftw2D$val[1], 0.018282019)
+  
+  fftw3D <- MFPCA:::dct3D(image3D, qThresh = 0.95)
+  expect_equal(length(fftw3D$ind), 10711)
+  expect_equal(fftw3D$ind[1:3], c(102, 103, 110))
+  expect_equal(mean(fftw3D$val), 0.00027522909)
+  expect_equal(fftw3D$val[1], -0.32200299)
+  
+})
