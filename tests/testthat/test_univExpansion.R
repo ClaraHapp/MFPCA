@@ -62,12 +62,6 @@ test_that("test univariate expansions 2D", {
   expect_equal(mean(norm(spline2Dpen)),  2.80048833) 
   expect_equal(norm(spline2Dpen)[1], 2.15059827)
   
-  dct2D <- MFPCA:::dctFunction2D(scores = scores, argvals = argvals)
-  expect_equal(nObs(dct2D), 20)
-  expect_equal(nObsPoints(dct2D),  c(101,101))
-  expect_equal(mean(norm(dct2D)),  2.06938459) 
-  expect_equal(norm(dct2D)[1], 2.45252941)
-  
   # wrapper function
   expandDefault2D <- MFPCA:::univExpansion(type = "default", scores = scores, argvals = argvals, 
                                            functions = tensorProduct(funData:::efPoly(argvals[[1]], M = 5), funData:::efWiener(argvals[[2]], M = 5)))
@@ -78,9 +72,6 @@ test_that("test univariate expansions 2D", {
   
   expandSpline2Dpen <- MFPCA:::univExpansion(type = "splines2Dpen", scores = scores, argvals = argvals, functions = NULL, params = list(bs = "ps", m = 3, k = 5))
   expect_equal(expandSpline2Dpen, spline2Dpen)
-  
-  expandDCT2D <- MFPCA:::univExpansion(type = "DCT2D", scores = scores, argvals = argvals, functions = NULL)
-  expect_equal(expandDCT2D, dct2D)
 })
 
 
@@ -98,42 +89,10 @@ test_that("test univariate expansions 3D", {
   expect_equal(mean(norm(default3D)),  117.481898) 
   expect_equal(norm(extractObs(default3D,1)), 118.67828)
   
-  dct3D <- MFPCA:::dctFunction3D(scores = scores, argvals = argvals)
-  expect_equal(nObs(dct3D), 20)
-  expect_equal(nObsPoints(dct3D),  c(101, 101, 21))
-  expect_equal(mean(norm(dct3D)),  7.57861399) 
-  expect_equal(norm(extractObs(dct3D, obs = 1)), 7.64625103)
-  
   # wrapper function
   expandDefault3D <- MFPCA:::univExpansion(type = "default", scores = scores, argvals = argvals, 
                                            functions = tensorProduct(funData:::efPoly(argvals[[1]], M = 3),
                                                                      funData:::efWiener(argvals[[2]], M = 4),
                                                                      funData:::efFourier(argvals[[3]], M = 5)))
   expect_equal(expandDefault3D, default3D)
-  
-  expandDCT3D <- MFPCA:::univExpansion(type = "DCT3D", scores = scores, argvals = argvals, functions = NULL)
-  expect_equal(expandDCT3D, dct3D)
 })
-
-test_that("Test fftw", {
-  set.seed(4)
-  scores <- rnorm(25, sd = 25:1/25)
-  
-  expect_error(MFPCA:::idct2D(scores = scores, ind = 1:25, dim = 50), "Function idct2D can handle only 2D images.")
-  expect_error(MFPCA:::idct2D(scores = scores, ind = 0:24, dim = c(10, 20)), "Indices must be positive.")
-  expect_error(MFPCA:::idct2D(scores = scores, ind = 200+0:24, dim = c(10, 20)), "Index exceeds image dimensions.")
-  
-  expect_error(MFPCA:::idct3D(scores = scores, ind = 1:25, dim = 50), "Function idct3D can handle only 3D images.")
-  expect_error(MFPCA:::idct3D(scores = scores, ind = 0:24, dim = c(10, 20, 30)), "Indices must be positive.")
-  expect_error(MFPCA:::idct3D(scores = scores, ind = 2000+0:24, dim = c(10, 20, 10)), "Index exceeds image dimensions.")
-  
-  idct2D <- MFPCA:::idct2D(scores = scores, ind = sample(200, 25), dim = c(10, 20))
-  expect_equal(dim(idct2D), c(10, 20))
-  expect_equal(mean(idct2D), 0)
-  expect_equal(idct2D[1,1], 1.08970077)
-  
-  idct3D <- MFPCA:::idct3D(scores = scores, ind = sample(2000, 25), dim = c(10, 20, 10))
-  expect_equal(dim(idct3D), c(10, 20, 10))
-  expect_equal(mean(idct3D), 0)
-  expect_equal(idct3D[1,1,1], 0.877946026)
-  })
