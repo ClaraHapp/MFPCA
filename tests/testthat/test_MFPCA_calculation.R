@@ -35,10 +35,10 @@ test_that("test MFPCA main function", {
                "Specify number of bootstrap iterations.")
   expect_error(MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "uFPCA"), list(type = "uFPCA")), 
                      bootstrap = TRUE, nBootstrap = 10, bootstrapAlpha = -.1), 
-               'Significance level for bootstrap confidence bands must be in (0,1).')
+               "Significance level for bootstrap confidence bands must be in (0,1).", fixed = TRUE) # fixed: do not interprete as reg. exp.
   expect_error(MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "uFPCA"), list(type = "uFPCA")), 
                      bootstrap = TRUE, nBootstrap = 10, bootstrapAlpha = 1.5), 
-               "Significance level for bootstrap confidence bands must be in (0,1).")
+               "Significance level for bootstrap confidence bands must be in (0,1).", fixed = TRUE) # fixed: do not interprete as reg. exp.
   
   # check functionality
   expect_warning(uFPCA <- MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "uFPCA"),
