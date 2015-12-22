@@ -8,6 +8,7 @@ if `dpkg -s libfftw3-dev >/dev/null 2>&1`; then
 else 
 	FFTW_LIBS=
 	echo "Warning: Library fftw3 not available. Package MFPCA is installed without Fourier/Cosine basis transformation. If you would like to enable this feature, please install fftw3 from http://www.fftw.org/ and reinstall MFPCA."	
+  mv ./tests/testthat/test_fftw.R  ./tests/testthat/notest_fftw.R # rename fftw test file s.t. it is not tested
 fi
 
 # Substitute FFTW_LIBS and FFTW_CFLAGS in Makevars.in
