@@ -331,8 +331,14 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fi
 
       for(j in 1:p)
       {
-        if(type[j] == "uFPCA") # re-estimate scores AND functions
+        if(!is.null(uniBasis[[j]]$functions)) # re-estimate scores AND functions
+        {
           bootBasis[[j]] <- univDecomp(type = type[j], data = extractObs(mFData, obs = bootObs)[[j]], params = uniExpansions[[j]]$params)
+          
+          # recalculate Bchol if necessary
+          if(!bootBasis$ortho)
+            Bchol[[j]] <- Matrix::chol(l$B)
+        } 
         else # resample scores (functions are given and scores can simply be resampled)
           bootBasis[[j]] <- list(scores = uniBasis[[j]]$scores[bootObs, ], B = uniBasis[[j]]$B, ortho = uniBasis[[j]]$ortho, functions = uniBasis[[j]]$functions,
                                  settings = uniBasis[[j]]$settings)
@@ -343,7 +349,7 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fi
       if(M > sum(npcBoot))
         stop("Function MFPCA (bootstrap): total number of univariate basis functions must be greater or equal M!")
 
-      # calculate MFPCA for bootstrap sample (Bchol must not be recalculated as uFPCA basis functions are orthonormal!)
+      # calculate MFPCA for bootstrap sample (Bchol has been updated for UMPCA)
       tmpFuns <- calcMFPCA(N = N, p = p, Bchol = Bchol, M = M, type = type, weights = weights,
                            npc = npcBoot, argvals = getArgvals(mFData), uniBasis = bootBasis, fit = FALSE, approx.eigen = approx.eigen)$functions
 
