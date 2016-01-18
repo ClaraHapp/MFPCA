@@ -50,6 +50,7 @@ univExpansion <- function(type, scores, argvals, functions, params = NULL)
 
   res <- switch(type,
                 "uFPCA" = do.call(fpcaFunction, params),
+                "UMPCA" = do.call(umpcaFunction, params),
                 "splines1D" = do.call(splineFunction1D, params),
                 "splines1Dpen" = do.call(splineFunction1D, params),
                 "splines2D" = do.call(splineFunction2D, params),
@@ -111,6 +112,35 @@ fpcaFunction <- function(scores, argvals, functions)
   return(funData(argvals, scores %*% functions@X))
 }
 
+#' Calculate a linear combination of a UMPCA basis on two-dimensional domains
+#' 
+#' This function calculates a linear combination of basis functions based on
+#' uncorrelated multilinear principal component analysis (UMPCA) for data on
+#' two-dimensional domains.
+#' 
+#' @param scores A matrix of dimension \eqn{N x K}, representing the \eqn{K} 
+#'   scores (coefficients) for each observation \eqn{i = 1, \ldots, N}.
+#' @param argvals A list containing a vector of x-values.
+#' @param functions A \code{funData} object, representing the UMPCA basis.
+#'   
+#' @return An object of class \code{funData} with \eqn{N} observations on 
+#'   \code{argvals}, corresponding to the linear combination of the functional 
+#'   principal components.
+#'   
+#' @seealso univExpansion
+umpcaFunction <- function(scores, argvals, functions)
+{
+  if(dimSupp(functions) != 2)
+    stop("UMPCA option for univExpansion is implemented for 2D data (images) only!")
+  
+  N <- nrow(scores) # number of observations
+  recons <- array(0, c(N, nObsPoints(functions)))
+  
+  for(i in 1:N)
+    recons[i,,] <- ttv(functions@X, list(scores[i,]), dim = 1)
+  
+  reconsFunctions <- funData(argvals = functions@argvals, X = recons)
+}
 
 #' Calculate linear combinations of spline basis functions on one-dimensional
 #' domains
