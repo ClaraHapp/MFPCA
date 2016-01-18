@@ -14,7 +14,7 @@
 #'          paper. It is the number of elementary multilinear projections 
 #'          (EMPs) in tensor-to-vector projection.
 #'          
-#'  @return \item{}
+#'  @return
 #'    \item{Us}{The multilinear projection, consiting of \code{numP} (\eqn{P} in the paper) 
 #'        elementary multilinear projections (EMPs), each EMP is consisted
 #'        of \eqn{N} vectors, one in each mode.}
@@ -158,6 +158,8 @@ maxeig <- function(A)
 #' Internal function for the Tensor times Vector calculation
 #' 
 #' @seealso ttv
+#' 
+#' @importFrom plyr alply
 #' 
 #' @keywords internal
 ttvCalculation <- function(A, v, dim)

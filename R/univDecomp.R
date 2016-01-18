@@ -156,7 +156,7 @@ umpcaBasis <- function(funDataObject, npc)
     scores[,i] <- ttv(obsCent, sapply(UMPCAres$Us, function(x){x[,UMPCAres$odrIdx[i]]}, simplify = FALSE), 1:2)
   
   return(list(scores = scores,
-              B = MFPCA:::.calcBasisIntegrals(eigenImages, dimSupp(funDataObject), funDataObject@argvals),
+              B = .calcBasisIntegrals(eigenImages, dimSupp(funDataObject), funDataObject@argvals),
               ortho = FALSE,
               functions = eigenFunctions))
 }
