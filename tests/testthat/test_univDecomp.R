@@ -62,6 +62,28 @@ test_that("PACE function", {
   expect_equal(pca1D$sigma2, 0.0131059337)
 })
 
+test_that("test UMPCA functionality", {
+  A <- array(1:24, dim = c(3,4,2))
+  
+  # check ttv errors
+  expect_error(ttv(A, list(rep(1,3)), 2), "A and v have wrong dimensions!")
+  expect_error(ttv(A, list(rep(1,3), rep(2,3)), 1), "The parameters 'dim' and 'v' must have the same length!")
+  
+  # check ttv functionality (double checked with matlab)
+  expect_equal(ttv(A, list(rep(1,3)), 1), colSums(A,1))
+  expect_equal(ttv(A, list(rep(1,4)), 2), apply(A,3, rowSums))
+  expect_equal(ttv(A, list(rep(1,2)), 3), apply(A,2, rowSums))
+  
+  # see also 1D decompositions
+  umpca2D <- UMPCA(A, numP = 3)
+  expect_equal(length(umpca2D$Us), 2)
+  expect_equal(umpca2D$Us[[1]], matrix(1/sqrt(3), nrow = 3))
+  expect_equal(umpca2D$Us[[2]], matrix(0.5, nrow = 4))
+  expect_equal(dim(umpca2D$TXmean), c(3,4,1))
+  expect_equal(umpca2D$TXmean[,,1], matrix(7:18, nrow = 3, ncol = 4))
+  expect_equal(umpca2D$odrIdx, 1)
+})
+
 test_that("test univariate decompositions 2D", {
   set.seed(1)
   x1 <- seq(0,1,length.out=50)
@@ -87,10 +109,22 @@ test_that("test univariate decompositions 2D", {
   expect_null(spline2Dpen$functions)
   expect_equal(spline2Dpen$settings, list(bs = "ps", k = c(8,10), m =list(c(2,2), c(3,3)))) 
   
+  umpca2D <- MFPCA:::umpcaBasis(f2, npc = 4)
+  expect_error(MFPCA:::umpcaBasis(funData(x1, t(sapply(1:5, function(x){x*x1}))), npc = 4), "UMPCAfunData is implemented for (2D) image data only!", fixed = TRUE)
+  expect_equal(dim(umpca2D$scores), c(10, 4))
+  expect_equal(mean(umpca2D$scores),  0) 
+  expect_equal(dim(umpca2D$B), c(4,4))
+  expect_equal(sum(umpca2D$B), 0.00219103918)
+  expect_equal(nObs(umpca2D$functions), 4)
+  expect_equal(norm(umpca2D$functions)[1],  0.000537663591)
+  
   # wrapper function
   decompSpline2D <- MFPCA:::univDecomp(type = "splines2D", data = f2, params = list(bs = "ps", m = c(2,3), k = c(8,10)))
   expect_equal(decompSpline2D, spline2D)
   
   decompSpline2Dpen <- MFPCA:::univDecomp(type = "splines2Dpen", data = extractObs(f2,1:2), params = list(bs = "ps", m = c(2,3), k = c(8,10)))
   expect_equal(decompSpline2Dpen, spline2Dpen)
+  
+  decompUMPCA2D <- MFPCA:::univDecomp(type = "UMPCA", data = f2, params = list(npc = 4))
+  expect_equal(decompUMPCA2D, umpca2D)
 })
