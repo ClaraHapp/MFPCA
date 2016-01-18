@@ -40,6 +40,7 @@ univDecomp <- function(type, data, params)
 
   res <- switch(type,
                 "uFPCA" = do.call(fpcaBasis, params),
+                "UMPCA" = do.call(umpcaBasis, params),
                 "splines1D" = do.call(splineBasis1D, params),
                 "splines1Dpen" = do.call(splineBasis1Dpen, params),
                 "splines2D" = do.call(splineBasis2D, params),
@@ -96,6 +97,70 @@ fpcaBasis <- function(funDataObject, nbasis = 10, pve = 0.99, npc = NULL, makePD
               functions = FPCA$functions
   ))
 }
+
+#' Calculate an uncorrelated multilinear principal component basis 
+#' representation for functional data on two-dimensional domains
+#' 
+#' This function calculates an uncorrelated multilinear principal component 
+#' analyis (UMPCA) representation for functional data on two-dimensional 
+#' domains. In this case, the data can be interpreted as images with \code{S1 x 
+#' S2} pixels (assuming \code{nObsPoints(funDataObject)} = (S1, S2)), i.e. the 
+#' total observed data are represented as third order tensor of dimension 
+#' \code{N x S1 x S2}.  The UMPCA of a tensor of this kind is calculated via the
+#' \link{UMPCA} function, which is an \code{R}-version of the analogous 
+#' functions in the
+#' \url{UMPCA}{http://www.mathworks.com/matlabcentral/fileexchange/35432-uncorrelated-multilinear-principal-component-analysis--umpca-}
+#' MATLAB toolbox by Haiping Lu (see references).
+#' 
+#' @param funDataObject An object of class \code{\link[funData]{funData}} 
+#'   containing the observed functional data samples (here: images) for which 
+#'   the UMPCA is to be calculated.
+#' @param npc An integer, giving a prespecified value for the number of 
+#'   principal components.
+#'   
+#' @return \item{scores}{A matrix of scores (coefficients) with dimension 
+#'   \code{N x k}, reflecting the weights for principal component in each 
+#'   observation.}  \item{B}{A matrix containing the scalar product of all pairs
+#'   of basis functions.} \item{ortho}{Logical, set to \code{FALSE}, as basis 
+#'   functions are not orthonormal.} \item{functions}{A functional data object, 
+#'   representing the functional principal component basis functions.}
+#'   
+#' @seealso univDecomp
+#' 
+#' @references 
+#'  Haiping Lu, K.N. Plataniotis, and A.N. Venetsanopoulos,
+#'   "Uncorrelated Multilinear Principal Component Analysis for Unsupervised Multilinear Subspace Learning",
+#'    IEEE Transactions on Neural Networks,
+#'   Vol. 20, No. 11, Page: 1820-1836, Nov. 2009.
+umpcaBasis <- function(funDataObject, npc)
+{
+  if(dimSupp(funDataObject) != 2)
+    stop("UMPCAfunData is implemented for (2D) image data only!")
+  
+  # calculate UMPCA
+  # permute observed data s.t. the observations are saved in the last dimension
+  UMPCAres <- UMPCA(aperm(funDataObject@X, c(1+1:dimSupp(funDataObject), 1)), numP = npc)
+  
+  # calculcate eigenfunctions  
+  eigenImages <- array(NA, c(npc, nObsPoints(funDataObject)))
+  for(i in 1:npc)
+    eigenImages[i,,] <- tcrossprod(UMPCAres$Us[[1]][,UMPCAres$odrIdx[i]], UMPCAres$Us[[2]][,UMPCAres$odrIdx[i]])
+  
+  eigenFunctions <- funData(argvals = funDataObject@argvals, X = eigenImages)
+  
+  # calculate scores
+  obsCent <- sweep(aperm(funDataObject@X, c(1+1:dimSupp(funDataObject), 1)), 1:2, UMPCAres$TXmean[,,1]) # demean images
+  scores <- array(NA, c(nObs(funDataObject), npc))
+  
+  for(i in 1:npc)
+    scores[,i] <- ttv(obsCent, sapply(UMPCAres$Us, function(x){x[,UMPCAres$odrIdx[i]]}, simplify = FALSE), 1:2)
+  
+  return(list(scores = scores,
+              B = MFPCA:::.calcBasisIntegrals(eigenImages, dimSupp(funDataObject), funDataObject@argvals),
+              ortho = FALSE,
+              functions = eigenFunctions))
+}
+
 
 #' Calculate an unpenalized spline basis decomposition for functional data on
 #' one-dimensional domains
