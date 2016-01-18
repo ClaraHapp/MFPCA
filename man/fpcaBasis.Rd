@@ -38,7 +38,7 @@ principal components. Defaults to \code{NULL}. If given, this overrides
   functional principal component basis functions.}
 }
 \description{
-This function calculates functional principal component basis representation
+This function calculates a functional principal component basis representation
 for functional data on one-dimensional domains. The FPCA is calculated via
 the \link{PACE} function, which is built on \link[refund]{fpca.sc} in the
 \pkg{refund} package.
