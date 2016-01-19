@@ -66,16 +66,16 @@ test_that("test UMPCA functionality", {
   A <- array(1:24, dim = c(3,4,2))
   
   # check ttv errors
-  expect_error(ttv(A, list(rep(1,3)), 2), "A and v have wrong dimensions!")
-  expect_error(ttv(A, list(rep(1,3), rep(2,3)), 1), "The parameters 'dim' and 'v' must have the same length!")
+  expect_error(MFPCA:::ttv(A, list(rep(1,3)), 2), "A and v have wrong dimensions!")
+  expect_error(MFPCA:::ttv(A, list(rep(1,3), rep(2,3)), 1), "The parameters 'dim' and 'v' must have the same length!")
   
   # check ttv functionality (double checked with matlab)
-  expect_equal(ttv(A, list(rep(1,3)), 1), colSums(A,1))
-  expect_equal(ttv(A, list(rep(1,4)), 2), apply(A,3, rowSums))
-  expect_equal(ttv(A, list(rep(1,2)), 3), apply(A,2, rowSums))
+  expect_equal(MFPCA:::ttv(A, list(rep(1,3)), 1), colSums(A,1))
+  expect_equal(MFPCA:::ttv(A, list(rep(1,4)), 2), apply(A,3, rowSums))
+  expect_equal(MFPCA:::ttv(A, list(rep(1,2)), 3), apply(A,2, rowSums))
   
   # see also 1D decompositions
-  umpca2D <- UMPCA(A, numP = 3)
+  umpca2D <- MFPCA:::UMPCA(A, numP = 3)
   expect_equal(length(umpca2D$Us), 2)
   expect_equal(umpca2D$Us[[1]], matrix(1/sqrt(3), nrow = 3))
   expect_equal(umpca2D$Us[[2]], matrix(0.5, nrow = 4))
@@ -116,7 +116,7 @@ test_that("test univariate decompositions 2D", {
   expect_equal(dim(umpca2D$B), c(4,4))
   expect_equal(sum(umpca2D$B), 0.00219103918)
   expect_equal(nObs(umpca2D$functions), 4)
-  expect_equal(norm(umpca2D$functions)[1],  0.000537663591)
+  expect_equal(norm(umpca2D$functions)[1], 0.000523190474)
   
   # wrapper function
   decompSpline2D <- MFPCA:::univDecomp(type = "splines2D", data = f2, params = list(bs = "ps", m = c(2,3), k = c(8,10)))

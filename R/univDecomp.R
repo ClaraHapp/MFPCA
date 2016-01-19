@@ -144,7 +144,7 @@ umpcaBasis <- function(funDataObject, npc)
   # calculcate eigenfunctions  
   eigenImages <- array(NA, c(npc, nObsPoints(funDataObject)))
   for(i in 1:npc)
-    eigenImages[i,,] <- tcrossprod(UMPCAres$Us[[1]][,UMPCAres$odrIdx[i]], UMPCAres$Us[[2]][,UMPCAres$odrIdx[i]])
+    eigenImages[UMPCAres$odrIdx[i],,] <- tcrossprod(UMPCAres$Us[[1]][,i], UMPCAres$Us[[2]][,i])
   
   eigenFunctions <- funData(argvals = funDataObject@argvals, X = eigenImages)
   
@@ -153,7 +153,7 @@ umpcaBasis <- function(funDataObject, npc)
   scores <- array(NA, c(nObs(funDataObject), npc))
   
   for(i in 1:npc)
-    scores[,i] <- ttv(obsCent, sapply(UMPCAres$Us, function(x){x[,UMPCAres$odrIdx[i]]}, simplify = FALSE), 1:2)
+    scores[,UMPCAres$odrIdx[i]] <- ttv(obsCent, sapply(UMPCAres$Us, function(x){x[,i]}, simplify = FALSE), 1:2)
   
   return(list(scores = scores,
               B = .calcBasisIntegrals(eigenImages, dimSupp(funDataObject), funDataObject@argvals),
