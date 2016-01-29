@@ -41,6 +41,7 @@ univDecomp <- function(type, data, params)
   res <- switch(type,
                 "uFPCA" = do.call(fpcaBasis, params),
                 "UMPCA" = do.call(umpcaBasis, params),
+                "FCP_TPA" = do.call(fcptpaBasis, params),
                 "splines1D" = do.call(splineBasis1D, params),
                 "splines1Dpen" = do.call(splineBasis1Dpen, params),
                 "splines2D" = do.call(splineBasis2D, params),
@@ -160,6 +161,49 @@ umpcaBasis <- function(funDataObject, npc)
               ortho = FALSE,
               functions = eigenFunctions))
 }
+
+
+# Recursion for difference operator matrix
+# taken from fpca.ssvd function in refund
+makeDiffOp <- function(degree, dim){
+  if(degree==0){
+    return(diag(dim))
+  } else {
+    return(diff(makeDiffOp(degree-1, dim)))
+  }
+}
+
+
+
+fcptpaBasis <- function(funDataObject, npc, smoothingDegree = rep(2,3), alphaProp)
+{
+  if(dimSupp(funDataObject) != 2)
+    stop("FCP_TPA is implemented for (2D) image data only!")
+  
+  d <- dim(funDataObject@X)
+  
+  Du <- makeDiffOp(degree = smoothingDegree[1], dim = d[1])
+  Dv <- makeDiffOp(degree = smoothingDegree[2], dim = d[2])
+  Dw <- makeDiffOp(degree = smoothingDegree[3], dim = d[3])
+  
+  alphaGrid = list(u = d[1]*min(alphaProp), v = d[2]*alphaProp, w = d[3]*alphaProp)
+  
+  FCPTPAres <- FCP_TPA(funDataObject@X, K = npc, list(u = t(Du) %*% Du, v = t(Dv) %*% Dv, w = t(Dw) %*% Dw), alphaGrid)
+  
+  # reconstruct eigenimages and scores from FCP_TPA result
+  eigenImages <- array(NA, c(npc, d[-1]))
+  
+  for(i in 1:npc)
+    eigenImages[i,,] <-  FCPTPAres$V[,i] %o% FCPTPAres$W[,i]
+  
+  scores <-  sweep(FCPTPAres$U,MARGIN=2,FCPTPAres$d,`*`)
+  
+  return(list(scores = scores,
+              B = .calcBasisIntegrals(eigenImages, dimSupp(funDataObject), funDataObject@argvals),
+              ortho = FALSE,
+              functions = funData(argvals = funDataObject@argvals, X = eigenImages)))
+}
+
 
 
 #' Calculate an unpenalized spline basis decomposition for functional data on

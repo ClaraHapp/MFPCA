@@ -51,6 +51,7 @@ univExpansion <- function(type, scores, argvals, functions, params = NULL)
   res <- switch(type,
                 "uFPCA" = do.call(fpcaFunction, params),
                 "UMPCA" = do.call(umpcaFunction, params),
+                "FCP_TPA" = do.call(fcptpaFunction, params),
                 "splines1D" = do.call(splineFunction1D, params),
                 "splines1Dpen" = do.call(splineFunction1D, params),
                 "splines2D" = do.call(splineFunction2D, params),
@@ -140,6 +141,12 @@ umpcaFunction <- function(scores, argvals, functions)
     recons[i,,] <- ttv(functions@X, list(scores[i,]), dim = 1)
   
   reconsFunctions <- funData(argvals = functions@argvals, X = recons)
+}
+
+
+fcptpaFunction <- function(scores, argvals, functions)
+{
+  return(defaultFunction(scores, argvals, functions))
 }
 
 #' Calculate linear combinations of spline basis functions on one-dimensional
