@@ -1,11 +1,44 @@
 #' The functional CP-TPA algorithm
 #' 
+#' This function implements the functional CP-TPA (FCP-TPA) algorithm, that 
+#' calculates a smooth PCA for 3D tensor data (i.e. \code{N} observations of 2D 
+#' images with dimension \code{S1 x S2}). The results are given in a 
+#' CANDECOMP/PARAFRAC (CP) model format \deqn{X = sum_{k = 1}^K d_k u_k o v_k o
+#' w_k}  where \eqn{o} stands for the outer product. In this representation,
+#' the outer product \eqn{v_k o w_k} can be regarded as the \eqn{k}-th
+#' eigenimage, while \eqn{d_k u_k} represents the vector of individual scores
+#' for this eigenimage and each observation.
+#' 
+#' The degree of smoothness is controlled by three smoothing parameters 
+#' \eqn{\alpha_u, \alpha_v, \alpha_w}. There is hence one smoothing parameter 
+#' for each direction, which is chosen from a given grid (passed via the 
+#' parameter \code{alphaGrid}). As the first direction corresponds to the 
+#' observations, only little smoothing is considered, setting \eqn{alpha_u} to 
+#' the minimum of the given values and throwing a warning, if the grid contains 
+#' more than one value. For \eqn{\alpha_v, \alpha_w}, the optimal value is 
+#' chosen via generalized cross-validation (\code{\link{gcvV}}) in each step, 
+#' allowing a different degree of smoothness for each eigenimage in each 
+#' dimension.
+#' 
 #' @param X The data tensor of dimensions \code{N x S1 x S2}
 #' @param K The number of eigentensors to be calculated
-#' @param penMat A list of three roughness penalization matrices, one for each direction (u, v & w).
-#' @param alphaGrid A list of three grids for smoothing parameters along each direction. For the observations (first diection), only the minimum is used
+#' @param penMat A list of three roughness penalization matrices, one for each 
+#'   direction (u, v & w).
+#' @param alphaGrid A list of three grids for smoothing parameters along each 
+#'   direction. For the observations (first diection), only the minimum is used.
 #'   
-#' @references G. Allen Multi-Way Functional Principal Component Analysis
+#' @return \item{d}{A vector of length \code{K}, containing the numeric weigths 
+#'   \eqn{d_k} in the CP model} \item{U}{A matrix of dimensions \code{N x K}, 
+#'   containing the eigenvectors \eqn{u_k} in the first dimension} \item{V}{A
+#'   matrix of dimensions \code{S1 x K}, containing the eigenvectors \eqn{v_k}
+#'   in the second dimension} \item{W}{A matrix of dimensions \code{S2 x K},
+#'   containing the eigenvectors \eqn{w_k} in the third dimension.}
+#'   
+#' @references G. I. Allen, "Multi-way Functional Principal Components 
+#'   Analysis", IEEE International Workshop on Computational Advances in 
+#'   Multi-Sensor Adaptive Processing, 2013.
+#'   
+#' @seealso fcptpaBasis
 FCP_TPA <- function(X, K, penMat, alphaGrid)
 {
   dimX <- dim(X)
@@ -86,9 +119,43 @@ FCP_TPA <- function(X, K, penMat, alphaGrid)
   return(list(d = d, U = U, V = V, W = W))
 }
 
-
+#' Calculate the euclidean norm of a vector
+#' 
+#' @param x The vector for which the norm is to be calculated
+#' 
+#' @return The euclidean norm of \code{x}.
+#' 
+#' @keywords internal
 normVec <- function(x) sqrt(sum(x^2))
 
+#' Generalized cross-validation for the FCP-TPA algorithm
+#' 
+#' These functions calculate the generalized cross-validation criteria for the 
+#' smoothing parameters \eqn{\alpha_v} and \eqn{\alpha_w} that are calculated within the 
+#' \code{\link{FCP_TPA}} algorithm.
+#' 
+#' @section Warning: In test scenarios, the GCV always tended to select the 
+#'   highest possible value for \eqn{\alpha_v, \alpha_w}, i.e. it seemed to be a
+#'   monotonically decreasing function in \eqn{\alpha_v, \alpha_w}.
+#'   
+#' @param alphaV,alphaW The values of the smoothing parameters \eqn{\alpha_v}, 
+#'   \eqn{\alpha_w} (numerical).
+#' @param data The tensor containing the data, an array of dimensions \code{N x 
+#'   S1 x S2}.
+#' @param u,v,w The current value of the eigenvectors \eqn{u_k, v_k, w_k} (not 
+#'   normalized) of dimensions \code{N}, \code{S1} and \code{S2}, respectively.
+#' @param penMat A list of three roughness penalization matrices, one for each 
+#'   direction (u, v & w). See \code{\link{FCP_TPA}}.
+#'   
+#' @return The value of the GCV criterion.
+#' 
+#' @references G. I. Allen, "Multi-way Functional Principal Components 
+#'   Analysis", IEEE International Workshop on Computational Advances in 
+#'   Multi-Sensor Adaptive Processing, 2013.
+#'   
+#' @keywords internal
+#'   
+#' @seealso FCP_TPA
 gcvV <- function(alphaV, data, u, v, w, penMat, alphaW)
 {
   m <- length(v)
@@ -99,6 +166,7 @@ gcvV <- function(alphaV, data, u, v, w, penMat, alphaW)
   return(res)
 }
 
+#' @rdname gcvV
 gcvW <- function(alphaW, data, u, v, w, penMat, alphaV)
 {
   p <- length(w)

@@ -174,7 +174,45 @@ makeDiffOp <- function(degree, dim){
 }
 
 
-
+#' Calculate an smooth PCA representaion for functional data on two-dimensional 
+#' domains
+#' 
+#' This function calculates a smooth PCA representation based on the FCP_TPA 
+#' algorithm for functional data on two-dimensional domains. In this case, the 
+#' data can be interpreted as images with \code{S1 x S2} pixels (assuming 
+#' \code{nObsPoints(funDataObject)} = (S1, S2)), i.e. the total observed data 
+#' are represented as third order tensor of dimension \code{N x S1 x S2}.  The 
+#' smooth PCA of a tensor of this kind is calculated via the 
+#' \code{\link{FCP_TPA}} function.
+#' 
+#' The smoothness of the resulting eigenvectors \eqn{u_k, v_k, w_k} (that are 
+#' used for the calculation of the eigenimages and the score vectors) is
+#' controlled by smoothing parameters \eqn{\alpha_u, \alpha_v, \alpha_w}.
+#' 
+#' @param funDataObject An object of class \code{\link[funData]{funData}} 
+#'   containing the observed functional data samples (here: images) for which 
+#'   the smooth PCA is to be calculated.
+#' @param npc An integer, giving a prespecified value for the number of 
+#'   principal components.
+#' @param smoothingDegree A numeric vector of length 3, specifying the degree of
+#'   the difference penalties inducing smoothness in each direction. Defaults to
+#'   2 for all directions (2nd differences).
+#' @param alphaProp A vector of proportions for choosing the smoothness 
+#'   parameters in the FCP_TPA algorithm. See Details.
+#'   
+#' @return \item{scores}{A matrix of scores (coefficients) with dimension 
+#'   \code{N x k}, reflecting the weights for principal component in each 
+#'   observation.}  \item{B}{A matrix containing the scalar product of all pairs
+#'   of basis functions.} \item{ortho}{Logical, set to \code{FALSE}, as basis 
+#'   functions are not orthonormal.} \item{functions}{A functional data object, 
+#'   representing the functional principal component basis functions.}
+#'   
+#' @seealso univDecomp
+#'   
+#' @references Haiping Lu, K.N. Plataniotis, and A.N. Venetsanopoulos, 
+#'   "Uncorrelated Multilinear Principal Component Analysis for Unsupervised 
+#'   Multilinear Subspace Learning", IEEE Transactions on Neural Networks, Vol. 
+#'   20, No. 11, Page: 1820-1836, Nov. 2009.
 fcptpaBasis <- function(funDataObject, npc, smoothingDegree = rep(2,3), alphaProp)
 {
   if(dimSupp(funDataObject) != 2)
