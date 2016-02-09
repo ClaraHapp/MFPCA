@@ -282,7 +282,10 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fi
   npc <- sapply(uniBasis, function(x){dim(x$scores)[2]}) # get number of univariate basis functions
 
   if(M > sum(npc))
-    stop("Function MFPCA: total number of univariate basis functions must be greater or equal M!")
+  {
+    M <- sum(npc)
+    warning("Function MFPCA: total number of univariate basis functions is smaller than given M. M was set to ", sum(npc), ".")
+  } 
 
   # check if non-orthonormal basis functions used
   if(all(foreach::foreach(j = 1:p, .combine = "c")%do%{uniBasis[[j]]$ortho}))
