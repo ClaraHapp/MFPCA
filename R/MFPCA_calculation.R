@@ -307,7 +307,11 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fi
 
   res <- calcMFPCA(N = N, p = p, Bchol = Bchol, M = M, type = type, weights = weights,
                    npc = npc, argvals = getArgvals(mFData), uniBasis = uniBasis, fit = fit, approx.eigen = approx.eigen)
+  
   res$meanFunction <- m # return mean function, too
+  
+  if(fit)
+    res$fit <- m + res$fit # add mean function to fits
 
   # bootstrap for eigenfunctions
   if(bootstrap)
