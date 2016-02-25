@@ -261,13 +261,21 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fi
       stop("Significance level for bootstrap confidence bands must be in (0,1).")
 
   }
-
-  #de-mean functions -> coefficients are also de-meaned!
-  m <- meanFunction(mFData, na.rm = TRUE) # ignore NAs in data
-  mFData <- mFData - m
-
+  
   # dimension for each component
   dimSupp <- dimSupp(mFData)
+  
+  # get type of univariate expansions
+  type <- sapply(uniExpansions, function(l){l$type})
+
+  # de-mean functions -> coefficients are also de-meaned!
+  # do not de-mean in uFPCA, as PACE gives a smooth estimate of the mean (see below)
+  m <- meanFunction(mFData, na.rm = TRUE) # ignore NAs in data
+  for(j in 1:p)
+  { 
+    if(type[j] != "uFPCA")
+      mFData[[j]] <- mFData[[j]] - m[[j]]
+  }
 
   if(verbose)
     cat("Calculating univariate basis expansions (", format(Sys.time(), "%T"), ")\n", sep = "")
@@ -276,7 +284,12 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fi
   uniBasis <- mapply(function(expansion, data){univDecomp(type = expansion$type, data = data, params = expansion$params)},
                      expansion = uniExpansions, data = mFData, SIMPLIFY = FALSE)
 
-  type <- sapply(uniExpansions, function(l){l$type})
+  # for uFPCA: replace estimated mean in m
+  for(j in 1:p)
+  {
+    if(type[j] == "uFPCA")
+      m[[j]] <- uniBasis[[j]]$meanFunction
+  }
 
   # Multivariate FPCA
   npc <- sapply(uniBasis, function(x){dim(x$scores)[2]}) # get number of univariate basis functions

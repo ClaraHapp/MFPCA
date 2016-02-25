@@ -3,35 +3,32 @@
 #' This function implements the functional CP-TPA (FCP-TPA) algorithm, that 
 #' calculates a smooth PCA for 3D tensor data (i.e. \code{N} observations of 2D 
 #' images with dimension \code{S1 x S2}). The results are given in a 
-#' CANDECOMP/PARAFRAC (CP) model format \deqn{X = sum_{k = 1}^K d_k u_k o v_k o
-#' w_k}  where \eqn{o} stands for the outer product. In this representation,
-#' the outer product \eqn{v_k o w_k} can be regarded as the \eqn{k}-th
-#' eigenimage, while \eqn{d_k u_k} represents the vector of individual scores
-#' for this eigenimage and each observation.
+#' CANDECOMP/PARAFRAC (CP) model format \deqn{X = sum_{k = 1}^K d_k u_k o v_k o 
+#' w_k}  where \eqn{o} stands for the outer product. In this representation, the
+#' outer product \eqn{v_k o w_k} can be regarded as the \eqn{k}-th eigenimage,
+#' while \eqn{d_k u_k} represents the vector of individual scores for this
+#' eigenimage and each observation.
 #' 
 #' The degree of smoothness is controlled by three smoothing parameters 
 #' \eqn{\alpha_u, \alpha_v, \alpha_w}. There is hence one smoothing parameter 
-#' for each direction, which is chosen from a given grid (passed via the 
-#' parameter \code{alphaGrid}). As the first direction corresponds to the 
-#' observations, only little smoothing is considered, setting \eqn{alpha_u} to 
-#' the minimum of the given values and throwing a warning, if the grid contains 
-#' more than one value. For \eqn{\alpha_v, \alpha_w}, the optimal value is 
-#' chosen via generalized cross-validation (\code{\link{gcvV}}) in each step, 
-#' allowing a different degree of smoothness for each eigenimage in each 
-#' dimension.
+#' for each direction, passed via the 
+#' parameter \code{alphaVal}. 
 #' 
 #' @param X The data tensor of dimensions \code{N x S1 x S2}
 #' @param K The number of eigentensors to be calculated
 #' @param penMat A list of three roughness penalization matrices, one for each 
 #'   direction (u, v & w).
-#' @param alphaGrid A list of three grids for smoothing parameters along each 
-#'   direction. For the observations (first diection), only the minimum is used.
+#' @param alphaVal A list of three smoothing parameters along each 
+#'   direction.
+#' @param verbose Logical. If \code{TRUE} computational details are given on the
+#'   standard output during calculation of the FPCA
+#'  @param tol A numeric value, given the tolerance for relative and absolute values in the algorithm. Defaults to \code{1e-5}.
 #'   
 #' @return \item{d}{A vector of length \code{K}, containing the numeric weigths 
 #'   \eqn{d_k} in the CP model} \item{U}{A matrix of dimensions \code{N x K}, 
-#'   containing the eigenvectors \eqn{u_k} in the first dimension} \item{V}{A
-#'   matrix of dimensions \code{S1 x K}, containing the eigenvectors \eqn{v_k}
-#'   in the second dimension} \item{W}{A matrix of dimensions \code{S2 x K},
+#'   containing the eigenvectors \eqn{u_k} in the first dimension} \item{V}{A 
+#'   matrix of dimensions \code{S1 x K}, containing the eigenvectors \eqn{v_k} 
+#'   in the second dimension} \item{W}{A matrix of dimensions \code{S2 x K}, 
 #'   containing the eigenvectors \eqn{w_k} in the third dimension.}
 #'   
 #' @references G. I. Allen, "Multi-way Functional Principal Components 
@@ -39,7 +36,7 @@
 #'   Multi-Sensor Adaptive Processing, 2013.
 #'   
 #' @seealso fcptpaBasis
-FCP_TPA <- function(X, K, penMat, alphaGrid)
+FCP_TPA <- function(X, K, penMat, alphaVal, verbose = FALSE, tol = 1e-5)
 {
   dimX <- dim(X)
   
@@ -49,9 +46,6 @@ FCP_TPA <- function(X, K, penMat, alphaGrid)
   w <- runif(dimX[3], min = -1, max = 1); w <- w/normVec(w)
   
   # initialize smoothness parameters and smoothing matrices
-  alphaU <- min(alphaGrid$u); if(length(alphaGrid$u) > 1) warning("Set smoothing parameter alphaU (smoothing over observations) to minimum of given values. No optimization.") # not updated
-  alphaV <- min(alphaGrid$v) # start with little smoothing
-  alphaW <- min(alphaGrid$w)
   Iu <- diag(dimX[1])
   Iv <- diag(dimX[2])
   Iw <- diag(dimX[3])
@@ -65,7 +59,8 @@ FCP_TPA <- function(X, K, penMat, alphaGrid)
   
   for(k in 1:K)
   {
-    # cat("\nk = ", k, "\n")
+    if(verbose)
+      cat("\nk = ", k, "\n")
     
     # initialize "old" versions
     uOld <- 0*u
@@ -73,32 +68,27 @@ FCP_TPA <- function(X, K, penMat, alphaGrid)
     wOld <- 0*w
     
     # repeat until convergence
-    while(any(c(normVec(u - uOld)/normVec(u), normVec(v - vOld)/normVec(v), normVec(w - wOld)/normVec(w)) > sqrt(.Machine$double.eps)))
+    while(any(c(normVec(u - uOld)/normVec(u), normVec(v - vOld)/normVec(v), normVec(w - wOld)/normVec(w)) > tol))
     {
-      
-      # update u (assume alpha_u = min(alphagrid$u) fixed, almost no smoothing over observations)
+      # update u
       uOld <- u
-      u <- solve(Iu + alphaU * penMat$u, ttv(X, list(v, w), dim = 2:3)) /
-        as.numeric(crossprod(v, v + alphaV*penMat$v %*%v )*crossprod(w, w + alphaW * penMat$w %*% w))#as.numeric(crossprod(v, solve(Sv, v))* crossprod(w, solve(Sw, w)))
+      u <- solve(Iu + alphaVal$u * penMat$u, ttv(X, list(v, w), dim = 2:3)) /
+        as.numeric(crossprod(v, v + alphaVal$v*penMat$v %*%v )*crossprod(w, w + alphaVal$w * penMat$w %*% w))#as.numeric(crossprod(v, solve(Sv, v))* crossprod(w, solve(Sw, w)))
       
       # update v
       vOld <- v
-      v <- solve(Iv + alphaV * penMat$v, ttv(X, list(u, w), dim = c(1,3)))/
-        as.numeric(crossprod(u, u + alphaU * penMat$u %*% u)*crossprod(w, w + alphaW * penMat$w %*% w))
-      
-      # optimize alphaV according to gcv on a given grid of values
-      alphaV <- alphaGrid$v[which.min(sapply(X = alphaGrid$v, FUN = gcvV, data = X, u = u, v = v, w = w, penMat = penMat, alphaW = alphaW))]
-      
+      v <- solve(Iv + alphaVal$v * penMat$v, ttv(X, list(u, w), dim = c(1,3)))/
+        as.numeric(crossprod(u, u + alphaVal$u * penMat$u %*% u)*crossprod(w, w + alphaVal$w * penMat$w %*% w))
+         
       # update w
       wOld <- w
-      w <- solve(Iw + alphaW * penMat$w, ttv(X, list(u, v), dim = 1:2)) /
-        as.numeric(crossprod(u,  u + alphaU * penMat$u %*% u)* crossprod(v, v + alphaV*penMat$v %*% v ))
-      
-      # update alphaW according to gcv on a given grid of values
-      alphaW <- alphaGrid$w[which.min(sapply(X = alphaGrid$w, FUN = gcvW, data = X, u = u, v=  v, w = w, penMat = penMat, alphaV = alphaV))]
-      
-      #cat("u: ", normVec(u - uOld), ", v: ", normVec(v - vOld), "w: ",  normVec(w - wOld), "alphaV: ", alphaV, "alphaW: ", alphaW, "\n")
+      w <- solve(Iw + alphaVal$w * penMat$w, ttv(X, list(u, v), dim = 1:2)) /
+        as.numeric(crossprod(u,  u + alphaVal$u * penMat$u %*% u)* crossprod(v, v + alphaVal$v*penMat$v %*% v ))
     }
+    
+    if(verbose)
+      cat("Absolute error:\n
+          u: ", normVec(u - uOld), ", v: ", normVec(v - vOld), "w: ",  normVec(w - wOld), "\n")
     
     # scale vectors to have norm one
     u <- u/normVec(u)
@@ -112,8 +102,7 @@ FCP_TPA <- function(X, K, penMat, alphaGrid)
     W[,k] <- w
     
     # update X
-    X <- X - d[k] * u %o% v %o% w #u[,1] %o% v[,1] %o% w[,1] # outer product
-    
+    X <- X - d[k] * u %o% v %o% w #u[,1] %o% v[,1] %o% w[,1] # outer product   
   }
   
   return(list(d = d, U = U, V = V, W = W))
@@ -156,23 +145,23 @@ normVec <- function(x) sqrt(sum(x^2))
 #' @keywords internal
 #'   
 #' @seealso FCP_TPA
-gcvV <- function(alphaV, data, u, v, w, penMat, alphaW)
+gcvV <- function(alphaV, data, u, v, w, penMat, alphaU, alphaW)
 {
   m <- length(v)
   
   res <- 1/m* normVec(ttv(data, list(u,w), c(1,3))/(normVec(u) * normVec(w))^2 - v)^2 / 
-    (1 - normVec(w)^2/m * sum(1/eigen(diag(m) + alphaV*penMat$v)$values) /as.numeric(crossprod(w, w + alphaW * penMat$w %*% w)))^2  
+    (1 - (normVec(u) * normVec(w))^2/m * sum(1/eigen(diag(m) + alphaV*penMat$v)$values) / (as.numeric(crossprod(u, u + alphaU * penMat$u %*% u)) * as.numeric(crossprod(w, w + alphaW * penMat$w %*% w))) )^2  
   
   return(res)
 }
 
 #' @rdname gcvV
-gcvW <- function(alphaW, data, u, v, w, penMat, alphaV)
+gcvW <- function(alphaW, data, u, v, w, penMat, alphaU, alphaV)
 {
   p <- length(w)
   
   res <- 1/p* normVec(ttv(data, list(u,v), c(1,2))/(normVec(u) * normVec(v))^2 - w)^2 / 
-    (1 - normVec(v)^2/p * sum(1 / eigen(diag(p) + alphaW * penMat$w)$values ) /as.numeric(crossprod(v, v + alphaV*penMat$v %*%v )))^2  
+    (1 - (normVec(u) * normVec(v))^2/p * sum(1 / eigen(diag(p) + alphaW * penMat$w)$values ) / ( as.numeric(crossprod(u, u + alphaU * penMat$u %*% u)) * as.numeric(crossprod(v, v + alphaV*penMat$v %*%v ))) )^2  
   
   return(res)
 }

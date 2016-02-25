@@ -35,9 +35,9 @@ univDecomp <- function(type, data, params)
 {
   if(is.null(params))
     params <- list() # create empty list
-
+  
   params$funDataObject <- data
-
+  
   res <- switch(type,
                 "uFPCA" = do.call(fpcaBasis, params),
                 "UMPCA" = do.call(umpcaBasis, params),
@@ -50,10 +50,10 @@ univDecomp <- function(type, data, params)
                 "DCT3D" = do.call(dctBasis3D, params),
                 stop("Univariate Decomposition for 'type' = ", type, " not defined!")
   )
-
+  
   if(res$ortho == FALSE & is.null(res$B))
     stop("UnivDecomp: must provide integral matrix B for non-orthonormal basis functions.")
-
+  
   return(res)
 }
 
@@ -92,10 +92,11 @@ univDecomp <- function(type, data, params)
 fpcaBasis <- function(funDataObject, nbasis = 10, pve = 0.99, npc = NULL, makePD = FALSE)
 {
   FPCA <- PACE(funDataObject, predData = NULL, nbasis, pve, npc, makePD)
-
+  
   return(list(scores = FPCA$scores,
               ortho = TRUE,
-              functions = FPCA$functions
+              functions = FPCA$functions,
+              meanFunction = FPCA$mu
   ))
 }
 
@@ -183,22 +184,24 @@ makeDiffOp <- function(degree, dim){
 #' \code{nObsPoints(funDataObject)} = (S1, S2)), i.e. the total observed data 
 #' are represented as third order tensor of dimension \code{N x S1 x S2}.  The 
 #' smooth PCA of a tensor of this kind is calculated via the 
-#' \code{\link{FCP_TPA}} function.
-#' 
-#' The smoothness of the resulting eigenvectors \eqn{u_k, v_k, w_k} (that are 
-#' used for the calculation of the eigenimages and the score vectors) is
-#' controlled by smoothing parameters \eqn{\alpha_u, \alpha_v, \alpha_w}.
+#' \code{\link{FCP_TPA}} function. The smoothness of the resulting eigenvectors
+#' \eqn{u_k, v_k, w_k} (that are used for the calculation of the eigenimages and
+#' the score vectors) is controlled by smoothing parameters \eqn{\alpha_u,
+#' \alpha_v, \alpha_w}.
 #' 
 #' @param funDataObject An object of class \code{\link[funData]{funData}} 
 #'   containing the observed functional data samples (here: images) for which 
 #'   the smooth PCA is to be calculated.
 #' @param npc An integer, giving a prespecified value for the number of 
 #'   principal components.
-#' @param smoothingDegree A numeric vector of length 3, specifying the degree of
-#'   the difference penalties inducing smoothness in each direction. Defaults to
-#'   2 for all directions (2nd differences).
-#' @param alphaProp A vector of proportions for choosing the smoothness 
-#'   parameters in the FCP_TPA algorithm. See Details.
+#' @param smoothingDegree A numeric vector of length 2, specifying the degree of
+#'   the difference penalties inducing smoothness in both directions of the
+#'   image. Defaults to 2 for each direction (2nd differences).
+#' @param alphaGrid A list of length two with entries \code{v} and \code{w}
+#'   containing the smoothness parameters to test for each direction via CV.
+#' @param nGroups An integer, giving the number of groups to use for CV. The
+#'   function throws an error, if the observations cannot be distributed
+#'   \code{nGroups} of equal size.
 #'   
 #' @return \item{scores}{A matrix of scores (coefficients) with dimension 
 #'   \code{N x k}, reflecting the weights for principal component in each 
@@ -209,32 +212,74 @@ makeDiffOp <- function(degree, dim){
 #'   
 #' @seealso univDecomp
 #'   
-#' @references Haiping Lu, K.N. Plataniotis, and A.N. Venetsanopoulos, 
-#'   "Uncorrelated Multilinear Principal Component Analysis for Unsupervised 
-#'   Multilinear Subspace Learning", IEEE Transactions on Neural Networks, Vol. 
-#'   20, No. 11, Page: 1820-1836, Nov. 2009.
-fcptpaBasis <- function(funDataObject, npc, smoothingDegree = rep(2,3), alphaProp)
+#' @references G. I. Allen, "Multi-way Functional Principal Components 
+#'   Analysis", In IEEE International Workshop on Computational Advances in 
+#'   Multi-Sensor Adaptive Processing, 2013.
+fcptpaBasis <- function(funDataObject, npc, smoothingDegree = rep(2,2), alphaGrid, nGroups = 5, printAlphaOpt = FALSE)
 {
   if(dimSupp(funDataObject) != 2)
     stop("FCP_TPA is implemented for (2D) image data only!")
   
   d <- dim(funDataObject@X)
   
-  Du <- makeDiffOp(degree = smoothingDegree[1], dim = d[1])
-  Dv <- makeDiffOp(degree = smoothingDegree[2], dim = d[2])
-  Dw <- makeDiffOp(degree = smoothingDegree[3], dim = d[3])
+  if(d[1] %% nGroups != 0)
+    stop("Crossvalidation: Observations cannot be distributed in ", nGroups, " groups of equal size!")
   
-  alphaGrid = list(u = d[1]*min(alphaProp), v = d[2]*alphaProp, w = d[3]*alphaProp)
+  Du <- diag(0, nrow = d[1], ncol = d[1]) # no smoothing along observations
+  Dv <- makeDiffOp(degree = smoothingDegree[1], dim = d[2])
+  Dv <- t(Dv) %*% Dv
+  Dw <- makeDiffOp(degree = smoothingDegree[1], dim = d[3])
+  Dw <- t(Dw) %*% Dw
   
-  FCPTPAres <- FCP_TPA(funDataObject@X, K = npc, list(u = t(Du) %*% Du, v = t(Dv) %*% Dv, w = t(Dw) %*% Dw), alphaGrid)
+  CVres <- data.frame(cbind(expand.grid(1:length(alphaGrid$v), 1:length(alphaGrid$w)), NA))
+  colnames(CVres) <-  c("indV", "indW", "err")
+  
+  for(i in 1:nrow(CVres))
+  {
+    # randomly assign groups
+    CVsample <- matrix(sample(d[1]), ncol = nGroups)
+    
+    CVres$err[i] <- 0
+    
+    for(j in 1:nGroups)
+    {
+      # leave out group j
+      pca <-  FCP_TPA(X = funDataObject@X[-CVsample[,j],,], K = npc,
+                              penMat = list(u = Du[-CVsample[,j], -CVsample[,j]], v = Dv, w = Dw),
+                              alphaVal = list(u = 0, v = alphaGrid$v[CVres$indV[i]], w = alphaGrid$w[CVres$indW[i]]))
+      
+      # calculate prediction for group j
+      pred <- array(0, c(d[1]/nGroups, d[-1]))
+      
+      for(k in 1:npc) # scores = projection on k-th eigenimage
+        pred <- pred + ttv(funDataObject@X[CVsample[,j],,], list(pca$V[,k], pca$W[,k]), c(2,3)) %o% pca$V[,k] %o% pca$W[,k]
+      
+      # calculate mean prediction error
+      CVres$err[i] <- CVres$err[i] + mean(funData::norm(funData(argvals = funDataObject@argvals,
+                                                                X = pred - funDataObject@X[CVsample[,j],,])))
+      
+    } 
+    
+    CVres$err[i] <- CVres$err[i]/nGroups
+  } 
+  
+  optInd <- which.min(CVres$err)
+  
+  pca <-  FCP_TPA(X = funDataObject@X, K = npc,
+                          penMat = list(u = Du, v = Dv, w = Dw),
+                          alphaVal = list(u = 0, v = alphaGrid$v[CVres$indV[optInd]], w = alphaGrid$w[CVres$indW[optInd]]))
+  
+  if(printAlphaOpt)
+    cat(alphaGrid$v[CVres$indV[optInd]], ";", alphaGrid$w[CVres$indW[optInd]], "\n", file = "./alphaOpt.tmp", append = TRUE)
+  
   
   # reconstruct eigenimages and scores from FCP_TPA result
   eigenImages <- array(NA, c(npc, d[-1]))
   
   for(i in 1:npc)
-    eigenImages[i,,] <-  FCPTPAres$V[,i] %o% FCPTPAres$W[,i]
+    eigenImages[i,,] <-  pca$V[,i] %o% pca$W[,i]
   
-  scores <-  sweep(FCPTPAres$U,MARGIN=2,FCPTPAres$d,`*`)
+  scores <-  sweep(pca$U,MARGIN=2,pca$d,`*`)
   
   return(list(scores = scores,
               B = .calcBasisIntegrals(eigenImages, dimSupp(funDataObject), funDataObject@argvals),
@@ -278,18 +323,18 @@ fcptpaBasis <- function(funDataObject, npc, smoothingDegree = rep(2,3), alphaPro
 splineBasis1D <- function(funDataObject, bs = "ps", m = NA, k = -1)
 {
   N <- nObs(funDataObject)
-
+  
   x <- funDataObject@argvals[[1]]
-
+  
   # spline design matrix via gam
   g <- mgcv::gam(funDataObject@X[1, ] ~ s(x, bs = bs, m = m, k = k), fit = FALSE)
   desMat <- g$X
   k <- g$smooth[[1]]$bs.dim
   m <- g$smooth[[1]]$p.order
-
+  
   # weights via lm -> no penalization
   scores <- t(apply(funDataObject@X, 1, function(f, dM){lm(f ~ dM - 1)$coef}, dM = desMat)) # design matrix already includes intercept!
-
+  
   return(list(scores = scores,
               B = .calcBasisIntegrals(t(desMat), 1, funDataObject@argvals),
               ortho = FALSE,
@@ -339,9 +384,9 @@ splineBasis1D <- function(funDataObject, bs = "ps", m = NA, k = -1)
 splineBasis1Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel = FALSE)
 {
   N <- nObs(funDataObject)
-
+  
   x <- funDataObject@argvals[[1]]
-
+  
   if(parallel)
   {
     scores <- foreach::foreach(i = 1:(N-1), .combine = "rbind")%dopar%{
@@ -356,14 +401,14 @@ splineBasis1Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
       g$coef
     }
   }
-
+  
   # last extra to extract model matrix
   g <- mgcv::gam(funDataObject@X[N, ] ~ s(x, bs = bs, m = m, k = k), method = "REML")
   k <- g$smooth[[1]]$bs.dim
   m <- g$smooth[[1]]$p.order
-
+  
   scores <- rbind(scores, g$coef)
-
+  
   return(list(scores = scores,
               B = .calcBasisIntegrals(t(model.matrix(g)), 1, funDataObject@argvals),
               ortho = FALSE,
@@ -410,21 +455,21 @@ splineBasis1Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
 splineBasis2D <- function(funDataObject, bs = "ps", m = NA, k = -1)
 {
   N <- nObs(funDataObject)
-
+  
   coord <- expand.grid(x = funDataObject@argvals[[1]], y = funDataObject@argvals[[2]])
-
+  
   # spline design matrix via gam
   g <- mgcv::gam(as.vector(funDataObject@X[1,,]) ~ te(coord$x, coord$y, bs = bs, m = m, k = k), data = coord, fit = FALSE)
   desMat <- g$X
   k <- sapply(g$smooth[[1]]$margin, function(l){l$bs.dim})
   m <- lapply(g$smooth[[1]]$margin, function(l){l$p.order})
-
+  
   # weights via lm -> no penalization
   scores <- t(apply(funDataObject@X, 1, function(f, dM){lm(as.vector(f) ~ dM - 1)$coef}, dM = desMat))
-
+  
   # extract basis functions (in the correct dimensions)
   B <- aperm(array(desMat, c(funData::nObsPoints(funDataObject), ncol(scores))), c(3,1,2))
-
+  
   return(list(scores = scores,
               B = .calcBasisIntegrals(B, 2, funDataObject@argvals),
               ortho = FALSE,
@@ -477,9 +522,9 @@ splineBasis2D <- function(funDataObject, bs = "ps", m = NA, k = -1)
 splineBasis2Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel = FALSE)
 {
   N <- nObs(funDataObject)
-
+  
   coord <- expand.grid(x = funDataObject@argvals[[1]], y = funDataObject@argvals[[2]])
-
+  
   if(parallel)
   {
     scores <- foreach::foreach(i = 1:(N-1), .combine = "rbind")%dopar%{
@@ -494,17 +539,17 @@ splineBasis2Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
       g$coef
     }
   }
-
+  
   # fit the last one extra in order to extract model matrix
   g <- mgcv::bam(as.vector(funDataObject@X[N, , ]) ~ te(coord$x, coord$y, bs = bs, m = m, k = k), data = coord, method = "REML")
   k <- sapply(g$smooth[[1]]$margin, function(l){l$bs.dim})
   m <- lapply(g$smooth[[1]]$margin, function(l){l$p.order})
-
+  
   scores <- rbind(scores, g$coef)
-
+  
   # extract basis functions (in the correct dimensions)
   B <- aperm(array(model.matrix(g), c(nObsPoints(funDataObject), ncol(scores))), c(3,1,2))
-
+  
   return(list(scores = scores,
               B = .calcBasisIntegrals(B, 2, funDataObject@argvals),
               ortho = FALSE,
@@ -570,20 +615,20 @@ dctBasis2D <- function(funDataObject, qThresh, parallel = FALSE)
 {
   if(dimSupp(funDataObject) != 2)
     stop("dctBasis2D can handle only functional data on two-dimensional domains.")
-
+  
   if(parallel)
     res <- foreach::foreach(i = 1:nObs(funDataObject), .combine = "rbind") %dopar% {
       dct <- dct2D(funDataObject@X[i,,], qThresh)
-
+      
       data.frame(i = rep(i, length(dct$ind)), j = dct$ind, x = dct$val)
     }
   else
     res <- foreach::foreach(i = 1:nObs(funDataObject), .combine = "rbind") %do% {
       dct <- dct2D(funDataObject@X[i,,], qThresh)
-
+      
       data.frame(i = rep(i, length(dct$ind)), j = dct$ind, x = dct$val)
     }
-
+  
   return(list(scores = sparseMatrix(i = res$i, j = res$j, x = res$x),
               B = Matrix::Diagonal(n = max(res$j), x = prod(sapply(funDataObject@argvals, function(l){diff(range(l))}))/pi^2),
               ortho = FALSE,
@@ -623,9 +668,9 @@ dct2D <- function(image, qThresh)
   
   res <- .C("calcCoefs", M = as.integer(nrow(image)), N = as.integer(ncol(image)),
             image = as.numeric(image), coefs = as.numeric(image*0))$coefs
-
+  
   ind <- which(abs(res) > quantile(abs(res), qThresh))
-
+  
   return(list(ind = ind, val = res[ind]))
 }
 
@@ -686,20 +731,20 @@ dctBasis3D <- function(funDataObject, qThresh, parallel = FALSE)
 {
   if(dimSupp(funDataObject) != 3)
     stop("dctBasis2D can handle only functional data on three-dimensional domains.")
-
+  
   if(parallel)
     res <- foreach::foreach(i = 1:nObs(funDataObject), .combine = "rbind") %dopar% {
       dct <- dct3D(funDataObject@X[i,,,], qThresh)
-
+      
       data.frame(i = rep(i, length(dct$ind)), j = dct$ind, x = dct$val)
     }
   else
     res <- foreach::foreach(i = 1:nObs(funDataObject), .combine = "rbind") %do% {
       dct <- dct3D(funDataObject@X[i,,,], qThresh)
-
+      
       data.frame(i = rep(i, length(dct$ind)), j = dct$ind, x = dct$val)
     }
-
+  
   return(list(scores = sparseMatrix(i = res$i, j = res$j, x = res$x),
               B = Matrix::Diagonal(n = max(res$j), x = prod(sapply(funDataObject@argvals, function(l){diff(range(l))}))/pi^3),
               ortho = FALSE,
@@ -739,9 +784,9 @@ dct3D <- function(image, qThresh)
   
   res <- .C("calcCoefs3D", dim = as.integer(dim(image)),
             image = as.numeric(image), coefs = as.numeric(image*0))$coefs
-
+  
   ind <- which(abs(res) > quantile(abs(res), qThresh))
-
+  
   return(list(ind = ind, val = res[ind]))
 }
 
