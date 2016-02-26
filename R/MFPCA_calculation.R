@@ -356,7 +356,7 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fi
           bootBasis[[j]] <- univDecomp(type = type[j], data = extractObs(mFData, obs = bootObs)[[j]], params = uniExpansions[[j]]$params)
           
           # recalculate Bchol if necessary
-          if(!bootBasis$ortho)
+          if(!bootBasis[[j]]$ortho)
             Bchol[[j]] <- Matrix::chol(bootBasis[[j]]$B)
         } 
         else # resample scores (functions are given and scores can simply be resampled)
