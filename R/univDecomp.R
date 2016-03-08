@@ -197,11 +197,8 @@ makeDiffOp <- function(degree, dim){
 #' @param smoothingDegree A numeric vector of length 2, specifying the degree of
 #'   the difference penalties inducing smoothness in both directions of the
 #'   image. Defaults to 2 for each direction (2nd differences).
-#' @param alphaGrid A list of length two with entries \code{v} and \code{w}
-#'   containing the smoothness parameters to test for each direction via CV.
-#' @param nGroups An integer, giving the number of groups to use for CV. The
-#'   function throws an error, if the observations cannot be distributed
-#'   \code{nGroups} of equal size.
+#' @param alphaRange A list of length two with entries \code{v} and \code{w}
+#'   containing the range of smoothness parameters to test for each direction.
 #'   
 #' @return \item{scores}{A matrix of scores (coefficients) with dimension 
 #'   \code{N x k}, reflecting the weights for principal component in each 
@@ -215,64 +212,21 @@ makeDiffOp <- function(degree, dim){
 #' @references G. I. Allen, "Multi-way Functional Principal Components 
 #'   Analysis", In IEEE International Workshop on Computational Advances in 
 #'   Multi-Sensor Adaptive Processing, 2013.
-fcptpaBasis <- function(funDataObject, npc, smoothingDegree = rep(2,2), alphaGrid, nGroups = 5, printAlphaOpt = FALSE)
+fcptpaBasis <- function(funDataObject, npc, smoothingDegree = rep(2,2), alphaRange)
 {
   if(dimSupp(funDataObject) != 2)
     stop("FCP_TPA is implemented for (2D) image data only!")
   
   d <- dim(funDataObject@X)
-  
-  if(d[1] %% nGroups != 0)
-    stop("Crossvalidation: Observations cannot be distributed in ", nGroups, " groups of equal size!")
-  
-  Du <- diag(0, nrow = d[1], ncol = d[1]) # no smoothing along observations
+    
+  # smoothing only along image directions
   Dv <- makeDiffOp(degree = smoothingDegree[1], dim = d[2])
   Dv <- t(Dv) %*% Dv
-  Dw <- makeDiffOp(degree = smoothingDegree[1], dim = d[3])
-  Dw <- t(Dw) %*% Dw
+  Dw <- makeDiffOp(degree = smoothingDegree[2], dim = d[3])
+  Dw <- t(Dw) %*% Dw 
   
-  CVres <- data.frame(cbind(expand.grid(1:length(alphaGrid$v), 1:length(alphaGrid$w)), NA))
-  colnames(CVres) <-  c("indV", "indW", "err")
-  
-  for(i in 1:nrow(CVres))
-  {
-    # randomly assign groups
-    CVsample <- matrix(sample(d[1]), ncol = nGroups)
+  pca <-  FCP_TPA(X = funDataObject@X, K = npc, penMat = list(v = Dv, w = Dw), alphaRange = alphaRange)
     
-    CVres$err[i] <- 0
-    
-    for(j in 1:nGroups)
-    {
-      # leave out group j
-      pca <-  FCP_TPA(X = funDataObject@X[-CVsample[,j],,], K = npc,
-                              penMat = list(u = Du[-CVsample[,j], -CVsample[,j]], v = Dv, w = Dw),
-                              alphaVal = list(u = 0, v = alphaGrid$v[CVres$indV[i]], w = alphaGrid$w[CVres$indW[i]]))
-      
-      # calculate prediction for group j
-      pred <- array(0, c(d[1]/nGroups, d[-1]))
-      
-      for(k in 1:npc) # scores = projection on k-th eigenimage
-        pred <- pred + ttv(funDataObject@X[CVsample[,j],,], list(pca$V[,k], pca$W[,k]), c(2,3)) %o% pca$V[,k] %o% pca$W[,k]
-      
-      # calculate mean prediction error
-      CVres$err[i] <- CVres$err[i] + mean(funData::norm(funData(argvals = funDataObject@argvals,
-                                                                X = pred - funDataObject@X[CVsample[,j],,])))
-      
-    } 
-    
-    CVres$err[i] <- CVres$err[i]/nGroups
-  } 
-  
-  optInd <- which.min(CVres$err)
-  
-  pca <-  FCP_TPA(X = funDataObject@X, K = npc,
-                          penMat = list(u = Du, v = Dv, w = Dw),
-                          alphaVal = list(u = 0, v = alphaGrid$v[CVres$indV[optInd]], w = alphaGrid$w[CVres$indW[optInd]]))
-  
-  if(printAlphaOpt)
-    cat(alphaGrid$v[CVres$indV[optInd]], ";", alphaGrid$w[CVres$indW[optInd]], "\n", file = "./alphaOpt.tmp", append = TRUE)
-  
-  
   # reconstruct eigenimages and scores from FCP_TPA result
   eigenImages <- array(NA, c(npc, d[-1]))
   
