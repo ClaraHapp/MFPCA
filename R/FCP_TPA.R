@@ -70,6 +70,7 @@ FCP_TPA <- function(X, K, penMat, alphaRange, verbose = FALSE, tol = 1e-4, maxIt
     uOld <- 0*u
     vOld <- 0*v
     wOld <- 0*w
+    tolOld <- tol
     
     # number of iterations
     iter <- 0
@@ -108,7 +109,6 @@ FCP_TPA <- function(X, K, penMat, alphaRange, verbose = FALSE, tol = 1e-4, maxIt
       {
         if((iter < 2*maxIter) & adaptTol) # try another maxIter with increased tolerance
         {
-          oldTol <- tol
           tol <- 10*tol
         } 
         else 
@@ -126,8 +126,8 @@ FCP_TPA <- function(X, K, penMat, alphaRange, verbose = FALSE, tol = 1e-4, maxIt
           u: ", normVec(u - uOld), ", v: ", normVec(v - vOld), ", w: ",  normVec(w - wOld), ", alphaV: ", alphaV, ", alphaW: ", alphaW, "\n")
     
     # reset tolerance if necessary
-    if((iter < 2*maxIter) & adaptTol) 
-      tol <- oldTol
+    if(adaptTol & (iter >= maxIter) ) 
+      tol <- tolOld
     
     # scale vectors to have norm one
     u <- u/normVec(u)
