@@ -513,58 +513,90 @@ splineBasis2Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
 }
 
 
-#' Calculate a cosine basis representation for functional data on
-#' two-dimensional domains
-#'
-#' This function calculates a tensor cosine basis representation for functional
-#' data on two-dimensional domains based on a discrete cosine transformation
-#' (DCT) using the C-library \code{fftw3} \url{http://www.fftw.org/}.
-#'
-#' Given the (discretized) observed functions \eqn{X_i}, this function
-#' calculates a basis representation \deqn{X_i(s,t) = \sum_{m = 0}^M \sum_{n =
-#' 0}^N \theta_{mn} f_{mn}(s,t)} in terms of (orthogonal) tensor cosine basis
-#' functions \deqn{f_{mn}(s,t) = c_m c_n \cos(ms) \cos(nt), \quad (s,t) \in
-#' \mathcal{T}}{f_{mn}(s,t) = c_m c_n \cos(ms) \cos(nt), \quad (s,t) \in
-#' \calT} with \eqn{c_m = \frac{1}{\sqrt{pi}}} for \eqn{m=0} and \eqn{c_m =
-#' \sqrt{\frac{2}{pi}}} for \eqn{m=1,2,\ldots} based on a discrete cosine
+#' Calculate a cosine basis representation for functional data on two- or 
+#' three-dimensional domains
+#' 
+#' These functions calculate  a tensor cosine basis representation for 
+#' functional data on two- or three-dimensional domains based on a discrete 
+#' cosine transformation (DCT) using the C-library \code{fftw3} 
+#' (\url{http://www.fftw.org/}). Coefficients under a given thershold are set to
+#' 0 to reduce complexity and for denoising.
+#' 
+#' Given the (discretized) observed functions \eqn{X_i}, the function 
+#' \code{dctBasis2D} calculates a basis representation \deqn{X_i(s,t) = \sum_{m 
+#' = 0}^{K_1-1} \sum_{n = 0}^{K_2-1} \theta_{mn} f_{mn}(s,t)} of a 
+#' two-dimensional function \eqn{X_i(s,t)} in terms of (orthogonal) tensor 
+#' cosine basis functions \deqn{f_{mn}(s,t) = c_m c_n \cos(ms) \cos(nt), \quad 
+#' (s,t) \in \mathcal{T}}{f_{mn}(s,t) = c_m c_n \cos(ms) \cos(nt), \quad (s,t) 
+#' \in \calT} with \eqn{c_m = \frac{1}{\sqrt{\pi}}} for \eqn{m=0} and \eqn{c_m =
+#' \sqrt{\frac{2}{\pi}}} for \eqn{m=1,2,\ldots} based on a discrete cosine 
 #' transform (DCT).
-#'
-#' If not thresholded (\code{qThresh = 0}), the function returns all non-zero
-#' coefficients \eqn{\theta_{mn}} in the basis representation in a sparse matrix
+#' 
+#' If not thresholded (\code{qThresh = 0}), the function returns all non-zero 
+#' coefficients \eqn{\theta_{mn}} in the basis representation in a 
+#' \code{\link[Matrix]{sparseMatrix}} (package \pkg{Matrix}) called
 #' \code{scores}. Otherwise, coefficients with \deqn{|\theta_{mn}| <= q } are
 #' set to zero, where \eqn{q} is the \code{qThresh}-quantile of
 #' \eqn{|\theta_{mn}|}.
-#'
-#' @section Warning: If the C-library \code{fftw3} is not available when the
-#'   package \code{MFPCA} is installed, this function is disabled an will throw
-#'   an error. For full functionality install the C-library \code{fftw3} from
+#' 
+#' For functions \eqn{X_i(s,t,u)} on three-dimensional domains, the function 
+#' \code{dctBasis3D} calculates a basis representation \deqn{X_i(s,t,u) = 
+#' \sum_{m = 0}^{K_1-1} \sum_{n = 0}^{K_2-1} \sum_{k = 0}^{K_3-1} \theta_{mnk} 
+#' f_{mnk}(s,t,u)} in terms of (orthogonal) tensor cosine basis functions 
+#' \deqn{f_{mnk}(s,t,u) = c_m c_n c_k \cos(ms) \cos(nt) \cos(ku), \quad (s,t,u) 
+#' \in \mathcal{T}}{f_{mnk}(s,t,u) = c_m c_n c_k \cos(ms) \cos(nt) \cos(ku), 
+#' \quad (s,t,u) \in \calT} again with \eqn{c_m = \frac{1}{\sqrt{pi}}} for 
+#' \eqn{m=0} and \eqn{c_m = \sqrt{\frac{2}{pi}}} for \eqn{m=1,2,\ldots} based on
+#' a discrete cosine transform (DCT). The thresholding works analogous as for 
+#' the two-dimensional case.
+#' 
+#' @section Warning: If the C-library \code{fftw3} is not available when the 
+#'   package \code{MFPCA} is installed, this function is disabled an will throw 
+#'   an error. For full functionality install the C-library \code{fftw3} from 
 #'   \url{http://www.fftw.org/} and reinstall \code{MFPCA}.
-#'
-#' @param funDataObject An object of class \code{\link[funData]{funData}}
-#'   containing the observed functional data samples and for which the basis
+#'   
+#' @param funDataObject An object of class \code{\link[funData]{funData}} 
+#'   containing the observed functional data samples and for which the basis 
 #'   representation is calculated.
-#' @param qThresh A numeric with value in \eqn{[0,1]}, giving the quantile for
+#' @param qThresh A numeric with value in \eqn{[0,1]}, giving the quantile for 
 #'   thresholding the coefficients. See Details.
-#' @param parallel Logical. If \code{TRUE}, the coefficients for the basis
-#'   functions are calculated in parallel. The implementation is based on the
-#'   \code{\link[foreach]{foreach}} function and requires a parallel backend
-#'   that must be registered before. See \code{\link[foreach]{foreach}} for
-#'   details.
-#'
-#' @return \item{scores}{A sparse matrix of scores (coefficients) with dimension
-#'   \code{N x L}, reflecting the weights \eqn{\theta_{mn}} for each basis
-#'   function in each observation, where \code{L} is the total number of basis
-#'   functions used.} \item{B}{A diagonal matrix, giving the norms of the
-#'   different basis functions used (as they are orthogonal).}
-#'   \item{ortho}{Logical, set to \code{FALSE}, as basis functions are
-#'   orthogonal, but in genereal not orthonormal.} \item{functions}{\code{NULL},
-#'   as basis functions are known.}
-#'
-#' @seealso univDecomp
-#'
+#' @param parallel Logical. If \code{TRUE}, the coefficients for the basis 
+#'   functions are calculated in parallel. The implementation is based on the 
+#'   \code{\link[foreach]{foreach}} function and requires a parallel backend 
+#'   that must be registered before; see \code{\link[foreach]{foreach}} for 
+#'   details. Defaults to \code{FALSE}.
+#'   
+#' @return \item{scores}{A \code{\link[Matrix]{sparseMatrix}} of scores 
+#'   (coefficients) with dimension \code{N x K}, reflecting the weights 
+#'   \eqn{\theta_{mn}} (\eqn{\theta_{mnk}}) for each basis function in each
+#'   observation, where \code{K} is the total number of basis functions used.}
+#'   \item{B}{A diagonal matrix, giving the norms of the different basis
+#'   functions used (as they are orthogonal).} \item{ortho}{Logical, set to
+#'   \code{FALSE}, as basis functions are orthogonal, but in genereal not
+#'   orthonormal.} \item{functions}{\code{NULL}, as basis functions are known.}
+#'   
+#' @seealso \code{\link{univDecomp}}, \code{\link{dct2D}}, \code{\link{dct3D}}
+#'   
 #' @importFrom foreach %do%
 #' @importFrom foreach %dopar%
 #' @importFrom Matrix sparseMatrix
+#'   
+#' @export dctBasis2D
+#'   
+#' @examples
+#' # Simulate data with 10 observations on two-dimensional domain (images)
+#' x1 <- seq(0, 1, length.out = 50)
+#' x2 <- seq(-1, 1, length.out = 75)
+#' f2 <- funData(argvals = list(x1, x2),
+#'               X = aperm(replicate(10, x1 %o% cos(pi*x2) + 
+#'                                   matrix(rnorm(50*75, sd = 0.1), nrow = 50)),
+#'                        c(3,1,2)))
+#' 
+#' # Calculate basis functions              
+#' dct2D <- dctBasis2D(f2, qThresh = 0.95)
+#' 
+#' # verify that scores are saved in a sparse matrix
+#' dct2D$scores[,1:25] # the first 25 scores for each observation
 dctBasis2D <- function(funDataObject, qThresh, parallel = FALSE)
 {
   if(dimSupp(funDataObject) != 2)
@@ -629,58 +661,9 @@ dct2D <- function(image, qThresh)
 }
 
 
-#' Calculate a cosine basis representation for functional data on
-#' three-dimensional domains
-#'
-#' This function calculates a tensor cosine basis representation for functional
-#' data on three-dimensional domains based on a discrete cosine transformation
-#' (DCT) using the C-library \code{fftw3} \url{http://www.fftw.org/}.
-#'
-#' Given the (discretized) observed functions \eqn{X_i}, this function
-#' calculates a basis representation \deqn{X_i(s,t, u) = \sum_{m = 0}^{M-1}
-#' \sum_{n = 0}^{N-1} \sum_{k = 0}^{K-1} \theta_{mnk}  f_{mnk}(s,t,u)} in terms
-#' of (orthogonal) tensor cosine basis functions \deqn{f_{mnk}(s,t,u) = c_m c_n
-#' c_k \cos(ms) \cos(nt) \cos(ku), \quad (s,t,u) \in \mathcal{T}}{f_{mnk}(s,t,u) = c_m c_n
-#' c_k \cos(ms) \cos(nt) \cos(ku), \quad (s,t,u) \in \calT} with \eqn{c_m =
-#' \frac{1}{\sqrt{pi}}} for \eqn{m=0} and \eqn{c_m = \sqrt{\frac{2}{pi}}} for
-#' \eqn{m=1,2,\ldots} based on a discrete cosine transform (DCT).
-#'
-#' If not thresholded (\code{qThresh = 0}), the function returns all non-zero
-#' coefficients \eqn{\theta_{mnk}} in the basis representation in a sparse
-#' matrix \code{scores}. Otherwise, coefficients with \deqn{|\theta_{mnk}| <= q
-#' } are set to zero, where \eqn{q} is the \code{qThresh}-quantile of
-#' \eqn{|\theta_{mnk}|}.
-#'
-#' @section Warning: If the C-library \code{fftw3} is not available when the
-#'   package \code{MFPCA} is installed, this function is disabled an will throw
-#'   an error. For full functionality install the C-library \code{fftw3} from
-#'   \url{http://www.fftw.org/} and reinstall \code{MFPCA}.
-#'
-#' @param funDataObject An object of class \code{\link[funData]{funData}}
-#'   containing the observed functional data samples and for which the basis
-#'   representation is calculated.
-#' @param qThresh A numeric with value in \eqn{[0,1]}, giving the quantile for
-#'   thresholding the coefficients. See Details.
-#' @param parallel Logical. If \code{TRUE}, the coefficients for the basis
-#'   functions are calculated in parallel. The implementation is based on the
-#'   \code{\link[foreach]{foreach}} function and requires a parallel backend
-#'   that must be registered before. See \code{\link[foreach]{foreach}} for
-#'   details.
-#'
-#' @return \item{scores}{A sparse matrix of scores (coefficients) with dimension
-#'   \code{N x L}, reflecting the weights \eqn{\theta_{mnk}} for each basis
-#'   function in each observation, where \code{L} is the total number of basis
-#'   functions used.} \item{B}{A diagonal matrix, giving the norms of the
-#'   different basis functions used (as they are orthogonal).}
-#'   \item{ortho}{Logical, set to \code{FALSE}, as basis functions are
-#'   orthogonal, but in genereal not orthonormal.} \item{functions}{\code{NULL},
-#'   as basis functions are known.}
-#'
-#' @seealso univDecomp
-#'
-#' @importFrom foreach %do%
-#' @importFrom foreach %dopar%
-#' @importFrom Matrix sparseMatrix
+#' @rdname dctBasis2D
+#' 
+#' @export dctBasis3D
 dctBasis3D <- function(funDataObject, qThresh, parallel = FALSE)
 {
   if(dimSupp(funDataObject) != 3)
