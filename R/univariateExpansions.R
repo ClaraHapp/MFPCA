@@ -259,35 +259,54 @@ splineFunction2Dpen <- function(scores, argvals, bs, m, k)
 }
 
 
-#' Calculate linear combinations of orthonormal cosine basis functions on
-#' two-dimensional domains
-#'
-#' Given scores (coefficients), this function calculates a linear combination of
-#' two-dimensional cosine tensor basis functions on two-dimensional domains
-#' using the C-library \code{fftw3} (see \url{http://www.fftw.org/}).
-#'
-#' @section Warning: If the C-library \code{fftw3} is not available when the
-#'   package \code{MFPCA} is installed, this function is disabled an will throw
-#'   an error. For full functionality install the C-library \code{fftw3} from
+#' Calculate linear combinations of orthonormal cosine basis functions on two- 
+#' or three-dimensional domains
+#' 
+#' Given scores (coefficients), these functions calculate a linear combination 
+#' of two- or three-dimensional cosine tensor basis functions on two- or 
+#' three-dimensional domains using the C-library \code{fftw3} (see 
+#' \url{http://www.fftw.org/}).
+#' 
+#' @section Warning: If the C-library \code{fftw3} is not available when the 
+#'   package \code{MFPCA} is installed, the functions are disabled an will throw
+#'   an error. For full functionality install the C-library \code{fftw3} from 
 #'   \url{http://www.fftw.org/} and reinstall \code{MFPCA}.
-#'
-#' @param  scores A sparse matrix of dimension \eqn{N x L}, representing the
-#'   \eqn{L} scores (coefficients) for each observation \eqn{i = 1, \ldots, N}.
-#' @param argvals A list containing a two numeric vectors, corresponding to the x-
-#'   and y-values.
-#' @param parallel Logical. If \code{TRUE}, the coefficients for the basis
-#'   functions are calculated in parallel. The implementation is based on the
-#'   \code{\link[foreach]{foreach}} function and requires a parallel backend
-#'   that must be registered before. See \code{\link[foreach]{foreach}} for
-#'   details.
-#'
-#' @return An object of class \code{funData} with \eqn{N} observations on the
-#'   two-dimensional domain specified by \code{argvals}, corresponding to the
-#'   linear combination of orthonormal cosine basis functions.
-#'
-#' @seealso univExpansion
-#'
+#'   
+#' @param  scores A sparse matrix of dimension \code{N x L}, representing the 
+#'   \code{L} scores (coefficients), where \code{n} is the number of 
+#'   observations.
+#' @param argvals A list containing two or three numeric vectors, corresponding 
+#'   to the domain grid (x and y values for two-dimensional domains; x,y, and z 
+#'   values fro three-dimensional domains.)
+#' @param parallel Logical. If \code{TRUE}, the coefficients for the basis 
+#'   functions are calculated in parallel. The implementation is based on the 
+#'   \code{\link[foreach]{foreach}} function and requires a parallel backend 
+#'   that must be registered before; see \code{\link[foreach]{foreach}} for 
+#'   details. Defaults to \code{FALSE}.
+#'   
+#' @return An object of class \code{funData} with \code{N} observations on the 
+#'   two- or threedimensional domain specified by \code{argvals}, corresponding 
+#'   to the linear combination of orthonormal cosine basis functions.
+#'   
+#' @seealso \code{\link{univExpansion}}, \code{\link{idct2D}}, 
+#'   \code{\link{idct3D}}, \code{\link{dctBasis2D}}, \code{\link{dctBasis3D}}
+#'   
 #' @importFrom abind abind
+#'   
+#' @export dctFunction2D
+#'   
+#' @examples
+#' # generate sparse 10 x 15 score matrix (i.e. 10 observations) with 30 entries
+#' scores <- sparseMatrix(i = sample(1:10, 30, replace = TRUE), # sample row indices
+#'      j = sample(1:15, 30, replace = TRUE, prob = 1/(1:15)), # sample column indices, high indices with low probability
+#'      x = rnorm(30)) # sample values
+#' scores
+#' 
+#' # calculate basis expansion on [0,1] x [0,1]
+#' f <- dctFunction2D(scores = scores, argvals = list(seq(0,1,0.01), seq(0,1,0.01)))
+#' nObs(f) # f has 10 observations
+#' plot(f, obs = 1) # plot first observation
+#' plot(f, obs = 2) # plot second observation
 dctFunction2D <- function(scores, argvals, parallel = FALSE)
 {
   # dimension of the image
@@ -357,35 +376,9 @@ idct2D <- function(scores, ind, dim)
 }
 
 
-#' Calculate linear combinations of orthonormal cosine basis functions on
-#' three-dimensional domains
-#'
-#' Given scores (coefficients), this function calculates a linear combination of
-#' threse-dimensional cosine tensor basis functions on three-dimensional domains
-#' using the C-library \code{fftw3} (see \url{http://www.fftw.org/}).
-#'
-#' @section Warning: If the C-library \code{fftw3} is not available when the
-#'   package \code{MFPCA} is installed, this function is disabled an will throw
-#'   an error. For full functionality install the C-library \code{fftw3} from
-#'   \url{http://www.fftw.org/} and reinstall \code{MFPCA}.
-#'
-#' @param  scores A sparse matrix of dimension \eqn{N x L}, representing the
-#'   \eqn{L} scores (coefficients) for each observation \eqn{i = 1, \ldots, N}.
-#' @param argvals A list containing a two numeric vectors, corresponding to the x-
-#'   and y-values.
-#' @param parallel Logical. If \code{TRUE}, the coefficients for the basis
-#'   functions are calculated in parallel. The implementation is based on the
-#'   \code{\link[foreach]{foreach}} function and requires a parallel backend
-#'   that must be registered before. See \code{\link[foreach]{foreach}} for
-#'   details.
-#'
-#' @return An object of class \code{funData} with \eqn{N} observations on the
-#'   two-dimensional domain specified by \code{argvals}, corresponding to the
-#'   linear combination of orthonormal cosine basis functions.
-#'
-#' @seealso univExpansion
-#'
-#' @importFrom abind abind
+#' @rdname dctFunction2D
+#'   
+#' @export dctFunction3D
 dctFunction3D <- function(scores, argvals, parallel = FALSE)
 {
   # dimension of the image
