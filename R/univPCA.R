@@ -38,7 +38,7 @@
       as.matrix(tmp$mat)
     }
   }
-
+  
   ### numerical integration for calculation of eigenvalues (see Ramsay & Silverman, Chapter 8)
   w <- funData:::.intWeights(X, method = "trapezoidal")
   Wsqrt <- diag(sqrt(w))
@@ -86,104 +86,105 @@
 }
 
 #' Univariate functional principal component analysis by smoothed covariance
-#'
-#' This function calculates a univariate functional principal components
-#' analysis by smoothed covariance based on code from \link[refund]{fpca.sc}
-#' (pacakge \pkg{refund}).
-#'
-#' @section Warning: This function works only for univariate functional data
+#' 
+#' This function calculates a univariate functional principal components 
+#' analysis by smoothed covariance based on code from 
+#' \code{\link[refund]{fpca.sc}} (package \pkg{refund}).
+#' 
+#' @section Warning: This function works only for univariate functional data 
 #'   observed on one-dimensional domains.
-#'
-#' @param funDataObject An object of class \code{\link[funData]{funData}}
+#'   
+#' @param funDataObject An object of class \code{\link[funData]{funData}} 
 #'   containing the functional data observed, for which the functional principal
 #'   component analysis is calculated.
 #' @param predData  An object of class \code{\link[funData]{funData}}, for which
-#'   estimated trajectories based on a truncated Karhunen-Lo\`{e}ve representation
-#'   should be estimated. Defaults to \code{NULL}, which implies prediction for
+#'   estimated trajectories based on a truncated Karhunen-Loeve representation 
+#'   should be estimated. Defaults to \code{NULL}, which implies prediction for 
 #'   the given data.
-#' @param nbasis An integer, representing the number of  B-spline basis
-#'   functions used for estimation of the mean function and bivariate smoothing
-#'   of the covariance surface. Defaults to 10 (cf.
+#' @param nbasis An integer, representing the number of  B-spline basis 
+#'   functions used for estimation of the mean function and bivariate smoothing 
+#'   of the covariance surface. Defaults to \code{10} (cf. 
 #'   \code{\link[refund]{fpca.sc}}).
-#' @param pve A numeric value between 0 and 1, the proportion of variance
-#'   explained: used to choose the number of principal components. Defaults to
-#'   0.99 (cf. \code{\link[refund]{fpca.sc}}).
-#' @param npc An integer, giving a prespecified value for the number of
-#'   principal components. Defaults to \code{NULL}. If given, this overrides
+#' @param pve A numeric value between 0 and 1, the proportion of variance 
+#'   explained: used to choose the number of principal components. Defaults to 
+#'   \code{0.99} (cf. \code{\link[refund]{fpca.sc}}).
+#' @param npc An integer, giving a prespecified value for the number of 
+#'   principal components. Defaults to \code{NULL}. If given, this overrides 
 #'   \code{pve} (cf. \code{\link[refund]{fpca.sc}}).
-#' @param makePD Logical: should positive definiteness be enforced for the
-#'   covariance surface estimate? Defaults to \code{FALSE} (cf.
+#' @param makePD Logical: should positive definiteness be enforced for the 
+#'   covariance surface estimate? Defaults to \code{FALSE} (cf. 
 #'   \code{\link[refund]{fpca.sc}}).
-#'
-#' @return \item{fit}{A \code{\link[funData]{funData}} object containing the
-#'   estimated trajectories based on the truncated Karhunen-Lo\`{e}ve representation
-#'   and the estimated scores and functional principal components for
-#'   \code{predData} (if this is not \code{NULL}) or \code{funDataObject} (if
-#'   \code{predData} is \code{NULL}).} \item{scores}{An matrix of estimated
-#'   scores for the observations in \code{funDataObject}. Each row corresponds
-#'   to the scores of one observation.} \item{mu}{A
-#'   \code{\link[funData]{funData}} object with one observation, corresponding
-#'   to the mean function.} \item{functions}{A \code{\link[funData]{funData}}
-#'   object containing the estimated functional principal components.}
-#'   \item{values}{A vector containing the estimated eigenvalues.}
-#'   \item{npc}{The number of functional principal components: either the
-#'   supplied \code{npc}, or the minimum number of basis functions needed to explain
-#'   proportion \code{pve} of the variance in the observed curves (cf.
-#'   \code{\link[refund]{fpca.sc}}).} \item{sigma2}{The estimated measurement
-#'   error variance (cf. \code{\link[refund]{fpca.sc}}).}
-#'
-#' @seealso \code{\link[funData]{funData}}, \code{\link[refund]{fpca.sc}}.
-#'
+#'   
+#' @return \item{mu}{A \code{\link[funData]{funData}} object with one 
+#'   observation, corresponding to the mean function.} \item{values}{A vector 
+#'   containing the estimated eigenvalues.} \item{functions}{A 
+#'   \code{\link[funData]{funData}} object containing the estimated functional 
+#'   principal components.} \item{scores}{An matrix of estimated scores for the 
+#'   observations in \code{funDataObject}. Each row corresponds to the scores of
+#'   one observation.} \item{fit}{A \code{\link[funData]{funData}} object 
+#'   containing the estimated trajectories based on the truncated Karhunen-Loeve
+#'   representation and the estimated scores and functional principal components
+#'   for \code{predData} (if this is not \code{NULL}) or \code{funDataObject} 
+#'   (if \code{predData} is \code{NULL}).} \item{npc}{The number of functional 
+#'   principal components: either the supplied \code{npc}, or the minimum number
+#'   of basis functions needed to explain proportion \code{pve} of the variance 
+#'   in the observed curves (cf. \code{\link[refund]{fpca.sc}}).} 
+#'   \item{sigma2}{The estimated measurement error variance (cf. 
+#'   \code{\link[refund]{fpca.sc}}).}
+#'   
+#' @seealso \code{\link[funData]{funData}}, \code{\link[refund]{fpca.sc}},
+#'   \code{\link{fpcaBasis}}, \code{\link{univDecomp}}
+#'   
 #' @export PACE
-#'
+#'   
 #' @examples
 #' \donttest{
 #'   oldPar <- par(no.readonly = TRUE)
-#'
+#' 
 #'   # simulate data
-#'   sim <- simFunData(argvals = seq(-1,1, 0.01), M = 5, eFunType = "Poly",
+#'   sim <- simFunData(argvals = seq(-1,1,0.01), M = 5, eFunType = "Poly",
 #'                     eValType = "exponential", N = 100)
-#'
+#' 
 #'   # calculate univariate FPCA
 #'   pca <- PACE(sim$simData, npc = 5)
-#'
+#' 
 #'   # Plot the results
 #'   par(mfrow = c(1,2))
 #'   plot(sim$trueFuns, lwd = 2, main = "Eigenfunctions")
 #'   # flip estimated functions for correct signs
 #'   plot(flipFuns(sim$trueFuns,pca$functions), lty = 2, add = TRUE)
 #'   legend("bottomright", c("True", "Estimate"), lwd = c(2,1), lty = c(1,2))
-#'
+#' 
 #'   plot(sim$simData, lwd = 2, main = "Some Observations", obs = 1:7)
 #'   plot(pca$fit, lty = 2, obs = 1:7, add = TRUE) # estimates are almost equal to true values
 #'   legend("bottomright", c("True", "Estimate"), lwd = c(2,1), lty = c(1,2))
-#'
+#' 
 #'   par(oldPar)
 #' }
 PACE <- function(funDataObject, predData = NULL, nbasis = 10, pve = 0.99, npc = NULL, makePD = FALSE)
 {
   if(dimSupp(funDataObject) != 1)
     stop("PACE: Implemented only for funData objects with one-dimensional support.")
-
+  
   if(!is.null(predData))
   {
     if(!isTRUE(all.equal(funDataObject@argvals, predData@argvals)))
       stop("PACE: funDataObject and predData must be defined on the same domains!")
-
+    
     Y.pred = predData@X
   }
   else
   {
     Y.pred = NULL # use only funDataObject
   }
-
+  
   res <- .PACE(X = funDataObject@argvals[[1]], funDataObject@X, Y.pred = Y.pred, nbasis = nbasis, pve = pve, npc = npc, makePD = makePD)
-
-  return(list(fit = funData(funDataObject@argvals, res$fit),
-              scores = res$scores,
-              mu = funData(funDataObject@argvals, matrix(res$mu, nrow = 1)),
-              functions = funData(funDataObject@argvals, t(res$efunctions)),
+  
+  return(list(mu = funData(funDataObject@argvals, matrix(res$mu, nrow = 1)),
               values = res$evalues,
+              functions = funData(funDataObject@argvals, t(res$efunctions)),
+              scores = res$scores,
+              fit = funData(funDataObject@argvals, res$fit),
               npc = res$npc,
               sigma2 = res$sigma2
   ))

@@ -13,18 +13,18 @@ containing the functional data observed, for which the functional principal
 component analysis is calculated.}
 
 \item{predData}{An object of class \code{\link[funData]{funData}}, for which
-estimated trajectories based on a truncated Karhunen-Lo\`{e}ve representation
+estimated trajectories based on a truncated Karhunen-Loeve representation
 should be estimated. Defaults to \code{NULL}, which implies prediction for
 the given data.}
 
 \item{nbasis}{An integer, representing the number of  B-spline basis
 functions used for estimation of the mean function and bivariate smoothing
-of the covariance surface. Defaults to 10 (cf.
+of the covariance surface. Defaults to \code{10} (cf.
 \code{\link[refund]{fpca.sc}}).}
 
 \item{pve}{A numeric value between 0 and 1, the proportion of variance
 explained: used to choose the number of principal components. Defaults to
-0.99 (cf. \code{\link[refund]{fpca.sc}}).}
+\code{0.99} (cf. \code{\link[refund]{fpca.sc}}).}
 
 \item{npc}{An integer, giving a prespecified value for the number of
 principal components. Defaults to \code{NULL}. If given, this overrides
@@ -35,27 +35,27 @@ principal components. Defaults to \code{NULL}. If given, this overrides
   \code{\link[refund]{fpca.sc}}).}
 }
 \value{
-\item{fit}{A \code{\link[funData]{funData}} object containing the
-  estimated trajectories based on the truncated Karhunen-Lo\`{e}ve representation
-  and the estimated scores and functional principal components for
-  \code{predData} (if this is not \code{NULL}) or \code{funDataObject} (if
-  \code{predData} is \code{NULL}).} \item{scores}{An matrix of estimated
-  scores for the observations in \code{funDataObject}. Each row corresponds
-  to the scores of one observation.} \item{mu}{A
-  \code{\link[funData]{funData}} object with one observation, corresponding
-  to the mean function.} \item{functions}{A \code{\link[funData]{funData}}
-  object containing the estimated functional principal components.}
-  \item{values}{A vector containing the estimated eigenvalues.}
-  \item{npc}{The number of functional principal components: either the
-  supplied \code{npc}, or the minimum number of basis functions needed to explain
-  proportion \code{pve} of the variance in the observed curves (cf.
-  \code{\link[refund]{fpca.sc}}).} \item{sigma2}{The estimated measurement
-  error variance (cf. \code{\link[refund]{fpca.sc}}).}
+\item{mu}{A \code{\link[funData]{funData}} object with one
+  observation, corresponding to the mean function.} \item{values}{A vector
+  containing the estimated eigenvalues.} \item{functions}{A
+  \code{\link[funData]{funData}} object containing the estimated functional
+  principal components.} \item{scores}{An matrix of estimated scores for the
+  observations in \code{funDataObject}. Each row corresponds to the scores of
+  one observation.} \item{fit}{A \code{\link[funData]{funData}} object
+  containing the estimated trajectories based on the truncated Karhunen-Loeve
+  representation and the estimated scores and functional principal components
+  for \code{predData} (if this is not \code{NULL}) or \code{funDataObject}
+  (if \code{predData} is \code{NULL}).} \item{npc}{The number of functional
+  principal components: either the supplied \code{npc}, or the minimum number
+  of basis functions needed to explain proportion \code{pve} of the variance
+  in the observed curves (cf. \code{\link[refund]{fpca.sc}}).}
+  \item{sigma2}{The estimated measurement error variance (cf.
+  \code{\link[refund]{fpca.sc}}).}
 }
 \description{
 This function calculates a univariate functional principal components
-analysis by smoothed covariance based on code from \link[refund]{fpca.sc}
-(pacakge \pkg{refund}).
+analysis by smoothed covariance based on code from
+\code{\link[refund]{fpca.sc}} (package \pkg{refund}).
 }
 \section{Warning}{
  This function works only for univariate functional data
@@ -66,7 +66,7 @@ analysis by smoothed covariance based on code from \link[refund]{fpca.sc}
   oldPar <- par(no.readonly = TRUE)
 
   # simulate data
-  sim <- simFunData(argvals = seq(-1,1, 0.01), M = 5, eFunType = "Poly",
+  sim <- simFunData(argvals = seq(-1,1,0.01), M = 5, eFunType = "Poly",
                     eValType = "exponential", N = 100)
 
   # calculate univariate FPCA
@@ -87,6 +87,7 @@ analysis by smoothed covariance based on code from \link[refund]{fpca.sc}
 }
 }
 \seealso{
-\code{\link[funData]{funData}}, \code{\link[refund]{fpca.sc}}.
+\code{\link[funData]{funData}}, \code{\link[refund]{fpca.sc}},
+  \code{\link{fpcaBasis}}, \code{\link{univDecomp}}
 }
 
