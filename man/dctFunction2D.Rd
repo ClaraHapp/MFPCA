@@ -44,7 +44,7 @@ three-dimensional domains using the C-library \code{fftw3} (see
 }
 \examples{
 # generate sparse 10 x 15 score matrix (i.e. 10 observations) with 30 entries
-scores <- sparseMatrix(i = sample(1:10, 30, replace = TRUE), # sample row indices
+scores <- Matrix::sparseMatrix(i = sample(1:10, 30, replace = TRUE), # sample row indices
      j = sample(1:15, 30, replace = TRUE, prob = 1/(1:15)), # sample column indices, high indices with low probability
      x = rnorm(30)) # sample values
 scores
