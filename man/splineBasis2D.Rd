@@ -2,10 +2,14 @@
 % Please edit documentation in R/univDecomp.R
 \name{splineBasis2D}
 \alias{splineBasis2D}
-\title{Calculate an unpenalized spline basis representation for functional data on
+\alias{splineBasis2Dpen}
+\title{Calculate a spline basis representation for functional data on
 two-dimensional domains}
 \usage{
 splineBasis2D(funDataObject, bs = "ps", m = NA, k = -1)
+
+splineBasis2Dpen(funDataObject, bs = "ps", m = NA, k = -1,
+  parallel = FALSE)
 }
 \arguments{
 \item{funDataObject}{An object of class \code{\link[funData]{funData}}
@@ -13,17 +17,23 @@ containing the observed functional data samples and for which the basis
 representation is calculated.}
 
 \item{bs}{A vector of character strings (or a single character string),
-specifying the type of basis functions to be used. Defaults to "ps"
+specifying the type of basis functions to be used. Defaults to \code{"ps"}
 (P-spline functions). Please refer to \code{\link[mgcv]{te}} for a list of
 possible basis functions.}
 
 \item{m}{A numeric vector (or a single number), the order of the spline
-basis. Defaults to NA, i.e. the order is chosen automatically.  See
+basis. Defaults to \code{NA}, i.e. the order is chosen automatically.  See
 \code{\link[mgcv]{s}} for details.}
 
 \item{k}{An numeric vector (or a single number), the number of basis
-  functions used.  Defaults to -1, i.e. the number of basis functions is
-  chosen automatically.   See  \code{\link[mgcv]{s}} for details.}
+functions used.  Defaults to \code{-1}, i.e. the number of basis functions
+is chosen automatically.   See  \code{\link[mgcv]{s}} for details.}
+
+\item{parallel}{Logical (only for function \code{splineBasis2Dpen}). If
+  \code{TRUE}, the coefficients for the basis functions are calculated in
+  parallel. The implementation is based on the \code{\link[foreach]{foreach}}
+  function and requires a parallel backend that must be registered before.
+  See \code{\link[foreach]{foreach}} for details.}
 }
 \value{
 \item{scores}{A matrix of scores (coefficients) with dimension
@@ -37,11 +47,20 @@ basis. Defaults to NA, i.e. the order is chosen automatically.  See
   functions.}
 }
 \description{
-This function calculates an unpenalized tensor product spline basis
-representation for functional data on two-dimensional domains based on the
-\link[mgcv]{gam} function in the \pkg{mgcv} package.
+These functions calculate a penalized or unpenalized tensor product spline
+basis representation for functional data on two-dimensional domains based on
+the \link[mgcv]{gam}/\link[mgcv]{bam} functions in the \pkg{mgcv} package.
+See Details.
+}
+\details{
+If the basis representation is calculated without penalization
+(\code{splineBasis2D}), the coefficients are computed using the
+\code{\link[mgcv]{gam}} function from the \pkg{mgcv} package. In the case of
+penalization (\code{splineBasis2Dpen}), the function \code{\link[mgcv]{bam}} (for large GAMs) is used
+instead.
 }
 \seealso{
-univDecomp
+\code{\link{univDecomp}}, \code{\link{splineBasis1D}},
+  \code{\link[mgcv]{gam}}, \code{\link[mgcv]{bam}},  \code{\link[foreach]{foreach}}
 }
 
