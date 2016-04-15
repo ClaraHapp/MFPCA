@@ -222,35 +222,42 @@ splineFunction1D <- function(scores, argvals, bs, m, k)
 }
 
 
-#' Calculate linear combinations of spline basis functions on two-dimensional
+#' Calculate linear combinations of spline basis functions on two-dimensional 
 #' domains
-#'
-#' Given scores (coefficients), this function calculates a linear combination of
-#' two-dimensional spline tensor basis functions on two-dimensional domains
-#' based on the \link[mgcv]{gam} function in the \pkg{mgcv} package. If the
-#' scores have been calculated based on a penalized tensor spline basis, use
-#' \code{splineFunction2Dpen} instead (which runs \link[mgcv]{bam} instead of
-#' \link[mgcv]{gam}).
-#'
-#' @param scores A matrix of dimension \eqn{N x K}, representing the \eqn{K}
-#'   scores (coefficients) for each observation \eqn{i = 1, \ldots, N}.
-#' @param argvals A list containing a two numeric vectors, corresponding to the x-
-#'   and y-values.
-#' @param bs An vector of character strings (or a single character), the type of
-#'   basis functions to be used. Please refer to \code{\link[mgcv]{te}} for a
+#' 
+#' Given scores (coefficients), these functions calculate a linear combination 
+#' of spline tensor basis functions on two-dimensional domains based on the 
+#' \link[mgcv]{gam}/ \link[mgcv]{bam} functions in the \pkg{mgcv} package. See 
+#' Details.
+#' 
+#' If the scores have been calculated based on an unpenalized tensor spline 
+#' basis, the linear combination is computed based on the
+#' \code{\link[mgcv{gam}]} functions ((\code{splineFunction2D})). If the scores
+#' were obtained using penalization, the expansion is calculated via 
+#' \link[mgcv]{bam} (\code{splineFunction2Dpen}).
+#' 
+#' @param scores A matrix of dimension \code{N x K}, representing the \code{K} 
+#'   scores (coefficients) for each of the \code{N} observations.
+#' @param argvals A list containing a two numeric vectors, corresponding to the 
+#'   x- and y-values, on which the functions should be defined.
+#' @param bs A vector of character strings (or a single character), the type of 
+#'   basis functions to be used. Please refer to \code{\link[mgcv]{te}} for a 
 #'   list of possible basis functions.
-#' @param m A numeric vector (or a single number), the order of the spline
+#' @param m A numeric vector (or a single number), the order of the spline 
 #'   basis. See \code{\link[mgcv]{s}} for details.
 #' @param k A numeric vector (or a single number), the number of basis functions
 #'   used.  See  \code{\link[mgcv]{s}} for details.
-#'
-#' @return An object of class \code{funData} with \eqn{N} observations on the
-#'   two-dimensional domain specified by \code{argvals}, corresponding to the
+#'   
+#' @return An object of class \code{funData} with \code{N} observations on the 
+#'   two-dimensional domain specified by \code{argvals}, corresponding to the 
 #'   linear combination of spline basis functions.
-#'
-#' @seealso univExpansion
-#'
+#'   
+#' @seealso \code{\link{univExpansion}},  \code{\link{gam}}, 
+#'   \code{\link{splineBasis2D}}
+#'   
 #' @importFrom mgcv gam
+#'   
+#' @export splineFunction2D
 splineFunction2D <- function(scores, argvals, bs, m, k)
 {
   N <- nrow(scores)
@@ -270,8 +277,10 @@ splineFunction2D <- function(scores, argvals, bs, m, k)
 
 
 #' @rdname splineFunction2D
-#'
+#'   
 #' @importFrom mgcv gam
+#'   
+#' @export splineFunction2Dpen
 splineFunction2Dpen <- function(scores, argvals, bs, m, k)
 {
   N <- nrow(scores)
