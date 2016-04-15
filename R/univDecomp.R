@@ -290,37 +290,47 @@ fcptpaBasis <- function(funDataObject, npc, smoothingDegree = rep(2,2), alphaRan
 
 
 
-#' Calculate an unpenalized spline basis decomposition for functional data on
-#' one-dimensional domains
-#'
-#' This function calculates an unpenalized spline basis decomposition for
-#' functional data on one-dimensional domains based on the \link[mgcv]{gam}
-#' function in the \pkg{mgcv} package.
-#'
-#' @param funDataObject An object of class \code{\link[funData]{funData}}
-#'   containing the observed functional data samples and for which the basis
+#' Calculate a spline basis decomposition for functional data on one-dimensional
+#' domains
+#' 
+#' These functions calculate a penalized or unpenalized spline basis 
+#' decomposition for functional data on one-dimensional domains based on the 
+#' \link[mgcv]{gam} function in the \pkg{mgcv} package.
+#' 
+#' @param funDataObject An object of class \code{\link[funData]{funData}} 
+#'   containing the observed functional data samples and for which the basis 
 #'   decomposition is calculated.
-#' @param bs A character string, specifying the type of basis functions to be
-#'   used. Defaults to "ps" (B-spline functions). Please refer to
+#' @param bs A character string, specifying the type of basis functions to be 
+#'   used. Defaults to \code{"ps"} (B-spline functions). Please refer to 
 #'   \code{\link[mgcv]{smooth.terms}} for a list of possible basis functions.
-#' @param m A numeric, the order of the spline basis. Defaults to NA, i.e. the
-#'   order is chosen automatically. See  \code{\link[mgcv]{s}} for details.
-#' @param k A numeric, the number of basis functions used. Defaults to -1, i.e.
-#'   the number of basis functions is chosen automatically. See
+#' @param m A numeric, the order of the spline basis. Defaults to \code{NA}, 
+#'   i.e. the order is chosen automatically. See  \code{\link[mgcv]{s}} for 
+#'   details.
+#' @param k A numeric, the number of basis functions used. Defaults to 
+#'   \code{-1}, i.e. the number of basis functions is chosen automatically. See 
 #'   \code{\link[mgcv]{s}} for details.
-#'
-#' @return \item{scores}{A matrix of scores (coefficients) with dimension
-#'   \code{N x k}, reflecting the weights for each basis function in each
-#'   observation.} \item{B}{A matrix containing the scalar product of all pairs
-#'   of basis functions.} \item{ortho}{Logical, set to \code{FALSE}, as basis
-#'   functions are not orthonormal.} \item{functions}{\code{NULL}, as basis
-#'   functions are known} \item{settings}{A list with entries \code{bs},
-#'   \code{m} and \code{k}, giving the actual parameters used for generating the
-#'   spline basis functions.}
-#'
-#' @seealso univDecomp
-#'
+#' @param parallel Logical (only for \code{splineBasis1Dpen}. If \code{TRUE}, 
+#'   the coefficients for the basis functions are calculated in parallel. The 
+#'   implementation is based on the \code{\link[foreach]{foreach}} function and 
+#'   requires a parallel backend that must be registered before. See 
+#'   \code{\link[foreach]{foreach}} for details.
+#'   
+#' @return \item{scores}{A matrix of scores (coefficients) with dimension 
+#'   \code{N x K}, reflecting the weights for each of the \code{K} basis 
+#'   functions and for each of the \code{N} observations.} \item{B}{A matrix 
+#'   containing the scalar product of all pairs of basis functions.} 
+#'   \item{ortho}{Logical, set to \code{FALSE}, as basis functions are not 
+#'   orthonormal.} \item{functions}{\code{NULL}, as basis functions are known} 
+#'   \item{settings}{A list with entries \code{bs}, \code{m} and \code{k}, 
+#'   giving the actual parameters used for generating the spline basis 
+#'   functions.}
+#'   
+#' @seealso \code{\link{univDecomp}}, \code{\link[mgcv]{gam}},
+#'   \code{\link[foreach]{foreach}}
+#'   
 #' @importFrom mgcv gam
+#'   
+#' @export splineBasis1D
 splineBasis1D <- function(funDataObject, bs = "ps", m = NA, k = -1)
 {
   N <- nObs(funDataObject)
@@ -344,44 +354,13 @@ splineBasis1D <- function(funDataObject, bs = "ps", m = NA, k = -1)
   ))
 }
 
-#' Calculate a penalized spline basis representation for functional data on
-#' one-dimensional domains
-#'
-#' This function calculates a penalized spline basis representation for
-#' functional data on one-dimensional domains based on the \link[mgcv]{gam}
-#' function in the \pkg{mgcv} package.
-#'
-#' @param funDataObject An object of class \code{\link[funData]{funData}}
-#'   containing the observed functional data samples and for which the basis
-#'   representation is calculated.
-#' @param bs A character string, specifying the type of basis functions to be
-#'   used. Defaults to "ps" (P-spline functions). Please refer to
-#'   \code{\link[mgcv]{smooth.terms}} for a list of possible basis functions.
-#' @param m A numeric, the order of the spline basis. Defaults to NA, i.e. the
-#'   order is chosen automatically. See  \code{\link[mgcv]{s}} for details.
-#' @param k A numeric, the number of basis functions used. Defaults to -1, i.e.
-#'   the number of basis functions is chosen automatically. See
-#'   \code{\link[mgcv]{s}} for details.
-#' @param parallel Logical. If \code{TRUE}, the coefficients for the basis
-#'   functions are calculated in parallel. The implementation is based on the
-#'   \code{\link[foreach]{foreach}} function and requires a parallel backend
-#'   that must be registered before. See \code{\link[foreach]{foreach}} for
-#'   details.
-#'
-#' @return \item{scores}{A matrix of scores (coefficients) with dimension
-#'   \code{N x k}, reflecting the weights for each basis function in each
-#'   observation.} \item{B}{A matrix containing the scalar product of all pairs
-#'   of basis functions.} \item{ortho}{Logical, set to \code{FALSE}, as basis
-#'   functions are not orthonormal.} \item{functions}{\code{NULL}, as basis
-#'   functions are known} \item{settings}{A list with entries \code{bs},
-#'   \code{m} and \code{k}, giving the actual parameters used for generating the
-#'   spline basis functions.}
-#'
-#' @seealso univDecomp
+#' @rdname splineBasis1D
 #'
 #' @importFrom foreach %do%
 #' @importFrom foreach %dopar%
 #' @importFrom mgcv gam
+#' 
+#' @export splineBasis1Dpen
 splineBasis1Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel = FALSE)
 {
   N <- nObs(funDataObject)

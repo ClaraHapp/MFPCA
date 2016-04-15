@@ -2,10 +2,14 @@
 % Please edit documentation in R/univDecomp.R
 \name{splineBasis1D}
 \alias{splineBasis1D}
-\title{Calculate an unpenalized spline basis decomposition for functional data on
-one-dimensional domains}
+\alias{splineBasis1Dpen}
+\title{Calculate a spline basis decomposition for functional data on one-dimensional
+domains}
 \usage{
 splineBasis1D(funDataObject, bs = "ps", m = NA, k = -1)
+
+splineBasis1Dpen(funDataObject, bs = "ps", m = NA, k = -1,
+  parallel = FALSE)
 }
 \arguments{
 \item{funDataObject}{An object of class \code{\link[funData]{funData}}
@@ -13,32 +17,41 @@ containing the observed functional data samples and for which the basis
 decomposition is calculated.}
 
 \item{bs}{A character string, specifying the type of basis functions to be
-used. Defaults to "ps" (B-spline functions). Please refer to
+used. Defaults to \code{"ps"} (B-spline functions). Please refer to
 \code{\link[mgcv]{smooth.terms}} for a list of possible basis functions.}
 
-\item{m}{A numeric, the order of the spline basis. Defaults to NA, i.e. the
-order is chosen automatically. See  \code{\link[mgcv]{s}} for details.}
+\item{m}{A numeric, the order of the spline basis. Defaults to \code{NA},
+i.e. the order is chosen automatically. See  \code{\link[mgcv]{s}} for
+details.}
 
-\item{k}{A numeric, the number of basis functions used. Defaults to -1, i.e.
-  the number of basis functions is chosen automatically. See
-  \code{\link[mgcv]{s}} for details.}
+\item{k}{A numeric, the number of basis functions used. Defaults to
+\code{-1}, i.e. the number of basis functions is chosen automatically. See
+\code{\link[mgcv]{s}} for details.}
+
+\item{parallel}{Logical (only for \code{splineBasis1Dpen}. If \code{TRUE},
+  the coefficients for the basis functions are calculated in parallel. The
+  implementation is based on the \code{\link[foreach]{foreach}} function and
+  requires a parallel backend that must be registered before. See
+  \code{\link[foreach]{foreach}} for details.}
 }
 \value{
 \item{scores}{A matrix of scores (coefficients) with dimension
-  \code{N x k}, reflecting the weights for each basis function in each
-  observation.} \item{B}{A matrix containing the scalar product of all pairs
-  of basis functions.} \item{ortho}{Logical, set to \code{FALSE}, as basis
-  functions are not orthonormal.} \item{functions}{\code{NULL}, as basis
-  functions are known} \item{settings}{A list with entries \code{bs},
-  \code{m} and \code{k}, giving the actual parameters used for generating the
-  spline basis functions.}
+  \code{N x K}, reflecting the weights for each of the \code{K} basis
+  functions and for each of the \code{N} observations.} \item{B}{A matrix
+  containing the scalar product of all pairs of basis functions.}
+  \item{ortho}{Logical, set to \code{FALSE}, as basis functions are not
+  orthonormal.} \item{functions}{\code{NULL}, as basis functions are known}
+  \item{settings}{A list with entries \code{bs}, \code{m} and \code{k},
+  giving the actual parameters used for generating the spline basis
+  functions.}
 }
 \description{
-This function calculates an unpenalized spline basis decomposition for
-functional data on one-dimensional domains based on the \link[mgcv]{gam}
-function in the \pkg{mgcv} package.
+These functions calculate a penalized or unpenalized spline basis
+decomposition for functional data on one-dimensional domains based on the
+\link[mgcv]{gam} function in the \pkg{mgcv} package.
 }
 \seealso{
-univDecomp
+\code{\link{univDecomp}}, \code{\link[mgcv]{gam}},
+  \code{\link[foreach]{foreach}}
 }
 
