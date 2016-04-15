@@ -57,38 +57,61 @@ univDecomp <- function(type, data, params)
   return(res)
 }
 
-#' Calculate a functional principal component basis representation for
+#' Calculate a functional principal component basis representation for 
 #' functional data on one-dimensional domains
-#'
-#' This function calculates a functional principal component basis representation
-#' for functional data on one-dimensional domains. The FPCA is calculated via
-#' the \link{PACE} function, which is built on \link[refund]{fpca.sc} in the
-#' \pkg{refund} package.
-#'
-#' @param funDataObject An object of class \code{\link[funData]{funData}}
-#'   containing the observed functional data samples and for which the FPCA is
+#' 
+#' This function calculates a functional principal component basis
+#' representation for functional data on one-dimensional domains. The FPCA is
+#' calculated via the \code{\link{PACE}} function, which is built on
+#' \link[refund]{fpca.sc} in the \pkg{refund} package.
+#' 
+#' @param funDataObject An object of class \code{\link[funData]{funData}} 
+#'   containing the observed functional data samples and for which the FPCA is 
 #'   to be calculated.
-#' @param nbasis An integer, representing the number of  B-spline basis
-#'   functions used for estimation of the mean function and bivariate smoothing
-#'   of the covariance surface. Defaults to 10 (cf.
+#' @param nbasis An integer, representing the number of  B-spline basis 
+#'   functions used for estimation of the mean function and bivariate smoothing 
+#'   of the covariance surface. Defaults to \code{10} (cf. 
 #'   \code{\link[refund]{fpca.sc}}).
-#' @param pve A numeric value between 0 and 1, the proportion of variance
-#'   explained: used to choose the number of principal components. Defaults to
-#'   0.99 (cf. \code{\link[refund]{fpca.sc}}).
-#' @param npc An integer, giving a prespecified value for the number of
-#'   principal components. Defaults to \code{NULL}. If given, this overrides
+#' @param pve A numeric value between 0 and 1, the proportion of variance 
+#'   explained: used to choose the number of principal components. Defaults to 
+#'   \code{0.99} (cf. \code{\link[refund]{fpca.sc}}).
+#' @param npc An integer, giving a prespecified value for the number of 
+#'   principal components. Defaults to \code{NULL}. If given, this overrides 
 #'   \code{pve} (cf. \code{\link[refund]{fpca.sc}}).
-#' @param makePD Logical: should positive definiteness be enforced for the
-#'   covariance surface estimate? Defaults to \code{FALSE} (cf.
+#' @param makePD Logical: should positive definiteness be enforced for the 
+#'   covariance surface estimate? Defaults to \code{FALSE} (cf. 
 #'   \code{\link[refund]{fpca.sc}}).
-#'
-#' @return \item{scores}{A matrix of scores (coefficients) with dimension
-#'   \code{N x k}, reflecting the weights for principal component in each
-#'   observation.} \item{ortho}{Logical, set to \code{TRUE}, as basis functions are
-#'   orthonormal.} \item{functions}{A functional data object, representing the
-#'   functional principal component basis functions.}
-#'
-#' @seealso univDecomp
+#'   
+#' @return \item{scores}{A matrix of scores (coefficients) with dimension 
+#'   \code{N x K}, reflecting the weights for each principal component in each 
+#'   observation, where \code{N} is the number of observations in
+#'   \code{funDataObject} and \code{K} is the number of functional principal
+#'   components.} \item{ortho}{Logical, set to \code{TRUE}, as basis functions
+#'   are orthonormal.} \item{functions}{A functional data object, representing
+#'   the functional principal component basis functions.} \item{meanFunction}{The smoothed mean function.}
+#'   
+#' @seealso \code{\link{univDecomp}}, \code{\link{PACE}}
+#' 
+#' @export fpcaBasis
+#' 
+#' @examples
+#' # simulate N = 100 observations of functional data based on polynomial eigenfunctions on [0,1]
+#' sim <- simFunData(argvals = seq(0,1,0.01), M = 5, eFunType = "Poly", eValType = "linear", N = 100)
+#' 
+#' # estimate the first 5 functional principal components from the data
+#' fpca <- fpcaBasis(sim$simData, npc = 5)
+#' 
+#' oldpar <- par(no.readonly = TRUE)
+#' par(mfrow = c(1,2))
+#' plot(sim$trueFuns, obs = 1:5, main = "True eigenfunctions")
+#' plot(fpca$functions, main = "Estimated eigenfunctions")
+#' 
+#' # Flip if necessary
+#' plot(sim$trueFuns, obs = 1:5, main = "True eigenfunctions")
+#' plot(flipFuns(extractObs(sim$trueFuns, obs = 1:5), fpca$functions),
+#'      main = "Estimated eigenfunctions\n(flipped)")
+#' 
+#' par(oldpar)
 fpcaBasis <- function(funDataObject, nbasis = 10, pve = 0.99, npc = NULL, makePD = FALSE)
 {
   FPCA <- PACE(funDataObject, predData = NULL, nbasis, pve, npc, makePD)

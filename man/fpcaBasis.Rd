@@ -15,12 +15,12 @@ to be calculated.}
 
 \item{nbasis}{An integer, representing the number of  B-spline basis
 functions used for estimation of the mean function and bivariate smoothing
-of the covariance surface. Defaults to 10 (cf.
+of the covariance surface. Defaults to \code{10} (cf.
 \code{\link[refund]{fpca.sc}}).}
 
 \item{pve}{A numeric value between 0 and 1, the proportion of variance
 explained: used to choose the number of principal components. Defaults to
-0.99 (cf. \code{\link[refund]{fpca.sc}}).}
+\code{0.99} (cf. \code{\link[refund]{fpca.sc}}).}
 
 \item{npc}{An integer, giving a prespecified value for the number of
 principal components. Defaults to \code{NULL}. If given, this overrides
@@ -32,18 +32,39 @@ principal components. Defaults to \code{NULL}. If given, this overrides
 }
 \value{
 \item{scores}{A matrix of scores (coefficients) with dimension
-  \code{N x k}, reflecting the weights for principal component in each
-  observation.} \item{ortho}{Logical, set to \code{TRUE}, as basis functions are
-  orthonormal.} \item{functions}{A functional data object, representing the
-  functional principal component basis functions.}
+  \code{N x K}, reflecting the weights for each principal component in each
+  observation, where \code{N} is the number of observations in
+  \code{funDataObject} and \code{K} is the number of functional principal
+  components.} \item{ortho}{Logical, set to \code{TRUE}, as basis functions
+  are orthonormal.} \item{functions}{A functional data object, representing
+  the functional principal component basis functions.} \item{meanFunction}{The smoothed mean function.}
 }
 \description{
-This function calculates a functional principal component basis representation
-for functional data on one-dimensional domains. The FPCA is calculated via
-the \link{PACE} function, which is built on \link[refund]{fpca.sc} in the
-\pkg{refund} package.
+This function calculates a functional principal component basis
+representation for functional data on one-dimensional domains. The FPCA is
+calculated via the \code{\link{PACE}} function, which is built on
+\link[refund]{fpca.sc} in the \pkg{refund} package.
+}
+\examples{
+# simulate N = 100 observations of functional data based on polynomial eigenfunctions on [0,1]
+sim <- simFunData(argvals = seq(0,1,0.01), M = 5, eFunType = "Poly", eValType = "linear", N = 100)
+
+# estimate the first 5 functional principal components from the data
+fpca <- fpcaBasis(sim$simData, npc = 5)
+
+oldpar <- par(no.readonly = TRUE)
+par(mfrow = c(1,2))
+plot(sim$trueFuns, obs = 1:5, main = "True eigenfunctions")
+plot(fpca$functions, main = "Estimated eigenfunctions")
+
+# Flip if necessary
+plot(sim$trueFuns, obs = 1:5, main = "True eigenfunctions")
+plot(flipFuns(extractObs(sim$trueFuns, obs = 1:5), fpca$functions),
+     main = "Estimated eigenfunctions\\n(flipped)")
+
+par(oldpar)
 }
 \seealso{
-univDecomp
+\code{\link{univDecomp}}, \code{\link{PACE}}
 }
 
