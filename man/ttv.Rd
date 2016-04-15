@@ -7,16 +7,41 @@
 ttv(A, v, dim)
 }
 \arguments{
-\item{A}{An array}
+\item{A}{An array.}
 
-\item{v}{A list of the same length as dim}
+\item{v}{A list of the same length as dim.}
 
-\item{dim}{A vector specifying the dimensions for the multiplication}
+\item{dim}{A vector specifying the dimensions for the multiplication.}
 }
 \value{
-An array, the result of the multiplication
+An array, the result of the multiplication.
 }
 \description{
-Functionality adapted from MATLAB tensor toolbox
+Functionality adapted from the MATLAB tensor toolbox
+(\url{http://www.sandia.gov/~tgkolda/TensorToolbox/index-2.6.html}).
+}
+\details{
+Let \code{A} be a tensor with dimensions \eqn{d_1 \times d_2 \times \ldots
+\times d_p}{d_1 x d_2 x \ldots x d_p} and let \code{v} be a vector of length
+\end{d_i}. Then the tensor-vector-product along the \end{i}-th dimension is
+defined as \deqn{B_{j_1 \ldots j_{i-1}j_{i+1} \ldots j_d} = \sum_{i=1}^{d_i}
+A_{j_1 \ldots j_{i-1} i j_{i+1} \ldots j_d} \cdot v_i.}{ B[j_1, \ldots
+,j_{i-1},j_{i+1},\ldots,j_d] = \sum A[j_1, \ldots, j_{i-1}, i, j_{i+1},
+\ldots, j_d]  v[i].} It can hence be seen as a generalization of the
+matrix-vector product.
+
+The tensor-vector-product along several dimensions between a tensor \code{A}
+and multiple vectors \code{v_1,\ldots,v_k} (\eqn{k \leq p}) is defined as a
+series of consecutive tensor-vector-product along the different dimensions.
+For consistency, the multiplications are calculated from the dimension of the
+highest order to the lowest.
+}
+\references{
+B. W. Bader and T. G. Kolda. Algorithm 862: MATLAB tensor classes
+  for fast algorithm prototyping, ACM Transactions on Mathematical Software
+  32(4):635-653, December 2006.
+}
+\seealso{
+\code{\link{UMPCA}}
 }
 

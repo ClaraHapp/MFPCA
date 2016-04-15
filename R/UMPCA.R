@@ -172,13 +172,37 @@ ttvCalculation <- function(A, v, dim)
 
 #' Tensor times vector calculation
 #' 
-#' Functionality adapted from MATLAB tensor toolbox 
+#' Functionality adapted from the MATLAB tensor toolbox 
+#' (\url{http://www.sandia.gov/~tgkolda/TensorToolbox/index-2.6.html}).
 #' 
-#' @param A An array
-#' @param v A list of the same length as dim
-#' @param dim A vector specifying the dimensions for the multiplication
+#' Let \code{A} be a tensor with dimensions \eqn{d_1 \times d_2 \times \ldots 
+#' \times d_p}{d_1 x d_2 x \ldots x d_p} and let \code{v} be a vector of length 
+#' \end{d_i}. Then the tensor-vector-product along the \end{i}-th dimension is 
+#' defined as \deqn{B_{j_1 \ldots j_{i-1}j_{i+1} \ldots j_d} = \sum_{i=1}^{d_i} 
+#' A_{j_1 \ldots j_{i-1} i j_{i+1} \ldots j_d} \cdot v_i.}{ B[j_1, \ldots 
+#' ,j_{i-1},j_{i+1},\ldots,j_d] = \sum A[j_1, \ldots, j_{i-1}, i, j_{i+1}, 
+#' \ldots, j_d]  v[i].} It can hence be seen as a generalization of the 
+#' matrix-vector product.
 #' 
-#' @return An array, the result of the multiplication
+#' The tensor-vector-product along several dimensions between a tensor \code{A} 
+#' and multiple vectors \code{v_1,\ldots,v_k} (\eqn{k \leq p}) is defined as a 
+#' series of consecutive tensor-vector-product along the different dimensions.
+#' For consistency, the multiplications are calculated from the dimension of the
+#' highest order to the lowest.
+#' 
+#' @param A An array.
+#' @param v A list of the same length as dim.
+#' @param dim A vector specifying the dimensions for the multiplication.
+#'   
+#' @return An array, the result of the multiplication.
+#'   
+#' @seealso \code{\link{UMPCA}}
+#'   
+#' @references B. W. Bader and T. G. Kolda. Algorithm 862: MATLAB tensor classes
+#'   for fast algorithm prototyping, ACM Transactions on Mathematical Software 
+#'   32(4):635-653, December 2006.
+#'   
+#' @export ttv
 ttv <- function(A, v, dim)
 {
   # check input arguments
