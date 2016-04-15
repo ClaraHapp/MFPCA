@@ -116,23 +116,26 @@ defaultFunction <- function(scores, argvals = functions@argvals, functions)
                              dim = c(dim(scores)[1],d[-1]))) )
 }
 
-#' Calculate a linear combination of a functional principal component basis on
+#' Calculate a linear combination of a functional principal component basis on 
 #' one-dimensional domains
-#'
-#' This function calculates  a linear combination of functional principal
+#' 
+#' This function calculates  a linear combination of functional principal 
 #' component basis functions on one-dimensional domains.
-#'
-#' @param scores A matrix of dimension \eqn{N x K}, representing the \eqn{K}
-#'   scores (coefficients) for each observation \eqn{i = 1, \ldots, N}.
-#' @param argvals A list containing a vector of x-values.
+#' 
+#' @param scores A matrix of dimension \code{N x K}, representing the \code{K} 
+#'   scores (coefficients) for each of the \code{N} observations.
+#' @param argvals A list containing a vector of x-values. Defaults to
+#'   \code{functions@@argvals}.
 #' @param functions A \code{funData} object, representing the FPCA basis.
-#'
-#' @return An object of class \code{funData} with \eqn{N} observations on
-#'   \code{argvals}, corresponding to the linear combination of the functional
+#'   
+#' @return An object of class \code{funData} with \code{N} observations on 
+#'   \code{argvals}, corresponding to the linear combination of the functional 
 #'   principal components.
-#'
-#' @seealso univExpansion
-fpcaFunction <- function(scores, argvals, functions)
+#'   
+#' @seealso \code{\link{univExpansion}}, \code{\link{fpcaBasis}}
+#' 
+#' @export fpcaFunction
+fpcaFunction <- function(scores, argvals = functions@argvals, functions)
 {
   return(funData(argvals, scores %*% functions@X))
 }
