@@ -8,41 +8,71 @@ FCP_TPA(X, K, penMat, alphaRange, verbose = FALSE, tol = 1e-04,
   maxIter = 15, adaptTol = TRUE)
 }
 \arguments{
-\item{X}{The data tensor of dimensions \code{N x S1 x S2}}
+\item{X}{The data tensor of dimensions \code{N x S1 x S2}.}
 
-\item{K}{The number of eigentensors to be calculated}
+\item{K}{The number of eigentensors to be calculated.}
 
-\item{penMat}{A list of two roughness penalization matrices, one for each image
-direction (v & w). No smoothing along observations.}
+\item{penMat}{A list with entries \code{v} and \code{w}, containing a
+roughness penalty matrix for each direction of the image. The algorithm
+does not induce smoothness along observations (see Details).}
 
-\item{verbose}{Logical. If \code{TRUE} computational details are given on the
- standard output during calculation of the FPCA}
+\item{alphaRange}{A list of length 2 with entries \code{v} and \code{w} ,
+containing the range of smoothness parameters to test for each direction.}
 
-\item{tol}{A numeric value, given the tolerance for relative and absolute values in the algorithm. Defaults to \code{1e-4}.}
+\item{verbose}{Logical. If \code{TRUE}, computational details are given on
+the standard output during calculation of the FCP_TPA.}
 
-\item{alphaVal}{A list of length 2, containing a vector of smoothing parameter values for each image direction (v & w).}
+\item{tol}{A numeric value, giving the tolerance for relative error values in
+the algorithm. Defaults to \code{1e-4}. It is automatically multiplied by
+10 after \code{maxIter} steps, if \code{adaptTol = TRUE}.}
+
+\item{maxIter}{A numeric value, the maximal iteration steps. Can be doubled,
+if \code{adaptTol = TRUE}.}
+
+\item{adaptTol}{Logical. If \code{TRUE}, the tolerance is adapted (multiplied
+  by 10), if the algorithm has not converged after \code{maxIter} steps and
+  another \code{maxIter} steps are allowed with the increased tolerance, see
+  Details. Use with caution. Defaults to \code{TRUE}.}
 }
 \value{
 \item{d}{A vector of length \code{K}, containing the numeric weigths
-  \eqn{d_k} in the CP model} \item{U}{A matrix of dimensions \code{N x K},
-  containing the eigenvectors \eqn{u_k} in the first dimension} \item{V}{A
+  \eqn{d_k} in the CP model.} \item{U}{A matrix of dimensions \code{N x K},
+  containing the eigenvectors \eqn{u_k} in the first dimension.} \item{V}{A
   matrix of dimensions \code{S1 x K}, containing the eigenvectors \eqn{v_k}
-  in the second dimension} \item{W}{A matrix of dimensions \code{S2 x K},
+  in the second dimension.} \item{W}{A matrix of dimensions \code{S2 x K},
   containing the eigenvectors \eqn{w_k} in the third dimension.}
 }
 \description{
 This function implements the functional CP-TPA (FCP-TPA) algorithm, that
 calculates a smooth PCA for 3D tensor data (i.e. \code{N} observations of 2D
 images with dimension \code{S1 x S2}). The results are given in a
-CANDECOMP/PARAFRAC (CP) model format \deqn{X = sum_{k = 1}^K d_k u_k o v_k o
-w_k}  where \eqn{o} stands for the outer product. In this representation, the
-outer product \eqn{v_k o w_k} can be regarded as the \eqn{k}-th eigenimage,
-while \eqn{d_k u_k} represents the vector of individual scores for this
-eigenimage and each observation.
+CANDECOMP/PARAFRAC (CP) model format \deqn{X = \sum_{k = 1}^K d_k \cdot u_k
+\circ v_k \circ w_k}{X = \sum d_k u_k \%o\% v_k \%o\% w_k}  where
+\eqn{\circ}{\%o\%} stands for the outer product, \eqn{d_k} is a scalar and
+\eqn{u_k, v_k, w_k} are eigenvectors for each direction of the tensor. In
+this representation, the outer product \eqn{v_k \circ w_k}{v_k \%o\% w_k} can
+be regarded as the \eqn{k}-th eigenimage, while \eqn{d_k \cdot u_k}{d_k u_k}
+represents the vector of individual scores for this eigenimage and each
+observation.
 }
 \details{
-The degree of smoothness is controlled by two smoothing parameters
-\eqn{\alpha_v, \alpha_w}, each from a given grid in \code{alphaVal}, that are chosen via gcv
+The smoothness of the eigenvectors \eqn{v_k, w_k} is induced by penalty
+matrices for both image directions, that are weighted by smoothing parameters
+\eqn{\alpha_{vk}, \alpha_{wk}}. The eigenvectors \eqn{u_k} are not smoothed,
+hence the algorithm does not induce smoothness along observations.
+
+Optimal smoothing parameters are found via a nested generalized cross
+validation. In each iteration of the TPA (tensor power algorithm), the GCV
+criterion is optimized via \code{\link[stats]{optimize}} on the interval
+specified via \code{alphaRange$v} (or \code{alphaRange$w}, respectively).
+
+The FCP_TPA algorithm is an iterative algorithm. Convergence is assumed if
+the relative difference between the actual and the previous values are all
+below the tolerance level \code{tol}. The tolerance level is increased
+automatically, if the algorithm has not converged after \code{maxIter} steps
+and if \code{adaptTol = TRUE}. If the algorithm did not converge after
+\code{maxIter} steps (or \code{2 * maxIter}) steps, the function throws a
+warning.
 }
 \references{
 G. I. Allen, "Multi-way Functional Principal Components
@@ -50,6 +80,6 @@ G. I. Allen, "Multi-way Functional Principal Components
   Multi-Sensor Adaptive Processing, 2013.
 }
 \seealso{
-fcptpaBasis
+\code{\link{fcptpaBasis}}
 }
 
