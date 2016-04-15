@@ -2,7 +2,7 @@
 % Please edit documentation in R/univDecomp.R
 \name{fcptpaBasis}
 \alias{fcptpaBasis}
-\title{Calculate an smooth PCA representaion for functional data on two-dimensional
+\title{Calculate a smooth PCA representaion for functional data on two-dimensional
 domains}
 \usage{
 fcptpaBasis(funDataObject, npc, smoothingDegree = rep(2, 2), alphaRange)
@@ -12,19 +12,19 @@ fcptpaBasis(funDataObject, npc, smoothingDegree = rep(2, 2), alphaRange)
 containing the observed functional data samples (here: images) for which
 the smooth PCA is to be calculated.}
 
-\item{npc}{An integer, giving a prespecified value for the number of
-principal components.}
+\item{npc}{An integer, giving the number of principal components to be
+calculated.}
 
 \item{smoothingDegree}{A numeric vector of length 2, specifying the degree of
 the difference penalties inducing smoothness in both directions of the
-image. Defaults to 2 for each direction (2nd differences).}
+image. Defaults to \code{2} for each direction (2nd differences).}
 
-\item{alphaRange}{A list of length two with entries \code{v} and \code{w}
+\item{alphaRange}{A list of length 2 with entries \code{v} and \code{w}
   containing the range of smoothness parameters to test for each direction.}
 }
 \value{
 \item{scores}{A matrix of scores (coefficients) with dimension
-  \code{N x k}, reflecting the weights for principal component in each
+  \code{N x K}, reflecting the weights for principal component in each
   observation.}  \item{B}{A matrix containing the scalar product of all pairs
   of basis functions.} \item{ortho}{Logical, set to \code{FALSE}, as basis
   functions are not orthonormal.} \item{functions}{A functional data object,
@@ -32,15 +32,19 @@ image. Defaults to 2 for each direction (2nd differences).}
 }
 \description{
 This function calculates a smooth PCA representation based on the FCP_TPA
-algorithm for functional data on two-dimensional domains. In this case, the
-data can be interpreted as images with \code{S1 x S2} pixels (assuming
-\code{nObsPoints(funDataObject)} = (S1, S2)), i.e. the total observed data
-are represented as third order tensor of dimension \code{N x S1 x S2}.  The
-smooth PCA of a tensor of this kind is calculated via the
-\code{\link{FCP_TPA}} function. The smoothness of the resulting eigenvectors
-\eqn{u_k, v_k, w_k} (that are used for the calculation of the eigenimages and
-the score vectors) is controlled by smoothing parameters \eqn{\alpha_u,
-\alpha_v, \alpha_w}.
+algorithm (see References) for functional data on two-dimensional domains. In
+this case, the data can be interpreted as images with \code{S1 x S2} pixels
+(assuming \code{nObsPoints(funDataObject) = (S1, S2)}), i.e. the total data
+for \code{N} observations can be represented as third order tensor of
+dimension \code{N x S1 x S2}.
+}
+\details{
+The smooth PCA of the tensor data is calculated via the \code{\link{FCP_TPA}}
+function. Ssmoothness is induced by difference penalty matrices for both
+directions of the images, weighted by smoothing parameters \eqn{\alpha_v,
+\alpha_w}. The resulting eigenvectors can be interpreted in terms of
+eigenfunctions and individual scores for each observation. See
+\code{\link{FCP_TPA}} for details.
 }
 \references{
 G. I. Allen, "Multi-way Functional Principal Components
@@ -48,6 +52,6 @@ G. I. Allen, "Multi-way Functional Principal Components
   Multi-Sensor Adaptive Processing, 2013.
 }
 \seealso{
-univDecomp
+\code{\link{univDecomp}}, \code{\link{FCP_TPA}}
 }
 
