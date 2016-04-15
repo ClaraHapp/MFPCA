@@ -8,31 +8,34 @@ domains}
 splineFunction1D(scores, argvals, bs, m, k)
 }
 \arguments{
-\item{scores}{A matrix of dimension \eqn{N x K}, representing the \eqn{K}
-scores (coefficients) for each observation \eqn{i = 1, \ldots, N}.}
+\item{scores}{A matrix of dimension \code{N x K}, representing the \code{K}
+scores (coefficients) for each of the \code{N} observations.}
 
-\item{argvals}{A list containing a vector of x-values.}
+\item{argvals}{A list containing a vector of x-values, on which the functions
+should be defined.}
 
 \item{bs}{A character string, specifying the type of basis functions to be
-used. Please refer to
-\code{\link[mgcv]{smooth.terms}} for a list of possible basis functions.}
+used. Please refer to \code{\link[mgcv]{smooth.terms}} for a list of
+possible basis functions.}
 
-\item{m}{A numeric, the order of the spline basis. See  \code{\link[mgcv]{s}} for details.}
+\item{m}{A numeric, the order of the spline basis. See  \code{\link[mgcv]{s}}
+for details.}
 
 \item{k}{A numeric, the number of basis functions used. See
   \code{\link[mgcv]{s}} for details.}
 }
 \value{
-An object of class \code{funData} with \eqn{N} observations on
+An object of class \code{funData} with \code{N} observations on
   \code{argvals}, corresponding to the linear combination of spline basis
   functions.
 }
 \description{
 Given scores (coefficients), this function calculates a linear combination of
-one-dimensional spline basis functions on one-dimensional domains based on
-the \link[mgcv]{gam} function in the \pkg{mgcv} package.
+spline basis functions on one-dimensional domains based on the
+\link[mgcv]{gam} function in the \pkg{mgcv} package.
 }
 \seealso{
-univExpansion
+\code{\link{univExpansion}}, \code{\link{gam}},
+  \code{\link{splineBasis1D}}
 }
 

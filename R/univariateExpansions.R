@@ -176,30 +176,35 @@ fcptpaFunction <- function(scores, argvals, functions)
   return(defaultFunction(scores, argvals, functions))
 }
 
-#' Calculate linear combinations of spline basis functions on one-dimensional
+#' Calculate linear combinations of spline basis functions on one-dimensional 
 #' domains
-#'
+#' 
 #' Given scores (coefficients), this function calculates a linear combination of
-#' one-dimensional spline basis functions on one-dimensional domains based on
-#' the \link[mgcv]{gam} function in the \pkg{mgcv} package.
-#'
-#' @param scores A matrix of dimension \eqn{N x K}, representing the \eqn{K}
-#'   scores (coefficients) for each observation \eqn{i = 1, \ldots, N}.
-#' @param argvals A list containing a vector of x-values.
-#' @param bs A character string, specifying the type of basis functions to be
-#'   used. Please refer to
-#'   \code{\link[mgcv]{smooth.terms}} for a list of possible basis functions.
-#' @param m A numeric, the order of the spline basis. See  \code{\link[mgcv]{s}} for details.
-#' @param k A numeric, the number of basis functions used. See
+#' spline basis functions on one-dimensional domains based on the 
+#' \link[mgcv]{gam} function in the \pkg{mgcv} package.
+#' 
+#' @param scores A matrix of dimension \code{N x K}, representing the \code{K} 
+#'   scores (coefficients) for each of the \code{N} observations.
+#' @param argvals A list containing a vector of x-values, on which the functions
+#'   should be defined.
+#' @param bs A character string, specifying the type of basis functions to be 
+#'   used. Please refer to \code{\link[mgcv]{smooth.terms}} for a list of 
+#'   possible basis functions.
+#' @param m A numeric, the order of the spline basis. See  \code{\link[mgcv]{s}}
+#'   for details.
+#' @param k A numeric, the number of basis functions used. See 
 #'   \code{\link[mgcv]{s}} for details.
-#'
-#' @return An object of class \code{funData} with \eqn{N} observations on
-#'   \code{argvals}, corresponding to the linear combination of spline basis
+#'   
+#' @return An object of class \code{funData} with \code{N} observations on 
+#'   \code{argvals}, corresponding to the linear combination of spline basis 
 #'   functions.
-#'
-#' @seealso univExpansion
-#'
+#'   
+#' @seealso \code{\link{univExpansion}}, \code{\link{gam}},
+#'   \code{\link{splineBasis1D}}
+#'   
 #' @importFrom mgcv gam
+#' 
+#' @export splineFunction1D
 splineFunction1D <- function(scores, argvals, bs, m, k)
 {
   N <- nrow(scores)
