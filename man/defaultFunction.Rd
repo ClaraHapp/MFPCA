@@ -4,26 +4,48 @@
 \alias{defaultFunction}
 \title{Calculate a linear combination of arbitrary basis function}
 \usage{
-defaultFunction(scores, argvals, functions)
+defaultFunction(scores, argvals = functions@argvals, functions)
 }
 \arguments{
-\item{scores}{A matrix of dimension \eqn{N x K}, representing the \eqn{K}
-scores (coefficients) for each observation \eqn{i = 1, \ldots, N}.}
+\item{scores}{A matrix of dimension \code{N x K}, representing the \code{K}
+scores (coefficients) for each of the \code{N} observations.}
 
-\item{argvals}{A list containing a vector of x-values, representing a  \eqn{M_1
-x ...x M_p} dimensional interval.}
+\item{argvals}{A list representing the domain, see \link[funData]{funData}
+for details. Defaults to \code{functions@argvals}.}
 
-\item{functions}{A \code{funData} object, representing \eqn{K} basis
-  functions on a \eqn{M_1 x ...x M_p} dimensional domain.}
+\item{functions}{A \code{funData} object, representing \code{K} basis
+  functions on a domain with arbitrary dimension.}
 }
 \value{
-An object of class \code{funData} with \eqn{N} observations on
+An object of class \code{funData} with \code{N} observations on
   \code{argvals}, corresponding to the linear combination of the basis
   functions.
 }
 \description{
 This function calculates a linear combination of arbitrary basis funtions on
 domains with arbitrary dimension.
+}
+\examples{
+N <- 12 # 12 observations
+K <- 10 # 10 basis functions
+
+# Use the first 10 Fourier basis functions on [0,1]
+x <- seq(0,1,0.01)
+b <- eFun(argvals = x, M = K, type = "Fourier")
+
+# generate N x K score matrix
+scores <- t(replicate(N, rnorm(K, sd = 1 / (1:10))))
+
+# calculate basis expansion
+f <- defaultFunction(scores = scores, functions = b) # default value for argvals
+
+oldpar <- par(no.readonly = TRUE)
+
+par(mfrow = c(1,2))
+plot(b, main = "Basis functions")
+plot(f, main = "Linear combination")
+
+par(oldpar)
 }
 \seealso{
 univExpansion
