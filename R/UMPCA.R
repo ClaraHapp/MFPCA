@@ -2,25 +2,23 @@
 #' 
 #' This function implements the uncorrelated multilinear principal component 
 #' analysis for tensors of dimension 2, 3 or 4. The code is basically the same
-#' as in the  MATLAB toolbox 
-#' \url{UMPCA}{http://www.mathworks.com/matlabcentral/fileexchange/35432-uncorrelated-multilinear-principal-component-analysis--umpca-}
-#' by Haiping Lu (see references).
+#' as in the  MATLAB toolbox UMPCA by Haiping Lu (Link: \url{http://www.mathworks.com/matlabcentral/fileexchange/35432}, see also references).
 #' 
 #' @section Warning: As this algorithm aims more at uncorrelated features than
 #'   at an optimal reconstruction of the data, hence it might give poor results
 #'   when used for the univariate decomposition of images in MFPCA.
 #'   
 #' @param TX The input training data in tensorial representation, the last mode 
-#'   is the sample mode. For Nth-order tensor data, \code{TX} is of 
-#'   (N+1)th-order with the (N+1)-mode to be the sample mode. E.g., 30x20x10x100
-#'   for 100 samples of size 30x20x10
+#'   is the sample mode. For \code{N}th-order tensor data, \code{TX} is of 
+#'   \code{(N+1)}th-order with the \code{(N+1)}-mode to be the sample mode. E.g., 30x20x10x100
+#'   for 100 samples of size 30x20x10.
 #' @param numP The dimension of the projected vector, denoted as \eqn{P} in the 
 #'   paper. It is the number of elementary multilinear projections (EMPs) in
 #'   tensor-to-vector projection.
 #'   
 #' @return \item{Us}{The multilinear projection, consiting of \code{numP}
 #' (\eqn{P} in the paper) elementary multilinear projections (EMPs), each EMP is
-#' consisted of \eqn{N} vectors, one in each mode.} \item{TXmean}{The mean of
+#' consisted of \code{N} vectors, one in each mode.} \item{TXmean}{The mean of
 #' the input training samples \code{TX}.} \item{odrIdx}{The ordering index of
 #' projected features in decreasing variance.}
 #' 
