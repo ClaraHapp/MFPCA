@@ -146,17 +146,18 @@ fpcaFunction <- function(scores, argvals = functions@argvals, functions)
 #' uncorrelated multilinear principal component analysis (UMPCA) for data on
 #' two-dimensional domains.
 #' 
-#' @param scores A matrix of dimension \eqn{N x K}, representing the \eqn{K} 
-#'   scores (coefficients) for each observation \eqn{i = 1, \ldots, N}.
-#' @param argvals A list containing a vector of x-values.
+#' @param scores A matrix of dimension \code{N x K}, representing the \code{K} 
+#'   scores (coefficients) for each of the \code{N} observations.
+#' @param argvals  A list containing a vector of x-values. Defaults to
+#'   \code{functions@@argvals}.
 #' @param functions A \code{funData} object, representing the UMPCA basis.
 #'   
-#' @return An object of class \code{funData} with \eqn{N} observations on 
+#' @return An object of class \code{funData} with \code{N} observations on 
 #'   \code{argvals}, corresponding to the linear combination of the functional 
 #'   principal components.
 #'   
 #' @seealso \code{\link{univExpansion}}
-umpcaFunction <- function(scores, argvals, functions)
+umpcaFunction <- function(scores, argvals = functions@argvals, functions)
 {
   if(dimSupp(functions) != 2)
     stop("UMPCA option for univExpansion is implemented for 2D data (images) only!")
