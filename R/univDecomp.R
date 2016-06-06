@@ -219,7 +219,7 @@ makeDiffOp <- function(degree, dim){
 #' dimension \code{N x S1 x S2}.
 #' 
 #' The smooth PCA of the tensor data is calculated via the \code{\link{FCP_TPA}}
-#' function. Ssmoothness is induced by difference penalty matrices for both 
+#' function. Smoothness is induced by difference penalty matrices for both 
 #' directions of the images, weighted by smoothing parameters \eqn{\alpha_v, 
 #' \alpha_w}. The resulting eigenvectors can be interpreted in terms of 
 #' eigenfunctions and individual scores for each observation. See 
