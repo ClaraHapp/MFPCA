@@ -1,7 +1,7 @@
-#' Univariate Basis Decomposition
+#' Univariate basis decomposition
 #'
 #' This function calculates a univariate basis decomposition for a (univariate)
-#' functional data object \code{data}.
+#' functional data object.
 #'
 #' Functional data \eqn{X_i(t)} can often be approximated by a linear
 #' combination of basis functions \eqn{b_k(t)} \deqn{X_i(t) = \sum_{k = 1}^K
@@ -30,7 +30,8 @@
 #'
 #' @seealso \code{\link{MFPCA}}, \code{\link{fpcaBasis}}, \code{\link{splineBasis1D}},
 #'   \code{\link{splineBasis1Dpen}}, \code{\link{splineBasis2D}}, \code{\link{splineBasis2Dpen}},
-#'   \code{\link{dctBasis2D}}
+#'   \code{\link{umpcaBasis}}, \code{\link{fcptpaBasis}},
+#'   \code{\link{dctBasis2D}}, \code{\link{dctBasis3D}}
 univDecomp <- function(type, data, params)
 {
   if(is.null(params))
