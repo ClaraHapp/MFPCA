@@ -71,13 +71,13 @@ globalVariables('j')
 #' \hat \nu_M > 0} and the individual scores \eqn{\hat \rho_{im} = 
 #' \widehat{<x_i, \psi_m>}}{\hat \rho_{im} = \hat{<x_i, \psi_m>}}. Moreover, 
 #' estimated trajectories for each observation based on the truncated 
-#' Karhunen-Loeve representation \deqn{\hat x_i = \sum_{m = 1}^M \hat \rho_{im}
-#' \hat \psi_m}{\hat x_i = \sum_{m = 1}^M \hat \rho_{im} \hat \psi_m} are given
-#' if desired (\code{fit = TRUE}). The implementation of the observations
-#' \eqn{x_i = (x_i^{(1)}, \ldots , x_i^{(p)}),~ i = 1 , \ldots, N}{x_i =
-#' (x_i^(1), \ldots , x_i^(p)), i = 1 , \ldots, N}, the mean function and
-#' multivariate functional principal components \eqn{\hat \psi_1, \ldots, \hat
-#' \psi_M} uses the \code{\link[funData]{multiFunData}} class, which is defined
+#' Karhunen-Loeve representation \deqn{\hat x_i = \sum_{m = 1}^M \hat \rho_{im} 
+#' \hat \psi_m}{\hat x_i = \sum_{m = 1}^M \hat \rho_{im} \hat \psi_m} are given 
+#' if desired (\code{fit = TRUE}). The implementation of the observations 
+#' \eqn{x_i = (x_i^{(1)}, \ldots , x_i^{(p)}),~ i = 1 , \ldots, N}{x_i = 
+#' (x_i^(1), \ldots , x_i^(p)), i = 1 , \ldots, N}, the mean function and 
+#' multivariate functional principal components \eqn{\hat \psi_1, \ldots, \hat 
+#' \psi_M} uses the \code{\link[funData]{multiFunData}} class, which is defined 
 #' in the package \pkg{funData}.
 #' 
 #' \subsection{Weighted MFPCA}{If the elements vary considerably in domain, 
@@ -96,28 +96,28 @@ globalVariables('j')
 #' \subsection{Univariate Expansions}{The multivariate functional principal 
 #' component analysis relies on a univariate basis expansion for each element 
 #' \eqn{X^{(j)}}{X^(j)}. It can be supplied in several forms: \itemize{ \item 
-#' Univariate functional principal component analysis. Then
-#' \code{uniExpansions[[j]] = list(type = "uFPCA", params = list(nbasis, pve,
-#' npc, makePD))}, where \code{nbasis,pve,npc,makePD} are parameters passed to
+#' Univariate functional principal component analysis. Then 
+#' \code{uniExpansions[[j]] = list(type = "uFPCA", params = list(nbasis, pve, 
+#' npc, makePD))}, where \code{nbasis,pve,npc,makePD} are parameters passed to 
 #' the \code{\link{PACE}} function for calculating the univariate functional 
 #' principal component analysis. \item Spline basis functions (not penalized). 
 #' Then \code{uniExpansions[[j]] = list(type = "splines1D", params = list(bs, m,
 #' k))}, where \code{bs,m,k} are passed to the functions 
 #' \code{\link{univDecomp}} and \code{\link{univExpansion}}. For two-dimensional
 #' tensor product splines, use \code{type = "splines2D"}. \item Spline basis 
-#' functions (with smoothness penalty). Then \code{uniExpansions[[j]] =
-#' list(type = "splines1DPen", params = list(bs, m, k))}, where \code{bs,m,k}
-#' are passed to the functions \code{\link{univDecomp}} and
-#' \code{\link{univExpansion}}. Analogously to the unpenalized case, use
-#' \code{type = "splines2Dpen"} for 2D penalized tensor product splines. \item
-#' Cosine basis functons. Use \code{uniExpansions[[j]] = list(type = "DCT2D",
-#' params = list(qThresh, parallel))} for functions one two-dimensional domains
+#' functions (with smoothness penalty). Then \code{uniExpansions[[j]] = 
+#' list(type = "splines1DPen", params = list(bs, m, k))}, where \code{bs,m,k} 
+#' are passed to the functions \code{\link{univDecomp}} and 
+#' \code{\link{univExpansion}}. Analogously to the unpenalized case, use 
+#' \code{type = "splines2Dpen"} for 2D penalized tensor product splines. \item 
+#' Cosine basis functons. Use \code{uniExpansions[[j]] = list(type = "DCT2D", 
+#' params = list(qThresh, parallel))} for functions one two-dimensional domains 
 #' (images) and \code{type = "DCT3D"} for 3D images. The calculation is based on
-#' the discrete cosine transform (DCT) implemented in the C-library
-#' \code{fftw3}. If this library is not available, the function will throw  a
-#' warning. \code{qThresh} gives the quantile for hard thresholding the basis
-#' coefficients based on their absolute value. If \code{parallel = TRUE}, the
-#' coefficients for different images are calcualated in parallel.} See
+#' the discrete cosine transform (DCT) implemented in the C-library 
+#' \code{fftw3}. If this library is not available, the function will throw  a 
+#' warning. \code{qThresh} gives the quantile for hard thresholding the basis 
+#' coefficients based on their absolute value. If \code{parallel = TRUE}, the 
+#' coefficients for different images are calcualated in parallel.} See 
 #' \link{univDecomp} and \link{univExpansion} for details.}
 #' 
 #' @param mFData A  \code{\link[funData]{multiFunData}} object containing the 
@@ -126,18 +126,18 @@ globalVariables('j')
 #'   calculate.
 #' @param uniExpansions A list characterizing the (univariate) expansion that is
 #'   calculated for each element. See Details.
-#' @param weights An optional vector of weights, defaults to \code{1} for each
+#' @param weights An optional vector of weights, defaults to \code{1} for each 
 #'   element. See Details.
-#' @param fit Logical. If \code{TRUE}, a truncated multivariate Karhunen-Loeve
+#' @param fit Logical. If \code{TRUE}, a truncated multivariate Karhunen-Loeve 
 #'   representation for the data is calculated based on the estimated scores and
 #'   eigenfunctions.
 #' @param approx.eigen Logical. If \code{TRUE}, the eigenanalysis problem for 
 #'   the estimated covariance matrix is solved approximately using the 
-#'   \pkg{irlba} package, which is much faster. Defaults to to calculate is high
-#'   with respect to the number of observations in \code{mFData} or the number
-#'   of estimated univariate eigenfunctions, the approximation may be 
-#'   inappropriate. In this case, approx.eigen is set to \code{FALSE} and the 
-#'   function throws a warning.
+#'   \pkg{irlba} package, which is much faster. Defaults to \code{TRUE}. If the number
+#'   \code{M} of eigenvalues to calculate is high with respect to the number of
+#'   observations in \code{mFData} or the number of estimated univariate
+#'   eigenfunctions, the approximation may be inappropriate. In this case,
+#'   approx.eigen is set to \code{FALSE} and the function throws a warning.
 #' @param bootstrap Logical. If \code{TRUE}, pointwise bootstrap confidence 
 #'   bands are calculated for the multivariate functional principal components. 
 #'   Defaults to \code{FALSE}. See Details.
