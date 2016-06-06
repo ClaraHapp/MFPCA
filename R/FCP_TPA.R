@@ -191,7 +191,7 @@ normVec <- function(x) sqrt(sum(x^2))
 #' based on generalized cross-validation, which is nested in the tensor power
 #' algorithm. Given a range of possible values of \eqn{\alpha_v} (or
 #' \eqn{\alpha_w}, respectively), the optimum is found by optimizing the GCV
-#' criterion using the function \link{optimize}.
+#' criterion using the function \code{\link[stats]{optimize}}.
 #' 
 #' @param alphaRange A numeric vector with two elements, containing the minimal 
 #'   and maximal value for the smoothing parameter that is to be optimized.
@@ -222,7 +222,7 @@ normVec <- function(x) sqrt(sum(x^2))
 #'   
 #' @keywords internal
 #'   
-#' @seealso \link{FCP_TPA}, \link{gcv}.
+#' @seealso \code{\link{FCP_TPA}}, \code{\link{gcv}}
 findAlphaVopt <- function(alphaRange, data, u, w, alphaW, OmegaW, GammaV, lambdaV)
 {
   z <-  t(GammaV) %*% ttv(data, list(u,w), c(1,3))/(normVec(u) * normVec(w))
@@ -252,7 +252,7 @@ findAlphaWopt <- function(alphaRange, data, u, v, alphaV, OmegaV, GammaW, lambda
 #' smoothing parameters \eqn{\alpha_v} or \eqn{\alpha_w} that are used in the 
 #' \code{\link{FCP_TPA}} algorithm. As the criterion is symmetric in \eqn{v} and
 #' \eqn{w}, this function implements a generic criterion, which is called by 
-#' \link{findAlphaVopt}, \link{findAlphaWopt} with the correct values.
+#' \code{\link{findAlphaVopt}}, \code{\link{findAlphaWopt}} with the correct values.
 #' 
 #' The criterion can be evaluated in a numerically efficient way, adopting the ideas in Huang, Shen and Buja (2008) to three-ways tensors. TODO!
 #' 
@@ -272,7 +272,7 @@ findAlphaWopt <- function(alphaRange, data, u, v, alphaV, OmegaV, GammaW, lambda
 #'   
 #' @keywords internal
 #'   
-#' @seealso FCP_TPA
+#' @seealso \code{\link{FCP_TPA}}
 gcv <- function(alpha, n, z, eta, lambda)
 {
   eS <- 1/(1 + alpha*lambda) # eigenvalues of S

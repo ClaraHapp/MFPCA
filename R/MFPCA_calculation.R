@@ -18,7 +18,7 @@ globalVariables('j')
 #'
 #' @return A matrix containing the scalar product of all combinations of basis functions (matrix \eqn{B^{(j)}})
 #'
-#' @seealso \code{\link{MFPCA}}, \code{\link[funData]{dimSupp}}.
+#' @seealso \code{\link{MFPCA}}, \code{\link[funData]{dimSupp}}
 #'
 #' @keywords internal
 .calcBasisIntegrals <- function(basisFunctions, dimSupp, argvals)
@@ -118,7 +118,7 @@ globalVariables('j')
 #' warning. \code{qThresh} gives the quantile for hard thresholding the basis 
 #' coefficients based on their absolute value. If \code{parallel = TRUE}, the 
 #' coefficients for different images are calcualated in parallel.} See 
-#' \link{univDecomp} and \link{univExpansion} for details.}
+#' \code{\link{univDecomp}} and \code{\link{univExpansion}} for details.}
 #' 
 #' @param mFData A  \code{\link[funData]{multiFunData}} object containing the 
 #'   \code{N} observations.

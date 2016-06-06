@@ -33,9 +33,9 @@ NULL
 #' @return A functional data object, representing the linear combinations of the
 #'   basis functions based on the given scores.
 #'
-#' @seealso \link{MFPCA}, \link{fpcaFunction}, \link{splineFunction1D},
-#'   \link{splineFunction2D}, \link{splineFunction2Dpen}, \link{dctFunction2D},
-#'   \link{defaultFunction}
+#' @seealso \code{\link{MFPCA}}, \code{\link{fpcaFunction}}, \code{\link{splineFunction1D}},
+#'   \code{\link{splineFunction2D}}, \code{\link{splineFunction2Dpen}}, \code{\link{dctFunction2D}},
+#'  \code{\link{defaultFunction}}
 #'
 #' @export univExpansion
 univExpansion <- function(type, scores, argvals, functions, params = NULL)
@@ -73,7 +73,7 @@ univExpansion <- function(type, scores, argvals, functions, params = NULL)
 #' 
 #' @param scores A matrix of dimension \code{N x K}, representing the \code{K} 
 #'   scores (coefficients) for each of the \code{N} observations.
-#' @param argvals A list representing the domain, see \link[funData]{funData}
+#' @param argvals A list representing the domain, see \code{\link[funData]{funData}}
 #'   for details. Defaults to \code{functions@@argvals}.
 #' @param functions A \code{funData} object, representing \code{K} basis 
 #'   functions on a domain with arbitrary dimension.
@@ -82,7 +82,7 @@ univExpansion <- function(type, scores, argvals, functions, params = NULL)
 #'   \code{argvals}, corresponding to the linear combination of the basis 
 #'   functions.
 #'   
-#' @seealso univExpansion
+#' @seealso \code{\link{univExpansion}}
 #' 
 #' @export defaultFunction
 #' 
@@ -155,7 +155,7 @@ fpcaFunction <- function(scores, argvals = functions@argvals, functions)
 #'   \code{argvals}, corresponding to the linear combination of the functional 
 #'   principal components.
 #'   
-#' @seealso univExpansion
+#' @seealso \code{\link{univExpansion}}
 umpcaFunction <- function(scores, argvals, functions)
 {
   if(dimSupp(functions) != 2)
@@ -227,12 +227,12 @@ splineFunction1D <- function(scores, argvals, bs, m, k)
 #' 
 #' Given scores (coefficients), these functions calculate a linear combination 
 #' of spline tensor basis functions on two-dimensional domains based on the 
-#' \link[mgcv]{gam}/ \link[mgcv]{bam} functions in the \pkg{mgcv} package. See 
+#' \code{\link[mgcv]{gam}}/\code{\link[mgcv]{bam}} functions in the \pkg{mgcv} package. See 
 #' Details.
 #' 
 #' If the scores have been calculated based on an unpenalized tensor spline 
 #' basis, the linear combination is computed based on the
-#' \code{\link[mgcv{gam}]} functions ((\code{splineFunction2D})). If the scores
+#' \code{\link[mgcv]{gam}} functions ((\code{splineFunction2D})). If the scores
 #' were obtained using penalization, the expansion is calculated via 
 #' \link[mgcv]{bam} (\code{splineFunction2Dpen}).
 #' 
@@ -391,7 +391,7 @@ dctFunction2D <- function(scores, argvals, parallel = FALSE)
 #' @return A matrix of dimensions \code{dim}, which is a linear combination of
 #'   cosine tensor basis functions with the given coefficients.
 #'
-#' @seealso dctBasis2D
+#' @seealso \code{\link{dctBasis2D}}
 #'
 #' @useDynLib MFPCA calcImage
 #'
@@ -463,7 +463,7 @@ dctFunction3D <- function(scores, argvals, parallel = FALSE)
 #' @return A matrix of dimensions \code{dim}, which is a linear combination of
 #'   cosine tensor basis functions with the given coefficients.
 #'
-#' @seealso dctBasis3D
+#' @seealso \code{\link{dctBasis3D}}
 #'
 #' @useDynLib MFPCA calcImage3D
 #'

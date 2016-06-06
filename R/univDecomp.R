@@ -28,9 +28,9 @@
 #'   representing the basis functions. Can be \code{NULL} if the basis functions
 #'   are not estimated from the data, but have a predefined form. See Details.}
 #'
-#' @seealso \link{MFPCA}, \link{fpcaBasis}, \link{splineBasis1D},
-#'   \link{splineBasis1Dpen}, \link{splineBasis2D}, \link{splineBasis2Dpen},
-#'   \link{dctBasis2D}
+#' @seealso \code{\link{MFPCA}}, \code{\link{fpcaBasis}}, \code{\link{splineBasis1D}},
+#'   \code{\link{splineBasis1Dpen}}, \code{\link{splineBasis2D}}, \code{\link{splineBasis2Dpen}},
+#'   \code{\link{dctBasis2D}}
 univDecomp <- function(type, data, params)
 {
   if(is.null(params))
@@ -150,7 +150,7 @@ fpcaBasis <- function(funDataObject, nbasis = 10, pve = 0.99, npc = NULL, makePD
 #'   functions are not orthonormal.} \item{functions}{A functional data object, 
 #'   representing the functional principal component basis functions.}
 #'   
-#' @seealso univDecomp
+#' @seealso \code{\link{univDecomp}}
 #' 
 #' @references 
 #'  Haiping Lu, K.N. Plataniotis, and A.N. Venetsanopoulos,
@@ -403,14 +403,14 @@ splineBasis1Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
 #' 
 #' These functions calculate a penalized or unpenalized tensor product spline 
 #' basis representation for functional data on two-dimensional domains based on 
-#' the \link[mgcv]{gam}/\link[mgcv]{bam} functions in the \pkg{mgcv} package. 
-#' See Details.
+#' the \code{\link[mgcv]{gam}}/\code{\link[mgcv]{bam}} functions in the
+#' \pkg{mgcv} package. See Details.
 #' 
 #' If the basis representation is calculated without penalization 
 #' (\code{splineBasis2D}), the coefficients are computed using the 
 #' \code{\link[mgcv]{gam}} function from the \pkg{mgcv} package. In the case of 
-#' penalization (\code{splineBasis2Dpen}), the function \code{\link[mgcv]{bam}} (for large GAMs) is used 
-#' instead.
+#' penalization (\code{splineBasis2Dpen}), the function \code{\link[mgcv]{bam}}
+#' (for large GAMs) is used instead.
 #' 
 #' @param funDataObject An object of class \code{\link[funData]{funData}} 
 #'   containing the observed functional data samples and for which the basis 
@@ -441,11 +441,12 @@ splineBasis1Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
 #'   \code{k}, giving the actual parameters used for generating the spline basis
 #'   functions.}
 #'   
-#' @seealso \code{\link{univDecomp}}, \code{\link{splineBasis1D}},
-#'   \code{\link[mgcv]{gam}}, \code{\link[mgcv]{bam}},  \code{\link[foreach]{foreach}}
+#' @seealso \code{\link{univDecomp}}, \code{\link{splineBasis1D}}, 
+#'   \code{\link[mgcv]{gam}}, \code{\link[mgcv]{bam}}, 
+#'   \code{\link[foreach]{foreach}}
 #'   
 #' @importFrom mgcv gam
-#' 
+#'   
 #' @export splineBasis2D
 splineBasis2D <- function(funDataObject, bs = "ps", m = NA, k = -1)
 {
@@ -642,13 +643,13 @@ dctBasis2D <- function(funDataObject, qThresh, parallel = FALSE)
 #'
 #' @param image An image (a 2D matrix with real values).
 #' @param qThresh A numeric with value in \eqn{[0,1]}, giving the quantile for
-#'   thresholding the coefficients. See \link{dctBasis2D} for details.
+#'   thresholding the coefficients. See \code{\link{dctBasis2D}} for details.
 #'
 #' @return \item{ind}{An integer vector, containing the indices of
 #'   non-thresholded (hence non-zero) coefficients.} \item{val}{A numeric
 #'   vector, giving the values of the corresponding coefficients.}
 #'
-#' @seealso dctBasis2D
+#' @seealso \code{\link{dctBasis2D}}
 #'
 #' @useDynLib MFPCA calcCoefs
 #'
@@ -709,13 +710,13 @@ dctBasis3D <- function(funDataObject, qThresh, parallel = FALSE)
 #'
 #' @param image A 3D image (a 3D array with real values).
 #' @param qThresh A numeric with value in \eqn{[0,1]}, giving the quantile for
-#'   thresholding the coefficients. See \link{dctBasis3D} for details.
+#'   thresholding the coefficients. See \code{\link{dctBasis3D}} for details.
 #'
 #' @return \item{ind}{An integer vector, containing the indices of
 #'   non-thresholded (hence non-zero) coefficients.} \item{val}{A numeric
 #'   vector, giving the values of the corresponding coefficients.}
 #'
-#' @seealso dctBasis3D
+#' @seealso \code{\link{dctBasis3D}}
 #'
 #' @useDynLib MFPCA calcCoefs3D
 #'

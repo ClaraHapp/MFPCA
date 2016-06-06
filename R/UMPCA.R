@@ -158,8 +158,8 @@ maxeig <- function(A)
 
 #' Internal function for the Tensor times Vector calculation
 #' 
-#' @seealso ttv
-#' 
+#' @seealso \code{\link{ttv}}
+#'  
 #' @importFrom plyr alply
 #' 
 #' @keywords internal
