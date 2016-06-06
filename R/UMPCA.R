@@ -185,13 +185,13 @@ ttvCalculation <- function(A, v, dim)
 #' matrix-vector product.
 #' 
 #' The tensor-vector-product along several dimensions between a tensor \code{A} 
-#' and multiple vectors \code{v_1,\ldots,v_k} (\eqn{k \leq p}) is defined as a 
+#' and multiple vectors \code{v_1,\ldots,v_k} (\eqn{k \le p}) is defined as a 
 #' series of consecutive tensor-vector-product along the different dimensions.
 #' For consistency, the multiplications are calculated from the dimension of the
 #' highest order to the lowest.
 #' 
 #' @param A An array.
-#' @param v A list of the same length as dim.
+#' @param v A list of the same length as \code{dim}.
 #' @param dim A vector specifying the dimensions for the multiplication.
 #'   
 #' @return An array, the result of the multiplication.

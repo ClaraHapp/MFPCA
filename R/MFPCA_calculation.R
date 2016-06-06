@@ -110,7 +110,7 @@ globalVariables('j')
 #' are passed to the functions \code{\link{univDecomp}} and 
 #' \code{\link{univExpansion}}. Analogously to the unpenalized case, use 
 #' \code{type = "splines2Dpen"} for 2D penalized tensor product splines. \item 
-#' Cosine basis functons. Use \code{uniExpansions[[j]] = list(type = "DCT2D", 
+#' Cosine basis functions. Use \code{uniExpansions[[j]] = list(type = "DCT2D", 
 #' params = list(qThresh, parallel))} for functions one two-dimensional domains 
 #' (images) and \code{type = "DCT3D"} for 3D images. The calculation is based on
 #' the discrete cosine transform (DCT) implemented in the C-library 

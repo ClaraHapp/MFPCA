@@ -68,7 +68,7 @@ univExpansion <- function(type, scores, argvals, functions, params = NULL)
 
 #' Calculate a linear combination of arbitrary basis function
 #' 
-#' This function calculates a linear combination of arbitrary basis funtions on 
+#' This function calculates a linear combination of arbitrary basis functions on 
 #' domains with arbitrary dimension.
 #' 
 #' @param scores A matrix of dimension \code{N x K}, representing the \code{K} 
