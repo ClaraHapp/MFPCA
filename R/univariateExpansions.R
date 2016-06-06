@@ -5,38 +5,43 @@ globalVariables('i')
 NULL
 
 #' Calculate a univariate basis expansion
-#'
-#' This function calculates a univariate basis expansion based on given scores
+#' 
+#' This function calculates a univariate basis expansion based on given scores 
 #' (coefficients) and basis functions.
-#'
-#' This function calculates functional data \eqn{X_i(t), i= 1 \ldots N} that is
-#' represented as a linear combination of basis functions \eqn{b_k(t)}
-#' \deqn{X_i(t) = \sum_{k = 1}^K \theta_{ik} b_k(t), i = 1, \ldots, N.} The
-#' basis functions may be prespecified (such as spline basis functions or
-#' Fourier bases) or can be estimated from observed data (e.g. by functional
-#' principal component analysis). If \code{type = "default"} (i.e. a linear
-#' combination of arbitrary basis functions is to be calculated), the scores and
-#' basis functions must be supplied.
-#'
-#' @param type A character string, specifying the basis for which the
+#' 
+#' This function calculates functional data \eqn{X_i(t), i= 1 \ldots N} that is 
+#' represented as a linear combination of basis functions \eqn{b_k(t)} 
+#' \deqn{X_i(t) = \sum_{k = 1}^K \theta_{ik} b_k(t), i = 1, \ldots, N.} The 
+#' basis functions may be prespecified (such as spline basis functions or 
+#' Fourier bases) or can be estimated from observed data (e.g. by functional 
+#' principal component analysis). If \code{type = "default"} (i.e. a linear 
+#' combination of arbitrary basis functions is to be calculated), both scores
+#' and basis functions must be supplied.
+#' 
+#' @param type A character string, specifying the basis for which the 
 #'   decomposition is to be calculated.
-#' @param argvals A list, representing the domain of the basis functions. See
-#'   \linkS4class{funData} for details.
+#' @param argvals A list, representing the domain of the basis functions. If
+#'   functions is not \code{NULL}, the usual default is
+#'   \code{functions@@argvals}. See \linkS4class{funData} and the underlying
+#'   expansion functions for details.
 #' @param scores A matrix of scores (coefficients) for each observation based on
 #'   the given basis functions.
-#' @param functions A functional data object, representing the basis functions.
-#'   Can be \code{NULL} if the basis functions are not estimated from observed
+#' @param functions A functional data object, representing the basis functions. 
+#'   Can be \code{NULL} if the basis functions are not estimated from observed 
 #'   data, but have a predefined form. See Details.
-#' @param params A list containing the parameters for the particular basis to
+#' @param params A list containing the parameters for the particular basis to 
 #'   use.
-#'
-#' @return A functional data object, representing the linear combinations of the
-#'   basis functions based on the given scores.
-#'
-#' @seealso \code{\link{MFPCA}}, \code{\link{fpcaFunction}}, \code{\link{splineFunction1D}},
-#'   \code{\link{splineFunction2D}}, \code{\link{splineFunction2Dpen}}, \code{\link{dctFunction2D}},
-#'  \code{\link{defaultFunction}}
-#'
+#'   
+#' @return An object of class \code{funData} with \code{N} observations on 
+#'   \code{argvals}, corresponding to the linear combination of the basis 
+#'   functions.
+#'   
+#' @seealso \code{\link{MFPCA}}, \code{\link{fpcaFunction}},
+#'   \code{\link{splineFunction1D}}, \code{\link{splineFunction2D}},
+#'   \code{\link{splineFunction2Dpen}}, \code{\link{umpcaFunction}},
+#'   \code{\link{fcptpaFunction}}, \code{\link{dctFunction2D}},
+#'   \code{\link{dctFunction3D}}, \code{\link{defaultFunction}}
+#'   
 #' @export univExpansion
 univExpansion <- function(type, scores, argvals, functions, params = NULL)
 {
