@@ -261,6 +261,7 @@ makeDiffOp <- function(degree, dim){
 #' f <- defaultFunction(scores = scores, functions = b) # calculate observation (= linear combination of basis functions)
 #' 
 #' # calculate basis functions based on FCP_TPA algorithm (needs some time)
+#' \donttest{
 #' fcptpa <- fcptpaBasis(f, npc = 5, alphaRange = list(v = c(1e-5, 1e5), w = c(1e-5, 1e5)))
 #' 
 #' oldpar <- par(no.readonly = TRUE)
@@ -268,7 +269,7 @@ makeDiffOp <- function(degree, dim){
 #' for(i in 1:5) # plot all 5 basis functions
 #' plot(fcptpa$functions, obs = i, main = paste("Basis function", i)) # plot first basis function
 #' 
-#' par(oldpar)
+#' par(oldpar)}
 fcptpaBasis <- function(funDataObject, npc, smoothingDegree = rep(2,2), alphaRange)
 {
   if(dimSupp(funDataObject) != 2)
