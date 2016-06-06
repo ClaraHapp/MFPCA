@@ -121,7 +121,7 @@ UMPCA <- function(TX, numP)
 
 #' Compute the largest eigenvalue and associated eigenvector of a matrix A using the power method
 #' 
-#' Matlab Function: Copyright 1999 by Todd K. Moon
+#' MATLAB Function: Copyright 1999 by Todd K. Moon
 #' 
 #' @param A Matrix whose eigenvalue is sought
 #' 
