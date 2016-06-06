@@ -487,7 +487,7 @@ calcMFPCA <- function(N, p, Bchol, M, type, weights, npc, argvals, uniBasis, fit
 
   ### Calculate scores
   scores <- Z %*% vectors * sqrt(N-1) # see defintion of Z above!
-  scores <- as.matrix(scores %*% diag(sqrt(values) * normFactors)) # normalization
+  scores <- as.matrix(scores %*% diag(sqrt(values) * normFactors, nrow = M, ncol = M)) # normalization
 
   ### Calculate eigenfunctions (incl. normalization)
   npcCum <- cumsum(c(0, npc)) # indices for blocks (-1)
