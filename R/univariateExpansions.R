@@ -176,8 +176,30 @@ umpcaFunction <- function(scores, argvals = functions@argvals, functions)
   reconsFunctions <- funData(argvals = functions@argvals, X = recons)
 }
 
-
-fcptpaFunction <- function(scores, argvals, functions)
+#' Calculate a linear combination of a FCP_TPA basis on two-dimensional domains
+#' 
+#' This function calculates a linear combination of basis functions based on
+#' the FCP_TPA algorithm (see References) for data on
+#' two-dimensional domains.
+#' 
+#' @param scores A matrix of dimension \code{N x K}, representing the \code{K} 
+#'   scores (coefficients) for each of the \code{N} observations.
+#' @param argvals  A list containing a vector of x-values. Defaults to
+#'   \code{functions@@argvals}.
+#' @param functions A \code{funData} object, representing the FCP_TPA basis.
+#'   
+#' @return An object of class \code{funData} with \code{N} observations on 
+#'   \code{argvals}, corresponding to the linear combination of the functional 
+#'   principal components.
+#'   
+#' @seealso \code{\link{univExpansion}}
+#'
+#' @references G. I. Allen, "Multi-way Functional Principal Components 
+#'   Analysis", In IEEE International Workshop on Computational Advances in 
+#'   Multi-Sensor Adaptive Processing, 2013.
+#'    
+#' @export fcptpaFunction
+fcptpaFunction <- function(scores, argvals = functions@argvals, functions)
 {
   return(defaultFunction(scores, argvals, functions))
 }
