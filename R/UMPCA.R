@@ -13,7 +13,7 @@
 #' @param TX The input training data in tensorial representation, the last mode 
 #'   is the sample mode. For Nth-order tensor data, \code{TX} is of 
 #'   (N+1)th-order with the (N+1)-mode to be the sample mode. E.g., 30x20x10x100
-#'   for 100 samples of size 30x20x10#'
+#'   for 100 samples of size 30x20x10
 #' @param numP The dimension of the projected vector, denoted as \eqn{P} in the 
 #'   paper. It is the number of elementary multilinear projections (EMPs) in
 #'   tensor-to-vector projection.
