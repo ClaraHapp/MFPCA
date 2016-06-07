@@ -339,7 +339,6 @@ fcptpaBasis <- function(funDataObject, npc, smoothingDegree = rep(2,2), alphaRan
 }
 
 
-
 #' Calculate a spline basis decomposition for functional data on one-dimensional
 #' domains
 #' 
@@ -381,6 +380,25 @@ fcptpaBasis <- function(funDataObject, npc, smoothingDegree = rep(2,2), alphaRan
 #' @importFrom mgcv gam
 #'   
 #' @export splineBasis1D
+#' 
+#' @examples
+#' # generate some data
+#' dat <- simFunData(argvals = seq(0,1,0.01), M = 5, 
+#'                   eFunType = "Poly", eValType = "linear", N = 100)$simData
+#'                   
+#'  # calculate spline basis decomposition
+#'  dataDec <- splineBasis1D(dat) # use mgcv's default parameters
+#'  str(dataDec)
+#'  
+#'  # add some noise to the data
+#'  noisyDat <- addError(dat, sd = 0.5)
+#'  
+#'  # calculate spline basis decomposition with penalization to reduce noise
+#'  noisyDataDec <- splineBasis1Dpen(dat) # use mgcv's default parameters
+#'  str(noisyDataDec)
+#'  
+#'  # check if noise has been filtered out by penalization
+#'   all.equal(noisyDataDec$scores, dataDec$scores, check.attributes = F) # have almost the same coefficients
 splineBasis1D <- function(funDataObject, bs = "ps", m = NA, k = -1)
 {
   N <- nObs(funDataObject)
