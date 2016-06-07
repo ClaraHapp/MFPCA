@@ -177,6 +177,30 @@ fpcaBasis <- function(funDataObject, nbasis = 10, pve = 0.99, npc = NULL, makePD
 #'   "Uncorrelated Multilinear Principal Component Analysis for Unsupervised 
 #'   Multilinear Subspace Learning", IEEE Transactions on Neural Networks, Vol. 
 #'   20, No. 11, Page: 1820-1836, Nov. 2009.
+#'   
+#' @export umpcaBasis
+#' 
+#' @examples
+#' # simulate image data for N = 100 observations
+#' N <- 100
+#' b1 <- eFun(seq(0,1,0.01), M = 7, type = "Poly")
+#' b2 <- eFun(seq(-pi, pi, 0.03), M = 8, type = "Fourier")
+#' b <- tensorProduct(b1,b2) # 2D basis functions
+#' scores <- matrix(rnorm(N*56), nrow = N)
+#' f <- defaultFunction(scores = scores, functions = b) # calculate observation (= linear combination of basis functions)
+#' 
+#' # calculate basis functions based on UMPCA algorithm (needs some time)
+#' \donttest{
+#' # throws warning as the function aims more at  uncorrelated features than at
+#' # optimal data reconstruction (see help)
+#' umpca <- umpcaBasis(f, npc = 5) 
+#' 
+#' oldpar <- par(no.readonly = TRUE)
+#' 
+#' for(i in 1:5) # plot all 5 basis functions
+#' plot(umpca$functions, obs = i, main = paste("Basis function", i)) # plot first basis function
+#' 
+#' par(oldpar)}
 umpcaBasis <- function(funDataObject, npc)
 {
   if(dimSupp(funDataObject) != 2)
