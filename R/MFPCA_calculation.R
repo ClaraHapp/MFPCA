@@ -21,7 +21,7 @@ globalVariables('j')
 #' @seealso \code{\link{MFPCA}}, \code{\link[funData]{dimSupp}}
 #'
 #' @keywords internal
-.calcBasisIntegrals <- function(basisFunctions, dimSupp, argvals)
+calcBasisIntegrals <- function(basisFunctions, dimSupp, argvals)
 {
   npc <- dim(basisFunctions)[1]
 
