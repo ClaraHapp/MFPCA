@@ -191,7 +191,7 @@ umpcaBasis <- function(funDataObject, npc)
     scores[,UMPCAres$odrIdx[i]] <- ttv(obsCent, sapply(UMPCAres$Us, function(x){x[,i]}, simplify = FALSE), 1:2)
   
   return(list(scores = scores,
-              B = .calcBasisIntegrals(eigenImages, dimSupp(funDataObject), funDataObject@argvals),
+              B = calcBasisIntegrals(eigenImages, dimSupp(funDataObject), funDataObject@argvals),
               ortho = FALSE,
               functions = eigenFunctions))
 }
@@ -293,7 +293,7 @@ fcptpaBasis <- function(funDataObject, npc, smoothingDegree = rep(2,2), alphaRan
   scores <-  sweep(pca$U,MARGIN=2,pca$d,`*`)
   
   return(list(scores = scores,
-              B = .calcBasisIntegrals(eigenImages, dimSupp(funDataObject), funDataObject@argvals),
+              B = calcBasisIntegrals(eigenImages, dimSupp(funDataObject), funDataObject@argvals),
               ortho = FALSE,
               functions = funData(argvals = funDataObject@argvals, X = eigenImages)))
 }
@@ -357,7 +357,7 @@ splineBasis1D <- function(funDataObject, bs = "ps", m = NA, k = -1)
   scores <- t(apply(funDataObject@X, 1, function(f, dM){lm(f ~ dM - 1)$coef}, dM = desMat)) # design matrix already includes intercept!
   
   return(list(scores = scores,
-              B = .calcBasisIntegrals(t(desMat), 1, funDataObject@argvals),
+              B = calcBasisIntegrals(t(desMat), 1, funDataObject@argvals),
               ortho = FALSE,
               functions = NULL,
               settings = list(bs = bs, k = k, m = m)
@@ -400,7 +400,7 @@ splineBasis1Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
   scores <- rbind(scores, g$coef)
   
   return(list(scores = scores,
-              B = .calcBasisIntegrals(t(model.matrix(g)), 1, funDataObject@argvals),
+              B = calcBasisIntegrals(t(model.matrix(g)), 1, funDataObject@argvals),
               ortho = FALSE,
               functions = NULL,
               settings = list(bs = bs, k = k, m = m)
@@ -477,7 +477,7 @@ splineBasis2D <- function(funDataObject, bs = "ps", m = NA, k = -1)
   B <- aperm(array(desMat, c(funData::nObsPoints(funDataObject), ncol(scores))), c(3,1,2))
   
   return(list(scores = scores,
-              B = .calcBasisIntegrals(B, 2, funDataObject@argvals),
+              B = calcBasisIntegrals(B, 2, funDataObject@argvals),
               ortho = FALSE,
               functions = NULL,
               settings = list(bs = bs, k = k, m = m)
@@ -522,7 +522,7 @@ splineBasis2Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
   B <- aperm(array(model.matrix(g), c(nObsPoints(funDataObject), ncol(scores))), c(3,1,2))
   
   return(list(scores = scores,
-              B = .calcBasisIntegrals(B, 2, funDataObject@argvals),
+              B = calcBasisIntegrals(B, 2, funDataObject@argvals),
               ortho = FALSE,
               functions = NULL,
               settings = list(bs = bs, k = k, m = m)
