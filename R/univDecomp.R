@@ -28,11 +28,26 @@
 #'   representing the basis functions. Can be \code{NULL} if the basis functions
 #'   are not estimated from the data, but have a predefined form. See Details.}
 #'
-#' @seealso \code{\link{MFPCA}}, \code{\link{fpcaBasis}}, \code{\link{splineBasis1D}},
+#' @seealso \code{\link{MFPCA}}, \code{\link{univExpansion}}, \code{\link{fpcaBasis}}, \code{\link{splineBasis1D}},
 #'   \code{\link{splineBasis1Dpen}}, \code{\link{splineBasis2D}}, \code{\link{splineBasis2Dpen}},
 #'   \code{\link{umpcaBasis}}, \code{\link{fcptpaBasis}},
 #'   \code{\link{dctBasis2D}}, \code{\link{dctBasis3D}}
-univDecomp <- function(type, data, params)
+#'   
+#' @export univDecomp
+#'   
+#' @examples
+#' # generate some data
+#' dat <- simFunData(argvals = seq(0,1,0.01), M = 5, 
+#'                   eFunType = "Poly", eValType = "linear", N = 100)$simData
+#' 
+#' # decompose the data in univariate functional principal components...
+#' decFPCA <- univDecomp(type = "uFPCA", data = dat, params = list(npc = 5))
+#' str(decFPCA)
+#' 
+#' # or in splines (penalized)
+#' decSplines <- univDecomp(type = "splines1Dpen", data = dat) # use mgcv's default params
+#' str(decSplines)
+univDecomp <- function(type, data, params = NULL)
 {
   if(is.null(params))
     params <- list() # create empty list
