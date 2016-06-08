@@ -4,11 +4,11 @@ context("Testing functions in MFCPA_calculation.R")
 test_that("test .calcBasisIntegrals", {
   basis1D <- univExpansion("splines1D", scores = matrix(1:30, nrow = 3), argvals = seq(0, 1, 0.01), 
                            functions = NULL, params = list(k = 10, m = 2, bs = "ps"))
-  calcBasis1D <- MFPCA:::.calcBasisIntegrals(basis1D@X, dimSupp = dimSupp(basis1D), argvals = basis1D@argvals)
+  calcBasis1D <- MFPCA:::calcBasisIntegrals(basis1D@X, dimSupp = dimSupp(basis1D), argvals = basis1D@argvals)
   
   basis2D <- univExpansion("splines2D", scores = matrix(1:360, nrow = 3), argvals = list(seq(0, 1, 0.01), seq(-2, 2, 0.02)),
                                        functions = NULL, params = list(k = c(10,12), m = c(2,3), bs = "ps"))
-  calcBasis2D <- MFPCA:::.calcBasisIntegrals(basis2D@X, dimSupp = dimSupp(basis2D), argvals = basis2D@argvals)
+  calcBasis2D <- MFPCA:::calcBasisIntegrals(basis2D@X, dimSupp = dimSupp(basis2D), argvals = basis2D@argvals)
   
   # check 1D row sums
   expect_equal(rowSums(calcBasis1D), c(139.7564, 146.9259, 154.0953), tolerance = 1e-6)
@@ -51,12 +51,11 @@ test_that("test MFPCA main function", {
   # values
   expect_equal(length(uFPCA$values), length(splines$values))
   expect_equal(sum(uFPCA$values), sum(uFPCA$values))
-  expect_equal(uFPCA$values[1], 1.05175127)
+  expect_equal(uFPCA$values[1], 1.05174404)
   expect_equal(splines$values[1], 1.05266096)
   
   # functions
   expect_equal(nObs(uFPCA$functions), nObs(splines$functions))
-  expect_equal(norm(uFPCA$functions), norm(splines$functions))
-  expect_equal(norm(uFPCA$functions[[1]])[1], 0.57954971)
+  expect_equal(norm(uFPCA$functions[[1]])[1], 0.579550598)
   expect_equal(norm(splines$functions[[1]])[1], 0.57956679)
 })
