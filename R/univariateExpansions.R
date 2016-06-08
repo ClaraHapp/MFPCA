@@ -315,6 +315,22 @@ fcptpaFunction <- function(scores, argvals = functions@argvals, functions)
 #' @importFrom mgcv gam
 #' 
 #' @export splineFunction1D
+#' 
+#' @examples 
+#' oldPar <- par(no.readonly = TRUE)
+#' par(mfrow = c(1,1))
+#' 
+#' # simulate coefficients (scores) for 10 observations and 8 basis functions
+#' scores <- t(replicate(n = 10, rnorm(8, sd = (8:1)/8)))
+#' dim(scores)
+#' 
+#' # expand spline basis on [0,1]
+#' funs <- splineFunction1D(scores = scores, argvals = list(seq(0,1,0.01)),
+#'                          bs = "ps", m = 2, k = 8) # params for mgcv
+#' 
+#' plot(funs, main = "Spline reconstruction")
+#' 
+#' par(oldPar)
 splineFunction1D <- function(scores, argvals, bs, m, k)
 {
   N <- nrow(scores)
