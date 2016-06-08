@@ -255,7 +255,7 @@ fpcaFunction <- function(scores, argvals = functions@argvals, functions)
 #' 
 #' # plot the resulting observations
 #' for(i in 1:4)
-#'  plot(f, obs = i, zlim = range(f@X))
+#'  plot(f, obs = i, zlim = range(f@@X))
 #' 
 #' par(oldpar)
 umpcaFunction <- function(scores, argvals = functions@argvals, functions)

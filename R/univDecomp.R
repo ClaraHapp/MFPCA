@@ -396,7 +396,7 @@ fcptpaBasis <- function(funDataObject, npc, smoothingDegree = rep(2,2), alphaRan
 #'  str(noisyDataDec)
 #'  
 #'  # check if noise has been filtered out by penalization
-#'   all.equal(noisyDataDec$scores, dataDec$scores, check.attributes = F) # have almost the same coefficients
+#'   all.equal(noisyDataDec$scores, dataDec$scores, check.attributes = FALSE) # have almost the same coefficients
 splineBasis1D <- function(funDataObject, bs = "ps", m = NA, k = -1)
 {
   N <- nObs(funDataObject)
