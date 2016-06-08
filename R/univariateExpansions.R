@@ -384,6 +384,26 @@ splineFunction1D <- function(scores, argvals, bs, m, k)
 #' @importFrom mgcv gam
 #'   
 #' @export splineFunction2D
+#' 
+#' @examples
+#' oldPar <- par(no.readonly = TRUE)
+#' par(mfrow = c(1,1))
+#' 
+#' ### Spline basis ###
+#' # simulate coefficients (scores) for N = 4 observations and K = 7*8 basis functions
+#' K <- 7*8
+#' scores <- t(replicate(n = 4, rnorm(K, sd = (K:1)/K)))
+#' dim(scores)
+#' 
+#' # expand spline basis on [0,1] x [-0.5, 0.5]
+#' funs <- splineFunction2D(scores = scores, argvals = list(seq(0,1,0.01), seq(-0.5, 0.5, 0.01)),
+#'                          bs = "ps", m = 2, k = c(7,8)) # params for mgcv
+#' 
+#' # plot all observations
+#' for(i in 1:4)
+#'  plot(funs, obs = i, main = "Spline reconstruction")
+#'
+#' par(oldPar)
 splineFunction2D <- function(scores, argvals, bs, m, k)
 {
   N <- nrow(scores)
