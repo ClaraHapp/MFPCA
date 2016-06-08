@@ -214,6 +214,33 @@ fpcaFunction <- function(scores, argvals = functions@argvals, functions)
 #'   principal components.
 #'   
 #' @seealso \code{\link{univExpansion}}
+#' 
+#' @export umpcaFunction
+#' 
+#' @examples
+#' # set.seed(1234)
+#' 
+#' # simulate coefficients (scores) for N = 4 observations and K = 8 basis functions
+#' scores <- t(replicate(n = 4, rnorm(8, sd = (8:1)/8)))
+#' dim(scores)
+#' 
+#' # Define basis functions
+#' x1 <- seq(0, 1, 0.01)
+#' x2 <- seq(-pi, pi, 0.05)
+#' b <- funData(argvals = list(x1, x2), X = 1:8 %o% exp(x1) %o% sin(x2))
+#' 
+#' # calculate PCA expansion
+#' f <- umpcaFunction(scores = scores, functions = b)
+#' 
+#' oldpar <- par(no.readonly = TRUE)
+#' 
+#' par(mfrow = c(1,1))
+#' 
+#' # plot the resulting observations
+#' for(i in 1:4)
+#'  plot(f, obs = i, zlim = range(f@X))
+#' 
+#' par(oldpar)
 umpcaFunction <- function(scores, argvals = functions@argvals, functions)
 {
   if(dimSupp(functions) != 2)
