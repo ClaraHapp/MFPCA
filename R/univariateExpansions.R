@@ -173,6 +173,25 @@ defaultFunction <- function(scores, argvals = functions@argvals, functions)
 #' @seealso \code{\link{univExpansion}}, \code{\link{fpcaBasis}}
 #' 
 #' @export fpcaFunction
+#' 
+#' @examples
+#' # simulate coefficients (scores) for 10 observations and 8 basis functions
+#' scores <- t(replicate(n = 10, rnorm(8, sd = (8:1)/8)))
+#' dim(scores)
+#' 
+#' # Fourier basis functions as eigenfunctions
+#' eFuns <- eFun(argvals = seq(0,1,0.01), M = 8, type = "Fourier")
+#' 
+#' # calculate PCA expansion
+#' f <- fpcaFunction(scores = scores, functions = eFuns)
+#' 
+#' oldpar <- par(no.readonly = TRUE)
+#' 
+#' par(mfrow = c(1,2))
+#' plot(eFuns, main = "Basis functions")
+#' plot(f, main = "Linear combination")
+#' 
+#' par(oldpar)
 fpcaFunction <- function(scores, argvals = functions@argvals, functions)
 {
   return(funData(argvals, scores %*% functions@X))
