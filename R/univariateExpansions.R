@@ -43,6 +43,39 @@ NULL
 #'   \code{\link{dctFunction3D}}, \code{\link{defaultFunction}}
 #'   
 #' @export univExpansion
+#' 
+#' @examples
+#' oldPar <- par(no.readonly = TRUE)
+#' par(mfrow = c(1,1))
+#' 
+#' ### Spline basis ###
+#' # simulate coefficients (scores) for 10 observations and 8 basis functions
+#' scores <- t(replicate(n = 10, rnorm(8, sd = (8:1)/8)))
+#' dim(scores)
+#' 
+#' # expand spline basis on [0,1]
+#' funs <- univExpansion(type = "splines1D", scores = scores, argvals = seq(0,1,0.01),
+#'                       functions = NULL, # spline functions are known, need not be given
+#'                       params = list(bs = "ps", m = 2, k = 8)) # params for mgcv
+#' 
+#' plot(funs, main = "Spline reconstruction")
+#' 
+#' ### PCA basis ###
+#' # simulate coefficients (scores) for 10 observations and 8 basis functions
+#' scores <- t(replicate(n = 10, rnorm(8, sd = (8:1)/8)))
+#' dim(scores)
+#' 
+#' # Fourier basis functions as eigenfunctions
+#' eFuns <- eFun(argvals = seq(0,1,0.01), M = 8, type = "Fourier")
+#' 
+#' # expand eigenfunction basis
+#' funs <-  univExpansion(type = "uFPCA", scores = scores, 
+#'                        argvals = NULL, # use argvals of eFuns (default)
+#'                        functions = eFuns)
+#'                        
+#' plot(funs, main = "PCA reconstruction")                     
+#' 
+#' par(oldPar)
 univExpansion <- function(type, scores, argvals, functions, params = NULL)
 {
   params$scores <- scores
