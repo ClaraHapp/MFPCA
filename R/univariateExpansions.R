@@ -363,7 +363,7 @@ splineFunction1D <- function(scores, argvals, bs, m, k)
 
   # calculate functions as linear combination of splines
   res <- funData(argvals,
-                 scores %*% t(desMat))
+                 tcrossprod(scores, desMat))
 
   return(res)
 }
@@ -439,7 +439,7 @@ splineFunction2D <- function(scores, argvals, bs, m, k)
 
   # calculate functions as linear combination of splines
   res <- funData(argvals,
-                 array(scores %*% t(desMat),
+                 array(tcrossprod(scores, desMat),
                        dim = c(N, length(argvals[[1]]), length(argvals[[2]]))))
 
   return(res)
@@ -463,7 +463,7 @@ splineFunction2Dpen <- function(scores, argvals, bs, m, k)
 
   # calculate functions as linear combination of splines
   res <- funData(argvals,
-                 array(scores %*% t(desMat),
+                 array(tcrossprod(scores, desMat),
                        dim = c(N, length(argvals[[1]]), length(argvals[[2]]))))
 
   return(res)

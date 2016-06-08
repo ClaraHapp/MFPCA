@@ -116,9 +116,8 @@
     Zcur = matrix(Z[obs.points, ], nrow = length(obs.points),
                   ncol = dim(Z)[2])
     ZtZ_sD.inv = solve(crossprod(Zcur) + sigma2 * D.inv)
-    scores[i.subj, ] = ZtZ_sD.inv %*% t(Zcur) %*% (Y.tilde[i.subj, obs.points])
-    fit[i.subj, ] = t(as.matrix(mu)) + scores[i.subj, ] %*%
-      t(efunctions)
+    scores[i.subj, ] = ZtZ_sD.inv %*% crossprod(Zcur, Y.tilde[i.subj, obs.points])
+    fit[i.subj, ] = t(as.matrix(mu)) + tcrossprod(scores[i.subj, ], efunctions)
   }
   ret.objects = c("fit", "scores", "mu", "efunctions", "evalues",
                   "npc", "sigma2") # add sigma2 to output

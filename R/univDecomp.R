@@ -317,10 +317,8 @@ fcptpaBasis <- function(funDataObject, npc, smoothingDegree = rep(2,2), alphaRan
   d <- dim(funDataObject@X)
     
   # smoothing only along image directions
-  Dv <- makeDiffOp(degree = smoothingDegree[1], dim = d[2])
-  Dv <- t(Dv) %*% Dv
-  Dw <- makeDiffOp(degree = smoothingDegree[2], dim = d[3])
-  Dw <- t(Dw) %*% Dw 
+  Dv <- crossprod(makeDiffOp(degree = smoothingDegree[1], dim = d[2]))
+  Dw <- crossprod(makeDiffOp(degree = smoothingDegree[2], dim = d[3]))
   
   pca <-  FCP_TPA(X = funDataObject@X, K = npc, penMat = list(v = Dv, w = Dw), alphaRange = alphaRange)
     

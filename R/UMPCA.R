@@ -106,13 +106,13 @@ UMPCA <- function(TX, numP)
         for(i in 1:numSpl)
         {
           YDiff <- Ypn[,i]
-          ST <- ST + YDiff %*% t(YDiff)   #Within-class Scatter
+          ST <- ST + tcrossprod(YDiff, YDiff)   #Within-class Scatter
         }
         
         #### #### ####
         if(iP > 1)
         {
-          GYYG <- t(Gps) %*% t(Ypn) %*% Ypn %*% Gps #equation (16) in the paper
+          GYYG <- crossprod(Ypn %*% Gps) #equation (16) in the paper
           ThetaST <- (diag(1, nrow = Is[n]) - Ypn %*% Gps %*% solve(GYYG) %*% t(Gps) %*% t(Ypn)) #equation (15) in the paper
           ST <- ThetaST %*% ST  
           Un <- maxeig(ST)$x
@@ -137,7 +137,7 @@ UMPCA <- function(TX, numP)
   #### Sort by Variance ####
   vecYps <- t(Gps)  #vecYps contains the feature vectors for training data
   Ymean <- rowMeans(vecYps)  #Should be zero
-  TVars <- diag(vecYps %*% t(vecYps))  #Calculate variance
+  TVars <- diag( tcrossprod(vecYps, vecYps) )  #Calculate variance
   odrIdx <- order(TVars, decreasing = TRUE)  
   odrIdx <- odrIdx[1:numP] # take the first numP
   

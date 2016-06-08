@@ -255,7 +255,7 @@ normVec <- function(x) sqrt(sum(x^2))
 #' @seealso \code{\link{FCP_TPA}}, \code{\link{gcv}}
 findAlphaVopt <- function(alphaRange, data, u, w, alphaW, OmegaW, GammaV, lambdaV)
 {
-  z <-  t(GammaV) %*% ttv(data, list(u,w), c(1,3))/(normVec(u) * normVec(w))
+  z <-  crossprod(GammaV, ttv(data, list(u,w), c(1,3))) / (normVec(u) * normVec(w))
   eta <- 1/(1 + alphaW * crossprod(w, OmegaW %*% w)/normVec(w))
   
   res <- optimize(f=gcv, interval=c(min(alphaRange), max(alphaRange)), 
@@ -267,7 +267,7 @@ findAlphaVopt <- function(alphaRange, data, u, w, alphaW, OmegaW, GammaV, lambda
 #' @describeIn findAlphaVopt
 findAlphaWopt <- function(alphaRange, data, u, v, alphaV, OmegaV, GammaW, lambdaW)
 {
-  z <-  t(GammaW) %*% ttv(data, list(u,v), c(1,2))/(normVec(u) * normVec(v))
+  z <-  crossprod(GammaW, ttv(data, list(u,v), c(1,2))) / (normVec(u) * normVec(v))
   eta <- 1/(1 + alphaV * crossprod(v, OmegaV %*% v)/normVec(v))
 
   res <- optimize(f=gcv, interval=c(min(alphaRange), max(alphaRange)), 
