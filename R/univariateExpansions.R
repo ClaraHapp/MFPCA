@@ -271,13 +271,16 @@ umpcaFunction <- function(scores, argvals = functions@argvals, functions)
 #'   \code{argvals}, corresponding to the linear combination of the functional 
 #'   principal components.
 #'   
-#' @seealso \code{\link{univExpansion}}
+#' @seealso \code{\link{univExpansion}}, \code{\link{defaultFunction}}
 #'
 #' @references G. I. Allen, "Multi-way Functional Principal Components 
 #'   Analysis", In IEEE International Workshop on Computational Advances in 
 #'   Multi-Sensor Adaptive Processing, 2013.
 #'    
 #' @export fcptpaFunction
+#' 
+#' @examples
+#' # see defaultFunction 
 fcptpaFunction <- function(scores, argvals = functions@argvals, functions)
 {
   return(defaultFunction(scores, argvals, functions))
