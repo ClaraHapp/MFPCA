@@ -43,6 +43,46 @@ NULL
 #'   \code{\link{dctFunction3D}}, \code{\link{defaultFunction}}
 #'   
 #' @export univExpansion
+#' 
+#' @examples
+#' oldPar <- par(no.readonly = TRUE)
+#' par(mfrow = c(1,1))
+#' 
+#' set.seed(1234)
+#' 
+#' ### Spline basis ###
+#' # simulate coefficients (scores) for N = 10 observations and K = 8 basis functions
+#' N <- 10
+#' K <- 8
+#' scores <- t(replicate(n = N, rnorm(K, sd = (K:1)/K)))
+#' dim(scores)
+#' 
+#' # expand spline basis on [0,1]
+#' funs <- univExpansion(type = "splines1D", scores = scores, argvals = seq(0,1,0.01),
+#'                       functions = NULL, # spline functions are known, need not be given
+#'                       params = list(bs = "ps", m = 2, k = K)) # params for mgcv
+#' 
+#' plot(funs, main = "Spline reconstruction")
+#' 
+#' ### PCA basis ###
+#' # simulate coefficients (scores) for N = 10 observations and K = 8 basis functions
+#' N <- 10
+#' K <- 8
+#' 
+#' scores <- t(replicate(n = N, rnorm(K, sd = (K:1)/K)))
+#' dim(scores)
+#' 
+#' # Fourier basis functions as eigenfunctions
+#' eFuns <- eFun(argvals = seq(0,1,0.01), M = K, type = "Fourier")
+#' 
+#' # expand eigenfunction basis
+#' funs <-  univExpansion(type = "uFPCA", scores = scores, 
+#'                        argvals = NULL, # use argvals of eFuns (default)
+#'                        functions = eFuns)
+#'                        
+#' plot(funs, main = "PCA reconstruction")                     
+#' 
+#' par(oldPar)
 univExpansion <- function(type, scores, argvals, functions, params = NULL)
 {
   params$scores <- scores
@@ -92,6 +132,9 @@ univExpansion <- function(type, scores, argvals, functions, params = NULL)
 #' @export defaultFunction
 #' 
 #' @examples
+#' # set seed
+#' set.seed(1234)
+#' 
 #' N <- 12 # 12 observations
 #' K <- 10 # 10 basis functions
 #' 
@@ -140,6 +183,30 @@ defaultFunction <- function(scores, argvals = functions@argvals, functions)
 #' @seealso \code{\link{univExpansion}}, \code{\link{fpcaBasis}}
 #' 
 #' @export fpcaFunction
+#' 
+#' @examples
+#' # set seed
+#' set.seed(1234)
+#' 
+#' # simulate coefficients (scores) for N = 10 observations and K = 8 basis functions
+#' N <- 10
+#' K <- 8
+#' scores <- t(replicate(n = N, rnorm(K, sd = (K:1)/K)))
+#' dim(scores)
+#' 
+#' # Fourier basis functions as eigenfunctions
+#' eFuns <- eFun(argvals = seq(0,1,0.01), M = K, type = "Fourier")
+#' 
+#' # calculate PCA expansion
+#' f <- fpcaFunction(scores = scores, functions = eFuns)
+#' 
+#' oldpar <- par(no.readonly = TRUE)
+#' 
+#' par(mfrow = c(1,2))
+#' plot(eFuns, main = "Basis functions")
+#' plot(f, main = "Linear combination")
+#' 
+#' par(oldpar)
 fpcaFunction <- function(scores, argvals = functions@argvals, functions)
 {
   return(funData(argvals, scores %*% functions@X))
@@ -162,6 +229,35 @@ fpcaFunction <- function(scores, argvals = functions@argvals, functions)
 #'   principal components.
 #'   
 #' @seealso \code{\link{univExpansion}}
+#' 
+#' @export umpcaFunction
+#' 
+#' @examples
+#' # set.seed(1234)
+#' 
+#' # simulate coefficients (scores) for N = 4 observations and K = 8 basis functions
+#' N <- 4
+#' K <- 8
+#' scores <- t(replicate(n = N, rnorm(K, sd = (K:1)/K)))
+#' dim(scores)
+#' 
+#' # Define basis functions
+#' x1 <- seq(0, 1, 0.01)
+#' x2 <- seq(-pi, pi, 0.05)
+#' b <- funData(argvals = list(x1, x2), X = 1:K %o% exp(x1) %o% sin(x2))
+#' 
+#' # calculate PCA expansion
+#' f <- umpcaFunction(scores = scores, functions = b)
+#' 
+#' oldpar <- par(no.readonly = TRUE)
+#' 
+#' par(mfrow = c(1,1))
+#' 
+#' # plot the resulting observations
+#' for(i in 1:4)
+#'  plot(f, obs = i, zlim = range(f@X))
+#' 
+#' par(oldpar)
 umpcaFunction <- function(scores, argvals = functions@argvals, functions)
 {
   if(dimSupp(functions) != 2)
@@ -192,13 +288,16 @@ umpcaFunction <- function(scores, argvals = functions@argvals, functions)
 #'   \code{argvals}, corresponding to the linear combination of the functional 
 #'   principal components.
 #'   
-#' @seealso \code{\link{univExpansion}}
+#' @seealso \code{\link{univExpansion}}, \code{\link{defaultFunction}}
 #'
 #' @references G. I. Allen, "Multi-way Functional Principal Components 
 #'   Analysis", In IEEE International Workshop on Computational Advances in 
 #'   Multi-Sensor Adaptive Processing, 2013.
 #'    
 #' @export fcptpaFunction
+#' 
+#' @examples
+#' # see defaultFunction 
 fcptpaFunction <- function(scores, argvals = functions@argvals, functions)
 {
   return(defaultFunction(scores, argvals, functions))
@@ -233,6 +332,26 @@ fcptpaFunction <- function(scores, argvals = functions@argvals, functions)
 #' @importFrom mgcv gam
 #' 
 #' @export splineFunction1D
+#' 
+#' @examples  
+#' set.seed(1234)
+#' 
+#' # simulate coefficients (scores) for 10 observations and 8 basis functions
+#' N <- 10
+#' K <- 8
+#' scores <- t(replicate(n = N, rnorm(K, sd = (K:1)/K)))
+#' dim(scores)
+#' 
+#' # expand spline basis on [0,1]
+#' funs <- splineFunction1D(scores = scores, argvals = list(seq(0,1,0.01)),
+#'                          bs = "ps", m = 2, k = K) # params for mgcv
+#'                          
+#' oldPar <- par(no.readonly = TRUE)
+#' par(mfrow = c(1,1))                        
+#' 
+#' plot(funs, main = "Spline reconstruction")
+#' 
+#' par(oldPar)
 splineFunction1D <- function(scores, argvals, bs, m, k)
 {
   N <- nrow(scores)
@@ -286,6 +405,29 @@ splineFunction1D <- function(scores, argvals, bs, m, k)
 #' @importFrom mgcv gam
 #'   
 #' @export splineFunction2D
+#' 
+#' @examples
+#' set.seed(1234)
+#' 
+#' ### Spline basis ###
+#' # simulate coefficients (scores) for N = 4 observations and K = 7*8 basis functions
+#' N <- 4
+#' K <- 7*8
+#' scores <- t(replicate(n = N, rnorm(K, sd = (K:1)/K)))
+#' dim(scores)
+#' 
+#' # expand spline basis on [0,1] x [-0.5, 0.5]
+#' funs <- splineFunction2D(scores = scores, argvals = list(seq(0,1,0.01), seq(-0.5, 0.5, 0.01)),
+#'                          bs = "ps", m = 2, k = c(7,8)) # params for mgcv
+#' 
+#' oldPar <- par(no.readonly = TRUE)
+#' par(mfrow = c(1,1))
+#' 
+#' # plot all observations
+#' for(i in 1:4)
+#'  plot(funs, obs = i, main = "Spline reconstruction")
+#'
+#' par(oldPar)
 splineFunction2D <- function(scores, argvals, bs, m, k)
 {
   N <- nrow(scores)
@@ -365,6 +507,9 @@ splineFunction2Dpen <- function(scores, argvals, bs, m, k)
 #' @export dctFunction2D
 #'   
 #' @examples
+#' # set seed
+#' set.seed(12345)
+#'
 #' # generate sparse 10 x 15 score matrix (i.e. 10 observations) with 30 entries
 #' scores <- Matrix::sparseMatrix(i = sample(1:10, 30, replace = TRUE), # sample row indices
 #'      j = sample(1:15, 30, replace = TRUE, prob = 1/(1:15)), # sample column indices, high indices with low probability
@@ -374,8 +519,14 @@ splineFunction2Dpen <- function(scores, argvals, bs, m, k)
 #' # calculate basis expansion on [0,1] x [0,1]
 #' f <- dctFunction2D(scores = scores, argvals = list(seq(0,1,0.01), seq(0,1,0.01)))
 #' nObs(f) # f has 10 observations
+#' 
+#' oldPar <- par(no.readonly = TRUE)
+#' par(mfrow = c(1,1))
+#' 
 #' plot(f, obs = 1) # plot first observation
 #' plot(f, obs = 2) # plot second observation
+#' 
+#' par(oldPar)
 dctFunction2D <- function(scores, argvals, parallel = FALSE)
 {
   # dimension of the image

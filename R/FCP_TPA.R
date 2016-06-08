@@ -61,6 +61,36 @@
 #'   Multi-Sensor Adaptive Processing, 2013.
 #'   
 #' @seealso \code{\link{fcptpaBasis}}
+#' 
+#' @export FCP_TPA
+#' 
+#' @examples
+#'  # set.seed(12345)
+#' 
+#'  # define "true" components
+#'  v <- sin(seq(-pi, pi, length.out = 100))
+#'  w <- exp(seq(-0.5, 1, length.out = 150))
+#'  
+#'  # simulate tensor data
+#'  X <- rnorm(80, sd = 0.5) %o% v %o% w
+#'  
+#'  # create penalty matrices (penalize first differences for each dimension)
+#'  Pv <- crossprod(diff(diag(100)))
+#'  Pw <- crossprod(diff(diag(150)))
+#'  
+#'  # estimate one eigentensor
+#'  res <- FCP_TPA(X, K = 1, penMat = list(v = Pv, w = Pw),
+#'              alphaRange = list(v = c(1e-4, 1e4), w = c(1e-4, 1e4)),
+#'              verbose = TRUE)
+#'  
+#'  # plot the results and compare to true values
+#'  plot(res$V)
+#'  points(v/sqrt(sum(v^2)), pch = 20)
+#'  legend("topleft", legend = c("True", "Estimated"), pch = c(20, 1))
+#'  
+#'  plot(res$W)
+#'  points(w/sqrt(sum(w^2)), pch = 20)
+#'  legend("topleft", legend = c("True", "Estimated"), pch = c(20, 1))
 FCP_TPA <- function(X, K, penMat, alphaRange, verbose = FALSE, tol = 1e-4, maxIter = 15, adaptTol = TRUE)
 {
   dimX <- dim(X)

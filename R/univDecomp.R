@@ -28,11 +28,26 @@
 #'   representing the basis functions. Can be \code{NULL} if the basis functions
 #'   are not estimated from the data, but have a predefined form. See Details.}
 #'
-#' @seealso \code{\link{MFPCA}}, \code{\link{fpcaBasis}}, \code{\link{splineBasis1D}},
+#' @seealso \code{\link{MFPCA}}, \code{\link{univExpansion}}, \code{\link{fpcaBasis}}, \code{\link{splineBasis1D}},
 #'   \code{\link{splineBasis1Dpen}}, \code{\link{splineBasis2D}}, \code{\link{splineBasis2Dpen}},
 #'   \code{\link{umpcaBasis}}, \code{\link{fcptpaBasis}},
 #'   \code{\link{dctBasis2D}}, \code{\link{dctBasis3D}}
-univDecomp <- function(type, data, params)
+#'   
+#' @export univDecomp
+#'   
+#' @examples
+#' # generate some data
+#' dat <- simFunData(argvals = seq(0,1,0.01), M = 5, 
+#'                   eFunType = "Poly", eValType = "linear", N = 100)$simData
+#' 
+#' # decompose the data in univariate functional principal components...
+#' decFPCA <- univDecomp(type = "uFPCA", data = dat, params = list(npc = 5))
+#' str(decFPCA)
+#' 
+#' # or in splines (penalized)
+#' decSplines <- univDecomp(type = "splines1Dpen", data = dat) # use mgcv's default params
+#' str(decSplines)
+univDecomp <- function(type, data, params = NULL)
 {
   if(is.null(params))
     params <- list() # create empty list
@@ -162,6 +177,30 @@ fpcaBasis <- function(funDataObject, nbasis = 10, pve = 0.99, npc = NULL, makePD
 #'   "Uncorrelated Multilinear Principal Component Analysis for Unsupervised 
 #'   Multilinear Subspace Learning", IEEE Transactions on Neural Networks, Vol. 
 #'   20, No. 11, Page: 1820-1836, Nov. 2009.
+#'   
+#' @export umpcaBasis
+#' 
+#' @examples
+#' # simulate image data for N = 100 observations
+#' N <- 100
+#' b1 <- eFun(seq(0,1,0.01), M = 7, type = "Poly")
+#' b2 <- eFun(seq(-pi, pi, 0.03), M = 8, type = "Fourier")
+#' b <- tensorProduct(b1,b2) # 2D basis functions
+#' scores <- matrix(rnorm(N*56), nrow = N)
+#' f <- defaultFunction(scores = scores, functions = b) # calculate observation (= linear combination of basis functions)
+#' 
+#' # calculate basis functions based on UMPCA algorithm (needs some time)
+#' \donttest{
+#' # throws warning as the function aims more at  uncorrelated features than at
+#' # optimal data reconstruction (see help)
+#' umpca <- umpcaBasis(f, npc = 5) 
+#' 
+#' oldpar <- par(no.readonly = TRUE)
+#' 
+#' for(i in 1:5) # plot all 5 basis functions
+#' plot(umpca$functions, obs = i, main = paste("Basis function", i)) # plot first basis function
+#' 
+#' par(oldpar)}
 umpcaBasis <- function(funDataObject, npc)
 {
   if(dimSupp(funDataObject) != 2)
@@ -261,6 +300,7 @@ makeDiffOp <- function(degree, dim){
 #' f <- defaultFunction(scores = scores, functions = b) # calculate observation (= linear combination of basis functions)
 #' 
 #' # calculate basis functions based on FCP_TPA algorithm (needs some time)
+#' \donttest{
 #' fcptpa <- fcptpaBasis(f, npc = 5, alphaRange = list(v = c(1e-5, 1e5), w = c(1e-5, 1e5)))
 #' 
 #' oldpar <- par(no.readonly = TRUE)
@@ -268,7 +308,7 @@ makeDiffOp <- function(degree, dim){
 #' for(i in 1:5) # plot all 5 basis functions
 #' plot(fcptpa$functions, obs = i, main = paste("Basis function", i)) # plot first basis function
 #' 
-#' par(oldpar)
+#' par(oldpar)}
 fcptpaBasis <- function(funDataObject, npc, smoothingDegree = rep(2,2), alphaRange)
 {
   if(dimSupp(funDataObject) != 2)
@@ -297,7 +337,6 @@ fcptpaBasis <- function(funDataObject, npc, smoothingDegree = rep(2,2), alphaRan
               ortho = FALSE,
               functions = funData(argvals = funDataObject@argvals, X = eigenImages)))
 }
-
 
 
 #' Calculate a spline basis decomposition for functional data on one-dimensional
@@ -341,6 +380,25 @@ fcptpaBasis <- function(funDataObject, npc, smoothingDegree = rep(2,2), alphaRan
 #' @importFrom mgcv gam
 #'   
 #' @export splineBasis1D
+#' 
+#' @examples
+#' # generate some data
+#' dat <- simFunData(argvals = seq(0,1,0.01), M = 5, 
+#'                   eFunType = "Poly", eValType = "linear", N = 100)$simData
+#'                   
+#'  # calculate spline basis decomposition
+#'  dataDec <- splineBasis1D(dat) # use mgcv's default parameters
+#'  str(dataDec)
+#'  
+#'  # add some noise to the data
+#'  noisyDat <- addError(dat, sd = 0.5)
+#'  
+#'  # calculate spline basis decomposition with penalization to reduce noise
+#'  noisyDataDec <- splineBasis1Dpen(dat) # use mgcv's default parameters
+#'  str(noisyDataDec)
+#'  
+#'  # check if noise has been filtered out by penalization
+#'   all.equal(noisyDataDec$scores, dataDec$scores, check.attributes = F) # have almost the same coefficients
 splineBasis1D <- function(funDataObject, bs = "ps", m = NA, k = -1)
 {
   N <- nObs(funDataObject)
@@ -458,6 +516,28 @@ splineBasis1Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
 #' @importFrom mgcv gam
 #'   
 #' @export splineBasis2D
+#' 
+#' @examples
+#' # simulate image data for N = 100 observations
+#' N <- 100
+#' b1 <- eFun(seq(0,1,0.01), M = 7, type = "Poly")
+#' b2 <- eFun(seq(-pi, pi, 0.03), M = 8, type = "Fourier")
+#' b <- tensorProduct(b1,b2) # 2D basis functions
+#' scores <- matrix(rnorm(N*56), nrow = N)
+#' dat <- defaultFunction(scores = scores, functions = b) # calculate observation (= linear combination of basis functions)
+#' 
+#' # calculate 2D spline basis decomposition (needs some time)
+#' \donttest{
+#' dataDec <- splineBasis2D(dat, k = c(5,5)) # use 5 basis functions in each direction
+#' }
+#' 
+#' # add some noise to the data
+#' noisyDat <- addError(dat, sd = 0.5)
+#' 
+#' # calculate 2D spline basis decomposition with penalization (needs A LOT more time)
+#' \donttest{
+#' noisyDataDec <- splineBasis2Dpen(noisyDat, k = c(5,5)) # use 5 basis functions in each direction
+#' }
 splineBasis2D <- function(funDataObject, bs = "ps", m = NA, k = -1)
 {
   N <- nObs(funDataObject)
