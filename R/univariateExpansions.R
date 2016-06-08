@@ -48,25 +48,32 @@ NULL
 #' oldPar <- par(no.readonly = TRUE)
 #' par(mfrow = c(1,1))
 #' 
+#' set.seed(1234)
+#' 
 #' ### Spline basis ###
-#' # simulate coefficients (scores) for 10 observations and 8 basis functions
-#' scores <- t(replicate(n = 10, rnorm(8, sd = (8:1)/8)))
+#' # simulate coefficients (scores) for N = 10 observations and K = 8 basis functions
+#' N <- 10
+#' K <- 8
+#' scores <- t(replicate(n = N, rnorm(K, sd = (K:1)/K)))
 #' dim(scores)
 #' 
 #' # expand spline basis on [0,1]
 #' funs <- univExpansion(type = "splines1D", scores = scores, argvals = seq(0,1,0.01),
 #'                       functions = NULL, # spline functions are known, need not be given
-#'                       params = list(bs = "ps", m = 2, k = 8)) # params for mgcv
+#'                       params = list(bs = "ps", m = 2, k = K)) # params for mgcv
 #' 
 #' plot(funs, main = "Spline reconstruction")
 #' 
 #' ### PCA basis ###
-#' # simulate coefficients (scores) for 10 observations and 8 basis functions
-#' scores <- t(replicate(n = 10, rnorm(8, sd = (8:1)/8)))
+#' # simulate coefficients (scores) for N = 10 observations and K = 8 basis functions
+#' N <- 10
+#' K <- 8
+#' 
+#' scores <- t(replicate(n = N, rnorm(K, sd = (K:1)/K)))
 #' dim(scores)
 #' 
 #' # Fourier basis functions as eigenfunctions
-#' eFuns <- eFun(argvals = seq(0,1,0.01), M = 8, type = "Fourier")
+#' eFuns <- eFun(argvals = seq(0,1,0.01), M = K, type = "Fourier")
 #' 
 #' # expand eigenfunction basis
 #' funs <-  univExpansion(type = "uFPCA", scores = scores, 
@@ -125,6 +132,9 @@ univExpansion <- function(type, scores, argvals, functions, params = NULL)
 #' @export defaultFunction
 #' 
 #' @examples
+#' # set seed
+#' set.seed(1234)
+#' 
 #' N <- 12 # 12 observations
 #' K <- 10 # 10 basis functions
 #' 
@@ -175,12 +185,17 @@ defaultFunction <- function(scores, argvals = functions@argvals, functions)
 #' @export fpcaFunction
 #' 
 #' @examples
-#' # simulate coefficients (scores) for 10 observations and 8 basis functions
-#' scores <- t(replicate(n = 10, rnorm(8, sd = (8:1)/8)))
+#' # set seed
+#' set.seed(1234)
+#' 
+#' # simulate coefficients (scores) for N = 10 observations and K = 8 basis functions
+#' N <- 10
+#' K <- 8
+#' scores <- t(replicate(n = N, rnorm(K, sd = (K:1)/K)))
 #' dim(scores)
 #' 
 #' # Fourier basis functions as eigenfunctions
-#' eFuns <- eFun(argvals = seq(0,1,0.01), M = 8, type = "Fourier")
+#' eFuns <- eFun(argvals = seq(0,1,0.01), M = K, type = "Fourier")
 #' 
 #' # calculate PCA expansion
 #' f <- fpcaFunction(scores = scores, functions = eFuns)
@@ -221,13 +236,15 @@ fpcaFunction <- function(scores, argvals = functions@argvals, functions)
 #' # set.seed(1234)
 #' 
 #' # simulate coefficients (scores) for N = 4 observations and K = 8 basis functions
-#' scores <- t(replicate(n = 4, rnorm(8, sd = (8:1)/8)))
+#' N <- 4
+#' K <- 8
+#' scores <- t(replicate(n = N, rnorm(K, sd = (K:1)/K)))
 #' dim(scores)
 #' 
 #' # Define basis functions
 #' x1 <- seq(0, 1, 0.01)
 #' x2 <- seq(-pi, pi, 0.05)
-#' b <- funData(argvals = list(x1, x2), X = 1:8 %o% exp(x1) %o% sin(x2))
+#' b <- funData(argvals = list(x1, x2), X = 1:K %o% exp(x1) %o% sin(x2))
 #' 
 #' # calculate PCA expansion
 #' f <- umpcaFunction(scores = scores, functions = b)
@@ -316,17 +333,21 @@ fcptpaFunction <- function(scores, argvals = functions@argvals, functions)
 #' 
 #' @export splineFunction1D
 #' 
-#' @examples 
-#' oldPar <- par(no.readonly = TRUE)
-#' par(mfrow = c(1,1))
+#' @examples  
+#' set.seed(1234)
 #' 
 #' # simulate coefficients (scores) for 10 observations and 8 basis functions
-#' scores <- t(replicate(n = 10, rnorm(8, sd = (8:1)/8)))
+#' N <- 10
+#' K <- 8
+#' scores <- t(replicate(n = N, rnorm(K, sd = (K:1)/K)))
 #' dim(scores)
 #' 
 #' # expand spline basis on [0,1]
 #' funs <- splineFunction1D(scores = scores, argvals = list(seq(0,1,0.01)),
-#'                          bs = "ps", m = 2, k = 8) # params for mgcv
+#'                          bs = "ps", m = 2, k = K) # params for mgcv
+#'                          
+#' oldPar <- par(no.readonly = TRUE)
+#' par(mfrow = c(1,1))                        
 #' 
 #' plot(funs, main = "Spline reconstruction")
 #' 
@@ -386,18 +407,21 @@ splineFunction1D <- function(scores, argvals, bs, m, k)
 #' @export splineFunction2D
 #' 
 #' @examples
-#' oldPar <- par(no.readonly = TRUE)
-#' par(mfrow = c(1,1))
+#' set.seed(1234)
 #' 
 #' ### Spline basis ###
 #' # simulate coefficients (scores) for N = 4 observations and K = 7*8 basis functions
+#' N <- 4
 #' K <- 7*8
-#' scores <- t(replicate(n = 4, rnorm(K, sd = (K:1)/K)))
+#' scores <- t(replicate(n = N, rnorm(K, sd = (K:1)/K)))
 #' dim(scores)
 #' 
 #' # expand spline basis on [0,1] x [-0.5, 0.5]
 #' funs <- splineFunction2D(scores = scores, argvals = list(seq(0,1,0.01), seq(-0.5, 0.5, 0.01)),
 #'                          bs = "ps", m = 2, k = c(7,8)) # params for mgcv
+#' 
+#' oldPar <- par(no.readonly = TRUE)
+#' par(mfrow = c(1,1))
 #' 
 #' # plot all observations
 #' for(i in 1:4)
@@ -495,8 +519,14 @@ splineFunction2Dpen <- function(scores, argvals, bs, m, k)
 #' # calculate basis expansion on [0,1] x [0,1]
 #' f <- dctFunction2D(scores = scores, argvals = list(seq(0,1,0.01), seq(0,1,0.01)))
 #' nObs(f) # f has 10 observations
+#' 
+#' oldPar <- par(no.readonly = TRUE)
+#' par(mfrow = c(1,1))
+#' 
 #' plot(f, obs = 1) # plot first observation
 #' plot(f, obs = 2) # plot second observation
+#' 
+#' par(oldPar)
 dctFunction2D <- function(scores, argvals, parallel = FALSE)
 {
   # dimension of the image
