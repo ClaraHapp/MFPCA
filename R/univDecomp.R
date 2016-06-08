@@ -517,7 +517,7 @@ splineBasis1Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
 #'   
 #' @export splineBasis2D
 #' 
-#' @example
+#' @examples
 #' # simulate image data for N = 100 observations
 #' N <- 100
 #' b1 <- eFun(seq(0,1,0.01), M = 7, type = "Poly")
