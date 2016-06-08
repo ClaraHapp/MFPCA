@@ -35,15 +35,38 @@ An object of class \code{funData} with \code{N} observations on the
 \description{
 Given scores (coefficients), these functions calculate a linear combination
 of spline tensor basis functions on two-dimensional domains based on the
-\link[mgcv]{gam}/ \link[mgcv]{bam} functions in the \pkg{mgcv} package. See
+\code{\link[mgcv]{gam}}/\code{\link[mgcv]{bam}} functions in the \pkg{mgcv} package. See
 Details.
 }
 \details{
 If the scores have been calculated based on an unpenalized tensor spline
 basis, the linear combination is computed based on the
-\code{\link[mgcv{gam}]} functions ((\code{splineFunction2D})). If the scores
+\code{\link[mgcv]{gam}} functions ((\code{splineFunction2D})). If the scores
 were obtained using penalization, the expansion is calculated via
 \link[mgcv]{bam} (\code{splineFunction2Dpen}).
+}
+\examples{
+set.seed(1234)
+
+### Spline basis ###
+# simulate coefficients (scores) for N = 4 observations and K = 7*8 basis functions
+N <- 4
+K <- 7*8
+scores <- t(replicate(n = N, rnorm(K, sd = (K:1)/K)))
+dim(scores)
+
+# expand spline basis on [0,1] x [-0.5, 0.5]
+funs <- splineFunction2D(scores = scores, argvals = list(seq(0,1,0.01), seq(-0.5, 0.5, 0.01)),
+                         bs = "ps", m = 2, k = c(7,8)) # params for mgcv
+
+oldPar <- par(no.readonly = TRUE)
+par(mfrow = c(1,1))
+
+# plot all observations
+for(i in 1:4)
+ plot(funs, obs = i, main = "Spline reconstruction")
+
+par(oldPar)
 }
 \seealso{
 \code{\link{univExpansion}},  \code{\link{gam}},

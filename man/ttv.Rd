@@ -9,7 +9,7 @@ ttv(A, v, dim)
 \arguments{
 \item{A}{An array.}
 
-\item{v}{A list of the same length as dim.}
+\item{v}{A list of the same length as \code{dim}.}
 
 \item{dim}{A vector specifying the dimensions for the multiplication.}
 }
@@ -23,7 +23,7 @@ Functionality adapted from the MATLAB tensor toolbox
 \details{
 Let \code{A} be a tensor with dimensions \eqn{d_1 \times d_2 \times \ldots
 \times d_p}{d_1 x d_2 x \ldots x d_p} and let \code{v} be a vector of length
-\end{d_i}. Then the tensor-vector-product along the \end{i}-th dimension is
+\eqn{d_i}. Then the tensor-vector-product along the \eqn{i}-th dimension is
 defined as \deqn{B_{j_1 \ldots j_{i-1}j_{i+1} \ldots j_d} = \sum_{i=1}^{d_i}
 A_{j_1 \ldots j_{i-1} i j_{i+1} \ldots j_d} \cdot v_i.}{ B[j_1, \ldots
 ,j_{i-1},j_{i+1},\ldots,j_d] = \sum A[j_1, \ldots, j_{i-1}, i, j_{i+1},
@@ -31,10 +31,26 @@ A_{j_1 \ldots j_{i-1} i j_{i+1} \ldots j_d} \cdot v_i.}{ B[j_1, \ldots
 matrix-vector product.
 
 The tensor-vector-product along several dimensions between a tensor \code{A}
-and multiple vectors \code{v_1,\ldots,v_k} (\eqn{k \leq p}) is defined as a
+and multiple vectors \code{v_1,\ldots,v_k} (\eqn{k \le p}) is defined as a
 series of consecutive tensor-vector-product along the different dimensions.
 For consistency, the multiplications are calculated from the dimension of the
 highest order to the lowest.
+}
+\examples{
+# create a three-mode tensor
+a1 <- seq(0,1, length.out = 10)
+a2 <- seq(-1,1, length.out = 20)
+a3 <- seq(-pi, pi, length.out = 15)
+A <-a1 \%o\% a2 \%o\% a3
+dim(A)
+
+# multiply along different dimensions
+dim(ttv(A = A, v = list(rnorm(10)), dim = 1))
+dim(ttv(A = A, v = list(rnorm(20)), dim = 2))
+dim(ttv(A = A, v = list(rnorm(15)), dim = 3))
+
+# multiply along more than one dimension
+length(ttv(A = A, v = list(rnorm(10), rnorm(15)), dim = c(1,3)))
 }
 \references{
 B. W. Bader and T. G. Kolda. Algorithm 862: MATLAB tensor classes

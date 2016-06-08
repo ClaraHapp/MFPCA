@@ -14,7 +14,7 @@ maxeig(A)
 \item{x}{corresponding eigenvector}
 }
 \description{
-Matlab Function: Copyright 1999 by Todd K. Moon
+MATLAB Function: Copyright 1999 by Todd K. Moon
 }
 \keyword{internal}
 

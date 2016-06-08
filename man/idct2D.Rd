@@ -33,7 +33,7 @@ values only of non-zero coefficients).
   \url{http://www.fftw.org/} and reinstall \code{MFPCA}.
 }
 \seealso{
-dctBasis2D
+\code{\link{dctBasis2D}}
 }
 \keyword{internal}
 

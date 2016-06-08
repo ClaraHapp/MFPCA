@@ -10,7 +10,7 @@ dct3D(image, qThresh)
 \item{image}{A 3D image (a 3D array with real values).}
 
 \item{qThresh}{A numeric with value in \eqn{[0,1]}, giving the quantile for
-  thresholding the coefficients. See \link{dctBasis3D} for details.}
+  thresholding the coefficients. See \code{\link{dctBasis3D}} for details.}
 }
 \value{
 \item{ind}{An integer vector, containing the indices of
@@ -29,7 +29,7 @@ a 3D image and returns thresholded DCT coefficients using the C-library
   \url{http://www.fftw.org/} and reinstall \code{MFPCA}.
 }
 \seealso{
-dctBasis3D
+\code{\link{dctBasis3D}}
 }
 \keyword{internal}
 

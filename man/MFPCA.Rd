@@ -28,11 +28,11 @@ eigenfunctions.}
 
 \item{approx.eigen}{Logical. If \code{TRUE}, the eigenanalysis problem for
 the estimated covariance matrix is solved approximately using the
-\pkg{irlba} package, which is much faster. Defaults to to calculate is high
-with respect to the number of observations in \code{mFData} or the number
-of estimated univariate eigenfunctions, the approximation may be
-inappropriate. In this case, approx.eigen is set to \code{FALSE} and the
-function throws a warning.}
+\pkg{irlba} package, which is much faster. Defaults to \code{TRUE}. If the number
+\code{M} of eigenvalues to calculate is high with respect to the number of
+observations in \code{mFData} or the number of estimated univariate
+eigenfunctions, the approximation may be inappropriate. In this case,
+approx.eigen is set to \code{FALSE} and the function throws a warning.}
 
 \item{bootstrap}{Logical. If \code{TRUE}, pointwise bootstrap confidence
 bands are calculated for the multivariate functional principal components.
@@ -118,7 +118,7 @@ list(type = "splines1DPen", params = list(bs, m, k))}, where \code{bs,m,k}
 are passed to the functions \code{\link{univDecomp}} and
 \code{\link{univExpansion}}. Analogously to the unpenalized case, use
 \code{type = "splines2Dpen"} for 2D penalized tensor product splines. \item
-Cosine basis functons. Use \code{uniExpansions[[j]] = list(type = "DCT2D",
+Cosine basis functions. Use \code{uniExpansions[[j]] = list(type = "DCT2D",
 params = list(qThresh, parallel))} for functions one two-dimensional domains
 (images) and \code{type = "DCT3D"} for 3D images. The calculation is based on
 the discrete cosine transform (DCT) implemented in the C-library
@@ -126,7 +126,7 @@ the discrete cosine transform (DCT) implemented in the C-library
 warning. \code{qThresh} gives the quantile for hard thresholding the basis
 coefficients based on their absolute value. If \code{parallel = TRUE}, the
 coefficients for different images are calcualated in parallel.} See
-\link{univDecomp} and \link{univExpansion} for details.}
+\code{\link{univDecomp}} and \code{\link{univExpansion}} for details.}
 }
 \examples{
 oldPar <- par(no.readonly = TRUE)
@@ -137,27 +137,57 @@ set.seed(1)
 sim <-  simMultiFunData(type = "split", argvals = list(seq(0,1,0.01), seq(-0.5,0.5,0.02)),
                         M = 5, eFunType = "Poly", eValType = "linear", N = 100)
 
-# MFPCA based on univariate FPCA (throws a warning, as default approx.eigen=TRUE is inappropriate)
-\donttest{uFPCA <- MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "uFPCA"),
-                                                                  list(type = "uFPCA")))}
+# MFPCA based on univariate FPCA (default approx.eigen = TRUE is inappropriate here)
+uFPCA <- MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "uFPCA"),
+                                                                  list(type = "uFPCA")),
+                         approx.eigen = FALSE)
 
 # MFPCA based on univariate spline expansions
 splines <- MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "splines1D", k = 10),
-                                                          list(type = "splines1D", k = 10)))
+                                                          list(type = "splines1D", k = 10)),
+                 fit = TRUE) # calculate reconstruction, too
 
 # flip to make results more clear
-\donttest{uFPCA$functions <- flipFuns(sim$trueFuns, uFPCA$functions)}
+uFPCA$functions <- flipFuns(sim$trueFuns, uFPCA$functions)
 splines$functions <- flipFuns(sim$trueFuns, splines$functions)
 
 par(mfrow = c(1,2))
-plot(sim$trueFuns[[1]], main = "Eigenfunctions", lwd = 2)
-\donttest{plot(uFPCA$functions[[1]], lty = 2, add = TRUE)}
+plot(sim$trueFuns[[1]], main = "Eigenfunctions\\n1st Element", lwd = 2)
+plot(uFPCA$functions[[1]], lty = 2, add = TRUE)
 plot(splines$functions[[1]], lty = 3, add = TRUE)
 
-plot(sim$trueFuns[[2]], main = "Eigenfunctions", lwd = 2)
-\donttest{plot(uFPCA$functions[[2]], lty = 2, add = TRUE)}
+plot(sim$trueFuns[[2]], main = "Eigenfunctions\\n2nd Element", lwd = 2)
+plot(uFPCA$functions[[2]], lty = 2, add = TRUE)
 plot(splines$functions[[2]], lty = 3, add = TRUE)
 legend("bottomleft", c("True", "uFPCA", "splines"), lty = 1:3, lwd = c(2,1,1))
+
+# Test reconstruction for the first 10 observations
+plot(sim$simData[[1]], obs = 1:10, main = "Reconstruction\\n1st Element", lwd = 2)
+plot(splines$fit[[1]], obs = 1:10, lty = 2, col = 1, add = TRUE)
+
+plot(sim$simData[[2]], obs = 1:10, main = "Reconstruction\\n2nd Element", lwd = 2)
+plot(splines$fit[[2]], obs = 1:10, lty = 2, col = 1, add = TRUE)
+legend("bottomleft", c("True", "Reconstruction"), lty = c(1,2), lwd = c(2,1))
+
+# MFPCA with Bootstrap-CI for the first 2 eigenfunctions
+splinesBoot <- MFPCA(sim$simData, M = 2, uniExpansions = list(list(type = "splines1D", k = 10),
+                                                          list(type = "splines1D", k = 10)),
+                 bootstrap = TRUE, nBootstrap = 100, bootstrapAlpha = c(0.05, 0.1), verbose = TRUE)
+
+plot(splinesBoot$functions[[1]], ylim = c(-2,1.5))
+plot(splinesBoot$CI$alpha_0.05$lower[[1]], lty = 2, add = TRUE)
+plot(splinesBoot$CI$alpha_0.05$upper[[1]], lty = 2, add = TRUE)
+plot(splinesBoot$CI$alpha_0.1$lower[[1]], lty = 3, add = TRUE)
+plot(splinesBoot$CI$alpha_0.1$upper[[1]], lty = 3, add = TRUE)
+abline(h = 0, col = "gray")
+
+plot(splinesBoot$functions[[2]], ylim = c(-1,2.5))
+plot(splinesBoot$CI$alpha_0.05$lower[[2]], lty = 2, add = TRUE)
+plot(splinesBoot$CI$alpha_0.05$upper[[2]], lty = 2, add = TRUE)
+plot(splinesBoot$CI$alpha_0.1$lower[[2]], lty = 3, add = TRUE)
+plot(splinesBoot$CI$alpha_0.1$upper[[2]], lty = 3, add = TRUE)
+abline(h = 0, col = "gray")
+legend("topleft", c("Estimate", "95\% CI", "90\% CI"), lty = 1:3, lwd = c(2,1,1))
 
 ### simulate data (two- and one-dimensional domains)
 \donttest{
@@ -171,8 +201,7 @@ sim <-  simMultiFunData(type = "weighted",
 # MFPCA based on univariate spline expansions (for images) and univariate FPCA (for functions)
 pca <- MFPCA(sim$simData, M = 10,
              uniExpansions = list(list(type = "splines2D", params = list(k = c(10,12))),
-                             list(type = "uFPCA"))
-             )
+                             list(type = "uFPCA")))
 
 # flip to make results more clear
 pca$functions <- flipFuns(extractObs(sim$trueFuns, obs = 1:10), pca$functions)
@@ -185,7 +214,7 @@ for(m in 2:6) # for m = 1, image.plot (used in plot(funData)) produces an error.
 }
 
 par(mfrow = c(1,1))
-plot(sim$trueFuns[[2]], main = "Eigenfunctions", lwd = 2, obs=  1:5)
+plot(sim$trueFuns[[2]], main = "Eigenfunctions (2nd element)", lwd = 2, obs=  1:5)
 plot(pca$functions[[2]], lty = 2, add = TRUE, obs=  1:5)
 legend("bottomleft", c("True", "MFPCA"), lty = 1:2, lwd = c(2,1))
 }

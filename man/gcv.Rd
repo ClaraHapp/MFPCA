@@ -27,7 +27,7 @@ These function calculates the generalized cross-validation criterion for the
 smoothing parameters \eqn{\alpha_v} or \eqn{\alpha_w} that are used in the
 \code{\link{FCP_TPA}} algorithm. As the criterion is symmetric in \eqn{v} and
 \eqn{w}, this function implements a generic criterion, which is called by
-\link{findAlphaVopt}, \link{findAlphaWopt} with the correct values.
+\code{\link{findAlphaVopt}}, \code{\link{findAlphaWopt}} with the correct values.
 }
 \details{
 The criterion can be evaluated in a numerically efficient way, adopting the ideas in Huang, Shen and Buja (2008) to three-ways tensors. TODO!
@@ -38,7 +38,7 @@ G. I. Allen, "Multi-way Functional Principal Components
   Multi-Sensor Adaptive Processing, 2013.
 }
 \seealso{
-FCP_TPA
+\code{\link{FCP_TPA}}
 }
 \keyword{internal}
 

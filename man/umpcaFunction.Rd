@@ -4,18 +4,19 @@
 \alias{umpcaFunction}
 \title{Calculate a linear combination of a UMPCA basis on two-dimensional domains}
 \usage{
-umpcaFunction(scores, argvals, functions)
+umpcaFunction(scores, argvals = functions@argvals, functions)
 }
 \arguments{
-\item{scores}{A matrix of dimension \eqn{N x K}, representing the \eqn{K}
-scores (coefficients) for each observation \eqn{i = 1, \ldots, N}.}
+\item{scores}{A matrix of dimension \code{N x K}, representing the \code{K}
+scores (coefficients) for each of the \code{N} observations.}
 
-\item{argvals}{A list containing a vector of x-values.}
+\item{argvals}{A list containing a vector of x-values. Defaults to
+\code{functions@argvals}.}
 
 \item{functions}{A \code{funData} object, representing the UMPCA basis.}
 }
 \value{
-An object of class \code{funData} with \eqn{N} observations on
+An object of class \code{funData} with \code{N} observations on
   \code{argvals}, corresponding to the linear combination of the functional
   principal components.
 }
@@ -24,7 +25,34 @@ This function calculates a linear combination of basis functions based on
 uncorrelated multilinear principal component analysis (UMPCA) for data on
 two-dimensional domains.
 }
+\examples{
+# set.seed(1234)
+
+# simulate coefficients (scores) for N = 4 observations and K = 8 basis functions
+N <- 4
+K <- 8
+scores <- t(replicate(n = N, rnorm(K, sd = (K:1)/K)))
+dim(scores)
+
+# Define basis functions
+x1 <- seq(0, 1, 0.01)
+x2 <- seq(-pi, pi, 0.05)
+b <- funData(argvals = list(x1, x2), X = 1:K \%o\% exp(x1) \%o\% sin(x2))
+
+# calculate PCA expansion
+f <- umpcaFunction(scores = scores, functions = b)
+
+oldpar <- par(no.readonly = TRUE)
+
+par(mfrow = c(1,1))
+
+# plot the resulting observations
+for(i in 1:4)
+ plot(f, obs = i, zlim = range(f@X))
+
+par(oldpar)
+}
 \seealso{
-univExpansion
+\code{\link{univExpansion}}
 }
 

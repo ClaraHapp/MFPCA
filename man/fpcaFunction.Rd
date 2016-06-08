@@ -25,6 +25,30 @@ An object of class \code{funData} with \code{N} observations on
 This function calculates  a linear combination of functional principal
 component basis functions on one-dimensional domains.
 }
+\examples{
+# set seed
+set.seed(1234)
+
+# simulate coefficients (scores) for N = 10 observations and K = 8 basis functions
+N <- 10
+K <- 8
+scores <- t(replicate(n = N, rnorm(K, sd = (K:1)/K)))
+dim(scores)
+
+# Fourier basis functions as eigenfunctions
+eFuns <- eFun(argvals = seq(0,1,0.01), M = K, type = "Fourier")
+
+# calculate PCA expansion
+f <- fpcaFunction(scores = scores, functions = eFuns)
+
+oldpar <- par(no.readonly = TRUE)
+
+par(mfrow = c(1,2))
+plot(eFuns, main = "Basis functions")
+plot(f, main = "Linear combination")
+
+par(oldpar)
+}
 \seealso{
 \code{\link{univExpansion}}, \code{\link{fpcaBasis}}
 }

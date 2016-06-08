@@ -40,11 +40,31 @@ dimension \code{N x S1 x S2}.
 }
 \details{
 The smooth PCA of the tensor data is calculated via the \code{\link{FCP_TPA}}
-function. Ssmoothness is induced by difference penalty matrices for both
+function. Smoothness is induced by difference penalty matrices for both
 directions of the images, weighted by smoothing parameters \eqn{\alpha_v,
 \alpha_w}. The resulting eigenvectors can be interpreted in terms of
 eigenfunctions and individual scores for each observation. See
 \code{\link{FCP_TPA}} for details.
+}
+\examples{
+# simulate image data for N = 100 observations
+N <- 100
+b1 <- eFun(seq(0,1,0.01), M = 7, type = "Poly")
+b2 <- eFun(seq(-pi, pi, 0.03), M = 8, type = "Fourier")
+b <- tensorProduct(b1,b2) # 2D basis functions
+scores <- matrix(rnorm(N*56), nrow = N)
+f <- defaultFunction(scores = scores, functions = b) # calculate observation (= linear combination of basis functions)
+
+# calculate basis functions based on FCP_TPA algorithm (needs some time)
+\donttest{
+fcptpa <- fcptpaBasis(f, npc = 5, alphaRange = list(v = c(1e-5, 1e5), w = c(1e-5, 1e5)))
+
+oldpar <- par(no.readonly = TRUE)
+
+for(i in 1:5) # plot all 5 basis functions
+plot(fcptpa$functions, obs = i, main = paste("Basis function", i)) # plot first basis function
+
+par(oldpar)}
 }
 \references{
 G. I. Allen, "Multi-way Functional Principal Components

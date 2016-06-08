@@ -10,7 +10,7 @@ ttvCalculation(A, v, dim)
 Internal function for the Tensor times Vector calculation
 }
 \seealso{
-ttv
+\code{\link{ttv}}
 }
 \keyword{internal}
 

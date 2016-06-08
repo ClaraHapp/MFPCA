@@ -10,7 +10,7 @@ defaultFunction(scores, argvals = functions@argvals, functions)
 \item{scores}{A matrix of dimension \code{N x K}, representing the \code{K}
 scores (coefficients) for each of the \code{N} observations.}
 
-\item{argvals}{A list representing the domain, see \link[funData]{funData}
+\item{argvals}{A list representing the domain, see \code{\link[funData]{funData}}
 for details. Defaults to \code{functions@argvals}.}
 
 \item{functions}{A \code{funData} object, representing \code{K} basis
@@ -22,10 +22,13 @@ An object of class \code{funData} with \code{N} observations on
   functions.
 }
 \description{
-This function calculates a linear combination of arbitrary basis funtions on
+This function calculates a linear combination of arbitrary basis functions on
 domains with arbitrary dimension.
 }
 \examples{
+# set seed
+set.seed(1234)
+
 N <- 12 # 12 observations
 K <- 10 # 10 basis functions
 
@@ -48,6 +51,6 @@ plot(f, main = "Linear combination")
 par(oldpar)
 }
 \seealso{
-univExpansion
+\code{\link{univExpansion}}
 }
 

@@ -10,7 +10,7 @@ dct2D(image, qThresh)
 \item{image}{An image (a 2D matrix with real values).}
 
 \item{qThresh}{A numeric with value in \eqn{[0,1]}, giving the quantile for
-  thresholding the coefficients. See \link{dctBasis2D} for details.}
+  thresholding the coefficients. See \code{\link{dctBasis2D}} for details.}
 }
 \value{
 \item{ind}{An integer vector, containing the indices of
@@ -29,7 +29,7 @@ an image and returns thresholded DCT coefficients using the C-library
   \url{http://www.fftw.org/} and reinstall \code{MFPCA}.
 }
 \seealso{
-dctBasis2D
+\code{\link{dctBasis2D}}
 }
 \keyword{internal}
 

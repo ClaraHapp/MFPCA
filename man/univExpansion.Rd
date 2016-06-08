@@ -13,8 +13,10 @@ decomposition is to be calculated.}
 \item{scores}{A matrix of scores (coefficients) for each observation based on
 the given basis functions.}
 
-\item{argvals}{A list, representing the domain of the basis functions. See
-\linkS4class{funData} for details.}
+\item{argvals}{A list, representing the domain of the basis functions. If
+functions is not \code{NULL}, the usual default is
+\code{functions@argvals}. See \linkS4class{funData} and the underlying
+expansion functions for details.}
 
 \item{functions}{A functional data object, representing the basis functions.
 Can be \code{NULL} if the basis functions are not estimated from observed
@@ -24,8 +26,9 @@ data, but have a predefined form. See Details.}
   use.}
 }
 \value{
-A functional data object, representing the linear combinations of the
-  basis functions based on the given scores.
+An object of class \code{funData} with \code{N} observations on
+  \code{argvals}, corresponding to the linear combination of the basis
+  functions.
 }
 \description{
 This function calculates a univariate basis expansion based on given scores
@@ -38,12 +41,54 @@ represented as a linear combination of basis functions \eqn{b_k(t)}
 basis functions may be prespecified (such as spline basis functions or
 Fourier bases) or can be estimated from observed data (e.g. by functional
 principal component analysis). If \code{type = "default"} (i.e. a linear
-combination of arbitrary basis functions is to be calculated), the scores and
-basis functions must be supplied.
+combination of arbitrary basis functions is to be calculated), both scores
+and basis functions must be supplied.
+}
+\examples{
+oldPar <- par(no.readonly = TRUE)
+par(mfrow = c(1,1))
+
+set.seed(1234)
+
+### Spline basis ###
+# simulate coefficients (scores) for N = 10 observations and K = 8 basis functions
+N <- 10
+K <- 8
+scores <- t(replicate(n = N, rnorm(K, sd = (K:1)/K)))
+dim(scores)
+
+# expand spline basis on [0,1]
+funs <- univExpansion(type = "splines1D", scores = scores, argvals = seq(0,1,0.01),
+                      functions = NULL, # spline functions are known, need not be given
+                      params = list(bs = "ps", m = 2, k = K)) # params for mgcv
+
+plot(funs, main = "Spline reconstruction")
+
+### PCA basis ###
+# simulate coefficients (scores) for N = 10 observations and K = 8 basis functions
+N <- 10
+K <- 8
+
+scores <- t(replicate(n = N, rnorm(K, sd = (K:1)/K)))
+dim(scores)
+
+# Fourier basis functions as eigenfunctions
+eFuns <- eFun(argvals = seq(0,1,0.01), M = K, type = "Fourier")
+
+# expand eigenfunction basis
+funs <-  univExpansion(type = "uFPCA", scores = scores,
+                       argvals = NULL, # use argvals of eFuns (default)
+                       functions = eFuns)
+
+plot(funs, main = "PCA reconstruction")
+
+par(oldPar)
 }
 \seealso{
-\link{MFPCA}, \link{fpcaFunction}, \link{splineFunction1D},
-  \link{splineFunction2D}, \link{splineFunction2Dpen}, \link{dctFunction2D},
-  \link{defaultFunction}
+\code{\link{MFPCA}}, \code{\link{fpcaFunction}},
+  \code{\link{splineFunction1D}}, \code{\link{splineFunction2D}},
+  \code{\link{splineFunction2Dpen}}, \code{\link{umpcaFunction}},
+  \code{\link{fcptpaFunction}}, \code{\link{dctFunction2D}},
+  \code{\link{dctFunction3D}}, \code{\link{defaultFunction}}
 }
 

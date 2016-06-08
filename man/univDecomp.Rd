@@ -2,9 +2,9 @@
 % Please edit documentation in R/univDecomp.R
 \name{univDecomp}
 \alias{univDecomp}
-\title{Univariate Basis Decomposition}
+\title{Univariate basis decomposition}
 \usage{
-univDecomp(type, data, params)
+univDecomp(type, data, params = NULL)
 }
 \arguments{
 \item{type}{A character string, specifying the basis for which the
@@ -27,7 +27,7 @@ data samples.}
 }
 \description{
 This function calculates a univariate basis decomposition for a (univariate)
-functional data object \code{data}.
+functional data object.
 }
 \details{
 Functional data \eqn{X_i(t)} can often be approximated by a linear
@@ -40,9 +40,23 @@ coefficients (or scores) \eqn{\theta_{ik}} reflect the weight of each basis
 function \eqn{b_k(t)} for the observed function \eqn{X_i(t)} and can be used
 to characterize the individual observations.
 }
+\examples{
+# generate some data
+dat <- simFunData(argvals = seq(0,1,0.01), M = 5,
+                  eFunType = "Poly", eValType = "linear", N = 100)$simData
+
+# decompose the data in univariate functional principal components...
+decFPCA <- univDecomp(type = "uFPCA", data = dat, params = list(npc = 5))
+str(decFPCA)
+
+# or in splines (penalized)
+decSplines <- univDecomp(type = "splines1Dpen", data = dat) # use mgcv's default params
+str(decSplines)
+}
 \seealso{
-\link{MFPCA}, \link{fpcaBasis}, \link{splineBasis1D},
-  \link{splineBasis1Dpen}, \link{splineBasis2D}, \link{splineBasis2Dpen},
-  \link{dctBasis2D}
+\code{\link{MFPCA}}, \code{\link{univExpansion}}, \code{\link{fpcaBasis}}, \code{\link{splineBasis1D}},
+  \code{\link{splineBasis1Dpen}}, \code{\link{splineBasis2D}}, \code{\link{splineBasis2Dpen}},
+  \code{\link{umpcaBasis}}, \code{\link{fcptpaBasis}},
+  \code{\link{dctBasis2D}}, \code{\link{dctBasis3D}}
 }
 

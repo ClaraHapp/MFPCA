@@ -49,18 +49,41 @@ is chosen automatically.   See  \code{\link[mgcv]{s}} for details.}
 \description{
 These functions calculate a penalized or unpenalized tensor product spline
 basis representation for functional data on two-dimensional domains based on
-the \link[mgcv]{gam}/\link[mgcv]{bam} functions in the \pkg{mgcv} package.
-See Details.
+the \code{\link[mgcv]{gam}}/\code{\link[mgcv]{bam}} functions in the
+\pkg{mgcv} package. See Details.
 }
 \details{
 If the basis representation is calculated without penalization
 (\code{splineBasis2D}), the coefficients are computed using the
 \code{\link[mgcv]{gam}} function from the \pkg{mgcv} package. In the case of
-penalization (\code{splineBasis2Dpen}), the function \code{\link[mgcv]{bam}} (for large GAMs) is used
-instead.
+penalization (\code{splineBasis2Dpen}), the function \code{\link[mgcv]{bam}}
+(for large GAMs) is used instead.
+}
+\examples{
+# simulate image data for N = 100 observations
+N <- 100
+b1 <- eFun(seq(0,1,0.01), M = 7, type = "Poly")
+b2 <- eFun(seq(-pi, pi, 0.03), M = 8, type = "Fourier")
+b <- tensorProduct(b1,b2) # 2D basis functions
+scores <- matrix(rnorm(N*56), nrow = N)
+dat <- defaultFunction(scores = scores, functions = b) # calculate observation (= linear combination of basis functions)
+
+# calculate 2D spline basis decomposition (needs some time)
+\donttest{
+dataDec <- splineBasis2D(dat, k = c(5,5)) # use 5 basis functions in each direction
+}
+
+# add some noise to the data
+noisyDat <- addError(dat, sd = 0.5)
+
+# calculate 2D spline basis decomposition with penalization (needs A LOT more time)
+\donttest{
+noisyDataDec <- splineBasis2Dpen(noisyDat, k = c(5,5)) # use 5 basis functions in each direction
+}
 }
 \seealso{
 \code{\link{univDecomp}}, \code{\link{splineBasis1D}},
-  \code{\link[mgcv]{gam}}, \code{\link[mgcv]{bam}},  \code{\link[foreach]{foreach}}
+  \code{\link[mgcv]{gam}}, \code{\link[mgcv]{bam}},
+  \code{\link[foreach]{foreach}}
 }
 

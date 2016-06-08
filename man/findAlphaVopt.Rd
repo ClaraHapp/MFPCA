@@ -42,7 +42,7 @@ These functions find the optimal smoothing parameters \eqn{\alpha_v,
 based on generalized cross-validation, which is nested in the tensor power
 algorithm. Given a range of possible values of \eqn{\alpha_v} (or
 \eqn{\alpha_w}, respectively), the optimum is found by optimizing the GCV
-criterion using the function \link{optimize}.
+criterion using the function \code{\link[stats]{optimize}}.
 }
 \section{Functions}{
 \itemize{
@@ -59,7 +59,7 @@ J. Z. Huang, H. Shen and A. Buja (2009), "The Analysis of Two-Way
   1620.
 }
 \seealso{
-\link{FCP_TPA}, \link{gcv}.
+\code{\link{FCP_TPA}}, \code{\link{gcv}}
 }
 \keyword{internal}
 
