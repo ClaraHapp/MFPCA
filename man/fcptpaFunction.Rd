@@ -26,7 +26,7 @@ the FCP_TPA algorithm (see References) for data on
 two-dimensional domains.
 }
 \examples{
-# see defaultFunction
+# see expandBasisFunction
 }
 \references{
 G. I. Allen, "Multi-way Functional Principal Components
@@ -34,6 +34,6 @@ G. I. Allen, "Multi-way Functional Principal Components
   Multi-Sensor Adaptive Processing, 2013.
 }
 \seealso{
-\code{\link{univExpansion}}, \code{\link{defaultFunction}}
+\code{\link{univExpansion}}, \code{\link{expandBasisFunction}}
 }
 
