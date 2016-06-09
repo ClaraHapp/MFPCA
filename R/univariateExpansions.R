@@ -300,6 +300,10 @@ umpcaFunction <- function(scores, argvals = functions@argvals, functions)
 #' # see defaultFunction 
 fcptpaFunction <- function(scores, argvals = functions@argvals, functions)
 {
+  if(dimSupp(functions) != 2)
+    stop("FCP_TPA option for univExpansion is implemented for 2D data (images) only!")
+  
+  
   return(defaultFunction(scores, argvals, functions))
 }
 

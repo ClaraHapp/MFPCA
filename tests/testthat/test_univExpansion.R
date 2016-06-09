@@ -60,6 +60,16 @@ test_that("test univariate expansions 2D", {
   expect_equal(norm(umpca2D)[1], 12.0950688)
   expect_equal(umpca2D, default2D) # UMPCA and default do the same in 2D
   
+  fcptpa2D <- MFPCA:::fcptpaFunction(scores = scores, argvals = argvals, 
+                                     functions = tensorProduct(funData:::efPoly(argvals[[1]], M = 5), funData:::efWiener(argvals[[2]], M = 5)))
+  expect_error(MFPCA:::fcptpaFunction(scores = scores, argvals = argvals, functions = funData:::efPoly(argvals[[1]], M = 5)),
+               "FCP_TPA option for univExpansion is implemented for 2D data (images) only!", fixed = TRUE)
+  expect_equal(nObs(fcptpa2D), 20)
+  expect_equal(nObsPoints(fcptpa2D), c(101,101))
+  expect_equal(mean(norm(fcptpa2D)),  10.2855118) 
+  expect_equal(norm(fcptpa2D)[1], 12.0950688)
+  expect_equal(fcptpa2D, default2D) # fcptpa and default do the same in 2D
+  
   spline2D <- MFPCA:::splineFunction2D(scores = scores, argvals = argvals, bs = "ps", m = 3, k = 5)
   expect_equal(nObs(spline2D), 20)
   expect_equal(nObsPoints(spline2D), c(101,101))
