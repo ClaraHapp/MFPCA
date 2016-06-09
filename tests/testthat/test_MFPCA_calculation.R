@@ -59,3 +59,19 @@ test_that("test MFPCA main function", {
   expect_equal(norm(uFPCA$functions[[1]])[1], 0.579550598)
   expect_equal(norm(splines$functions[[1]])[1], 0.57956679)
 })
+
+test_that("MFPCA calculation function", {
+  set.seed(1)
+  sim <-  simFunData(argvals = seq(0,1,0.01), M = 5, eFunType = "Poly", eValType = "linear", N = 100)
+  uniB <- univDecomp("uFPCA", sim$simData, params = list(npc = 3))
+  
+  res <- MFPCA:::calcMFPCA(N = 100, p = 1, Bchol = diag(3), M = 3, type = "uFPCA", weights = 1, npc = 3, 
+            argvals = sim$simData@argvals, uniBasis = list(uniB), approx.eigen = FALSE)
+  
+  # for p = 1, the univariate and multivariate results should coincide...
+  expect_equal(abs(res$scores), abs(uniB$scores), tol = 2e-3, check.attributes = F)
+  expect_equal(flipFuns(uniB$functions, res$functions[[1]]), uniB$functions, tol = 2e-3)
+  expect_equal(res$values, c(1.307880364, 0.790022175, 0.421445368))
+    
+            
+          })
