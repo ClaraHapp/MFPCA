@@ -1,7 +1,7 @@
 context("Testing functions in MFCPA_calculation.R")
 
 # rather plausibility checks
-test_that("test .calcBasisIntegrals", {
+test_that("test calcBasisIntegrals", {
   basis1D <- univExpansion("splines1D", scores = matrix(1:30, nrow = 3), argvals = seq(0, 1, 0.01), 
                            functions = NULL, params = list(k = 10, m = 2, bs = "ps"))
   calcBasis1D <- MFPCA:::calcBasisIntegrals(basis1D@X, dimSupp = dimSupp(basis1D), argvals = basis1D@argvals)
