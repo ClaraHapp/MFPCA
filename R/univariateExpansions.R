@@ -94,9 +94,9 @@ univExpansion <- function(type, scores, argvals, functions, params = NULL)
   params$argvals <- argvals
 
   res <- switch(type,
-                "uFPCA" = do.call(fpcaFunction, params),
-                "UMPCA" = do.call(umpcaFunction, params),
-                "FCP_TPA" = do.call(fcptpaFunction, params),
+                "uFPCA" = do.call(expandBasisFunction, params),
+                "UMPCA" = do.call(expandBasisFunction, params),
+                "FCP_TPA" = do.call(expandBasisFunction, params),
                 "splines1D" = do.call(splineFunction1D, params),
                 "splines1Dpen" = do.call(splineFunction1D, params),
                 "splines2D" = do.call(splineFunction2D, params),
@@ -135,6 +135,8 @@ univExpansion <- function(type, scores, argvals, functions, params = NULL)
 #' # set seed
 #' set.seed(1234)
 #' 
+#' ### functions on one-dimensional domains ###
+#' 
 #' N <- 12 # 12 observations
 #' K <- 10 # 10 basis functions
 #' 
@@ -153,6 +155,24 @@ univExpansion <- function(type, scores, argvals, functions, params = NULL)
 #' par(mfrow = c(1,2))
 #' plot(b, main = "Basis functions")
 #' plot(f, main = "Linear combination")
+#' par(mfrow = c(1,1))
+#' 
+#' ### functions on two-dimensional domains (images) ###
+#' 
+#' # use the same score matrix as for the one-dimensional example
+#' dim(scores)
+#' 
+#' # Define basis functions
+#' x1 <- seq(0, 1, 0.01)
+#' x2 <- seq(-pi, pi, 0.05)
+#' b <- funData(argvals = list(x1, x2), X = 1:K %o% exp(x1) %o% sin(x2))
+#' 
+#' # calculate PCA expansion
+#' f <- expandBasisFunction(scores = scores, functions = b)
+#' 
+#' # plot the resulting observations
+#' for(i in 1:4)
+#'  plot(f, obs = i, zlim = range(f@@X))
 #' 
 #' par(oldpar)
 expandBasisFunction <- function(scores, argvals = functions@argvals, functions)
@@ -166,149 +186,6 @@ expandBasisFunction <- function(scores, argvals = functions@argvals, functions)
   resX <- scores %*% functions@X
   dim(resX) <- c(dim(scores)[1],d[-1])
   return( funData(argvals, resX) )
-}
-
-#' Calculate a linear combination of a functional principal component basis on 
-#' one-dimensional domains
-#' 
-#' This function calculates  a linear combination of functional principal 
-#' component basis functions on one-dimensional domains.
-#' 
-#' @param scores A matrix of dimension \code{N x K}, representing the \code{K} 
-#'   scores (coefficients) for each of the \code{N} observations.
-#' @param argvals A list containing a vector of x-values. Defaults to
-#'   \code{functions@@argvals}.
-#' @param functions A \code{funData} object, representing the FPCA basis.
-#'   
-#' @return An object of class \code{funData} with \code{N} observations on 
-#'   \code{argvals}, corresponding to the linear combination of the functional 
-#'   principal components.
-#'   
-#' @seealso \code{\link{univExpansion}}, \code{\link{fpcaBasis}}
-#' 
-#' @export fpcaFunction
-#' 
-#' @examples
-#' # set seed
-#' set.seed(1234)
-#' 
-#' # simulate coefficients (scores) for N = 10 observations and K = 8 basis functions
-#' N <- 10
-#' K <- 8
-#' scores <- t(replicate(n = N, rnorm(K, sd = (K:1)/K)))
-#' dim(scores)
-#' 
-#' # Fourier basis functions as eigenfunctions
-#' eFuns <- eFun(argvals = seq(0,1,0.01), M = K, type = "Fourier")
-#' 
-#' # calculate PCA expansion
-#' f <- fpcaFunction(scores = scores, functions = eFuns)
-#' 
-#' oldpar <- par(no.readonly = TRUE)
-#' 
-#' par(mfrow = c(1,2))
-#' plot(eFuns, main = "Basis functions")
-#' plot(f, main = "Linear combination")
-#' 
-#' par(oldpar)
-fpcaFunction <- function(scores, argvals = functions@argvals, functions)
-{
-  return(funData(argvals, scores %*% functions@X))
-}
-
-#' Calculate a linear combination of a UMPCA basis on two-dimensional domains
-#' 
-#' This function calculates a linear combination of basis functions based on
-#' uncorrelated multilinear principal component analysis (UMPCA) for data on
-#' two-dimensional domains.
-#' 
-#' @param scores A matrix of dimension \code{N x K}, representing the \code{K} 
-#'   scores (coefficients) for each of the \code{N} observations.
-#' @param argvals  A list containing a vector of x-values. Defaults to
-#'   \code{functions@@argvals}.
-#' @param functions A \code{funData} object, representing the UMPCA basis.
-#'   
-#' @return An object of class \code{funData} with \code{N} observations on 
-#'   \code{argvals}, corresponding to the linear combination of the functional 
-#'   principal components.
-#'   
-#' @seealso \code{\link{univExpansion}}
-#' 
-#' @export umpcaFunction
-#' 
-#' @examples
-#' # set.seed(1234)
-#' 
-#' # simulate coefficients (scores) for N = 4 observations and K = 8 basis functions
-#' N <- 4
-#' K <- 8
-#' scores <- t(replicate(n = N, rnorm(K, sd = (K:1)/K)))
-#' dim(scores)
-#' 
-#' # Define basis functions
-#' x1 <- seq(0, 1, 0.01)
-#' x2 <- seq(-pi, pi, 0.05)
-#' b <- funData(argvals = list(x1, x2), X = 1:K %o% exp(x1) %o% sin(x2))
-#' 
-#' # calculate PCA expansion
-#' f <- umpcaFunction(scores = scores, functions = b)
-#' 
-#' oldpar <- par(no.readonly = TRUE)
-#' 
-#' par(mfrow = c(1,1))
-#' 
-#' # plot the resulting observations
-#' for(i in 1:4)
-#'  plot(f, obs = i, zlim = range(f@@X))
-#' 
-#' par(oldpar)
-umpcaFunction <- function(scores, argvals = functions@argvals, functions)
-{
-  if(dimSupp(functions) != 2)
-    stop("UMPCA option for univExpansion is implemented for 2D data (images) only!")
-  
-  N <- nrow(scores) # number of observations
-  recons <- array(0, c(N, nObsPoints(functions)))
-  
-  for(i in 1:N)
-    recons[i,,] <- ttv(functions@X, list(scores[i,]), dim = 1)
-  
-  reconsFunctions <- funData(argvals = functions@argvals, X = recons)
-}
-
-#' Calculate a linear combination of a FCP_TPA basis on two-dimensional domains
-#' 
-#' This function calculates a linear combination of basis functions based on
-#' the FCP_TPA algorithm (see References) for data on
-#' two-dimensional domains.
-#' 
-#' @param scores A matrix of dimension \code{N x K}, representing the \code{K} 
-#'   scores (coefficients) for each of the \code{N} observations.
-#' @param argvals  A list containing a vector of x-values. Defaults to
-#'   \code{functions@@argvals}.
-#' @param functions A \code{funData} object, representing the FCP_TPA basis.
-#'   
-#' @return An object of class \code{funData} with \code{N} observations on 
-#'   \code{argvals}, corresponding to the linear combination of the functional 
-#'   principal components.
-#'   
-#' @seealso \code{\link{univExpansion}}, \code{\link{expandBasisFunction}}
-#'
-#' @references G. I. Allen, "Multi-way Functional Principal Components 
-#'   Analysis", In IEEE International Workshop on Computational Advances in 
-#'   Multi-Sensor Adaptive Processing, 2013.
-#'    
-#' @export fcptpaFunction
-#' 
-#' @examples
-#' # see expandBasisFunction 
-fcptpaFunction <- function(scores, argvals = functions@argvals, functions)
-{
-  if(dimSupp(functions) != 2)
-    stop("FCP_TPA option for univExpansion is implemented for 2D data (images) only!")
-  
-  
-  return(expandBasisFunction(scores, argvals, functions))
 }
 
 #' Calculate linear combinations of spline basis functions on one-dimensional 
