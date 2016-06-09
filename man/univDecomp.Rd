@@ -4,7 +4,7 @@
 \alias{univDecomp}
 \title{Univariate basis decomposition}
 \usage{
-univDecomp(type, data, params = NULL)
+univDecomp(type, funDataObject, ...)
 }
 \arguments{
 \item{type}{A character string, specifying the basis for which the

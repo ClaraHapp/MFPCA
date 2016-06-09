@@ -47,12 +47,26 @@
 #' # or in splines (penalized)
 #' decSplines <- univDecomp(type = "splines1Dpen", data = dat) # use mgcv's default params
 #' str(decSplines)
-univDecomp <- function(type, data, params = NULL)
+univDecomp <- function(type, funDataObject, ...)
 {
-  if(is.null(params))
-    params <- list() # create empty list
+  params <- as.list(match.call()) # get all arguments
   
-  params$funDataObject <- data
+  # check if type and data are of correct type
+  if(is.null(params$type))
+    stop("univDecomp: must specify 'type'.")
+  
+  if(!inherits(params$type, "character"))
+    stop("univDecomp: 'type' must be of class character.")
+  
+  if(is.null(params$funDataObject))
+    stop("univDecomp: must specify 'funDataObject'.")
+  
+  if(class(eval(params$funDataObject)) != "funData")
+    stop("univDecomp: 'funDataObject' must be of class funData.")
+  
+  # delete function call and type information in params
+  params[[1]] <- NULL
+  params$type <- NULL  
   
   res <- switch(type,
                 "uFPCA" = do.call(fpcaBasis, params),

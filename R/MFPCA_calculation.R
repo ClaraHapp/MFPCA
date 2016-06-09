@@ -308,7 +308,7 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fi
     cat("Calculating univariate basis expansions (", format(Sys.time(), "%T"), ")\n", sep = "")
 
   # calculate univariate basis expansion for all components
-  uniBasis <- mapply(function(expansion, data){univDecomp(type = expansion$type, data = data, params = expansion$params)},
+  uniBasis <- mapply(function(expansion, data){do.call(univDecomp, c(list(funDataObject = data), expansion))},
                      expansion = uniExpansions, data = mFData, SIMPLIFY = FALSE)
 
   # for uFPCA: replace estimated mean in m
