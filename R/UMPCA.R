@@ -163,7 +163,13 @@ maxeig <- function(A)
     stop("Input matrix must be quadratic!")
   n <- d[1]
   x <- rep(0, n)
-  x[1] <- 1  # assumed to be not orthogonal to the first eigenvector
+   x[1] <- 1 
+  # make sure x is not an eigenvector of A (for a possibly small eigenvalue)
+  while( isTRUE( all.equal(as.vector(A %*% x), as.numeric(t(x) %*% A %*% x) * x) ))
+  {
+    x <- runif(n)
+    x <- x/normVec(n)
+  }             
   lambda <- 1
   lambdaold <- 0
   maxItr <- 300

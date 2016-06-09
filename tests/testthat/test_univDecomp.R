@@ -80,6 +80,10 @@ test_that("test UMPCA functionality", {
   expect_equal(MFPCA:::ttvCalculation(A, list(rep(1,4)), 2), apply(A,3, rowSums))
   expect_equal(MFPCA:::ttvCalculation(A, list(rep(1,2)), 3), apply(A,2, rowSums))
   
+  # check maxeig
+  expect_equal(as.numeric(MFPCA:::maxeig(diag(1:5))$lambda), 5)
+  expect_equal(as.vector(MFPCA:::maxeig(diag(1:5))$x), c(0,0,0,0,1), tolerance = 1e-7)
+  
   # see also 1D decompositions
   umpca2D <- MFPCA:::UMPCA(A, numP = 3)
   expect_equal(length(umpca2D$Us), 2)
