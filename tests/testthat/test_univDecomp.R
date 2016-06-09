@@ -4,6 +4,11 @@ test_that("test univariate decompositions 1D", {
   set.seed(1)
   f1 <- simFunData(seq(0,1,0.01), M = 10, eFunType = "Poly", eValType = "linear", N = 10)$simData
   
+  # splines1D
+  # check error
+  expect_error(MFPCA:::splineBasis1D(tensorProduct(f1,f1), bs = "ps", m = 3, k = 10), 
+               "splines1D is implemented for 1D functional data only.")
+  # check functionality
   spline1D <- MFPCA:::splineBasis1D(f1, bs = "ps", m = 3, k = 10)
   expect_equal(dim(spline1D$scores), c(10,10))
   expect_equal(mean(spline1D$scores),  17.22414491) 
@@ -13,6 +18,11 @@ test_that("test univariate decompositions 1D", {
   expect_null(spline1D$functions) 
   expect_equal(spline1D$settings, list(bs = "ps", k = 10, m= c(3,3))) 
   
+  # splines1Dpen
+  # check error
+  expect_error(MFPCA:::splineBasis1Dpen(tensorProduct(f1,f1), bs = "ps", m = 3, k = 10), 
+               "splines1Dpen is implemented for 1D functional data only.")
+  # check functionality
   spline1Dpen <- MFPCA:::splineBasis1Dpen(f1, bs = "ps", m = 3, k = 10)
   expect_equal(dim(spline1Dpen$scores), c(10,10))
   expect_equal(mean(spline1Dpen$scores),  17.19100716) 
@@ -101,6 +111,11 @@ test_that("test univariate decompositions 2D", {
   f2 <- funData(argvals = list(x1, x2),
                 X = aperm(replicate(10, outer(x1, cos(pi*x2))+matrix(rnorm(50*75, sd = 0.1), nrow = 50)), c(3,1,2)))
   
+  # splines2D
+  # check error
+  expect_error(MFPCA:::splineBasis2D(funData(x1, rnorm(10)%o%x1), bs = "ps", m = 3, k = 10),
+               "splines2D is implemented for 2D functional data (images) only.", fixed = TRUE)
+  # check functionality
   spline2D <- MFPCA:::splineBasis2D(f2, bs = "ps", m = c(2,3), k = c(8,10))
   expect_equal(dim(spline2D$scores), c(10,80))
   expect_equal(mean(spline2D$scores),  -0.040453269) 
@@ -110,6 +125,11 @@ test_that("test univariate decompositions 2D", {
   expect_null(spline2D$functions)  
   expect_equal(spline2D$settings, list(bs = "ps", k = c(8,10), m =list(c(2,2), c(3,3)))) 
   
+  # splines2Dpen
+  # check error
+  expect_error(MFPCA:::splineBasis2Dpen(funData(x1, rnorm(10)%o%x1), bs = "ps", m = 3, k = 10),
+               "splines2Dpen is implemented for 2D functional data (images) only.", fixed = TRUE)
+  # check functionality
   spline2Dpen <- MFPCA:::splineBasis2Dpen(extractObs(f2,1:2), bs = "ps", m = c(2,3), k = c(8,10))
   expect_equal(dim(spline2Dpen$scores), c(2,80))
   expect_equal(mean(spline2Dpen$scores),  -0.0501778768) 
@@ -120,7 +140,7 @@ test_that("test univariate decompositions 2D", {
   expect_equal(spline2Dpen$settings, list(bs = "ps", k = c(8,10), m =list(c(2,2), c(3,3)))) 
   
   umpca2D <- MFPCA:::umpcaBasis(f2, npc = 4)
-  expect_error(MFPCA:::umpcaBasis(funData(x1, t(sapply(1:5, function(x){x*x1}))), npc = 4), "UMPCAfunData is implemented for (2D) image data only!", fixed = TRUE)
+  expect_error(MFPCA:::umpcaBasis(funData(x1, t(sapply(1:5, function(x){x*x1}))), npc = 4), "UMPCA is implemented for (2D) image data only!", fixed = TRUE)
   expect_equal(dim(umpca2D$scores), c(10, 4))
   expect_equal(mean(umpca2D$scores),  0) 
   expect_equal(dim(umpca2D$B), c(4,4))

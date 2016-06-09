@@ -204,7 +204,7 @@ fpcaBasis <- function(funDataObject, nbasis = 10, pve = 0.99, npc = NULL, makePD
 umpcaBasis <- function(funDataObject, npc)
 {
   if(dimSupp(funDataObject) != 2)
-    stop("UMPCAfunData is implemented for (2D) image data only!")
+    stop("UMPCA is implemented for (2D) image data only!")
   
   # throw warning
   warning("The UMPCA algorithm aims more at uncorrelated features than 
@@ -399,6 +399,9 @@ fcptpaBasis <- function(funDataObject, npc, smoothingDegree = rep(2,2), alphaRan
 #'   all.equal(noisyDataDec$scores, dataDec$scores, check.attributes = FALSE) # have almost the same coefficients
 splineBasis1D <- function(funDataObject, bs = "ps", m = NA, k = -1)
 {
+  if(dimSupp(funDataObject) != 1)
+    stop("splines1D is implemented for 1D functional data only.")
+  
   N <- nObs(funDataObject)
   
   x <- funDataObject@argvals[[1]]
@@ -429,6 +432,9 @@ splineBasis1D <- function(funDataObject, bs = "ps", m = NA, k = -1)
 #' @export splineBasis1Dpen
 splineBasis1Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel = FALSE)
 {
+  if(dimSupp(funDataObject) != 1)
+    stop("splines1Dpen is implemented for 1D functional data only.")
+  
   N <- nObs(funDataObject)
   
   x <- funDataObject@argvals[[1]]
@@ -538,6 +544,9 @@ splineBasis1Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
 #' }
 splineBasis2D <- function(funDataObject, bs = "ps", m = NA, k = -1)
 {
+  if(dimSupp(funDataObject) != 2)
+    stop("splines2D is implemented for 2D functional data (images) only.")
+  
   N <- nObs(funDataObject)
   
   coord <- expand.grid(x = funDataObject@argvals[[1]], y = funDataObject@argvals[[2]])
@@ -570,6 +579,9 @@ splineBasis2D <- function(funDataObject, bs = "ps", m = NA, k = -1)
 #' @export splineBasis2Dpen
 splineBasis2Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel = FALSE)
 {
+  if(dimSupp(funDataObject) != 2)
+    stop("splines2Dpen is implemented for 2D functional data (images) only.")
+  
   N <- nObs(funDataObject)
   
   coord <- expand.grid(x = funDataObject@argvals[[1]], y = funDataObject@argvals[[2]])
