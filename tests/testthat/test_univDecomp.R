@@ -127,6 +127,16 @@ test_that("test univariate decompositions 2D", {
   expect_equal(sum(umpca2D$B), 0.00219103918)
   expect_equal(nObs(umpca2D$functions), 4)
   expect_equal(norm(umpca2D$functions)[1], 0.000523190474)
+   
+  set.seed(2)
+  fcptpa2D <- MFPCA:::fcptpaBasis(f2, npc = 4, alphaRange = list(v = c(1e-4, 1e4), w = c(1e-4, 1e4)))
+  expect_error(MFPCA:::fcptpaBasis(funData(x1, t(sapply(1:5, function(x){x*x1}))), npc = 4), "FCP_TPA is implemented for (2D) image data only!", fixed = TRUE)
+  expect_equal(dim(fcptpa2D$scores), c(10, 4))
+  expect_equal(mean(fcptpa2D$scores),  -6.34674399) 
+  expect_equal(dim(fcptpa2D$B), c(4,4))
+  expect_equal(sum(fcptpa2D$B), 0.00213955703)
+  expect_equal(nObs(fcptpa2D$functions), 4)
+  expect_equal(norm(fcptpa2D$functions)[1], 0.000520573393)
   
   # wrapper function
   decompSpline2D <- MFPCA:::univDecomp(type = "splines2D", data = f2, params = list(bs = "ps", m = c(2,3), k = c(8,10)))
@@ -137,4 +147,8 @@ test_that("test univariate decompositions 2D", {
   
   decompUMPCA2D <- MFPCA:::univDecomp(type = "UMPCA", data = f2, params = list(npc = 4))
   expect_equal(decompUMPCA2D, umpca2D)
+  
+  set.seed(2)
+  decompFCPTPA2D <- MFPCA:::univDecomp(type = "FCP_TPA", data = f2, params = list(npc = 4, alphaRange = list(v = c(1e-4, 1e4), w = c(1e-4, 1e4))))
+  expect_equal(decompFCPTPA2D, fcptpa2D)
 })
