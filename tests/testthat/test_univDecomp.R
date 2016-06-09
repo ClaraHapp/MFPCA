@@ -69,10 +69,16 @@ test_that("test UMPCA functionality", {
   expect_error(MFPCA:::ttv(A, list(rep(1,3)), 2), "A and v have wrong dimensions!")
   expect_error(MFPCA:::ttv(A, list(rep(1,3), rep(2,3)), 1), "The parameters 'dim' and 'v' must have the same length!")
   
-  # check ttv functionality (double checked with matlab)
+  # check ttv functionality 
   expect_equal(MFPCA:::ttv(A, list(rep(1,3)), 1), colSums(A,1))
   expect_equal(MFPCA:::ttv(A, list(rep(1,4)), 2), apply(A,3, rowSums))
   expect_equal(MFPCA:::ttv(A, list(rep(1,2)), 3), apply(A,2, rowSums))
+  expect_equal(MFPCA:::ttv(A, list(rep(1,2), rep(1,3), rep(1,4)), c(3,1,2)), sum(A))
+  
+  # check internal function (double checked with matlab)
+  expect_equal(MFPCA:::ttvCalculation(A, list(rep(1,3)), 1), colSums(A,1))
+  expect_equal(MFPCA:::ttvCalculation(A, list(rep(1,4)), 2), apply(A,3, rowSums))
+  expect_equal(MFPCA:::ttvCalculation(A, list(rep(1,2)), 3), apply(A,2, rowSums))
   
   # see also 1D decompositions
   umpca2D <- MFPCA:::UMPCA(A, numP = 3)
