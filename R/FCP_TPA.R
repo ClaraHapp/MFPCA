@@ -212,7 +212,10 @@ FCP_TPA <- function(X, K, penMat, alphaRange, verbose = FALSE, tol = 1e-4, maxIt
 #' @return The euclidean norm of \code{x}.
 #' 
 #' @keywords internal
-normVec <- function(x) sqrt(sum(x^2))
+normVec <- function(x)
+{
+  sqrt(sum(x^2))
+}
 
 #' Find the optimal smoothing parameters in FCP_TPA using GCV
 #' 
