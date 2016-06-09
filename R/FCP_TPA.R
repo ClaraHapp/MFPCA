@@ -95,6 +95,44 @@ FCP_TPA <- function(X, K, penMat, alphaRange, verbose = FALSE, tol = 1e-4, maxIt
 {
   dimX <- dim(X)
   
+  ### check input parameters
+  
+  # penMat: correct list names
+  if(!identical(names(penMat), c("v", "w")))
+    stop("Function FCP_TPA: penMat must be a list of matrices with entries 'v' and 'w'.")
+  
+  # penMat$v: correct dimensions and symmetric
+  if(any(dim(penMat$v) != rep(dimX[2],2)))
+    stop("Function FCP_TPA: the penalization matrix for dimension v must be ", dimX[2], " x ", dimX[2], ".")
+  
+  if(!isSymmetric(penMat$v))
+    stop("Function FCP_TPA: the penalization matrix for dimension v must be symmetric.")
+  
+  # penMat$w: correct dimensions and symmetric
+  if(any(dim(penMat$w) != rep(dimX[3],2)))
+    stop("Function FCP_TPA: the penalization matrix for dimension w must be ", dimX[3], " x ", dimX[3], ".")
+  
+  if(!isSymmetric(penMat$w))
+    stop("Function FCP_TPA: the penalization matrix for dimension w must be symmetric.")
+    
+  # alphaRange: correct list names, length and values
+  if(!identical(names(alphaRange), c("v", "w")))
+    stop("Function FCP_TPA: alphaRange must be a list of vectors with entries 'v' and 'w'.")
+  
+  if(length(alphaRange$v) != 2)
+    stop("Function FCP_TPA: alphaRange$v must be a vector of length 2.")
+  
+  if(any(alphaRange$v < 0))
+    stop("Function FCP_TPA: Values for alphaV must not be negative.")
+  
+  if(length(alphaRange$w) != 2)
+    stop("Function FCP_TPA: alphaRange$w must be a vector of length 2.")
+  
+  if(any(alphaRange$w < 0))
+    stop("Function FCP_TPA: Values for alphaW must not be negative.")
+
+  ### initialize all relevant values
+  
   # initialize the norm-one vectors u, v, w randomly
   u <- runif(dimX[1], min = -1, max = 1); u <- u/normVec(u)
   v <- runif(dimX[2], min = -1, max = 1); v <- v/normVec(v)
@@ -174,7 +212,7 @@ FCP_TPA <- function(X, K, penMat, alphaRange, verbose = FALSE, tol = 1e-4, maxIt
           uOld <- u
           vOld <- v
           wOld <- w
-          warning("FCP-TPA algorithm did not converge; iteration", k , "stopped")
+          warning("FCP-TPA algorithm did not converge; iteration ", k , " stopped.")
         } 
       }
     }
