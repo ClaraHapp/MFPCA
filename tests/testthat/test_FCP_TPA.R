@@ -49,5 +49,38 @@ test_that("FPC_TPA",{
   expect_equal(abs(res$U[,1]), abs(u/MFPCA:::normVec(u)), tolerance = 1e-4)
   expect_equal(abs(res$V[,1]), abs(v/MFPCA:::normVec(v)), tolerance = 1e-4)
   expect_equal(abs(res$W[,1]), abs(w/MFPCA:::normVec(w)), tolerance = 1e-4)
+})
+
+
+test_that("findAlphaOpt", {
+  data <- (1:3) %o% 1:2 %o% 1:5
+  u <- c(1,0,0)
+  w <- c(0,0,0,0,1)
+  GammaV <- diag(2)
+  alphaW <- 0
+  OmegaW <- diag(5)
+  lambdaV <- c(1,2)
   
+  # no minimum here... (rather plausibility check...)
+  expect_equal(MFPCA:::findAlphaVopt(alphaRange = c(1e-4, 1e4), data = data, u = u, w = w, 
+                             alphaW = alphaW, OmegaW = OmegaW, GammaV = GammaV, lambdaV = lambdaV),
+               1e4, tol = .Machine$double.eps^0.25)
+  expect_equal(MFPCA:::findAlphaWopt(alphaRange = c(1e-4, 1e4), data = data, u = u, v = c(1,0), 
+                                     alphaV = alphaW, OmegaV = diag(2), GammaW = diag(5), lambdaW = 1:5),
+               1e4, tol = .Machine$double.eps^0.25)
+})
+
+test_that("gcv", {
+
+  # rather plausibility check...
+  expect_equal(MFPCA:::gcv(alpha = 1, n=  5, z = c(1,0,0,0,0), eta = 0.5, lambda = 5:1),
+               0.229890299)
+})
+
+
+test_that("makeDiffOp", {
+  expect_equal(MFPCA:::makeDiffOp(degree = 1, dim = 3),
+               rbind(c(-1,1,0), c(0,-1,1)))
+  expect_equal(MFPCA:::makeDiffOp(degree = 2, dim = 4),
+               rbind(c(1,-2,1, 0), c(0, 1, -2, 1)))
 })
