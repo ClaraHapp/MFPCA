@@ -1,11 +1,16 @@
 context("Testing functions in univExpansion.R")
 
+test_that("test expandBasis function", {
+  expect_error(expandBasisFunction(scores = matrix(nrow = 2, ncol = 5), functions = funData(1:5, matrix(nrow = 3, ncol = 5))),
+               "expandBasisFunction: number of scores for each observation and number of eigenfunctions does not match.")  
+})
+
 test_that("test univariate expansions 1D", {
   set.seed(1)
   scores <- sapply(1:5, function(x){rnorm(20, sd = exp(-x))})
   argvals <- list(seq(0, 1, 0.01))
   
-  default1D <- MFPCA:::defaultFunction(scores = scores, argvals = argvals, functions = funData:::efPoly(argvals[[1]], M = 5))
+  default1D <- MFPCA:::expandBasisFunction(scores = scores, argvals = argvals, functions = funData:::efPoly(argvals[[1]], M = 5))
   expect_equal(nObs(default1D), 20)
   expect_equal(nObsPoints(default1D), 101)
   expect_equal(mean(norm(default1D)),  0.12734517) 
@@ -43,7 +48,7 @@ test_that("test univariate expansions 2D", {
   scores <- sapply(25:1, function(x){rnorm(20, sd = x/25)})
   argvals <- list(seq(0, 1, 0.01), seq(-1, 1, 0.02))
   
-  default2D <- MFPCA:::defaultFunction(scores = scores, argvals = argvals, 
+  default2D <- MFPCA:::expandBasisFunction(scores = scores, argvals = argvals, 
                                        functions = tensorProduct(funData:::efPoly(argvals[[1]], M = 5), funData:::efWiener(argvals[[2]], M = 5)))
   expect_equal(nObs(default2D), 20)
   expect_equal(nObsPoints(default2D), c(101,101))
@@ -104,7 +109,7 @@ test_that("test univariate expansions 3D", {
   scores <- sapply(60:1, function(x){rnorm(20, sd = x/25)})
   argvals <- list(seq(0, 1, 0.01), seq(-1, 1, 0.02), seq(-0.5, 0.5, 0.05))
   
-  default3D <- MFPCA:::defaultFunction(scores = scores, argvals = argvals, 
+  default3D <- MFPCA:::expandBasisFunction(scores = scores, argvals = argvals, 
                                        functions = tensorProduct(funData:::efPoly(argvals[[1]], M = 3),
                                                                  funData:::efWiener(argvals[[2]], M = 4),
                                                                  funData:::efFourier(argvals[[3]], M = 5)))

@@ -187,7 +187,7 @@ fpcaBasis <- function(funDataObject, nbasis = 10, pve = 0.99, npc = NULL, makePD
 #' b2 <- eFun(seq(-pi, pi, 0.03), M = 8, type = "Fourier")
 #' b <- tensorProduct(b1,b2) # 2D basis functions
 #' scores <- matrix(rnorm(N*56), nrow = N)
-#' f <- defaultFunction(scores = scores, functions = b) # calculate observation (= linear combination of basis functions)
+#' f <- expandBasisFunction(scores = scores, functions = b) # calculate observation (= linear combination of basis functions)
 #' 
 #' # calculate basis functions based on UMPCA algorithm (needs some time)
 #' \donttest{
@@ -297,7 +297,7 @@ makeDiffOp <- function(degree, dim){
 #' b2 <- eFun(seq(-pi, pi, 0.03), M = 8, type = "Fourier")
 #' b <- tensorProduct(b1,b2) # 2D basis functions
 #' scores <- matrix(rnorm(N*56), nrow = N)
-#' f <- defaultFunction(scores = scores, functions = b) # calculate observation (= linear combination of basis functions)
+#' f <- expandBasisFunction(scores = scores, functions = b) # calculate observation (= linear combination of basis functions)
 #' 
 #' # calculate basis functions based on FCP_TPA algorithm (needs some time)
 #' \donttest{
@@ -528,7 +528,7 @@ splineBasis1Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
 #' b2 <- eFun(seq(-pi, pi, 0.03), M = 8, type = "Fourier")
 #' b <- tensorProduct(b1,b2) # 2D basis functions
 #' scores <- matrix(rnorm(N*56), nrow = N)
-#' dat <- defaultFunction(scores = scores, functions = b) # calculate observation (= linear combination of basis functions)
+#' dat <- expandBasisFunction(scores = scores, functions = b) # calculate observation (= linear combination of basis functions)
 #' 
 #' # calculate 2D spline basis decomposition (needs some time)
 #' \donttest{

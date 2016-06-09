@@ -40,7 +40,7 @@ NULL
 #'   \code{\link{splineFunction1D}}, \code{\link{splineFunction2D}},
 #'   \code{\link{splineFunction2Dpen}}, \code{\link{umpcaFunction}},
 #'   \code{\link{fcptpaFunction}}, \code{\link{dctFunction2D}},
-#'   \code{\link{dctFunction3D}}, \code{\link{defaultFunction}}
+#'   \code{\link{dctFunction3D}}, \code{\link{expandBasisFunction}}
 #'   
 #' @export univExpansion
 #' 
@@ -103,7 +103,7 @@ univExpansion <- function(type, scores, argvals, functions, params = NULL)
                 "splines2Dpen" = do.call(splineFunction2Dpen, params),
                 "DCT2D" = do.call(dctFunction2D, params),
                 "DCT3D" = do.call(dctFunction3D, params),
-                "default" = do.call(defaultFunction, params),
+                "default" = do.call(expandBasisFunction, params),
                 stop("Univariate Expansion for 'type' = ", type, " not defined!")
   )
 
@@ -129,7 +129,7 @@ univExpansion <- function(type, scores, argvals, functions, params = NULL)
 #'   
 #' @seealso \code{\link{univExpansion}}
 #' 
-#' @export defaultFunction
+#' @export expandBasisFunction
 #' 
 #' @examples
 #' # set seed
@@ -146,7 +146,7 @@ univExpansion <- function(type, scores, argvals, functions, params = NULL)
 #' scores <- t(replicate(N, rnorm(K, sd = 1 / (1:10))))
 #' 
 #' # calculate basis expansion
-#' f <- defaultFunction(scores = scores, functions = b) # default value for argvals
+#' f <- expandBasisFunction(scores = scores, functions = b) # default value for argvals
 #' 
 #' oldpar <- par(no.readonly = TRUE)
 #' 
@@ -155,13 +155,17 @@ univExpansion <- function(type, scores, argvals, functions, params = NULL)
 #' plot(f, main = "Linear combination")
 #' 
 #' par(oldpar)
-defaultFunction <- function(scores, argvals = functions@argvals, functions)
+expandBasisFunction <- function(scores, argvals = functions@argvals, functions)
 {
-  d <- dim(functions@X)
+  if(dim(scores)[2] != nObs(functions))
+    stop("expandBasisFunction: number of scores for each observation and number of eigenfunctions does not match.")
 
-  # collapse higher-dimensional functions and resize the result
-  return(funData(argvals, array(scores %*% array(functions@X, dim = c(d[1], prod(d[-1]))),
-                             dim = c(dim(scores)[1],d[-1]))) )
+  # collapse higher-dimensional functions, multiply with scores and resize the result
+  d <- dim(functions@X)
+  dim(functions@X) <- c(d[1], prod(d[-1]))
+  resX <- scores %*% functions@X
+  dim(resX) <- c(dim(scores)[1],d[-1])
+  return( funData(argvals, resX) )
 }
 
 #' Calculate a linear combination of a functional principal component basis on 
@@ -288,7 +292,7 @@ umpcaFunction <- function(scores, argvals = functions@argvals, functions)
 #'   \code{argvals}, corresponding to the linear combination of the functional 
 #'   principal components.
 #'   
-#' @seealso \code{\link{univExpansion}}, \code{\link{defaultFunction}}
+#' @seealso \code{\link{univExpansion}}, \code{\link{expandBasisFunction}}
 #'
 #' @references G. I. Allen, "Multi-way Functional Principal Components 
 #'   Analysis", In IEEE International Workshop on Computational Advances in 
@@ -297,14 +301,14 @@ umpcaFunction <- function(scores, argvals = functions@argvals, functions)
 #' @export fcptpaFunction
 #' 
 #' @examples
-#' # see defaultFunction 
+#' # see expandBasisFunction 
 fcptpaFunction <- function(scores, argvals = functions@argvals, functions)
 {
   if(dimSupp(functions) != 2)
     stop("FCP_TPA option for univExpansion is implemented for 2D data (images) only!")
   
   
-  return(defaultFunction(scores, argvals, functions))
+  return(expandBasisFunction(scores, argvals, functions))
 }
 
 #' Calculate linear combinations of spline basis functions on one-dimensional 
