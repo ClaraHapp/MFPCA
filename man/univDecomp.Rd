@@ -10,11 +10,11 @@ univDecomp(type, funDataObject, ...)
 \item{type}{A character string, specifying the basis for which the
 decomposition is to be calculated.}
 
+\item{funDataObject}{A \code{funData} object, representing the (univariate) functional
+data samples.}
+
 \item{...}{Further parameters, passed to the function for the particular basis to
   use.}
-
-\item{data}{A \code{funData} object, representing the (univariate) functional
-data samples.}
 }
 \value{
 \item{scores}{A matrix of scores (coefficients) for each observation

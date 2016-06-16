@@ -15,7 +15,7 @@
 #'
 #' @param type A character string, specifying the basis for which the
 #'   decomposition is to be calculated.
-#' @param data A \code{funData} object, representing the (univariate) functional
+#' @param funDataObject A \code{funData} object, representing the (univariate) functional
 #'   data samples.
 #' @param ... Further parameters, passed to the function for the particular basis to
 #'   use.
