@@ -28,11 +28,12 @@ eigenfunctions.}
 
 \item{approx.eigen}{Logical. If \code{TRUE}, the eigenanalysis problem for
 the estimated covariance matrix is solved approximately using the
-\pkg{irlba} package, which is much faster. Defaults to \code{TRUE}. If the number
-\code{M} of eigenvalues to calculate is high with respect to the number of
-observations in \code{mFData} or the number of estimated univariate
-eigenfunctions, the approximation may be inappropriate. In this case,
-approx.eigen is set to \code{FALSE} and the function throws a warning.}
+\pkg{irlba} package, which is much faster. Defaults to \code{TRUE}. If the
+number \code{M} of eigenvalues to calculate is high with respect to the
+number of observations in \code{mFData} or the number of estimated
+univariate eigenfunctions, the approximation may be inappropriate. In this
+case, approx.eigen is set to \code{FALSE} and the function throws a
+warning.}
 
 \item{bootstrap}{Logical. If \code{TRUE}, pointwise bootstrap confidence
 bands are calculated for the multivariate functional principal components.
@@ -103,30 +104,37 @@ principal components \eqn{\hat \psi_1, \ldots, \hat \psi_M}{\hat \psi_1,
 
 \subsection{Univariate Expansions}{The multivariate functional principal
 component analysis relies on a univariate basis expansion for each element
-\eqn{X^{(j)}}{X^(j)}. It can be supplied in several forms: \itemize{ \item
-Univariate functional principal component analysis. Then
-\code{uniExpansions[[j]] = list(type = "uFPCA", params = list(nbasis, pve,
-npc, makePD))}, where \code{nbasis,pve,npc,makePD} are parameters passed to
-the \code{\link{PACE}} function for calculating the univariate functional
-principal component analysis. \item Spline basis functions (not penalized).
-Then \code{uniExpansions[[j]] = list(type = "splines1D", params = list(bs, m,
-k))}, where \code{bs,m,k} are passed to the functions
-\code{\link{univDecomp}} and \code{\link{univExpansion}}. For two-dimensional
-tensor product splines, use \code{type = "splines2D"}. \item Spline basis
-functions (with smoothness penalty). Then \code{uniExpansions[[j]] =
-list(type = "splines1DPen", params = list(bs, m, k))}, where \code{bs,m,k}
-are passed to the functions \code{\link{univDecomp}} and
-\code{\link{univExpansion}}. Analogously to the unpenalized case, use
+\eqn{X^{(j)}}{X^(j)}. The univariate basis representation is calculated using
+the \code{\link{univDecomp}} function, that passes the univariate functional
+observations and optional parameters to the specific function. The univariate
+decompositions are specified via the \code{uniExpansions} argument in the
+\code{MFPCA} function. It is a list of the same length as the \code{mFData}
+object, i.e. having one entry for each element of the multivariate functional
+data. For each element, \code{uniExpansion} must specify at least the type of
+basis functions to use. Additionally, one may add further parameters. The
+following basis representations are supported: \itemize{ \item Univariate
+functional principal component analysis. Then \code{uniExpansions[[j]] =
+list(type = "uFPCA", nbasis, pve, npc, makePD)}, where
+\code{nbasis,pve,npc,makePD} are parameters passed to the \code{\link{PACE}}
+function for calculating the univariate functional principal component
+analysis. \item Spline basis functions (not penalized). Then
+\code{uniExpansions[[j]] = list(type = "splines1D", bs, m, k)}, where
+\code{bs,m,k} are passed to the functions \code{\link{univDecomp}} and
+\code{\link{univExpansion}}. For two-dimensional tensor product splines, use
+\code{type = "splines2D"}. \item Spline basis functions (with smoothness
+penalty). Then \code{uniExpansions[[j]] = list(type = "splines1DPen", bs, m,
+k)}, where \code{bs,m,k} are passed to the functions \code{\link{univDecomp}}
+and \code{\link{univExpansion}}. Analogously to the unpenalized case, use
 \code{type = "splines2Dpen"} for 2D penalized tensor product splines. \item
 Cosine basis functions. Use \code{uniExpansions[[j]] = list(type = "DCT2D",
-params = list(qThresh, parallel))} for functions one two-dimensional domains
-(images) and \code{type = "DCT3D"} for 3D images. The calculation is based on
-the discrete cosine transform (DCT) implemented in the C-library
-\code{fftw3}. If this library is not available, the function will throw  a
-warning. \code{qThresh} gives the quantile for hard thresholding the basis
-coefficients based on their absolute value. If \code{parallel = TRUE}, the
-coefficients for different images are calcualated in parallel.} See
-\code{\link{univDecomp}} and \code{\link{univExpansion}} for details.}
+qThresh, parallel)} for functions one two-dimensional domains (images) and
+\code{type = "DCT3D"} for 3D images. The calculation is based on the discrete
+cosine transform (DCT) implemented in the C-library \code{fftw3}. If this
+library is not available, the function will throw  a warning. \code{qThresh}
+gives the quantile for hard thresholding the basis coefficients based on
+their absolute value. If \code{parallel = TRUE}, the coefficients for
+different images are calcualated in parallel.} See \code{\link{univDecomp}}
+and \code{\link{univExpansion}} for details.}
 }
 \examples{
 oldPar <- par(no.readonly = TRUE)
@@ -200,7 +208,7 @@ sim <-  simMultiFunData(type = "weighted",
 
 # MFPCA based on univariate spline expansions (for images) and univariate FPCA (for functions)
 pca <- MFPCA(sim$simData, M = 10,
-             uniExpansions = list(list(type = "splines2D", params = list(k = c(10,12))),
+             uniExpansions = list(list(type = "splines2D", k = c(10,12)),
                              list(type = "uFPCA")))
 
 # flip to make results more clear
