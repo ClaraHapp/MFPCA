@@ -36,10 +36,10 @@ NULL
 #'   \code{argvals}, corresponding to the linear combination of the basis 
 #'   functions.
 #'   
-#' @seealso \code{\link{MFPCA}}, \code{\link{fpcaFunction}},
+#' @seealso \code{\link{MFPCA}},
 #'   \code{\link{splineFunction1D}}, \code{\link{splineFunction2D}},
-#'   \code{\link{splineFunction2Dpen}}, \code{\link{umpcaFunction}},
-#'   \code{\link{fcptpaFunction}}, \code{\link{dctFunction2D}},
+#'   \code{\link{splineFunction2Dpen}}, 
+#'   \code{\link{dctFunction2D}},
 #'   \code{\link{dctFunction3D}}, \code{\link{expandBasisFunction}}
 #'   
 #' @export univExpansion
