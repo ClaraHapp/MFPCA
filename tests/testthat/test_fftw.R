@@ -44,7 +44,7 @@ test_that("test univariate DCT 2D", {
   expect_null(dct2D$functions)
   
   # wrapper function
-  decompDCT2D<- MFPCA:::univDecomp(type = "DCT2D", data = f2, params = list(qThresh = 0.95))
+  decompDCT2D <- MFPCA:::univDecomp(type = "DCT2D", funDataObject = f2, qThresh = 0.95)
   expect_equal(decompDCT2D, dct2D)
 })
 
@@ -67,7 +67,7 @@ test_that("test univariate DCT 3D", {
   expect_null(dct3D$functions)
   
   # wrapper function
-  decompDCT3D<- MFPCA:::univDecomp(type = "DCT3D", data = f3, params = list(qThresh = 0.95))
+  decompDCT3D <- MFPCA:::univDecomp(type = "DCT3D", funDataObject = f3, qThresh = 0.95)
   expect_equal(decompDCT3D, dct3D)
 })
 
