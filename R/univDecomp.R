@@ -50,6 +50,7 @@
 univDecomp <- function(type, funDataObject, ...)
 {
   params <- as.list(match.call()) # get all arguments
+  params$funDataObject <- funDataObject # add funDataObject (-> make sure is evaluated in correct env.)
   
   # check if type and data are of correct type
   if(is.null(params$type))
@@ -61,7 +62,7 @@ univDecomp <- function(type, funDataObject, ...)
   if(is.null(params$funDataObject))
     stop("univDecomp: must specify 'funDataObject'.")
   
-  if(class(eval(params$funDataObject)) != "funData")
+  if(class(params$funDataObject) != "funData")
     stop("univDecomp: 'funDataObject' must be of class funData.")
   
   # delete function call and type information in params
