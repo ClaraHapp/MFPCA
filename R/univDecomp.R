@@ -202,7 +202,9 @@ fpcaBasis <- function(funDataObject, nbasis = 10, pve = 0.99, npc = NULL, makePD
 #' b2 <- eFun(seq(-pi, pi, 0.03), M = 8, type = "Fourier")
 #' b <- tensorProduct(b1,b2) # 2D basis functions
 #' scores <- matrix(rnorm(N*56), nrow = N)
-#' f <- expandBasisFunction(scores = scores, functions = b) # calculate observation (= linear combination of basis functions)
+#' 
+#' # calculate observations (= linear combination of basis functions)
+#' f <- expandBasisFunction(scores = scores, functions = b)
 #' 
 #' # calculate basis functions based on UMPCA algorithm (needs some time)
 #' \donttest{
@@ -312,7 +314,9 @@ makeDiffOp <- function(degree, dim){
 #' b2 <- eFun(seq(-pi, pi, 0.03), M = 8, type = "Fourier")
 #' b <- tensorProduct(b1,b2) # 2D basis functions
 #' scores <- matrix(rnorm(N*56), nrow = N)
-#' f <- expandBasisFunction(scores = scores, functions = b) # calculate observation (= linear combination of basis functions)
+#' 
+#' # calculate observations (= linear combination of basis functions)
+#' f <- expandBasisFunction(scores = scores, functions = b)
 #' 
 #' # calculate basis functions based on FCP_TPA algorithm (needs some time)
 #' \donttest{
@@ -411,7 +415,8 @@ fcptpaBasis <- function(funDataObject, npc, smoothingDegree = rep(2,2), alphaRan
 #'  str(noisyDataDec)
 #'  
 #'  # check if noise has been filtered out by penalization
-#'   all.equal(noisyDataDec$scores, dataDec$scores, check.attributes = FALSE) # have almost the same coefficients
+#'  all.equal(noisyDataDec$scores, dataDec$scores, check.attributes = FALSE)
+#'  # -> have almost the same coefficients
 splineBasis1D <- function(funDataObject, bs = "ps", m = NA, k = -1)
 {
   if(dimSupp(funDataObject) != 1)
@@ -543,7 +548,9 @@ splineBasis1Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
 #' b2 <- eFun(seq(-pi, pi, 0.03), M = 8, type = "Fourier")
 #' b <- tensorProduct(b1,b2) # 2D basis functions
 #' scores <- matrix(rnorm(N*56), nrow = N)
-#' dat <- expandBasisFunction(scores = scores, functions = b) # calculate observation (= linear combination of basis functions)
+#' 
+#' # calculate observations (= linear combination of basis functions)
+#' dat <- expandBasisFunction(scores = scores, functions = b)
 #' 
 #' # calculate 2D spline basis decomposition (needs some time)
 #' \donttest{

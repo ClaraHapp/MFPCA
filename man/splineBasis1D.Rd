@@ -67,7 +67,8 @@ dat <- simFunData(argvals = seq(0,1,0.01), M = 5,
  str(noisyDataDec)
 
  # check if noise has been filtered out by penalization
-  all.equal(noisyDataDec$scores, dataDec$scores, check.attributes = FALSE) # have almost the same coefficients
+ all.equal(noisyDataDec$scores, dataDec$scores, check.attributes = FALSE)
+ # -> have almost the same coefficients
 }
 \seealso{
 \code{\link{univDecomp}}, \code{\link[mgcv]{gam}},

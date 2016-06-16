@@ -47,8 +47,9 @@ three-dimensional domains using the C-library \code{fftw3} (see
 set.seed(12345)
 
 # generate sparse 10 x 15 score matrix (i.e. 10 observations) with 30 entries
+# smoothness assumption: higher order basis functions (high column index) have lower probability
 scores <- Matrix::sparseMatrix(i = sample(1:10, 30, replace = TRUE), # sample row indices
-     j = sample(1:15, 30, replace = TRUE, prob = 1/(1:15)), # sample column indices, high indices with low probability
+     j = sample(1:15, 30, replace = TRUE, prob = 1/(1:15)), # sample column indices
      x = rnorm(30)) # sample values
 scores
 

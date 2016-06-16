@@ -66,7 +66,9 @@ b1 <- eFun(seq(0,1,0.01), M = 7, type = "Poly")
 b2 <- eFun(seq(-pi, pi, 0.03), M = 8, type = "Fourier")
 b <- tensorProduct(b1,b2) # 2D basis functions
 scores <- matrix(rnorm(N*56), nrow = N)
-dat <- expandBasisFunction(scores = scores, functions = b) # calculate observation (= linear combination of basis functions)
+
+# calculate observations (= linear combination of basis functions)
+dat <- expandBasisFunction(scores = scores, functions = b)
 
 # calculate 2D spline basis decomposition (needs some time)
 \donttest{
