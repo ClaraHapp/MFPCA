@@ -63,7 +63,7 @@ test_that("test MFPCA main function", {
 test_that("MFPCA calculation function", {
   set.seed(1)
   sim <-  simFunData(argvals = seq(0,1,0.01), M = 5, eFunType = "Poly", eValType = "linear", N = 100)
-  uniB <- univDecomp("uFPCA", sim$simData, params = list(npc = 3))
+  uniB <- univDecomp("uFPCA", sim$simData, npc = 3)
   
   res <- MFPCA:::calcMFPCA(N = 100, p = 1, Bchol = diag(3), M = 3, type = "uFPCA", weights = 1, npc = 3, 
             argvals = sim$simData@argvals, uniBasis = list(uniB), approx.eigen = FALSE)
