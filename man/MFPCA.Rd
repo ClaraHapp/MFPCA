@@ -178,6 +178,8 @@ plot(splines$fit[[2]], obs = 1:10, lty = 2, col = 1, add = TRUE)
 legend("bottomleft", c("True", "Reconstruction"), lty = c(1,2), lwd = c(2,1))
 
 # MFPCA with Bootstrap-CI for the first 2 eigenfunctions
+### ATTENTION: Takes long
+\donttest{
 splinesBoot <- MFPCA(sim$simData, M = 2, uniExpansions = list(list(type = "splines1D", k = 10),
                                                           list(type = "splines1D", k = 10)),
                  bootstrap = TRUE, nBootstrap = 100, bootstrapAlpha = c(0.05, 0.1), verbose = TRUE)
@@ -196,10 +198,11 @@ plot(splinesBoot$CI$alpha_0.1$lower[[2]], lty = 3, add = TRUE)
 plot(splinesBoot$CI$alpha_0.1$upper[[2]], lty = 3, add = TRUE)
 abline(h = 0, col = "gray")
 legend("topleft", c("Estimate", "95\% CI", "90\% CI"), lty = 1:3, lwd = c(2,1,1))
+}
 
 ### simulate data (two- and one-dimensional domains)
-\donttest{
 ### ATTENTION: Takes long
+\donttest{
 set.seed(2)
 sim <-  simMultiFunData(type = "weighted",
                  argvals = list(list(seq(0,1,0.01), seq(-1,1,0.02)), list(seq(-0.5,0.5,0.01))),

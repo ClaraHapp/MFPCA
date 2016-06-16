@@ -65,18 +65,22 @@
 #' @export FCP_TPA
 #' 
 #' @examples
-#'  # set.seed(12345)
+#'  # set.seed(1234)
+#'  
+#'  N <- 100
+#'  S1 <- 75
+#'  S2 <- 75
 #' 
 #'  # define "true" components
-#'  v <- sin(seq(-pi, pi, length.out = 100))
-#'  w <- exp(seq(-0.5, 1, length.out = 150))
+#'  v <- sin(seq(-pi, pi, length.out = S1))
+#'  w <- exp(seq(-0.5, 1, length.out = S2))
 #'  
-#'  # simulate tensor data
-#'  X <- rnorm(80, sd = 0.5) %o% v %o% w
+#'  # simulate tensor data with dimensions N x S1 x S2
+#'  X <- rnorm(N, sd = 0.5) %o% v %o% w
 #'  
 #'  # create penalty matrices (penalize first differences for each dimension)
-#'  Pv <- crossprod(diff(diag(100)))
-#'  Pw <- crossprod(diff(diag(150)))
+#'  Pv <- crossprod(diff(diag(S1)))
+#'  Pw <- crossprod(diff(diag(S2)))
 #'  
 #'  # estimate one eigentensor
 #'  res <- FCP_TPA(X, K = 1, penMat = list(v = Pv, w = Pw),
