@@ -10,11 +10,11 @@ univDecomp(type, funDataObject, ...)
 \item{type}{A character string, specifying the basis for which the
 decomposition is to be calculated.}
 
+\item{...}{Further parameters, passed to the function for the particular basis to
+  use.}
+
 \item{data}{A \code{funData} object, representing the (univariate) functional
 data samples.}
-
-\item{params}{A list containing the parameters for the particular basis to
-  use.}
 }
 \value{
 \item{scores}{A matrix of scores (coefficients) for each observation
@@ -46,7 +46,7 @@ dat <- simFunData(argvals = seq(0,1,0.01), M = 5,
                   eFunType = "Poly", eValType = "linear", N = 100)$simData
 
 # decompose the data in univariate functional principal components...
-decFPCA <- univDecomp(type = "uFPCA", data = dat, params = list(npc = 5))
+decFPCA <- univDecomp(type = "uFPCA", data = dat, npc = 5)
 str(decFPCA)
 
 # or in splines (penalized)
