@@ -53,7 +53,7 @@ b1 <- eFun(seq(0,1,0.01), M = 7, type = "Poly")
 b2 <- eFun(seq(-pi, pi, 0.03), M = 8, type = "Fourier")
 b <- tensorProduct(b1,b2) # 2D basis functions
 scores <- matrix(rnorm(N*56), nrow = N)
-f <- expandBasisFunction(scores = scores, functions = b) # calculate observation (= linear combination of basis functions)
+f <- defaultFunction(scores = scores, functions = b) # calculate observation (= linear combination of basis functions)
 
 # calculate basis functions based on FCP_TPA algorithm (needs some time)
 \donttest{

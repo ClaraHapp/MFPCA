@@ -4,16 +4,16 @@
 \alias{univDecomp}
 \title{Univariate basis decomposition}
 \usage{
-univDecomp(type, funDataObject, ...)
+univDecomp(type, data, params = NULL)
 }
 \arguments{
 \item{type}{A character string, specifying the basis for which the
 decomposition is to be calculated.}
 
-\item{funDataObject}{A \code{funData} object, representing the (univariate) functional
+\item{data}{A \code{funData} object, representing the (univariate) functional
 data samples.}
 
-\item{...}{Further parameters, passed to the function for the particular basis to
+\item{params}{A list containing the parameters for the particular basis to
   use.}
 }
 \value{
@@ -46,11 +46,11 @@ dat <- simFunData(argvals = seq(0,1,0.01), M = 5,
                   eFunType = "Poly", eValType = "linear", N = 100)$simData
 
 # decompose the data in univariate functional principal components...
-decFPCA <- univDecomp(type = "uFPCA", funDataObject = dat, npc = 5)
+decFPCA <- univDecomp(type = "uFPCA", data = dat, params = list(npc = 5))
 str(decFPCA)
 
 # or in splines (penalized)
-decSplines <- univDecomp(type = "splines1Dpen", funDataObject = dat) # use mgcv's default params
+decSplines <- univDecomp(type = "splines1Dpen", data = dat) # use mgcv's default params
 str(decSplines)
 }
 \seealso{

@@ -15,9 +15,9 @@
 #'
 #' @param type A character string, specifying the basis for which the
 #'   decomposition is to be calculated.
-#' @param funDataObject A \code{funData} object, representing the (univariate) functional
+#' @param data A \code{funData} object, representing the (univariate) functional
 #'   data samples.
-#' @param ... Further parameters, passed to the function for the particular basis to
+#' @param params A list containing the parameters for the particular basis to
 #'   use.
 #'
 #' @return \item{scores}{A matrix of scores (coefficients) for each observation
@@ -41,33 +41,18 @@
 #'                   eFunType = "Poly", eValType = "linear", N = 100)$simData
 #' 
 #' # decompose the data in univariate functional principal components...
-#' decFPCA <- univDecomp(type = "uFPCA", funDataObject = dat, npc = 5)
+#' decFPCA <- univDecomp(type = "uFPCA", data = dat, params = list(npc = 5))
 #' str(decFPCA)
 #' 
 #' # or in splines (penalized)
-#' decSplines <- univDecomp(type = "splines1Dpen", funDataObject = dat) # use mgcv's default params
+#' decSplines <- univDecomp(type = "splines1Dpen", data = dat) # use mgcv's default params
 #' str(decSplines)
-univDecomp <- function(type, funDataObject, ...)
+univDecomp <- function(type, data, params = NULL)
 {
-  params <- as.list(match.call()) # get all arguments
-  params$funDataObject <- funDataObject # add funDataObject (-> make sure is evaluated in correct env.)
+  if(is.null(params))
+    params <- list() # create empty list
   
-  # check if type and data are of correct type
-  if(is.null(params$type))
-    stop("univDecomp: must specify 'type'.")
-  
-  if(!inherits(params$type, "character"))
-    stop("univDecomp: 'type' must be of class character.")
-  
-  if(is.null(params$funDataObject))
-    stop("univDecomp: must specify 'funDataObject'.")
-  
-  if(class(params$funDataObject) != "funData")
-    stop("univDecomp: 'funDataObject' must be of class funData.")
-  
-  # delete function call and type information in params
-  params[[1]] <- NULL
-  params$type <- NULL  
+  params$funDataObject <- data
   
   res <- switch(type,
                 "uFPCA" = do.call(fpcaBasis, params),
@@ -202,7 +187,7 @@ fpcaBasis <- function(funDataObject, nbasis = 10, pve = 0.99, npc = NULL, makePD
 #' b2 <- eFun(seq(-pi, pi, 0.03), M = 8, type = "Fourier")
 #' b <- tensorProduct(b1,b2) # 2D basis functions
 #' scores <- matrix(rnorm(N*56), nrow = N)
-#' f <- expandBasisFunction(scores = scores, functions = b) # calculate observation (= linear combination of basis functions)
+#' f <- defaultFunction(scores = scores, functions = b) # calculate observation (= linear combination of basis functions)
 #' 
 #' # calculate basis functions based on UMPCA algorithm (needs some time)
 #' \donttest{
@@ -312,7 +297,7 @@ makeDiffOp <- function(degree, dim){
 #' b2 <- eFun(seq(-pi, pi, 0.03), M = 8, type = "Fourier")
 #' b <- tensorProduct(b1,b2) # 2D basis functions
 #' scores <- matrix(rnorm(N*56), nrow = N)
-#' f <- expandBasisFunction(scores = scores, functions = b) # calculate observation (= linear combination of basis functions)
+#' f <- defaultFunction(scores = scores, functions = b) # calculate observation (= linear combination of basis functions)
 #' 
 #' # calculate basis functions based on FCP_TPA algorithm (needs some time)
 #' \donttest{
@@ -543,7 +528,7 @@ splineBasis1Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
 #' b2 <- eFun(seq(-pi, pi, 0.03), M = 8, type = "Fourier")
 #' b <- tensorProduct(b1,b2) # 2D basis functions
 #' scores <- matrix(rnorm(N*56), nrow = N)
-#' dat <- expandBasisFunction(scores = scores, functions = b) # calculate observation (= linear combination of basis functions)
+#' dat <- defaultFunction(scores = scores, functions = b) # calculate observation (= linear combination of basis functions)
 #' 
 #' # calculate 2D spline basis decomposition (needs some time)
 #' \donttest{

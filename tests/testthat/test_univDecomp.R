@@ -42,13 +42,13 @@ test_that("test univariate decompositions 1D", {
   expect_equal(norm(fpca$functions), rep(1,5))
   
   # wrapper function
-  decompSpline1D <- MFPCA:::univDecomp(type = "splines1D", funDataObject = f1, bs = "ps", m = 3, k = 10)
+  decompSpline1D <- MFPCA:::univDecomp(type = "splines1D", data = f1, params = list(bs = "ps", m = 3, k = 10))
   expect_equal(decompSpline1D, spline1D)
   
-  decompSpline1Dpen <- MFPCA:::univDecomp(type = "splines1Dpen", funDataObject = f1, bs = "ps", m = 3, k = 10)
+  decompSpline1Dpen <- MFPCA:::univDecomp(type = "splines1Dpen", data = f1, params = list(bs = "ps", m = 3, k = 10))
   expect_equal(decompSpline1Dpen, spline1Dpen)
   
-  decompFPCA1D <- MFPCA:::univDecomp(type = "uFPCA", funDataObject = f1, pve = 0.95)
+  decompFPCA1D <- MFPCA:::univDecomp(type = "uFPCA", data = f1, params = list(pve = 0.95))
   expect_equal(decompFPCA1D, fpca)
 })
 
@@ -159,16 +159,16 @@ test_that("test univariate decompositions 2D", {
   expect_equal(norm(fcptpa2D$functions)[1], 0.000520573393)
   
   # wrapper function
-  decompSpline2D <- MFPCA:::univDecomp(type = "splines2D", funDataObject = f2, bs = "ps", m = c(2,3), k = c(8,10))
+  decompSpline2D <- MFPCA:::univDecomp(type = "splines2D", data = f2, params = list(bs = "ps", m = c(2,3), k = c(8,10)))
   expect_equal(decompSpline2D, spline2D)
   
-  decompSpline2Dpen <- MFPCA:::univDecomp(type = "splines2Dpen", funDataObject = extractObs(f2,1:2), bs = "ps", m = c(2,3), k = c(8,10))
+  decompSpline2Dpen <- MFPCA:::univDecomp(type = "splines2Dpen", data = extractObs(f2,1:2), params = list(bs = "ps", m = c(2,3), k = c(8,10)))
   expect_equal(decompSpline2Dpen, spline2Dpen)
   
-  decompUMPCA2D <- MFPCA:::univDecomp(type = "UMPCA", funDataObject = f2, npc = 4)
+  decompUMPCA2D <- MFPCA:::univDecomp(type = "UMPCA", data = f2, params = list(npc = 4))
   expect_equal(decompUMPCA2D, umpca2D)
   
   set.seed(2)
-  decompFCPTPA2D <- MFPCA:::univDecomp(type = "FCP_TPA", funDataObject = f2, npc = 4, alphaRange = list(v = c(1e-4, 1e4), w = c(1e-4, 1e4)))
+  decompFCPTPA2D <- MFPCA:::univDecomp(type = "FCP_TPA", data = f2, params = list(npc = 4, alphaRange = list(v = c(1e-4, 1e4), w = c(1e-4, 1e4))))
   expect_equal(decompFCPTPA2D, fcptpa2D)
 })
