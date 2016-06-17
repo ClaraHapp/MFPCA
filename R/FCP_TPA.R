@@ -65,18 +65,22 @@
 #' @export FCP_TPA
 #' 
 #' @examples
-#'  # set.seed(12345)
+#'  # set.seed(1234)
+#'  
+#'  N <- 100
+#'  S1 <- 75
+#'  S2 <- 75
 #' 
 #'  # define "true" components
-#'  v <- sin(seq(-pi, pi, length.out = 100))
-#'  w <- exp(seq(-0.5, 1, length.out = 150))
+#'  v <- sin(seq(-pi, pi, length.out = S1))
+#'  w <- exp(seq(-0.5, 1, length.out = S2))
 #'  
-#'  # simulate tensor data
-#'  X <- rnorm(80, sd = 0.5) %o% v %o% w
+#'  # simulate tensor data with dimensions N x S1 x S2
+#'  X <- rnorm(N, sd = 0.5) %o% v %o% w
 #'  
 #'  # create penalty matrices (penalize first differences for each dimension)
-#'  Pv <- crossprod(diff(diag(100)))
-#'  Pw <- crossprod(diff(diag(150)))
+#'  Pv <- crossprod(diff(diag(S1)))
+#'  Pw <- crossprod(diff(diag(S2)))
 #'  
 #'  # estimate one eigentensor
 #'  res <- FCP_TPA(X, K = 1, penMat = list(v = Pv, w = Pw),
@@ -94,6 +98,44 @@
 FCP_TPA <- function(X, K, penMat, alphaRange, verbose = FALSE, tol = 1e-4, maxIter = 15, adaptTol = TRUE)
 {
   dimX <- dim(X)
+  
+  ### check input parameters
+  
+  # penMat: correct list names
+  if(!identical(names(penMat), c("v", "w")))
+    stop("Function FCP_TPA: penMat must be a list of matrices with entries 'v' and 'w'.")
+  
+  # penMat$v: correct dimensions and symmetric
+  if(any(dim(penMat$v) != rep(dimX[2],2)))
+    stop("Function FCP_TPA: the penalization matrix for dimension v must be ", dimX[2], " x ", dimX[2], ".")
+  
+  if(!isSymmetric(penMat$v))
+    stop("Function FCP_TPA: the penalization matrix for dimension v must be symmetric.")
+  
+  # penMat$w: correct dimensions and symmetric
+  if(any(dim(penMat$w) != rep(dimX[3],2)))
+    stop("Function FCP_TPA: the penalization matrix for dimension w must be ", dimX[3], " x ", dimX[3], ".")
+  
+  if(!isSymmetric(penMat$w))
+    stop("Function FCP_TPA: the penalization matrix for dimension w must be symmetric.")
+    
+  # alphaRange: correct list names, length and values
+  if(!identical(names(alphaRange), c("v", "w")))
+    stop("Function FCP_TPA: alphaRange must be a list of vectors with entries 'v' and 'w'.")
+  
+  if(length(alphaRange$v) != 2)
+    stop("Function FCP_TPA: alphaRange$v must be a vector of length 2.")
+  
+  if(any(alphaRange$v < 0))
+    stop("Function FCP_TPA: Values for alphaV must not be negative.")
+  
+  if(length(alphaRange$w) != 2)
+    stop("Function FCP_TPA: alphaRange$w must be a vector of length 2.")
+  
+  if(any(alphaRange$w < 0))
+    stop("Function FCP_TPA: Values for alphaW must not be negative.")
+
+  ### initialize all relevant values
   
   # initialize the norm-one vectors u, v, w randomly
   u <- runif(dimX[1], min = -1, max = 1); u <- u/normVec(u)
@@ -174,7 +216,7 @@ FCP_TPA <- function(X, K, penMat, alphaRange, verbose = FALSE, tol = 1e-4, maxIt
           uOld <- u
           vOld <- v
           wOld <- w
-          warning("FCP-TPA algorithm did not converge; iteration", k , "stopped")
+          warning("FCP-TPA algorithm did not converge; iteration ", k , " stopped.")
         } 
       }
     }
@@ -212,7 +254,10 @@ FCP_TPA <- function(X, K, penMat, alphaRange, verbose = FALSE, tol = 1e-4, maxIt
 #' @return The euclidean norm of \code{x}.
 #' 
 #' @keywords internal
-normVec <- function(x) sqrt(sum(x^2))
+normVec <- function(x)
+{
+  sqrt(sum(x^2))
+}
 
 #' Find the optimal smoothing parameters in FCP_TPA using GCV
 #' 

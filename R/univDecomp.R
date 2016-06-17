@@ -15,9 +15,9 @@
 #'
 #' @param type A character string, specifying the basis for which the
 #'   decomposition is to be calculated.
-#' @param data A \code{funData} object, representing the (univariate) functional
+#' @param funDataObject A \code{funData} object, representing the (univariate) functional
 #'   data samples.
-#' @param params A list containing the parameters for the particular basis to
+#' @param ... Further parameters, passed to the function for the particular basis to
 #'   use.
 #'
 #' @return \item{scores}{A matrix of scores (coefficients) for each observation
@@ -41,18 +41,33 @@
 #'                   eFunType = "Poly", eValType = "linear", N = 100)$simData
 #' 
 #' # decompose the data in univariate functional principal components...
-#' decFPCA <- univDecomp(type = "uFPCA", data = dat, params = list(npc = 5))
+#' decFPCA <- univDecomp(type = "uFPCA", funDataObject = dat, npc = 5)
 #' str(decFPCA)
 #' 
 #' # or in splines (penalized)
-#' decSplines <- univDecomp(type = "splines1Dpen", data = dat) # use mgcv's default params
+#' decSplines <- univDecomp(type = "splines1Dpen", funDataObject = dat) # use mgcv's default params
 #' str(decSplines)
-univDecomp <- function(type, data, params = NULL)
+univDecomp <- function(type, funDataObject, ...)
 {
-  if(is.null(params))
-    params <- list() # create empty list
+  params <- as.list(match.call()) # get all arguments
+  params$funDataObject <- funDataObject # add funDataObject (-> make sure is evaluated in correct env.)
   
-  params$funDataObject <- data
+  # check if type and data are of correct type
+  if(is.null(params$type))
+    stop("univDecomp: must specify 'type'.")
+  
+  if(!inherits(params$type, "character"))
+    stop("univDecomp: 'type' must be of class character.")
+  
+  if(is.null(params$funDataObject))
+    stop("univDecomp: must specify 'funDataObject'.")
+  
+  if(class(params$funDataObject) != "funData")
+    stop("univDecomp: 'funDataObject' must be of class funData.")
+  
+  # delete function call and type information in params
+  params[[1]] <- NULL
+  params$type <- NULL  
   
   res <- switch(type,
                 "uFPCA" = do.call(fpcaBasis, params),
@@ -187,7 +202,9 @@ fpcaBasis <- function(funDataObject, nbasis = 10, pve = 0.99, npc = NULL, makePD
 #' b2 <- eFun(seq(-pi, pi, 0.03), M = 8, type = "Fourier")
 #' b <- tensorProduct(b1,b2) # 2D basis functions
 #' scores <- matrix(rnorm(N*56), nrow = N)
-#' f <- defaultFunction(scores = scores, functions = b) # calculate observation (= linear combination of basis functions)
+#' 
+#' # calculate observations (= linear combination of basis functions)
+#' f <- expandBasisFunction(scores = scores, functions = b)
 #' 
 #' # calculate basis functions based on UMPCA algorithm (needs some time)
 #' \donttest{
@@ -204,7 +221,7 @@ fpcaBasis <- function(funDataObject, nbasis = 10, pve = 0.99, npc = NULL, makePD
 umpcaBasis <- function(funDataObject, npc)
 {
   if(dimSupp(funDataObject) != 2)
-    stop("UMPCAfunData is implemented for (2D) image data only!")
+    stop("UMPCA is implemented for (2D) image data only!")
   
   # throw warning
   warning("The UMPCA algorithm aims more at uncorrelated features than 
@@ -297,7 +314,9 @@ makeDiffOp <- function(degree, dim){
 #' b2 <- eFun(seq(-pi, pi, 0.03), M = 8, type = "Fourier")
 #' b <- tensorProduct(b1,b2) # 2D basis functions
 #' scores <- matrix(rnorm(N*56), nrow = N)
-#' f <- defaultFunction(scores = scores, functions = b) # calculate observation (= linear combination of basis functions)
+#' 
+#' # calculate observations (= linear combination of basis functions)
+#' f <- expandBasisFunction(scores = scores, functions = b)
 #' 
 #' # calculate basis functions based on FCP_TPA algorithm (needs some time)
 #' \donttest{
@@ -396,9 +415,13 @@ fcptpaBasis <- function(funDataObject, npc, smoothingDegree = rep(2,2), alphaRan
 #'  str(noisyDataDec)
 #'  
 #'  # check if noise has been filtered out by penalization
-#'   all.equal(noisyDataDec$scores, dataDec$scores, check.attributes = FALSE) # have almost the same coefficients
+#'  all.equal(noisyDataDec$scores, dataDec$scores, check.attributes = FALSE)
+#'  # -> have almost the same coefficients
 splineBasis1D <- function(funDataObject, bs = "ps", m = NA, k = -1)
 {
+  if(dimSupp(funDataObject) != 1)
+    stop("splines1D is implemented for 1D functional data only.")
+  
   N <- nObs(funDataObject)
   
   x <- funDataObject@argvals[[1]]
@@ -429,6 +452,9 @@ splineBasis1D <- function(funDataObject, bs = "ps", m = NA, k = -1)
 #' @export splineBasis1Dpen
 splineBasis1Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel = FALSE)
 {
+  if(dimSupp(funDataObject) != 1)
+    stop("splines1Dpen is implemented for 1D functional data only.")
+  
   N <- nObs(funDataObject)
   
   x <- funDataObject@argvals[[1]]
@@ -522,7 +548,9 @@ splineBasis1Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
 #' b2 <- eFun(seq(-pi, pi, 0.03), M = 8, type = "Fourier")
 #' b <- tensorProduct(b1,b2) # 2D basis functions
 #' scores <- matrix(rnorm(N*56), nrow = N)
-#' dat <- defaultFunction(scores = scores, functions = b) # calculate observation (= linear combination of basis functions)
+#' 
+#' # calculate observations (= linear combination of basis functions)
+#' dat <- expandBasisFunction(scores = scores, functions = b)
 #' 
 #' # calculate 2D spline basis decomposition (needs some time)
 #' \donttest{
@@ -538,6 +566,9 @@ splineBasis1Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
 #' }
 splineBasis2D <- function(funDataObject, bs = "ps", m = NA, k = -1)
 {
+  if(dimSupp(funDataObject) != 2)
+    stop("splines2D is implemented for 2D functional data (images) only.")
+  
   N <- nObs(funDataObject)
   
   coord <- expand.grid(x = funDataObject@argvals[[1]], y = funDataObject@argvals[[2]])
@@ -570,6 +601,9 @@ splineBasis2D <- function(funDataObject, bs = "ps", m = NA, k = -1)
 #' @export splineBasis2Dpen
 splineBasis2Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel = FALSE)
 {
+  if(dimSupp(funDataObject) != 2)
+    stop("splines2Dpen is implemented for 2D functional data (images) only.")
+  
   N <- nObs(funDataObject)
   
   coord <- expand.grid(x = funDataObject@argvals[[1]], y = funDataObject@argvals[[2]])
