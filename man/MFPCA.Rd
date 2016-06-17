@@ -6,7 +6,7 @@
 different (dimensional) domains}
 \usage{
 MFPCA(mFData, M, uniExpansions, weights = rep(1, length(mFData)),
-  fit = FALSE, approx.eigen = TRUE, bootstrap = FALSE,
+  fit = FALSE, approx.eigen = FALSE, bootstrap = FALSE,
   nBootstrap = NULL, bootstrapAlpha = 0.05, verbose = options()$verbose)
 }
 \arguments{
@@ -28,12 +28,11 @@ eigenfunctions.}
 
 \item{approx.eigen}{Logical. If \code{TRUE}, the eigenanalysis problem for
 the estimated covariance matrix is solved approximately using the
-\pkg{irlba} package, which is much faster. Defaults to \code{TRUE}. If the
-number \code{M} of eigenvalues to calculate is high with respect to the
-number of observations in \code{mFData} or the number of estimated
-univariate eigenfunctions, the approximation may be inappropriate. In this
-case, approx.eigen is set to \code{FALSE} and the function throws a
-warning.}
+\pkg{irlba} package, which is much faster. If the number \code{M} of
+eigenvalues to calculate is high with respect to the number of observations
+in \code{mFData} or the number of estimated univariate eigenfunctions, the
+approximation may be inappropriate. In this case, approx.eigen is set to
+\code{FALSE} and the function throws a warning. Defaults to \code{FALSE}.}
 
 \item{bootstrap}{Logical. If \code{TRUE}, pointwise bootstrap confidence
 bands are calculated for the multivariate functional principal components.
@@ -158,10 +157,9 @@ set.seed(1)
 sim <-  simMultiFunData(type = "split", argvals = list(seq(0,1,0.01), seq(-0.5,0.5,0.02)),
                         M = 5, eFunType = "Poly", eValType = "linear", N = 100)
 
-# MFPCA based on univariate FPCA (default approx.eigen = TRUE is inappropriate here)
+# MFPCA based on univariate FPCA
 uFPCA <- MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "uFPCA"),
-                                                                  list(type = "uFPCA")),
-                         approx.eigen = FALSE)
+                                                                  list(type = "uFPCA")))
 
 # MFPCA based on univariate spline expansions
 splines <- MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "splines1D", k = 10),

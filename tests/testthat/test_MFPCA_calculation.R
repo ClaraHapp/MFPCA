@@ -42,11 +42,12 @@ test_that("test MFPCA main function", {
   
   # check functionality
   expect_warning(uFPCA <- MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "uFPCA"),
-                                                          list(type = "uFPCA"))), 
+                                                          list(type = "uFPCA")), approx.eigen = TRUE), 
                  "Calculating a large percentage of principal components, approximation may not be appropriate.
             'approx.eigen' set to FALSE.")
   splines <- MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "splines1D", k = 10),
-                                                            list(type = "splines1D", k = 10)))
+                                                            list(type = "splines1D", k = 10)),
+                   approx.eigen = TRUE)
   
   # values
   expect_equal(length(uFPCA$values), length(splines$values))
@@ -66,7 +67,7 @@ test_that("MFPCA calculation function", {
   uniB <- univDecomp("uFPCA", sim$simData, npc = 3)
   
   res <- MFPCA:::calcMFPCA(N = 100, p = 1, Bchol = diag(3), M = 3, type = "uFPCA", weights = 1, npc = 3, 
-            argvals = sim$simData@argvals, uniBasis = list(uniB), approx.eigen = FALSE)
+            argvals = sim$simData@argvals, uniBasis = list(uniB))
   
   # for p = 1, the univariate and multivariate results should coincide...
   expect_equal(abs(res$scores), abs(uniB$scores), tol = 2e-3, check.attributes = F)

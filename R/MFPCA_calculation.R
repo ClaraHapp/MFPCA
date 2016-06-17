@@ -99,10 +99,10 @@ calcBasisIntegrals <- function(basisFunctions, dimSupp, argvals)
 #' estimate are used to speed up the calculations. The confidence bands are 
 #' calculated separately for each element as pointwise percentile bootstrap 
 #' confidence intervals. The significance level(s) can be defined by the 
-#' \code{bootstrapAlpha} parameter, which defaults to 5\%. As a result, the
-#' \code{MFPCA} function returns a list \code{CI} of the same length as
-#' \code{bootstrapAlpha}, containing the lower and upper bounds of the
-#' confidence bands as \code{multiFunData} objects of the same structure as
+#' \code{bootstrapAlpha} parameter, which defaults to 5\%. As a result, the 
+#' \code{MFPCA} function returns a list \code{CI} of the same length as 
+#' \code{bootstrapAlpha}, containing the lower and upper bounds of the 
+#' confidence bands as \code{multiFunData} objects of the same structure as 
 #' \code{mFData}.}
 #' 
 #' 
@@ -153,12 +153,11 @@ calcBasisIntegrals <- function(basisFunctions, dimSupp, argvals)
 #'   eigenfunctions.
 #' @param approx.eigen Logical. If \code{TRUE}, the eigenanalysis problem for 
 #'   the estimated covariance matrix is solved approximately using the 
-#'   \pkg{irlba} package, which is much faster. Defaults to \code{TRUE}. If the 
-#'   number \code{M} of eigenvalues to calculate is high with respect to the 
-#'   number of observations in \code{mFData} or the number of estimated 
-#'   univariate eigenfunctions, the approximation may be inappropriate. In this 
-#'   case, approx.eigen is set to \code{FALSE} and the function throws a 
-#'   warning.
+#'   \pkg{irlba} package, which is much faster. If the number \code{M} of
+#'   eigenvalues to calculate is high with respect to the number of observations
+#'   in \code{mFData} or the number of estimated univariate eigenfunctions, the
+#'   approximation may be inappropriate. In this case, approx.eigen is set to
+#'   \code{FALSE} and the function throws a warning. Defaults to \code{FALSE}.
 #' @param bootstrap Logical. If \code{TRUE}, pointwise bootstrap confidence 
 #'   bands are calculated for the multivariate functional principal components. 
 #'   Defaults to \code{FALSE}. See Details.
@@ -206,10 +205,9 @@ calcBasisIntegrals <- function(basisFunctions, dimSupp, argvals)
 #' sim <-  simMultiFunData(type = "split", argvals = list(seq(0,1,0.01), seq(-0.5,0.5,0.02)),
 #'                         M = 5, eFunType = "Poly", eValType = "linear", N = 100)
 #' 
-#' # MFPCA based on univariate FPCA (default approx.eigen = TRUE is inappropriate here)
+#' # MFPCA based on univariate FPCA
 #' uFPCA <- MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "uFPCA"),
-#'                                                                   list(type = "uFPCA")),
-#'                          approx.eigen = FALSE)
+#'                                                                   list(type = "uFPCA")))
 #' 
 #' # MFPCA based on univariate spline expansions
 #' splines <- MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "splines1D", k = 10),
@@ -291,7 +289,7 @@ calcBasisIntegrals <- function(basisFunctions, dimSupp, argvals)
 #' legend("bottomleft", c("True", "MFPCA"), lty = 1:2, lwd = c(2,1))
 #' }
 #' par(oldPar)
-MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fit = FALSE, approx.eigen = TRUE,
+MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fit = FALSE, approx.eigen = FALSE,
                   bootstrap = FALSE, nBootstrap = NULL, bootstrapAlpha = 0.05, verbose = options()$verbose)
 {
   # number of components
@@ -475,7 +473,7 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fi
 #' @importFrom irlba irlba
 #'
 #' @keywords internal
-calcMFPCA <- function(N, p, Bchol, M, type, weights, npc, argvals, uniBasis, fit = FALSE, approx.eigen = TRUE)
+calcMFPCA <- function(N, p, Bchol, M, type, weights, npc, argvals, uniBasis, fit = FALSE, approx.eigen = FALSE)
 {
   # combine all scores
   allScores <- foreach::foreach(j = 1:p, .combine = "cBind")%do%{uniBasis[[j]]$scores}
