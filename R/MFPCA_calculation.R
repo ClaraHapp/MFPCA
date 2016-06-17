@@ -87,28 +87,41 @@ calcBasisIntegrals <- function(basisFunctions, dimSupp, argvals)
 #' t}{<<f,g>>_w = \sum_{j = 1}^p w_j \int_\calT_j f^(j)(t) g^(j)(t) d t} and the
 #' corresponding weighted covariance operator \eqn{\Gamma_w}.}
 #' 
-#' \subsection{Pointwise bootstrap confidence bands}{Optionally, pointwise 
-#' bootstrap confidence bands are generated for the multivariate functional 
-#' principal components \eqn{\hat \psi_1, \ldots, \hat \psi_M}{\hat \psi_1, 
-#' \ldots, \hat \psi_M}.}
+#' \subsection{Pointwise bootstrap confidence bands}{If \code{bootstrap = TRUE},
+#' pointwise bootstrap confidence bands are generated for the multivariate 
+#' functional principal components \eqn{\hat \psi_1, \ldots, \hat \psi_M}{\hat 
+#' \psi_1, \ldots, \hat \psi_M}. The parameter \code{nBootstrap} gives the 
+#' number of bootstrap iterations. In each iteration, the observations are 
+#' resampled on the level of (multivariate) functions and the whole MFPCA is 
+#' recalculated. In particular, if the univariate basis depends on the data 
+#' (FPCA approaches), basis functions and scores are both re-estimated. If the 
+#' basis functions are fixed (e.g. splines), the scores form the original 
+#' estimate are used to speed up the calculations. The confidence bands are 
+#' calculated separately for each element as pointwise percentile bootstrap 
+#' confidence intervals. The significance level(s) can be defined by the 
+#' \code{bootstrapAlpha} parameter, which defaults to 5\%. As a result, the
+#' \code{MFPCA} function returns a list \code{CI} of the same length as
+#' \code{bootstrapAlpha}, containing the lower and upper bounds of the
+#' confidence bands as \code{multiFunData} objects of the same structure as
+#' \code{mFData}.}
 #' 
 #' 
 #' \subsection{Univariate Expansions}{The multivariate functional principal 
 #' component analysis relies on a univariate basis expansion for each element 
 #' \eqn{X^{(j)}}{X^(j)}. The univariate basis representation is calculated using
-#' the \code{\link{univDecomp}} function, that passes the univariate functional
+#' the \code{\link{univDecomp}} function, that passes the univariate functional 
 #' observations and optional parameters to the specific function. The univariate
 #' decompositions are specified via the \code{uniExpansions} argument in the 
-#' \code{MFPCA} function. It is a list of the same length as the \code{mFData}
+#' \code{MFPCA} function. It is a list of the same length as the \code{mFData} 
 #' object, i.e. having one entry for each element of the multivariate functional
 #' data. For each element, \code{uniExpansion} must specify at least the type of
-#' basis functions to use. Additionally, one may add further parameters. The
-#' following basis representations are supported: \itemize{ \item Univariate
-#' functional principal component analysis. Then \code{uniExpansions[[j]] =
-#' list(type = "uFPCA", nbasis, pve, npc, makePD)}, where
-#' \code{nbasis,pve,npc,makePD} are parameters passed to the \code{\link{PACE}}
-#' function for calculating the univariate functional principal component
-#' analysis. \item Spline basis functions (not penalized). Then
+#' basis functions to use. Additionally, one may add further parameters. The 
+#' following basis representations are supported: \itemize{ \item Univariate 
+#' functional principal component analysis. Then \code{uniExpansions[[j]] = 
+#' list(type = "uFPCA", nbasis, pve, npc, makePD)}, where 
+#' \code{nbasis,pve,npc,makePD} are parameters passed to the \code{\link{PACE}} 
+#' function for calculating the univariate functional principal component 
+#' analysis. \item Spline basis functions (not penalized). Then 
 #' \code{uniExpansions[[j]] = list(type = "splines1D", bs, m, k)}, where 
 #' \code{bs,m,k} are passed to the functions \code{\link{univDecomp}} and 
 #' \code{\link{univExpansion}}. For two-dimensional tensor product splines, use 

@@ -97,10 +97,23 @@ and the MFPCA is based on the weighted scalar product \deqn{<<f,g>>_w =
 t}{<<f,g>>_w = \sum_{j = 1}^p w_j \int_\calT_j f^(j)(t) g^(j)(t) d t} and the
 corresponding weighted covariance operator \eqn{\Gamma_w}.}
 
-\subsection{Pointwise bootstrap confidence bands}{Optionally, pointwise
-bootstrap confidence bands are generated for the multivariate functional
-principal components \eqn{\hat \psi_1, \ldots, \hat \psi_M}{\hat \psi_1,
-\ldots, \hat \psi_M}.}
+\subsection{Pointwise bootstrap confidence bands}{If \code{bootstrap = TRUE},
+pointwise bootstrap confidence bands are generated for the multivariate
+functional principal components \eqn{\hat \psi_1, \ldots, \hat \psi_M}{\hat
+\psi_1, \ldots, \hat \psi_M}. The parameter \code{nBootstrap} gives the
+number of bootstrap iterations. In each iteration, the observations are
+resampled on the level of (multivariate) functions and the whole MFPCA is
+recalculated. In particular, if the univariate basis depends on the data
+(FPCA approaches), basis functions and scores are both re-estimated. If the
+basis functions are fixed (e.g. splines), the scores form the original
+estimate are used to speed up the calculations. The confidence bands are
+calculated separately for each element as pointwise percentile bootstrap
+confidence intervals. The significance level(s) can be defined by the
+\code{bootstrapAlpha} parameter, which defaults to 5\%. As a result, the
+\code{MFPCA} function returns a list \code{CI} of the same length as
+\code{bootstrapAlpha}, containing the lower and upper bounds of the
+confidence bands as \code{multiFunData} objects of the same structure as
+\code{mFData}.}
 
 \subsection{Univariate Expansions}{The multivariate functional principal
 component analysis relies on a univariate basis expansion for each element
