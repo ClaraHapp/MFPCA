@@ -37,10 +37,10 @@
 #'   
 #' @references Di, C., Crainiceanu, C., Caffo, B., and Punjabi, N. (2009).
 #' Multilevel functional principal component analysis. Annals of Applied
-#' Statistics, 3, 458–488. 
+#' Statistics, 3, 458--488. 
 #' Yao, F., Mueller, H.-G., and Wang, J.-L. (2005).
 #' Functional data analysis for sparse longitudinal data. Journal of the
-#' American Statistical Association, 100, 577–590.
+#' American Statistical Association, 100, 577--590.
 #' 
 #' @importFrom mgcv gam predict.gam
 #'   
