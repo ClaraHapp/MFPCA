@@ -721,11 +721,13 @@ splineBasis2Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
 #'                                   matrix(rnorm(50*75, sd = 0.1), nrow = 50)),
 #'                        c(3,1,2)))
 #' 
-#' # Calculate basis functions              
+#' # Calculate basis functions: This will throw an error if fftw3 is not installed.           
+#' \dontrun{
 #' dct2D <- dctBasis2D(f2, qThresh = 0.95)
 #' 
 #' # verify that scores are saved in a sparse matrix
 #' dct2D$scores[,1:25] # the first 25 scores for each observation
+#' }
 dctBasis2D <- function(funDataObject, qThresh, parallel = FALSE)
 {
   if(dimSupp(funDataObject) != 2)
