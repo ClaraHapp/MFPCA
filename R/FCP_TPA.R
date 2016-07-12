@@ -62,6 +62,8 @@
 #'   
 #' @seealso \code{\link{fcptpaBasis}}
 #' 
+#' @importFrom stats runif
+#' 
 #' @export FCP_TPA
 #' 
 #' @examples
@@ -138,9 +140,9 @@ FCP_TPA <- function(X, K, penMat, alphaRange, verbose = FALSE, tol = 1e-4, maxIt
   ### initialize all relevant values
   
   # initialize the norm-one vectors u, v, w randomly
-  u <- runif(dimX[1], min = -1, max = 1); u <- u/normVec(u)
-  v <- runif(dimX[2], min = -1, max = 1); v <- v/normVec(v)
-  w <- runif(dimX[3], min = -1, max = 1); w <- w/normVec(w)
+  u <- stats::runif(dimX[1], min = -1, max = 1); u <- u/normVec(u)
+  v <- stats::runif(dimX[2], min = -1, max = 1); v <- v/normVec(v)
+  w <- stats::runif(dimX[3], min = -1, max = 1); w <- w/normVec(w)
   
   # initialize smoothing parameters: start with minimal values (almost no smoothing)
   alphaV <- min(alphaRange$v)
@@ -298,24 +300,28 @@ normVec <- function(x)
 #' @keywords internal
 #'   
 #' @seealso \code{\link{FCP_TPA}}, \code{\link{gcv}}
+#' 
+#' @importFrom stats optimize
 findAlphaVopt <- function(alphaRange, data, u, w, alphaW, OmegaW, GammaV, lambdaV)
 {
   z <-  crossprod(GammaV, ttv(data, list(u,w), c(1,3))) / (normVec(u) * normVec(w))
   eta <- 1/(1 + alphaW * crossprod(w, OmegaW %*% w)/normVec(w))
   
-  res <- optimize(f=gcv, interval=c(min(alphaRange), max(alphaRange)), 
+  res <- stats::optimize(f=gcv, interval=c(min(alphaRange), max(alphaRange)), 
                  n = length(lambdaV), z = z, eta = eta, lambda = lambdaV)$minimum
  
  return(res)
 }
 
 #' @describeIn findAlphaVopt
+#' 
+#' @importFrom stats optimize
 findAlphaWopt <- function(alphaRange, data, u, v, alphaV, OmegaV, GammaW, lambdaW)
 {
   z <-  crossprod(GammaW, ttv(data, list(u,v), c(1,2))) / (normVec(u) * normVec(v))
   eta <- 1/(1 + alphaV * crossprod(v, OmegaV %*% v)/normVec(v))
 
-  res <- optimize(f=gcv, interval=c(min(alphaRange), max(alphaRange)), 
+  res <- stats::optimize(f=gcv, interval=c(min(alphaRange), max(alphaRange)), 
                   n = length(lambdaW), z = z, eta = eta, lambda = lambdaW)$minimum
   
   return(res)

@@ -1,15 +1,33 @@
 Package: MFPCA
 Type: Package
-Title: Multivariate Functional Principal Component Analysis for Data Observed on Different Dimensional Domains
+Title: Multivariate Functional Principal Component Analysis for Data Observed on
+    Different Dimensional Domains
 Version: 0.2
 Authors@R: person("Clara", "Happ", email = "clara.happ@stat.uni-muenchen.de",
                   role = c("aut", "cre"))
 Author: Clara Happ [aut, cre]
 Maintainer: Clara Happ <clara.happ@stat.uni-muenchen.de>
-Description:  Calculate a multivariate functional principal component analysis for data observed on different dimensional domains. The estimation algorithm relies on univariate basis expansions for each element of the multivariate functional data. Multivariate and univariate functional data objects are represented by S4 classes for this type of data implemented in the package funData.
+Description: Calculate a multivariate functional principal component analysis
+    for data observed on different dimensional domains. The estimation algorithm
+    relies on univariate basis expansions for each element of the multivariate
+    functional data. Multivariate and univariate functional data objects are
+    represented by S4 classes for this type of data implemented in the package
+    funData.
 License: GPL-2
-Imports: abind,  foreach, irlba, Matrix
-Depends: R (>= 3.1.0), funData, mgcv, plyr
-Suggests: testthat
+Imports:
+    abind,
+    foreach,
+    irlba,
+    Matrix,
+    methods,
+    stats
+Depends:
+    R (>= 3.1.0),
+    funData,
+    mgcv,
+    plyr
+Suggests:
+    testthat
 NeedsCompilation: yes
 SystemRequirements: libfftw3 (>= 3.3.4)
+RoxygenNote: 5.0.1

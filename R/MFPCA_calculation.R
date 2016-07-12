@@ -467,6 +467,7 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fi
 
 #' Internal function that implements the MFPCA algorithm for given univariate decompositions
 #'
+#' @importFrom stats cov
 #' @importFrom Matrix t
 #' @importFrom Matrix cBind
 #' @importFrom foreach foreach
@@ -506,7 +507,7 @@ calcMFPCA <- function(N, p, Bchol, M, type, weights, npc, argvals, uniBasis, fit
       if(sum(npc) > 1000)
         warning("MFPCA with > 1000 univariate eigenfunctions and approx.eigen = FALSE. This may take some time...")
 
-      e <- eigen(cov(allScores) * outer(allWeights, allWeights, "*"))
+      e <- eigen(stats::cov(allScores) * outer(allWeights, allWeights, "*"))
 
       values <- e$values[1:M]
       vectors <- e$vectors[,1:M]
@@ -526,7 +527,7 @@ calcMFPCA <- function(N, p, Bchol, M, type, weights, npc, argvals, uniBasis, fit
       if(sum(npc) > 1000)
         warning("MFPCA with > 1000 univariate eigenfunctions and approx.eigen = FALSE. This may take some time...")
 
-      e <- eigen(Matrix::crossprod(Bchol) %*% (cov(allScores) * outer(allWeights, allWeights, "*")))
+      e <- eigen(Matrix::crossprod(Bchol) %*% (stats::cov(allScores) * outer(allWeights, allWeights, "*")))
 
       values <- Re(e$values[1:M])
       vectors <- Re(e$vectors[,1:M])

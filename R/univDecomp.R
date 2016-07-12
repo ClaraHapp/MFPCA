@@ -394,6 +394,7 @@ fcptpaBasis <- function(funDataObject, npc, smoothingDegree = rep(2,2), alphaRan
 #' @seealso \code{\link{univDecomp}}, \code{\link[mgcv]{gam}},
 #'   \code{\link[foreach]{foreach}}
 #'   
+#' @importFrom stats lm
 #' @importFrom mgcv gam
 #'   
 #' @export splineBasis1D
@@ -433,7 +434,7 @@ splineBasis1D <- function(funDataObject, bs = "ps", m = NA, k = -1)
   m <- g$smooth[[1]]$p.order
   
   # weights via lm -> no penalization
-  scores <- t(apply(funDataObject@X, 1, function(f, dM){lm(f ~ dM - 1)$coef}, dM = desMat)) # design matrix already includes intercept!
+  scores <- t(apply(funDataObject@X, 1, function(f, dM){stats::lm(f ~ dM - 1)$coef}, dM = desMat)) # design matrix already includes intercept!
   
   return(list(scores = scores,
               B = calcBasisIntegrals(t(desMat), 1, funDataObject@argvals),
@@ -448,6 +449,7 @@ splineBasis1D <- function(funDataObject, bs = "ps", m = NA, k = -1)
 #' @importFrom foreach %do%
 #' @importFrom foreach %dopar%
 #' @importFrom mgcv gam
+#' @importFrom mgcv model.matrix.gam
 #' 
 #' @export splineBasis1Dpen
 splineBasis1Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel = FALSE)
@@ -482,7 +484,7 @@ splineBasis1Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
   scores <- rbind(scores, g$coef)
   
   return(list(scores = scores,
-              B = calcBasisIntegrals(t(model.matrix(g)), 1, funDataObject@argvals),
+              B = calcBasisIntegrals(t(mgcv::model.matrix.gam(g)), 1, funDataObject@argvals),
               ortho = FALSE,
               functions = NULL,
               settings = list(bs = bs, k = k, m = m)
@@ -537,6 +539,7 @@ splineBasis1Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
 #'   \code{\link[mgcv]{gam}}, \code{\link[mgcv]{bam}}, 
 #'   \code{\link[foreach]{foreach}}
 #'   
+#' @importFrom stats lm
 #' @importFrom mgcv gam
 #'   
 #' @export splineBasis2D
@@ -580,7 +583,7 @@ splineBasis2D <- function(funDataObject, bs = "ps", m = NA, k = -1)
   m <- lapply(g$smooth[[1]]$margin, function(l){l$p.order})
   
   # weights via lm -> no penalization
-  scores <- t(apply(funDataObject@X, 1, function(f, dM){lm(as.vector(f) ~ dM - 1)$coef}, dM = desMat))
+  scores <- t(apply(funDataObject@X, 1, function(f, dM){stats::lm(as.vector(f) ~ dM - 1)$coef}, dM = desMat))
   
   # extract basis functions (in the correct dimensions)
   B <- aperm(array(desMat, c(funData::nObsPoints(funDataObject), ncol(scores))), c(3,1,2))
@@ -597,6 +600,7 @@ splineBasis2D <- function(funDataObject, bs = "ps", m = NA, k = -1)
 #' @importFrom foreach %do%
 #' @importFrom foreach %dopar%
 #' @importFrom mgcv bam
+#' @importFrom mgcv model.matrix.gam
 #' 
 #' @export splineBasis2Dpen
 splineBasis2Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel = FALSE)
@@ -631,7 +635,7 @@ splineBasis2Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
   scores <- rbind(scores, g$coef)
   
   # extract basis functions (in the correct dimensions)
-  B <- aperm(array(model.matrix(g), c(nObsPoints(funDataObject), ncol(scores))), c(3,1,2))
+  B <- aperm(array(mgcv::model.matrix.gam(g), c(nObsPoints(funDataObject), ncol(scores))), c(3,1,2))
   
   return(list(scores = scores,
               B = calcBasisIntegrals(B, 2, funDataObject@argvals),
@@ -774,6 +778,8 @@ dctBasis2D <- function(funDataObject, qThresh, parallel = FALSE)
 #'   vector, giving the values of the corresponding coefficients.}
 #'
 #' @seealso \code{\link{dctBasis2D}}
+#' 
+#' @importFrom stats quantile
 #'
 #' @useDynLib MFPCA calcCoefs
 #'
@@ -786,7 +792,7 @@ dct2D <- function(image, qThresh)
   res <- .C("calcCoefs", M = as.integer(nrow(image)), N = as.integer(ncol(image)),
             image = as.numeric(image), coefs = as.numeric(image*0))$coefs
   
-  ind <- which(abs(res) > quantile(abs(res), qThresh))
+  ind <- which(abs(res) > stats::quantile(abs(res), qThresh))
   
   return(list(ind = ind, val = res[ind]))
 }
@@ -841,6 +847,8 @@ dctBasis3D <- function(funDataObject, qThresh, parallel = FALSE)
 #'   vector, giving the values of the corresponding coefficients.}
 #'
 #' @seealso \code{\link{dctBasis3D}}
+#' 
+#' @importFrom stats quantile
 #'
 #' @useDynLib MFPCA calcCoefs3D
 #'
@@ -853,7 +861,7 @@ dct3D <- function(image, qThresh)
   res <- .C("calcCoefs3D", dim = as.integer(dim(image)),
             image = as.numeric(image), coefs = as.numeric(image*0))$coefs
   
-  ind <- which(abs(res) > quantile(abs(res), qThresh))
+  ind <- which(abs(res) > stats::quantile(abs(res), qThresh))
   
   return(list(ind = ind, val = res[ind]))
 }

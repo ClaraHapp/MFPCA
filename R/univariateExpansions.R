@@ -402,6 +402,7 @@ splineFunction2Dpen <- function(scores, argvals, bs, m, k)
 #'      x = rnorm(30)) # sample values
 #' scores
 #' 
+#' \dontrun{
 #' # calculate basis expansion on [0,1] x [0,1]
 #' f <- dctFunction2D(scores = scores, argvals = list(seq(0,1,0.01), seq(0,1,0.01)))
 #' nObs(f) # f has 10 observations
@@ -413,13 +414,14 @@ splineFunction2Dpen <- function(scores, argvals, bs, m, k)
 #' plot(f, obs = 2) # plot second observation
 #' 
 #' par(oldPar)
+#' }
 dctFunction2D <- function(scores, argvals, parallel = FALSE)
 {
   # dimension of the image
   dim <-sapply(argvals, length)
 
   # get indices of sparse matrix
-  scores <- as(scores, "dgTMatrix") # uncompressed format
+  scores <- methods::as(scores, "dgTMatrix") # uncompressed format
 
   if(parallel)
     res <- foreach::foreach(i = 0:max(scores@i), .combine = function(x,y){abind(x,y, along = 3)}) %dopar%{
@@ -491,7 +493,7 @@ dctFunction3D <- function(scores, argvals, parallel = FALSE)
   dim <-sapply(argvals, length)
 
   # get indices of sparse matrix
-  scores <- as(scores, "dgTMatrix") # uncompressed format
+  scores <- methods::as(scores, "dgTMatrix") # uncompressed format
 
   if(parallel)
     res <- foreach::foreach(i = 0:max(scores@i), .combine = function(x,y){abind(x,y, along = 4)}) %dopar%{

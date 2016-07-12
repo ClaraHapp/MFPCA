@@ -155,6 +155,8 @@ UMPCA <- function(TX, numP)
 #' \item{lambda}{Largest eigenvalue}
 #' \item{x}{corresponding eigenvector}
 #' 
+#' @importFrom stats runif
+#' 
 #' @keywords internal
 maxeig <- function(A)
 {
@@ -167,7 +169,7 @@ maxeig <- function(A)
   # make sure x is not an eigenvector of A (for a possibly small eigenvalue)
   while( isTRUE( all.equal(as.vector(A %*% x), as.numeric(t(x) %*% A %*% x) * x) ))
   {
-    x <- runif(n)
+    x <- stats::runif(n)
     x <- x/normVec(n)
   }             
   lambda <- 1
