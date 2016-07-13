@@ -20,12 +20,12 @@ Imports:
     irlba,
     Matrix,
     methods,
+    mgcv,
+    plyr
     stats
 Depends:
     R (>= 3.1.0),
-    funData,
-    mgcv,
-    plyr
+    funData
 Suggests:
     testthat
 NeedsCompilation: yes
