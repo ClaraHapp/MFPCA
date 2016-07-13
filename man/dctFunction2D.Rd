@@ -53,6 +53,7 @@ scores <- Matrix::sparseMatrix(i = sample(1:10, 30, replace = TRUE), # sample ro
      x = rnorm(30)) # sample values
 scores
 
+\dontrun{
 # calculate basis expansion on [0,1] x [0,1]
 f <- dctFunction2D(scores = scores, argvals = list(seq(0,1,0.01), seq(0,1,0.01)))
 nObs(f) # f has 10 observations
@@ -64,6 +65,7 @@ plot(f, obs = 1) # plot first observation
 plot(f, obs = 2) # plot second observation
 
 par(oldPar)
+}
 }
 \seealso{
 \code{\link{univExpansion}}, \code{\link{idct2D}},
