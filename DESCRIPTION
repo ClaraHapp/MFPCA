@@ -21,7 +21,7 @@ Imports:
     Matrix,
     methods,
     mgcv,
-    plyr
+    plyr,
     stats
 Depends:
     R (>= 3.1.0),
