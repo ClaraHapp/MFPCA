@@ -139,7 +139,7 @@ test_that("test univariate decompositions 2D", {
   expect_null(spline2Dpen$functions)
   expect_equal(spline2Dpen$settings, list(bs = "ps", k = c(8,10), m =list(c(2,2), c(3,3)))) 
   
-  umpca2D <- MFPCA:::umpcaBasis(f2, npc = 4)
+  expect_warning(umpca2D <- MFPCA:::umpcaBasis(f2, npc = 4))
   expect_error(MFPCA:::umpcaBasis(funData(x1, t(sapply(1:5, function(x){x*x1}))), npc = 4), "UMPCA is implemented for (2D) image data only!", fixed = TRUE)
   expect_equal(dim(umpca2D$scores), c(10, 4))
   expect_equal(mean(umpca2D$scores),  0) 
@@ -165,7 +165,7 @@ test_that("test univariate decompositions 2D", {
   decompSpline2Dpen <- MFPCA:::univDecomp(type = "splines2Dpen", funDataObject = extractObs(f2,1:2), bs = "ps", m = c(2,3), k = c(8,10))
   expect_equal(decompSpline2Dpen, spline2Dpen)
   
-  decompUMPCA2D <- MFPCA:::univDecomp(type = "UMPCA", funDataObject = f2, npc = 4)
+  expect_warning(decompUMPCA2D <- MFPCA:::univDecomp(type = "UMPCA", funDataObject = f2, npc = 4))
   expect_equal(decompUMPCA2D, umpca2D)
   
   set.seed(2)
