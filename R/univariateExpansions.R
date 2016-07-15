@@ -214,7 +214,7 @@ expandBasisFunction <- function(scores, argvals = functions@argvals, functions)
 #' @seealso \code{\link{univExpansion}}, \code{\link{gam}},
 #'   \code{\link{splineBasis1D}}
 #'   
-#' @importFrom mgcv gam
+#' @importFrom mgcv gam s
 #' 
 #' @export splineFunction1D
 #' 
@@ -287,7 +287,7 @@ splineFunction1D <- function(scores, argvals, bs, m, k)
 #' @seealso \code{\link{univExpansion}},  \code{\link{gam}}, 
 #'   \code{\link{splineBasis2D}}
 #'   
-#' @importFrom mgcv gam
+#' @importFrom mgcv gam te
 #'   
 #' @export splineFunction2D
 #' 
@@ -333,7 +333,7 @@ splineFunction2D <- function(scores, argvals, bs, m, k)
 
 #' @rdname splineFunction2D
 #'   
-#' @importFrom mgcv gam
+#' @importFrom mgcv gam te
 #'   
 #' @export splineFunction2Dpen
 splineFunction2Dpen <- function(scores, argvals, bs, m, k)

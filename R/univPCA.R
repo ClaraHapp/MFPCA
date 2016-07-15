@@ -42,7 +42,7 @@
 #' Functional data analysis for sparse longitudinal data. Journal of the
 #' American Statistical Association, 100, 577--590.
 #' 
-#' @importFrom mgcv gam predict.gam
+#' @importFrom mgcv gam predict.gam s te
 #'   
 #' @keywords internal
 .PACE <- function(X, Y, Y.pred = NULL, nbasis = 10, pve = 0.99, npc = NULL, makePD = FALSE)

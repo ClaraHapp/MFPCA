@@ -395,7 +395,7 @@ fcptpaBasis <- function(funDataObject, npc, smoothingDegree = rep(2,2), alphaRan
 #'   \code{\link[foreach]{foreach}}
 #'   
 #' @importFrom stats lm
-#' @importFrom mgcv gam
+#' @importFrom mgcv gam s
 #'   
 #' @export splineBasis1D
 #' 
@@ -448,8 +448,7 @@ splineBasis1D <- function(funDataObject, bs = "ps", m = NA, k = -1)
 #'
 #' @importFrom foreach %do%
 #' @importFrom foreach %dopar%
-#' @importFrom mgcv gam
-#' @importFrom mgcv model.matrix.gam
+#' @importFrom mgcv gam model.matrix.gam s
 #' 
 #' @export splineBasis1Dpen
 splineBasis1Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel = FALSE)
@@ -540,7 +539,7 @@ splineBasis1Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
 #'   \code{\link[foreach]{foreach}}
 #'   
 #' @importFrom stats lm
-#' @importFrom mgcv gam
+#' @importFrom mgcv gam te
 #'   
 #' @export splineBasis2D
 #' 
@@ -599,8 +598,7 @@ splineBasis2D <- function(funDataObject, bs = "ps", m = NA, k = -1)
 #' @rdname splineBasis2D
 #' @importFrom foreach %do%
 #' @importFrom foreach %dopar%
-#' @importFrom mgcv bam
-#' @importFrom mgcv model.matrix.gam
+#' @importFrom mgcv bam model.matrix.gam te
 #' 
 #' @export splineBasis2Dpen
 splineBasis2Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel = FALSE)
