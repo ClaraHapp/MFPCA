@@ -42,13 +42,14 @@ test_that("FPC_TPA",{
   expect_warning(FCP_TPA(X = X, K = 1, penMat = penMat, alphaRange = alphaRange, maxIter = 2, tol = 1e-18),
                  "FCP-TPA algorithm did not converge; iteration 1 stopped.")
   
-  # check results  
+  # check results 
+  set.seed(1)
   res <- FCP_TPA(X = X, K = 1, penMat = penMat, alphaRange = alphaRange)
   
   expect_equal(res$d, MFPCA:::normVec(u) * MFPCA:::normVec(v)  * MFPCA:::normVec(w))
-  expect_equal(abs(res$U[,1]), abs(u/MFPCA:::normVec(u)), tolerance = 1e-4)
-  expect_equal(abs(res$V[,1]), abs(v/MFPCA:::normVec(v)), tolerance = 1e-4)
-  expect_equal(abs(res$W[,1]), abs(w/MFPCA:::normVec(w)), tolerance = 1e-4)
+  expect_equal(abs(res$U[,1]), abs(u/MFPCA:::normVec(u)), tolerance = 1e-9)
+  expect_equal(abs(res$V[,1]), abs(v/MFPCA:::normVec(v)), tolerance = 1e-6)
+  expect_equal(abs(res$W[,1]), abs(w/MFPCA:::normVec(w)), tolerance = 1e-5)
 })
 
 
