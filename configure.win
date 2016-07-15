@@ -1,2 +1,4 @@
 FFTW_LIBS=
 echo "Warning: Installing package MFPCA without Fourier/Cosine basis transformation. This feature is not available on Windows."	
+
+mv ./tests/testthat/test_fftw.R ./tests/testthat/notest_fftw.R # rename fftw test file s.t. it is not tested
