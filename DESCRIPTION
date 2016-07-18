@@ -13,7 +13,7 @@ Description: Calculate a multivariate functional principal component analysis
     relies on univariate basis expansions for each element of the multivariate
     functional data. Multivariate and univariate functional data objects are
     represented by S4 classes for this type of data implemented in the package
-    funData.
+    'funData'.
 License: GPL-2
 Imports:
     abind,
