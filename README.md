@@ -14,19 +14,20 @@ It implements various univariate bases:
 * Univariate functional PCA (only one-dimensional domains)
 * Spline bases (one- and two-dimensional domains; with optional smoothing penalty)
 * Cosine bases (two- and three-dimensional domains; fast implementation built on DCT)
+* Tensor PCA (two-dimensional domains; UMPCA approach from [`Lu et al. (2009)`](http://ieeexplore.ieee.org/xpl/articleDetails.jsp?arnumber=5272374) and FCP_TPA approach from [`Allen (2013)`](http://www.stat.rice.edu/~gallen/gallen_func_hopca_2013.pdf))
 
 The representation of the data is based on the object-oriented [`funData`](https://github.com/ClaraHapp/funData) package, hence all functionalities for plotting, arithmetics etc. included therein may be used.
 
 
 ## Installation ##
 
-To install the latest version directly from GitHub, please use `devtools::install_github("ClaraHapp/MFPCA")` (install [`devtools`](https://github.com/hadley/devtools) before).
+To install the latest version directly from GitHub, please use `devtools::install_github("ClaraHapp/MFPCA")` (install [`devtools`](https://cran.r-project.org/package=devtools) before).
 
-If you would like to use the cosine bases make sure that the `C`-library [`fftw3`](http://www.fftw.org/) is installed on your computer before you install `MFPCA`. Otherwise, `MFPCA` is installed without the cosine bases and will throw a warning if you attempt to use functions that need `fftw3`.
+If you would like to use the cosine bases make sure that the `C`-library [`fftw3`](http://www.fftw.org/) is installed on your computer before you install `MFPCA`. Otherwise, `MFPCA` is installed without the cosine bases and will throw an error if you attempt to use functions that need `fftw3`.
 
 ## Dependencies ##
 
-The `funData` package depends on the `R`-packages [`funData`](https://github.com/ClaraHapp/funData) for representing (multivariate) functional data, [`mgcv`](https://cran.r-project.org/web/packages/mgcv/index.html) and `methods`.
+The `funData` package depends on the `R`-package [`funData`](https://github.com/ClaraHapp/funData) for representing (multivariate) functional data.
 
 ## References ##
 
