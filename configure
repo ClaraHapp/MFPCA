@@ -1,7 +1,7 @@
-#!/bin/bash
+#!/bin/sh
 
 # check if library fftw3 is installed
-if `dpkg -s libfftw3-dev >/dev/null 2>&1`; then 
+if `pkg-config --silence-errors --libs fftw3`; then 
 	# fftw3 is installed
 	FFTW_LIBS=-lfftw3
 	FFTW_CFLAGS="-D HAVE_FFTW" # define makro HAVE_FFTW
