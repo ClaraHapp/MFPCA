@@ -58,8 +58,13 @@ test_that("test univariate expansions 2D", {
   spline2Dpen <- MFPCA:::splineFunction2Dpen(scores = scores, argvals = argvals, bs = "ps", m = 3, k = 5)
   expect_equal(nObs(spline2Dpen), 20)
   expect_equal(nObsPoints(spline2Dpen), c(101,101))
-  expect_equal(mean(norm(spline2Dpen)),  2.80048833) 
-  expect_equal(norm(spline2Dpen)[1], 2.15059827)
+  if(.Platform$endian == "big")
+    skip("Regression tests for spline2Dpen skipped on this architecture (big endian).")
+  else
+  {
+    expect_equal(mean(norm(spline2Dpen)),  2.80048833) 
+    expect_equal(norm(spline2Dpen)[1], 2.15059827)
+  }
   
   # wrapper function
   expandDefault2D <- MFPCA:::univExpansion(type = "default", scores = scores, argvals = argvals, 
