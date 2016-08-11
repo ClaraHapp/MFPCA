@@ -34,7 +34,7 @@ test_that("test univariate decompositions 1D", {
   
   fpca <- MFPCA:::fpcaBasis(f1, pve = 0.95)
   expect_equal(dim(fpca$scores), c(10,5))
-  expect_equal(mean(fpca$scores), -0.0107182127) 
+  expect_equal(mean(abs(fpca$scores)), 0.71489007) 
   expect_null(fpca$B) 
   expect_true(fpca$ortho)  
   expect_false(is.null(fpca$functions))  
@@ -62,7 +62,7 @@ test_that("PACE function", {
   expect_equal(nObs(pca1D$fit), 10)
   expect_equal(mean(norm(pca1D$fit)), 4.41694367)
   expect_equal(dim(pca1D$scores), c(10,5))
-  expect_equal(mean(pca1D$scores), -0.0107182127)
+  expect_equal(mean(abs(pca1D$scores)), 0.71489007)
   expect_equal(nObs(pca1D$mu), 1)
   expect_equal(norm(pca1D$mu), 0.54801585)
   expect_equal(nObs(pca1D$functions), 5)
