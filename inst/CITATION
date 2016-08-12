@@ -1,0 +1,23 @@
+citHeader("To cite the 'MFPCA' package in publications use:")
+
+year =  sub("-.*", "", meta$Date)
+vers = paste('R package version', meta$Version)
+
+citEntry(
+  entry = 'manual',
+  title = paste('MFPCA:', meta$Title),
+  author = person("Clara", "Happ"),
+  year = year,
+  note = vers,
+  url = meta$URL,
+  textVersion = paste('C. Happ (', year, '). MFPCA: ', meta$Title, '. ', vers, '.', sep = '')
+)
+
+citEntry(
+  entry = "unpublished",
+  author = c(person("Clara", "Happ"), person("Sonja", "Greven")),
+  title = "Multivariate Functional Principal Component Analysis for Data Observed on Different (Dimensional) Domains",
+  year = "2016",
+  note = "Under Revision. Preprint available on arXiv: http://arxiv.org/abs/1509.02029",
+  textVersion = "C. Happ and S. Greven (2016). Multivariate Functional Principal Component Analysis for Data Observed on Different (Dimensional) Domains. Under Revision. Preprint available on arXiv: http://arxiv.org/abs/1509.02029."
+)
