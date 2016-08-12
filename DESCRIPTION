@@ -2,7 +2,7 @@ Package: MFPCA
 Type: Package
 Title: Multivariate Functional Principal Component Analysis for Data Observed on
     Different Dimensional Domains
-Version: 1.0
+Version: 1.0-1
 Date: 2016-07-18
 Authors@R: person("Clara", "Happ", email = "clara.happ@stat.uni-muenchen.de",
                   role = c("aut", "cre"))
