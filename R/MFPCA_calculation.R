@@ -497,7 +497,7 @@ calcMFPCA <- function(N, p, Bchol, M, type, weights, npc, argvals, uniBasis, fit
   {
     if(approx.eigen)
     {
-      tmpSVD <- irlba::irlba(Z, nv = M)
+      tmpSVD <- irlba::irlba(as.matrix(Z), nv = M)
 
       vectors <- tmpSVD$v
       values <- tmpSVD$d[1:M]^2
@@ -517,7 +517,7 @@ calcMFPCA <- function(N, p, Bchol, M, type, weights, npc, argvals, uniBasis, fit
   {
     if(approx.eigen)
     {
-      tmpSVD <- irlba::irlba(Matrix::tcrossprod(Z, Bchol), nv = M)
+      tmpSVD <- irlba::irlba(as.matrix(Matrix::tcrossprod(Z, Bchol)), nv = M)
 
       vectors <- Matrix::crossprod(Bchol, tmpSVD$v)
       values <- tmpSVD$d[1:M]^2
