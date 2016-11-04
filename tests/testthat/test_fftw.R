@@ -102,10 +102,12 @@ test_that("Test fftw: IDCT", {
   scores <- rnorm(25, sd = 25:1/25)
   
   expect_error(MFPCA:::idct2D(scores = scores, ind = 1:25, dim = 50), "Function idct2D can handle only 2D images.")
+  expect_error(MFPCA:::idct2D(scores = scores, ind = 1:20, dim = c(5,5)), "Indices do not match number of scores.")
   expect_error(MFPCA:::idct2D(scores = scores, ind = 0:24, dim = c(10, 20)), "Indices must be positive.")
   expect_error(MFPCA:::idct2D(scores = scores, ind = 200+0:24, dim = c(10, 20)), "Index exceeds image dimensions.")
   
   expect_error(MFPCA:::idct3D(scores = scores, ind = 1:25, dim = 50), "Function idct3D can handle only 3D images.")
+  expect_error(MFPCA:::idct3D(scores = scores, ind = 1:20, dim = c(5,5,5)), "Indices do not match number of scores.")
   expect_error(MFPCA:::idct3D(scores = scores, ind = 0:24, dim = c(10, 20, 30)), "Indices must be positive.")
   expect_error(MFPCA:::idct3D(scores = scores, ind = 2000+0:24, dim = c(10, 20, 10)), "Index exceeds image dimensions.")
   
@@ -119,6 +121,9 @@ test_that("Test fftw: IDCT", {
     expect_equal(idct2D[1,1], 1.08970077)
   }
   
+  # check correct handling of empty scores
+  expect_equal(MFPCA:::idct2D(scores = NULL, ind = NULL, dim = c(5,5)), array(0, dim = c(5,5)))
+  
   idct3D <- try(MFPCA:::idct3D(scores = scores, ind = sample(2000, 25), dim = c(10, 20, 10)), silent = TRUE)
   if(class(idct3D) == "try-error")
     expect_error(stop(idct3D), "dctBasis3D requires C-library fftw3 to be installed. Check http://www.fftw.org/ for more information.")
@@ -128,6 +133,9 @@ test_that("Test fftw: IDCT", {
     expect_equal(mean(idct3D), 0)
     expect_equal(idct3D[1,1,1], 0.877946026)
   }
+  
+  # check correct handling of empty scores
+  expect_equal(MFPCA:::idct3D(scores = NULL, ind = NULL, dim = c(5,5,5)), array(0,c(5,5,5)))
 })
 
 
