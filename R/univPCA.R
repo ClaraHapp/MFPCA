@@ -135,9 +135,12 @@
 #' @section Warning: This function works only for univariate functional data 
 #'   observed on one-dimensional domains.
 #'   
-#' @param funDataObject An object of class \code{\link[funData]{funData}} 
-#'   containing the functional data observed, for which the functional principal
-#'   component analysis is calculated.
+#' @param funDataObject An object of class \code{\link[funData]{funData}} or
+#'   \code{\link[funData]{irregFunData}} containing the functional data
+#'   observed, for which the functional principal component analysis is
+#'   calculated. If the data is sampled irregularly (i.e. of class
+#'   \code{\link[funData]{irregFunData}}), \code{funDataObject} is transformed
+#'   to a \code{\link[funData]{funData}} object first.
 #' @param predData  An object of class \code{\link[funData]{funData}}, for which
 #'   estimated trajectories based on a truncated Karhunen-Loeve representation 
 #'   should be estimated. Defaults to \code{NULL}, which implies prediction for 
@@ -173,7 +176,7 @@
 #'   \item{sigma2}{The estimated measurement error variance (cf. 
 #'   \code{\link[refund]{fpca.sc}}).}
 #'   
-#' @seealso \code{\link[funData]{funData}}, \code{\link[refund]{fpca.sc}},
+#' @seealso \code{\link[funData]{funData}}, \code{\link[refund]{fpca.sc}}, 
 #'   \code{\link{fpcaBasis}}, \code{\link{univDecomp}}
 #'   
 #' @export PACE
@@ -206,6 +209,9 @@ PACE <- function(funDataObject, predData = NULL, nbasis = 10, pve = 0.99, npc = 
 {
   if(dimSupp(funDataObject) != 1)
     stop("PACE: Implemented only for funData objects with one-dimensional support.")
+  
+  if(is(funDataObject, "irregFunData")) # for irregular functional data, use funData representation
+    funDataObject <- as.funData(funDataObject)
   
   if(!is.null(predData))
   {

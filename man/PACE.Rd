@@ -8,9 +8,12 @@ PACE(funDataObject, predData = NULL, nbasis = 10, pve = 0.99,
   npc = NULL, makePD = FALSE)
 }
 \arguments{
-\item{funDataObject}{An object of class \code{\link[funData]{funData}}
-containing the functional data observed, for which the functional principal
-component analysis is calculated.}
+\item{funDataObject}{An object of class \code{\link[funData]{funData}} or
+\code{\link[funData]{irregFunData}} containing the functional data
+observed, for which the functional principal component analysis is
+calculated. If the data is sampled irregularly (i.e. of class
+\code{\link[funData]{irregFunData}}), \code{funDataObject} is transformed
+to a \code{\link[funData]{funData}} object first.}
 
 \item{predData}{An object of class \code{\link[funData]{funData}}, for which
 estimated trajectories based on a truncated Karhunen-Loeve representation
