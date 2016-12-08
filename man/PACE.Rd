@@ -54,6 +54,7 @@ principal components. Defaults to \code{NULL}. If given, this overrides
   in the observed curves (cf. \code{\link[refund]{fpca.sc}}).}
   \item{sigma2}{The estimated measurement error variance (cf.
   \code{\link[refund]{fpca.sc}}).}
+  \item{estVar}{The estimated smooth variance function of the data.}
 }
 \description{
 This function calculates a univariate functional principal components

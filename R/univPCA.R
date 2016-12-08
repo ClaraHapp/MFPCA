@@ -23,29 +23,32 @@
 #'   \code{NULL}. If given, this overrides \code{pve}.
 #' @param makePD Logical, should positive definiteness be enforced for the 
 #'   covariance estimate? Defaults to \code{FALSE}.
+#' @param cov.weight.type The type of weighting used for the smooth covariance
+#'   estimate. Defaults to \code{"none"}, i.e. no weighting. Alternatively, 
+#'   \code{"counts"} (corresponds to \code{\link[refund]{fpca.sc}} ) weights the pointwise estimates of the covariance function
+#'   by the number of observation points.
 #'   
 #' @return \item{fit}{The approximation of \code{Y.pred} (if \code{NULL}, the 
 #'   approximation of \code{Y}) based on the functional principal components.} 
-#'   \item{scores}{A matrix containing the estimated scores (observations by
-#'   row).} \item{mu}{The estimated mean function.} \item{efunctions}{A matrix
-#'   containing the estimated eigenfunctions (by row).} \item{evalues}{The
-#'   estimated eigenvalues.} \item{npc}{The number of principal comopnents that
-#'   were calculated.} \item{sigma2}{The estimated variance of the measurement
-#'   error.}
+#'   \item{scores}{A matrix containing the estimated scores (observations by 
+#'   row).} \item{mu}{The estimated mean function.} \item{efunctions}{A matrix 
+#'   containing the estimated eigenfunctions (by row).} \item{evalues}{The 
+#'   estimated eigenvalues.} \item{npc}{The number of principal comopnents that 
+#'   were calculated.} \item{sigma2}{The estimated variance of the measurement 
+#'   error.}  \item{estVar}{The estimated smooth variance function of the data.}
 #'   
 #' @seealso \code{\link[refund]{fpca.sc}}, \code{\link{PACE}}
 #'   
-#' @references Di, C., Crainiceanu, C., Caffo, B., and Punjabi, N. (2009).
-#' Multilevel functional principal component analysis. Annals of Applied
-#' Statistics, 3, 458--488. 
-#' Yao, F., Mueller, H.-G., and Wang, J.-L. (2005).
-#' Functional data analysis for sparse longitudinal data. Journal of the
-#' American Statistical Association, 100, 577--590.
-#' 
+#' @references Di, C., Crainiceanu, C., Caffo, B., and Punjabi, N. (2009). 
+#'   Multilevel functional principal component analysis. Annals of Applied 
+#'   Statistics, 3, 458--488. Yao, F., Mueller, H.-G., and Wang, J.-L. (2005). 
+#'   Functional data analysis for sparse longitudinal data. Journal of the 
+#'   American Statistical Association, 100, 577--590.
+#'   
 #' @importFrom mgcv gam predict.gam s te
 #'   
 #' @keywords internal
-.PACE <- function(X, Y, Y.pred = NULL, nbasis = 10, pve = 0.99, npc = NULL, makePD = FALSE)
+.PACE <- function(X, Y, Y.pred = NULL, nbasis = 10, pve = 0.99, npc = NULL, makePD = FALSE, cov.weight.type = "none")
 {
   if (is.null(Y.pred))
     Y.pred = Y
@@ -69,7 +72,12 @@
   diag(G.0) = NA
   row.vec = rep(X, each = D) # use given X-values
   col.vec = rep(X, D) # use given X-values
-  npc.0 = matrix(mgcv::predict.gam(mgcv::gam(as.vector(G.0)~te(row.vec, col.vec, k = nbasis)),
+  cov.weights <- switch(cov.weight.type,
+                        none = rep(1, D^2),
+                        counts = as.vector(cov.count),
+                        stop("cov.weight.type ", cov.weight.type, " unknown in smooth covariance estimation"))
+  
+  npc.0 = matrix(mgcv::predict.gam(mgcv::gam(as.vector(G.0)~te(row.vec, col.vec, k = nbasis), weights = cov.weights),
                                    newdata = data.frame(row.vec = row.vec, col.vec = col.vec)), D, D)
   npc.0 = (npc.0 + t(npc.0))/2
   # no extra-option (useSymm) as in fpca.sc-method
@@ -123,6 +131,7 @@
                   "npc", "sigma2") # add sigma2 to output
   ret = lapply(1:length(ret.objects), function(u) get(ret.objects[u]))
   names(ret) = ret.objects
+  ret$estVar <- diag(cov.hat)
   return(ret)
 }
 
@@ -175,6 +184,7 @@
 #'   in the observed curves (cf. \code{\link[refund]{fpca.sc}}).} 
 #'   \item{sigma2}{The estimated measurement error variance (cf. 
 #'   \code{\link[refund]{fpca.sc}}).}
+#'   \item{estVar}{The estimated smooth variance function of the data.}
 #'   
 #' @seealso \code{\link[funData]{funData}}, \code{\link[refund]{fpca.sc}}, 
 #'   \code{\link{fpcaBasis}}, \code{\link{univDecomp}}
@@ -233,6 +243,7 @@ PACE <- function(funDataObject, predData = NULL, nbasis = 10, pve = 0.99, npc = 
               scores = res$scores,
               fit = funData(funDataObject@argvals, res$fit),
               npc = res$npc,
-              sigma2 = res$sigma2
+              sigma2 = res$sigma2,
+              estVar = res$estVar
   ))
 }
