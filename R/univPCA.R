@@ -108,7 +108,7 @@
   DIAG = (diag.G0 - diag(cov.hat))[T1.min :T1.max] # function values
   # weights
   w <- funData:::.intWeights(X[T1.min:T1.max], method = "trapezoidal")
-  sigma2 <- max(1/(X[T1.max]-X[T1.min]) * sum(DIAG*w), 0) #max(1/T.len * sum(DIAG*w), 0)
+  sigma2 <- max(1/(X[T1.max]-X[T1.min]) * sum(DIAG*w, na.rm = TRUE), 0) #max(1/T.len * sum(DIAG*w), 0)
   ####
   D.inv = diag(1/evalues, nrow = npc, ncol = npc)
   Z = efunctions
@@ -144,11 +144,11 @@
 #' @section Warning: This function works only for univariate functional data 
 #'   observed on one-dimensional domains.
 #'   
-#' @param funDataObject An object of class \code{\link[funData]{funData}} or
-#'   \code{\link[funData]{irregFunData}} containing the functional data
-#'   observed, for which the functional principal component analysis is
-#'   calculated. If the data is sampled irregularly (i.e. of class
-#'   \code{\link[funData]{irregFunData}}), \code{funDataObject} is transformed
+#' @param funDataObject An object of class \code{\link[funData]{funData}} or 
+#'   \code{\link[funData]{irregFunData}} containing the functional data 
+#'   observed, for which the functional principal component analysis is 
+#'   calculated. If the data is sampled irregularly (i.e. of class 
+#'   \code{\link[funData]{irregFunData}}), \code{funDataObject} is transformed 
 #'   to a \code{\link[funData]{funData}} object first.
 #' @param predData  An object of class \code{\link[funData]{funData}}, for which
 #'   estimated trajectories based on a truncated Karhunen-Loeve representation 
@@ -167,6 +167,11 @@
 #' @param makePD Logical: should positive definiteness be enforced for the 
 #'   covariance surface estimate? Defaults to \code{FALSE} (cf. 
 #'   \code{\link[refund]{fpca.sc}}).
+#' @param cov.weight.type The type of weighting used for the smooth covariance 
+#'   estimate. Defaults to \code{"none"}, i.e. no weighting. Alternatively, 
+#'   \code{"counts"} (corresponds to \code{\link[refund]{fpca.sc}} ) weights the
+#'   pointwise estimates of the covariance function by the number of observation
+#'   points.
 #'   
 #' @return \item{mu}{A \code{\link[funData]{funData}} object with one 
 #'   observation, corresponding to the mean function.} \item{values}{A vector 
@@ -183,8 +188,8 @@
 #'   of basis functions needed to explain proportion \code{pve} of the variance 
 #'   in the observed curves (cf. \code{\link[refund]{fpca.sc}}).} 
 #'   \item{sigma2}{The estimated measurement error variance (cf. 
-#'   \code{\link[refund]{fpca.sc}}).}
-#'   \item{estVar}{The estimated smooth variance function of the data.}
+#'   \code{\link[refund]{fpca.sc}}).} \item{estVar}{The estimated smooth
+#'   variance function of the data.}
 #'   
 #' @seealso \code{\link[funData]{funData}}, \code{\link[refund]{fpca.sc}}, 
 #'   \code{\link{fpcaBasis}}, \code{\link{univDecomp}}
@@ -215,7 +220,7 @@
 #' 
 #'   par(oldPar)
 #' }
-PACE <- function(funDataObject, predData = NULL, nbasis = 10, pve = 0.99, npc = NULL, makePD = FALSE)
+PACE <- function(funDataObject, predData = NULL, nbasis = 10, pve = 0.99, npc = NULL, makePD = FALSE, cov.weight.type = "none")
 {
   if(dimSupp(funDataObject) != 1)
     stop("PACE: Implemented only for funData objects with one-dimensional support.")
@@ -235,7 +240,9 @@ PACE <- function(funDataObject, predData = NULL, nbasis = 10, pve = 0.99, npc = 
     Y.pred = NULL # use only funDataObject
   }
   
-  res <- .PACE(X = funDataObject@argvals[[1]], funDataObject@X, Y.pred = Y.pred, nbasis = nbasis, pve = pve, npc = npc, makePD = makePD)
+  res <- .PACE(X = funDataObject@argvals[[1]], funDataObject@X, Y.pred = Y.pred,
+               nbasis = nbasis, pve = pve, npc = npc, makePD = makePD,
+               cov.weight.type = cov.weight.type)
   
   return(list(mu = funData(funDataObject@argvals, matrix(res$mu, nrow = 1)),
               values = res$evalues,
@@ -244,6 +251,6 @@ PACE <- function(funDataObject, predData = NULL, nbasis = 10, pve = 0.99, npc = 
               fit = funData(funDataObject@argvals, res$fit),
               npc = res$npc,
               sigma2 = res$sigma2,
-              estVar = res$estVar
+              estVar = funData(funDataObject@argvals, matrix(res$estVar, nrow = 1))
   ))
 }
