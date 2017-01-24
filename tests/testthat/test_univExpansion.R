@@ -46,8 +46,8 @@ test_that("test univariate expansions 2D", {
                                        functions = tensorProduct(funData:::efPoly(argvals[[1]], M = 5), funData:::efWiener(argvals[[2]], M = 5)))
   expect_equal(nObs(default2D), 20)
   expect_equal(nObsPoints(default2D), c(101,101))
-  expect_equal(mean(norm(default2D)),  10.2855118) 
-  expect_equal(norm(default2D)[1], 12.0950688)
+  expect_equal(mean(norm(default2D)),   10.2717312) 
+  expect_equal(norm(default2D)[1], 12.0851797)
   
   spline2D <- MFPCA:::splineFunction2D(scores = scores, argvals = argvals, bs = "ps", m = 3, k = 5)
   expect_equal(nObs(spline2D), 20)
@@ -98,8 +98,8 @@ test_that("test univariate expansions 3D", {
                                                                  funData:::efFourier(argvals[[3]], M = 5)))
   expect_equal(nObs(default3D), 20)
   expect_equal(nObsPoints(default3D), c(101,101,21))
-  expect_equal(mean(norm(default3D)),  117.481898) 
-  expect_equal(norm(extractObs(default3D,1)), 118.67828)
+  expect_equal(mean(norm(default3D)),  117.447302) 
+  expect_equal(norm(extractObs(default3D,1)), 118.648544)
   
   # wrapper function
   expandDefault3D <- MFPCA:::univExpansion(type = "default", scores = scores, argvals = argvals, 
