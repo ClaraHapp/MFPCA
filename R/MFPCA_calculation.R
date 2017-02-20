@@ -130,7 +130,7 @@ calcBasisIntegrals <- function(basisFunctions, dimSupp, argvals)
 #' \code{bs,m,k} are passed to the functions \code{\link{univDecomp}} and 
 #' \code{\link{univExpansion}}. For two-dimensional tensor product splines, use 
 #' \code{type = "splines2D"}. \item Spline basis functions (with smoothness 
-#' penalty). Then \code{uniExpansions[[j]] = list(type = "splines1DPen", bs, m, 
+#' penalty). Then \code{uniExpansions[[j]] = list(type = "splines1Dpen", bs, m, 
 #' k)}, where \code{bs,m,k} are passed to the functions \code{\link{univDecomp}}
 #' and \code{\link{univExpansion}}. Analogously to the unpenalized case, use 
 #' \code{type = "splines2Dpen"} for 2D penalized tensor product splines. \item 
