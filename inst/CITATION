@@ -14,10 +14,11 @@ citEntry(
 )
 
 citEntry(
-  entry = "unpublished",
+  entry = "article",
   author = c(person("Clara", "Happ"), person("Sonja", "Greven")),
   title = "Multivariate Functional Principal Component Analysis for Data Observed on Different (Dimensional) Domains",
-  year = "2016",
-  note = "Under Revision. Preprint available on arXiv: http://arxiv.org/abs/1509.02029",
-  textVersion = "C. Happ and S. Greven (2016). Multivariate Functional Principal Component Analysis for Data Observed on Different (Dimensional) Domains. Under Revision. Preprint available on arXiv: http://arxiv.org/abs/1509.02029."
+  journal = "Journal of the American Statistical Association",
+  note = "To appear",
+  year = "2016+",
+  textVersion = "C. Happ and S. Greven (2016+). Multivariate Functional Principal Component Analysis for Data Observed on Different (Dimensional) Domains. Journal of the American Statistical Association, to appear. Accepted author version is available at: http://dx.doi.org/10.1080/01621459.2016.1273115."
 )

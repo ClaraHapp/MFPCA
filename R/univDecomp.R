@@ -112,6 +112,10 @@ univDecomp <- function(type, funDataObject, ...)
 #' @param makePD Logical: should positive definiteness be enforced for the 
 #'   covariance surface estimate? Defaults to \code{FALSE} (cf. 
 #'   \code{\link[refund]{fpca.sc}}).
+#'   @param cov.weight.type The type of weighting used for the smooth covariance
+#'   estimate in \code{\link{PACE}}. Defaults to \code{"none"}, i.e. no weighting. Alternatively, 
+#'   \code{"counts"} (corresponds to \code{\link[refund]{fpca.sc}} ) weights the pointwise estimates of the covariance function
+#'   by the number of observation points.
 #'   
 #' @return \item{scores}{A matrix of scores (coefficients) with dimension 
 #'   \code{N x K}, reflecting the weights for each principal component in each 
@@ -143,9 +147,9 @@ univDecomp <- function(type, funDataObject, ...)
 #'      main = "Estimated eigenfunctions\n(flipped)")
 #' 
 #' par(oldpar)
-fpcaBasis <- function(funDataObject, nbasis = 10, pve = 0.99, npc = NULL, makePD = FALSE)
+fpcaBasis <- function(funDataObject, nbasis = 10, pve = 0.99, npc = NULL, makePD = FALSE, cov.weight.type = "none")
 {
-  FPCA <- PACE(funDataObject, predData = NULL, nbasis, pve, npc, makePD)
+  FPCA <- PACE(funDataObject, predData = NULL, nbasis, pve, npc, makePD, cov.weight.type)
   
   return(list(scores = FPCA$scores,
               ortho = TRUE,

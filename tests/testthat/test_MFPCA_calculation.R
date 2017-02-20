@@ -59,6 +59,16 @@ test_that("test MFPCA main function", {
   expect_equal(nObs(uFPCA$functions), nObs(splines$functions))
   expect_equal(norm(uFPCA$functions[[1]])[1], 0.579550598)
   expect_equal(norm(splines$functions[[1]])[1], 0.57956679)
+  
+  ### Test bootstrap
+  set.seed(2)
+  splinesBoot <- MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "splines1D", k = 10),
+                                                            list(type = "splines1D", k = 10)),
+                   approx.eigen = FALSE, bootstrap = TRUE, nBootstrap = 100, bootstrapAlpha = 0.05, verbose = FALSE)
+  all.equal(splinesBoot$CIvalues$alpha_0.05$upper[1], 1.39715714 )
+  all.equal(sum(splinesBoot$CIvalues$alpha_0.05$upper), 3.5155807)
+  all.equal(splinesBoot$CIvalues$alpha_0.05$lower[1], 0.82536666 )
+  all.equal(sum(splinesBoot$CIvalues$alpha_0.05$lower), 2.2491912)
 })
 
 test_that("MFPCA calculation function", {

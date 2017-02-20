@@ -70,6 +70,24 @@ test_that("PACE function", {
   expect_equal(sum(pca1D$values), 3.77553890)
   expect_equal(pca1D$values[1], 1.35690262)
   expect_equal(pca1D$sigma2, 0.0131059337)
+  
+  # test also for irregular data
+  f1sparse <- sparsify(f1, minObs=  20, maxObs = 50)
+  i1 <- irregFunData(argvals = apply(f1sparse@X,1, function(x){f1sparse@argvals[[1]][which(!is.na(x))]}), X = apply(f1sparse@X, 1, na.omit))
+  
+  pca1Dirreg <- PACE(i1, pve = 0.95)
+  expect_equal(pca1Dirreg$npc, 5)
+  expect_equal(nObs(pca1Dirreg$fit), 10)
+  expect_equal(mean(norm(pca1Dirreg$fit)), 4.2779322)
+  expect_equal(dim(pca1Dirreg$scores), c(10,5))
+  expect_equal(mean(abs(pca1Dirreg$scores)), 0.63885727)
+  expect_equal(nObs(pca1Dirreg$mu), 1)
+  expect_equal(norm(pca1Dirreg$mu), 0.72933293)
+  expect_equal(nObs(pca1Dirreg$functions), 5)
+  expect_equal(norm(pca1Dirreg$functions), rep(1,5))
+  expect_equal(sum(pca1Dirreg$values), 4.0822808)
+  expect_equal(pca1Dirreg$values[1], 1.8022939)
+  expect_equal(pca1Dirreg$sigma2, 0)
 })
 
 test_that("test UMPCA functionality", {

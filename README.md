@@ -14,7 +14,7 @@ It implements various univariate bases:
 * Univariate functional PCA (only one-dimensional domains)
 * Spline bases (one- and two-dimensional domains; with optional smoothing penalty)
 * Cosine bases (two- and three-dimensional domains; fast implementation built on DCT)
-* Tensor PCA (two-dimensional domains; UMPCA approach from [`Lu et al. (2009)`](http://ieeexplore.ieee.org/xpl/articleDetails.jsp?arnumber=5272374) and FCP_TPA approach from [`Allen (2013)`](http://www.stat.rice.edu/~gallen/gallen_func_hopca_2013.pdf))
+* Tensor PCA (two-dimensional domains; UMPCA approach from [Lu et al. (2009)](http://ieeexplore.ieee.org/xpl/articleDetails.jsp?arnumber=5272374) and FCP_TPA approach from [Allen (2013)](http://www.stat.rice.edu/~gallen/gallen_func_hopca_2013.pdf))
 
 The representation of the data is based on the object-oriented [`funData`](https://github.com/ClaraHapp/funData) package, hence all functionalities for plotting, arithmetics etc. included therein may be used.
 
@@ -33,8 +33,8 @@ The `funData` package depends on the `R`-package [`funData`](https://github.com/
 
 The theoretical foundations of multivariate functional principal component analysis are described in:
 
-C. Happ, S. Greven (2015): Multivariate Functional Principal Component Analysis for Data Observed on Different (Dimensional) Domains.
-    *Submitted*. [ArXiv link](http://arxiv.org/abs/1509.02029)
+C. Happ, S. Greven (2016+): Multivariate Functional Principal Component Analysis for Data Observed on Different (Dimensional) Domains.
+    *Journal of the American Statistical Association*, to appear. [Accepted author version](http://dx.doi.org/10.1080/01621459.2016.1273115), [ArXiv link](http://arxiv.org/abs/1509.02029).
 
 ## Bug reports ##
 

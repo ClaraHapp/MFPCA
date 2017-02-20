@@ -61,8 +61,11 @@ significance level for bootstrap intervals. Defaults to \code{0.05}.}
   trajectories for each observation based on the truncated Karhunen-Loeve
   representation and the estimated scores and eigenfunctions.} \item{CI}{A
   list of the same length as \code{bootstrapAlpha}, containing the pointwise
-  lower and upper bootstrap confidence bands for each significance level in
-  form of \code{\link[funData]{multiFunData}} objects (only if
+  lower and upper bootstrap confidence bands for each eigenfunction and each
+  significance level in form of \code{\link[funData]{multiFunData}} objects
+  (only if \code{bootstrap = TRUE}).} \item{CIvalues}{A list of the same
+  length as \code{bootstrapAlpha}, containing the lower and upper bootstrap
+  confidence bands for each eigenvalue and each significance level (only if
   \code{bootstrap = TRUE}).}
 }
 \description{
@@ -96,23 +99,27 @@ and the MFPCA is based on the weighted scalar product \deqn{<<f,g>>_w =
 t}{<<f,g>>_w = \sum_{j = 1}^p w_j \int_\calT_j f^(j)(t) g^(j)(t) d t} and the
 corresponding weighted covariance operator \eqn{\Gamma_w}.}
 
-\subsection{Pointwise bootstrap confidence bands}{If \code{bootstrap = TRUE},
-pointwise bootstrap confidence bands are generated for the multivariate
-functional principal components \eqn{\hat \psi_1, \ldots, \hat \psi_M}{\hat
-\psi_1, \ldots, \hat \psi_M}. The parameter \code{nBootstrap} gives the
-number of bootstrap iterations. In each iteration, the observations are
-resampled on the level of (multivariate) functions and the whole MFPCA is
-recalculated. In particular, if the univariate basis depends on the data
-(FPCA approaches), basis functions and scores are both re-estimated. If the
-basis functions are fixed (e.g. splines), the scores form the original
-estimate are used to speed up the calculations. The confidence bands are
-calculated separately for each element as pointwise percentile bootstrap
-confidence intervals. The significance level(s) can be defined by the
-\code{bootstrapAlpha} parameter, which defaults to 5\%. As a result, the
-\code{MFPCA} function returns a list \code{CI} of the same length as
-\code{bootstrapAlpha}, containing the lower and upper bounds of the
-confidence bands as \code{multiFunData} objects of the same structure as
-\code{mFData}.}
+\subsection{Bootstrap}{If \code{bootstrap = TRUE}, pointwise bootstrap
+confidence bands are generated for the multivariate eigenvalues \eqn{\hat
+\nu_1, \ldots, \hat \nu_M } as well as for multivariate functional principal
+components \eqn{\hat \psi_1, \ldots, \hat \psi_M}{\hat \psi_1, \ldots, \hat
+\psi_M}. The parameter \code{nBootstrap} gives the number of bootstrap
+iterations. In each iteration, the observations are resampled on the level of
+(multivariate) functions and the whole MFPCA is recalculated. In particular,
+if the univariate basis depends on the data (FPCA approaches), basis
+functions and scores are both re-estimated. If the basis functions are fixed
+(e.g. splines), the scores from the original estimate are used to speed up
+the calculations. The confidence bands for the eigenfunctions are calculated
+separately for each element as pointwise percentile bootstrap confidence
+intervals. Analogously, the confidence bands for the eigenvalues are also
+percentile bootstrap confidence bands. The significance level(s) can be
+defined by the \code{bootstrapAlpha} parameter, which defaults to 5\%. As a
+result, the \code{MFPCA} function returns a list \code{CI} of the same length
+as \code{bootstrapAlpha}, containing the lower and upper bounds of the
+confidence bands for the principal components as \code{multiFunData} objects
+of the same structure as \code{mFData}. The confidence bands for the
+eigenvalues are returned in a list \code{CIvalues}, containing the upper and
+lower bounds for each significance level.}
 
 \subsection{Univariate Expansions}{The multivariate functional principal
 component analysis relies on a univariate basis expansion for each element
@@ -209,6 +216,16 @@ plot(splinesBoot$CI$alpha_0.1$lower[[2]], lty = 3, add = TRUE)
 plot(splinesBoot$CI$alpha_0.1$upper[[2]], lty = 3, add = TRUE)
 abline(h = 0, col = "gray")
 legend("topleft", c("Estimate", "95\% CI", "90\% CI"), lty = 1:3, lwd = c(2,1,1))
+
+# Plot 95\% confidence bands for eigenvalues
+plot(1:2, splinesBoot$values, pch = 20, ylim = c(0, 1.5),
+     main = "Estimated eigenvalues with 95\% CI",
+     xlab = "Eigenvalue no.", ylab = "")
+arrows(1:2, splinesBoot$CIvalues$alpha_0.05$lower,
+       1:2, splinesBoot$CIvalues$alpha_0.05$upper,
+       length = 0.05, angle = 90, code = 3)
+points(1:2, sim$trueVals[1:2], pch = 20, col = 4)
+legend("topright", c("Estimate", "True value"), pch = 20, col = c(1,4))
 }
 
 ### simulate data (two- and one-dimensional domains)
@@ -243,9 +260,10 @@ legend("bottomleft", c("True", "MFPCA"), lty = 1:2, lwd = c(2,1))
 par(oldPar)
 }
 \references{
-C. Happ, S. Greven (2015): Multivariate Functional Principal
+C. Happ, S. Greven (2016+):Multivariate Functional Principal
   Component Analysis for Data Observed on Different (Dimensional) Domains.
-  Preprint on arXiv: \url{http://arxiv.org/abs/1509.02029}
+  Journal of the American Statistical Association, to appear. DOI:
+  \url{http://dx.doi.org/10.1080/01621459.2016.1273115}
 }
 \seealso{
 \code{\link[funData]{multiFunData}}, \code{\link{PACE}},

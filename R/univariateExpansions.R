@@ -468,6 +468,12 @@ idct2D <- function(scores, ind, dim)
   if(length(dim) != 2)
     stop("Function idct2D can handle only 2D images.")
   
+  if(length(ind) != length(scores))
+    stop("Indices do not match number of scores.")
+  
+  if(length(ind) == 0) # no scores at all
+    return(array(0, dim))
+  
   if(min(ind) < 1)
     stop("Indices must be positive.")
   
@@ -539,6 +545,12 @@ idct3D <- function(scores, ind, dim)
 {
   if(length(dim) != 3)
     stop("Function idct3D can handle only 3D images.")
+  
+  if(length(ind) != length(scores))
+    stop("Indices do not match number of scores.")
+  
+  if(length(ind) == 0) # no scores at all
+    return(array(0, dim))
   
   if(min(ind) < 1)
     stop("Indices must be positive.")

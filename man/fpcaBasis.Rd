@@ -6,7 +6,7 @@
 functional data on one-dimensional domains}
 \usage{
 fpcaBasis(funDataObject, nbasis = 10, pve = 0.99, npc = NULL,
-  makePD = FALSE)
+  makePD = FALSE, cov.weight.type = "none")
 }
 \arguments{
 \item{funDataObject}{An object of class \code{\link[funData]{funData}}
@@ -27,8 +27,13 @@ principal components. Defaults to \code{NULL}. If given, this overrides
 \code{pve} (cf. \code{\link[refund]{fpca.sc}}).}
 
 \item{makePD}{Logical: should positive definiteness be enforced for the
-  covariance surface estimate? Defaults to \code{FALSE} (cf.
-  \code{\link[refund]{fpca.sc}}).}
+covariance surface estimate? Defaults to \code{FALSE} (cf.
+\code{\link[refund]{fpca.sc}}).}
+
+\item{cov.weight.type}{The type of weighting used for the smooth covariance
+  estimate in \code{\link{PACE}}. Defaults to \code{"none"}, i.e. no weighting. Alternatively,
+  \code{"counts"} (corresponds to \code{\link[refund]{fpca.sc}} ) weights the pointwise estimates of the covariance function
+  by the number of observation points.}
 }
 \value{
 \item{scores}{A matrix of scores (coefficients) with dimension

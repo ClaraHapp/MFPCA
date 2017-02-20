@@ -5,12 +5,15 @@
 \title{Univariate functional principal component analysis by smoothed covariance}
 \usage{
 PACE(funDataObject, predData = NULL, nbasis = 10, pve = 0.99,
-  npc = NULL, makePD = FALSE)
+  npc = NULL, makePD = FALSE, cov.weight.type = "none")
 }
 \arguments{
-\item{funDataObject}{An object of class \code{\link[funData]{funData}}
-containing the functional data observed, for which the functional principal
-component analysis is calculated.}
+\item{funDataObject}{An object of class \code{\link[funData]{funData}} or
+\code{\link[funData]{irregFunData}} containing the functional data
+observed, for which the functional principal component analysis is
+calculated. If the data is sampled irregularly (i.e. of class
+\code{\link[funData]{irregFunData}}), \code{funDataObject} is transformed
+to a \code{\link[funData]{funData}} object first.}
 
 \item{predData}{An object of class \code{\link[funData]{funData}}, for which
 estimated trajectories based on a truncated Karhunen-Loeve representation
@@ -31,8 +34,14 @@ principal components. Defaults to \code{NULL}. If given, this overrides
 \code{pve} (cf. \code{\link[refund]{fpca.sc}}).}
 
 \item{makePD}{Logical: should positive definiteness be enforced for the
-  covariance surface estimate? Defaults to \code{FALSE} (cf.
-  \code{\link[refund]{fpca.sc}}).}
+covariance surface estimate? Defaults to \code{FALSE} (cf.
+\code{\link[refund]{fpca.sc}}).}
+
+\item{cov.weight.type}{The type of weighting used for the smooth covariance
+  estimate. Defaults to \code{"none"}, i.e. no weighting. Alternatively,
+  \code{"counts"} (corresponds to \code{\link[refund]{fpca.sc}} ) weights the
+  pointwise estimates of the covariance function by the number of observation
+  points.}
 }
 \value{
 \item{mu}{A \code{\link[funData]{funData}} object with one
@@ -50,7 +59,8 @@ principal components. Defaults to \code{NULL}. If given, this overrides
   of basis functions needed to explain proportion \code{pve} of the variance
   in the observed curves (cf. \code{\link[refund]{fpca.sc}}).}
   \item{sigma2}{The estimated measurement error variance (cf.
-  \code{\link[refund]{fpca.sc}}).}
+  \code{\link[refund]{fpca.sc}}).} \item{estVar}{The estimated smooth
+  variance function of the data.}
 }
 \description{
 This function calculates a univariate functional principal components
