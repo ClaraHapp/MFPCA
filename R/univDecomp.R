@@ -353,10 +353,17 @@ fcptpaBasis <- function(funDataObject, npc, smoothingDegree = rep(2,2), alphaRan
   
   scores <-  sweep(pca$U,MARGIN=2,pca$d,`*`)
   
+  # eigenvalues
+  values <- rep(NA, npc)
+  
+  for(m in 1:npc)
+    values[m] <- crossprod(MFPCA::ttv(funDataObject@X, list(pca$V[,m], pca$W[,m]), dim = c(2,3))) / nObs(funDataObject)
+  
   return(list(scores = scores,
               B = calcBasisIntegrals(eigenImages, dimSupp(funDataObject), funDataObject@argvals),
               ortho = FALSE,
-              functions = funData(argvals = funDataObject@argvals, X = eigenImages)))
+              functions = funData(argvals = funDataObject@argvals, X = eigenImages),
+              values = values))
 }
 
 
