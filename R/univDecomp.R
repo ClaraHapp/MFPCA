@@ -332,7 +332,7 @@ makeDiffOp <- function(degree, dim){
 #' plot(fcptpa$functions, obs = i, main = paste("Basis function", i)) # plot first basis function
 #' 
 #' par(oldpar)}
-fcptpaBasis <- function(funDataObject, npc, smoothingDegree = rep(2,2), alphaRange)
+fcptpaBasis <- function(funDataObject, npc, smoothingDegree = rep(2,2), alphaRange, ortho = FALSE)
 {
   if(dimSupp(funDataObject) != 2)
     stop("FCP_TPA is implemented for (2D) image data only!")
@@ -345,24 +345,38 @@ fcptpaBasis <- function(funDataObject, npc, smoothingDegree = rep(2,2), alphaRan
   
   pca <-  FCP_TPA(X = funDataObject@X, K = npc, penMat = list(v = Dv, w = Dw), alphaRange = alphaRange)
     
-  # reconstruct eigenimages and scores from FCP_TPA result
-  eigenImages <- array(NA, c(npc, d[-1]))
+  # reconstruct eigenimages, values and scores from FCP_TPA result
+  eigenImages <- sapply(1:npc, function(i){pca$V[,i] %o% pca$W[,i]}, simplify = "array")
+  functions <- funData(argvals = funDataObject@argvals, X = aperm(eigenImages, perm = c(3,1,2)))
   
-  for(i in 1:npc)
-    eigenImages[i,,] <-  pca$V[,i] %o% pca$W[,i]
+  values <- sapply(1:npc, 
+                   function(m){crossprod(MFPCA::ttv(funDataObject@X, list(pca$V[,m], pca$W[,m]), dim = c(2,3)))/ nObs(funDataObject)}) 
   
   scores <-  sweep(pca$U,MARGIN=2,pca$d,`*`)
   
-  # eigenvalues
-  values <- rep(NA, npc)
-  
-  for(m in 1:npc)
-    values[m] <- crossprod(MFPCA::ttv(funDataObject@X, list(pca$V[,m], pca$W[,m]), dim = c(2,3))) / nObs(funDataObject)
+  # make orthonormal eigenfunctions
+  if(ortho)
+  {
+    norms <- norm(functions, squared = FALSE)
+    
+    # calculate values and define ordering
+    values <- values * norms^2
+    ord <- order(values, decreasing = TRUE)
+    
+    scores <- sweep(scores[,ord], MARGIN = 2, norms[ord], "/") # divide columns by norms
+    B <- NULL
+    functions@X <- sweep(functions@X[ord,,], MARGIN = 1, norms[ord], "/") # divide "rows" by norms
+    values <- values[ord]
+  }
+  else
+  {
+    B <- calcBasisIntegrals(functions@X, dimSupp(funDataObject), funDataObject@argvals)
+  }
   
   return(list(scores = scores,
-              B = calcBasisIntegrals(eigenImages, dimSupp(funDataObject), funDataObject@argvals),
-              ortho = FALSE,
-              functions = funData(argvals = funDataObject@argvals, X = eigenImages),
+              B = B,
+              ortho = ortho,
+              functions = functions,
               values = values))
 }
 
