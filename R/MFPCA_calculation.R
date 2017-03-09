@@ -99,9 +99,9 @@ calcBasisIntegrals <- function(basisFunctions, dimSupp, argvals)
 #' (e.g. splines), the scores from the original estimate are used to speed up 
 #' the calculations. The confidence bands for the eigenfunctions are calculated 
 #' separately for each element as pointwise percentile bootstrap confidence 
-#' intervals. Analogously, the confidence bands for the eigenvalues are also
-#' percentile bootstrap confidence bands. The significance level(s) can be
-#' defined by the \code{bootstrapAlpha} parameter, which defaults to 5\%. As a
+#' intervals. Analogously, the confidence bands for the eigenvalues are also 
+#' percentile bootstrap confidence bands. The significance level(s) can be 
+#' defined by the \code{bootstrapAlpha} parameter, which defaults to 5\%. As a 
 #' result, the \code{MFPCA} function returns a list \code{CI} of the same length
 #' as \code{bootstrapAlpha}, containing the lower and upper bounds of the 
 #' confidence bands for the principal components as \code{multiFunData} objects 
@@ -169,6 +169,13 @@ calcBasisIntegrals <- function(basisFunctions, dimSupp, argvals)
 #'   \code{NULL}, which leads to an error, if \code{bootstrap = TRUE}.
 #' @param bootstrapAlpha A vector of numerics (or a single number) giving the 
 #'   significance level for bootstrap intervals. Defaults to \code{0.05}.
+#' @param bootstrapStrat A stratification variable for bootstrap. Must be a 
+#'   factor of length \code{nObs(mFData)} or \code{NULL} (default). If
+#'   \code{NULL}, no stratification is made in the bootstrap resampling, i.e.
+#'   the curves are sampled with replacement. If \code{bootstrapStrat} is not
+#'   \code{NULL}, the curves are resampled with replacement within the groups
+#'   defined by \code{bootstrapStrat}, hence keeping the group proportions
+#'   fixed.
 #' @param verbose Logical. If \code{TRUE}, the function reports 
 #'   extra-information about the progress (incl. timestamps). Defaults to 
 #'   \code{options()$verbose}.
@@ -196,9 +203,9 @@ calcBasisIntegrals <- function(basisFunctions, dimSupp, argvals)
 #'   
 #' @importFrom foreach %do%
 #'   
-#' @references C. Happ, S. Greven (2016+):Multivariate Functional Principal
-#'   Component Analysis for Data Observed on Different (Dimensional) Domains.
-#'   Journal of the American Statistical Association, to appear. DOI:
+#' @references C. Happ, S. Greven (2016+):Multivariate Functional Principal 
+#'   Component Analysis for Data Observed on Different (Dimensional) Domains. 
+#'   Journal of the American Statistical Association, to appear. DOI: 
 #'   \url{http://dx.doi.org/10.1080/01621459.2016.1273115}
 #'   
 #' @seealso \code{\link[funData]{multiFunData}}, \code{\link{PACE}}, 
@@ -308,7 +315,8 @@ calcBasisIntegrals <- function(basisFunctions, dimSupp, argvals)
 #' }
 #' par(oldPar)
 MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fit = FALSE, approx.eigen = FALSE,
-                  bootstrap = FALSE, nBootstrap = NULL, bootstrapAlpha = 0.05, verbose = options()$verbose)
+                  bootstrap = FALSE, nBootstrap = NULL, bootstrapAlpha = 0.05, bootstrapStrat = NULL, 
+                  verbose = options()$verbose)
 {
   # number of components
   p <- length(mFData)
@@ -327,6 +335,14 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fi
     if(any(!(0 < bootstrapAlpha & bootstrapAlpha < 1)))
       stop("Significance level for bootstrap confidence bands must be in (0,1).")
 
+    if(!is.null(bootstrapStrat))
+    {
+      if(!is.factor(bootstrapStrat))
+        stop("bootstrapStrat must be either NULL or a factor.")
+      
+      if(length(bootstrapStrat) != nObs(mFData))
+        stop("bootstrapStrat must have the same length as the number of observations in the mFData object.")
+    }
   }
   
   # dimension for each component
@@ -414,7 +430,10 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fi
           cat("\t n = ", n, " (", format(Sys.time(), "%T"), ")\n", sep = "")
       }
 
-      bootObs <- sample(N, replace = TRUE)
+      if(is.null(bootstrapStrat))
+        bootObs <- sample(N, replace = TRUE)
+      else
+        bootObs <- stratSample(bootstrapStrat)
 
       bootBasis <- vector("list", p)
 
