@@ -15,7 +15,7 @@
 #' f <- as.factor(c(1,1,1,2,4,4,4,4,6,6))
 #' table(f)
 #' 
-#' sampleInd <- stratSample(f)
+#' sampleInd <- MFPCA:::stratSample(f)
 #' table(f[sampleInd])
 stratSample <- function(f)
 {
