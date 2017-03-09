@@ -332,7 +332,7 @@ makeDiffOp <- function(degree, dim){
 #' plot(fcptpa$functions, obs = i, main = paste("Basis function", i)) # plot first basis function
 #' 
 #' par(oldpar)}
-fcptpaBasis <- function(funDataObject, npc, smoothingDegree = rep(2,2), alphaRange, ortho = FALSE)
+fcptpaBasis <- function(funDataObject, npc, smoothingDegree = rep(2,2), alphaRange, normalize = FALSE)
 {
   if(dimSupp(funDataObject) != 2)
     stop("FCP_TPA is implemented for (2D) image data only!")
@@ -352,10 +352,10 @@ fcptpaBasis <- function(funDataObject, npc, smoothingDegree = rep(2,2), alphaRan
   values <- sapply(1:npc, 
                    function(m){crossprod(MFPCA::ttv(funDataObject@X, list(pca$V[,m], pca$W[,m]), dim = c(2,3)))/ nObs(funDataObject)}) 
   
-  scores <-  sweep(pca$U,MARGIN=2,pca$d,`*`)
+  scores <-  sweep(pca$U, MARGIN=2, pca$d, "*")
   
   # make orthonormal eigenfunctions
-  if(ortho)
+  if(normalize)
   {
     norms <- norm(functions, squared = FALSE)
     
@@ -375,7 +375,7 @@ fcptpaBasis <- function(funDataObject, npc, smoothingDegree = rep(2,2), alphaRan
   
   return(list(scores = scores,
               B = B,
-              ortho = ortho,
+              ortho = normalize, # Functions are orthogonal by definition
               functions = functions,
               values = values))
 }
