@@ -175,6 +175,17 @@ test_that("test univariate decompositions 2D", {
   expect_equal(sum(fcptpa2D$B), 0.00213955703)
   expect_equal(nObs(fcptpa2D$functions), 4)
   expect_equal(norm(fcptpa2D$functions)[1], 0.000520573393)
+  expect_equal(fcptpa2D$values[1], 643.5194)
+  expect_equal(sum(fcptpa2D$values), 658.5576201)
+  
+  set.seed(2)
+  fcptpa2Dnorm <- MFPCA:::fcptpaBasis(f2, npc = 4, alphaRange = list(v = c(1e-4, 1e4), w = c(1e-4, 1e4)), normalize = TRUE)
+  expect_equal(mean(fcptpa2Dnorm$scores), -278.15999) 
+  expect_true(fcptpa2Dnorm$ortho)
+  expect_null(fcptpa2Dnorm$B)
+  expect_equal(norm(fcptpa2Dnorm$functions), rep(1, nObs(fcptpa2Dnorm$functions)))
+  expect_equal(fcptpa2Dnorm$values[1],  0.33499908)
+  expect_equal(sum(fcptpa2Dnorm$values), 0.342610553)
   
   # wrapper function
   decompSpline2D <- MFPCA:::univDecomp(type = "splines2D", funDataObject = f2, bs = "ps", m = c(2,3), k = c(8,10))
@@ -189,4 +200,8 @@ test_that("test univariate decompositions 2D", {
   set.seed(2)
   decompFCPTPA2D <- MFPCA:::univDecomp(type = "FCP_TPA", funDataObject = f2, npc = 4, alphaRange = list(v = c(1e-4, 1e4), w = c(1e-4, 1e4)))
   expect_equal(decompFCPTPA2D, fcptpa2D)
+  
+  set.seed(2)
+  decompFCPTPA2Dnorm <- MFPCA:::univDecomp(type = "FCP_TPA", funDataObject = f2, npc = 4, alphaRange = list(v = c(1e-4, 1e4), w = c(1e-4, 1e4)), normalize = TRUE)
+  expect_equal(decompFCPTPA2Dnorm, fcptpa2Dnorm)
 })
