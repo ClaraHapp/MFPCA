@@ -775,7 +775,7 @@ dctBasis2D <- function(funDataObject, qThresh, parallel = FALSE)
                      img = funDataObject@X,
                      .parallel = parallel)
   
-  return(list(scores = sparseMatrix(i = res$i, j = res$j, x = res$x),
+  return(list(scores = Matrix::sparseMatrix(i = res$i, j = res$j, x = res$x),
               B = Matrix::Diagonal(n = max(res$j), x = prod(sapply(funDataObject@argvals, function(l){diff(range(l))}))/pi^2),
               ortho = FALSE,
               functions = NULL
