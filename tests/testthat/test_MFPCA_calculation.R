@@ -39,6 +39,12 @@ test_that("test MFPCA main function", {
   expect_error(MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "uFPCA"), list(type = "uFPCA")), 
                      bootstrap = TRUE, nBootstrap = 10, bootstrapAlpha = 1.5), 
                "Significance level for bootstrap confidence bands must be in (0,1).", fixed = TRUE) # fixed: do not interprete as reg. exp.
+  expect_error(MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "uFPCA"), list(type = "uFPCA")), 
+                     bootstrap = TRUE, nBootstrap = 10, bootstrapStrat = 1:nObs(sim$simData)), 
+               "bootstrapStrat must be either NULL or a factor.", fixed = TRUE)
+  expect_error(MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "uFPCA"), list(type = "uFPCA")), 
+                     bootstrap = TRUE, nBootstrap = 10, bootstrapStrat = as.factor(1:5)), 
+               "bootstrapStrat must have the same length as the number of observations in the mFData object.", fixed = TRUE)
   
   # check functionality
   expect_warning(uFPCA <- MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "uFPCA"),
