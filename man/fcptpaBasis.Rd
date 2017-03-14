@@ -2,7 +2,7 @@
 % Please edit documentation in R/univDecomp.R
 \name{fcptpaBasis}
 \alias{fcptpaBasis}
-\title{Calculate a smooth PCA representaion for functional data on two-dimensional
+\title{Calculate a smooth PCA representation for functional data on two-dimensional
 domains}
 \usage{
 fcptpaBasis(funDataObject, npc, smoothingDegree = rep(2, 2), alphaRange,
