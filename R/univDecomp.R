@@ -746,10 +746,6 @@ splineBasis2Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
 #'   
 #' @seealso \code{\link{univDecomp}}, \code{\link{dct2D}}, \code{\link{dct3D}}
 #'   
-#' @importFrom foreach %do%
-#' @importFrom foreach %dopar%
-#' @importFrom Matrix sparseMatrix
-#'   
 #' @export dctBasis2D
 #'   
 #' @examples
@@ -773,18 +769,11 @@ dctBasis2D <- function(funDataObject, qThresh, parallel = FALSE)
   if(dimSupp(funDataObject) != 2)
     stop("dctBasis2D can handle only functional data on two-dimensional domains.")
   
-  if(parallel)
-    res <- foreach::foreach(i = 1:nObs(funDataObject), .combine = "rbind") %dopar% {
-      dct <- dct2D(funDataObject@X[i,,], qThresh)
-      
-      data.frame(i = rep(i, length(dct$ind)), j = dct$ind, x = dct$val)
-    }
-  else
-    res <- foreach::foreach(i = 1:nObs(funDataObject), .combine = "rbind") %do% {
-      dct <- dct2D(funDataObject@X[i,,], qThresh)
-      
-      data.frame(i = rep(i, length(dct$ind)), j = dct$ind, x = dct$val)
-    }
+  res <- plyr::ldply(1:nObs(funDataObject), 
+                     .fun = function(i, img){dct <- dct2D(img[i,,], qThresh)
+                                             data.frame(i = rep(i, length(dct$ind)), j = dct$ind, x = dct$val)},
+                     img = funDataObject@X,
+                     .parallel = parallel)
   
   return(list(scores = sparseMatrix(i = res$i, j = res$j, x = res$x),
               B = Matrix::Diagonal(n = max(res$j), x = prod(sapply(funDataObject@argvals, function(l){diff(range(l))}))/pi^2),
@@ -840,22 +829,15 @@ dct2D <- function(image, qThresh)
 dctBasis3D <- function(funDataObject, qThresh, parallel = FALSE)
 {
   if(dimSupp(funDataObject) != 3)
-    stop("dctBasis2D can handle only functional data on three-dimensional domains.")
+    stop("dctBasis3D can handle only functional data on three-dimensional domains.")
   
-  if(parallel)
-    res <- foreach::foreach(i = 1:nObs(funDataObject), .combine = "rbind") %dopar% {
-      dct <- dct3D(funDataObject@X[i,,,], qThresh)
-      
-      data.frame(i = rep(i, length(dct$ind)), j = dct$ind, x = dct$val)
-    }
-  else
-    res <- foreach::foreach(i = 1:nObs(funDataObject), .combine = "rbind") %do% {
-      dct <- dct3D(funDataObject@X[i,,,], qThresh)
-      
-      data.frame(i = rep(i, length(dct$ind)), j = dct$ind, x = dct$val)
-    }
+  res <- plyr::ldply(1:nObs(funDataObject), 
+                     .fun = function(i, img){dct <- dct3D(img[i,,,], qThresh)
+                                             data.frame(i = rep(i, length(dct$ind)), j = dct$ind, x = dct$val)},
+                     img = funDataObject@X,
+                     .parallel = parallel)
   
-  return(list(scores = sparseMatrix(i = res$i, j = res$j, x = res$x),
+  return(list(scores = Matrix::sparseMatrix(i = res$i, j = res$j, x = res$x),
               B = Matrix::Diagonal(n = max(res$j), x = prod(sapply(funDataObject@argvals, function(l){diff(range(l))}))/pi^3),
               ortho = FALSE,
               functions = NULL
