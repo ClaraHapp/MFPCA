@@ -8,11 +8,11 @@ os:
 r:
   - release
   - devel
-
+  
 matrix:
   exclude:
-  - os: osx
-     r: devel
-
+    - os: osx
+      r: devel
+  
 after_success:
   - Rscript -e 'covr::codecov()'
