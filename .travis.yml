@@ -3,16 +3,16 @@ cache: packages
 
 os:
   - linux
-- osx
+  - osx
 
 r:
   - release
-- devel
+  - devel
 
 matrix:
   exclude:
   - os: osx
-r: devel
+     r: devel
 
 after_success:
   - Rscript -e 'covr::codecov()'
