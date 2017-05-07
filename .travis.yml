@@ -1,6 +1,11 @@
 language: r
 cache: packages
 
+addons:
+  apt:
+    packages:
+      - libfftw3-dev
+
 os:
   - linux
   - osx
