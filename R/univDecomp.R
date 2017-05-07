@@ -295,6 +295,9 @@ makeDiffOp <- function(degree, dim){
 #'   image. Defaults to \code{2} for each direction (2nd differences).
 #' @param alphaRange A list of length 2 with entries \code{v} and \code{w} 
 #'   containing the range of smoothness parameters to test for each direction.
+#' @param normalize Logical. Should the eigenfunctions be normalized? Defaults 
+#'   to \code{FALSE}. If \code{TRUE}, the eigenfunctions and scores are sortted 
+#'   according to the eigenvalues.
 #'   
 #' @return \item{scores}{A matrix of scores (coefficients) with dimension 
 #'   \code{N x K}, reflecting the weights for principal component in each 
@@ -302,6 +305,9 @@ makeDiffOp <- function(degree, dim){
 #'   of basis functions.} \item{ortho}{Logical, set to \code{FALSE}, as basis 
 #'   functions are not orthonormal.} \item{functions}{A functional data object, 
 #'   representing the functional principal component basis functions.}
+#'   \item{values}{A vector of length \code{npc}containing the eigenvalues. If \code{normalized} is
+#'   \code{TRUE}, the eigenvalues (and accordingly, the eigenfunctions and
+#'   scores) are sorted in a decreasing manner.}
 #'   
 #' @seealso \code{\link{univDecomp}}, \code{\link{FCP_TPA}}
 #'   
