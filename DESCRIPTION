@@ -28,6 +28,7 @@ Depends:
     R (>= 3.1.0),
     funData
 Suggests:
+    covr,
     testthat
 NeedsCompilation: yes
 SystemRequirements: libfftw3 (>= 3.3.4)
