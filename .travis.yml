@@ -1,0 +1,23 @@
+language: r
+cache: packages
+
+addons:
+  apt:
+    packages:
+      - libfftw3-dev
+
+os:
+  - linux
+  - osx
+
+r:
+  - release
+  - devel
+  
+matrix:
+  exclude:
+    - os: osx
+      r: devel
+  
+after_success:
+  - Rscript -e 'covr::codecov()'

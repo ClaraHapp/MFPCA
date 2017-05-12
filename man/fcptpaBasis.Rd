@@ -2,15 +2,16 @@
 % Please edit documentation in R/univDecomp.R
 \name{fcptpaBasis}
 \alias{fcptpaBasis}
-\title{Calculate a smooth PCA representaion for functional data on two-dimensional
+\title{Calculate a smooth PCA representation for functional data on two-dimensional
 domains}
 \usage{
-fcptpaBasis(funDataObject, npc, smoothingDegree = rep(2, 2), alphaRange)
+fcptpaBasis(funDataObject, npc, smoothingDegree = rep(2, 2), alphaRange,
+  normalize = FALSE)
 }
 \arguments{
 \item{funDataObject}{An object of class \code{\link[funData]{funData}}
-containing the observed functional data samples (here: images) for which
-the smooth PCA is to be calculated.}
+containing the observed functional data samples (here: images) for which the
+smooth PCA is to be calculated.}
 
 \item{npc}{An integer, giving the number of principal components to be
 calculated.}
@@ -20,15 +21,20 @@ the difference penalties inducing smoothness in both directions of the
 image. Defaults to \code{2} for each direction (2nd differences).}
 
 \item{alphaRange}{A list of length 2 with entries \code{v} and \code{w}
-  containing the range of smoothness parameters to test for each direction.}
+containing the range of smoothness parameters to test for each direction.}
+
+\item{normalize}{Logical. If \code{TRUE} the eigenfunctions are normalized to
+ have norm 1. Defaults to \code{FALSE}.}
 }
 \value{
-\item{scores}{A matrix of scores (coefficients) with dimension
-  \code{N x K}, reflecting the weights for principal component in each
-  observation.}  \item{B}{A matrix containing the scalar product of all pairs
-  of basis functions.} \item{ortho}{Logical, set to \code{FALSE}, as basis
-  functions are not orthonormal.} \item{functions}{A functional data object,
-  representing the functional principal component basis functions.}
+\item{scores}{A matrix of scores (coefficients) with dimension \code{N
+ x npc}, reflecting the weights for principal component in each observation.}
+ \item{B}{A matrix containing the scalar product of all pairs of basis
+ functions.} \item{ortho}{Logical, set to \code{FALSE}, as basis functions
+ are not orthonormal.} \item{functions}{A functional data object,
+ representing the functional principal component basis functions.}
+ \item{values}{A vector of length \code{npc}, containing the eigenvalues in
+ decreasing order.}
 }
 \description{
 This function calculates a smooth PCA representation based on the FCP_TPA
@@ -69,9 +75,9 @@ plot(fcptpa$functions, obs = i, main = paste("Basis function", i)) # plot first 
 par(oldpar)}
 }
 \references{
-G. I. Allen, "Multi-way Functional Principal Components
-  Analysis", In IEEE International Workshop on Computational Advances in
-  Multi-Sensor Adaptive Processing, 2013.
+G. I. Allen, "Multi-way Functional Principal Components Analysis",
+ In IEEE International Workshop on Computational Advances in Multi-Sensor
+ Adaptive Processing, 2013.
 }
 \seealso{
 \code{\link{univDecomp}}, \code{\link{FCP_TPA}}
