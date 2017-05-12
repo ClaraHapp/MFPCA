@@ -1,4 +1,7 @@
 # MFPCA
+
+[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/MFPCA)](http://cran.r-project.org/package=MFPCA)
+
 `MFPCA` is an `R`-package for calculating a PCA for multivariate functional data observed on different domains, that may also differ in dimension. The estimation algorithm relies on univariate basis expansions for each element of the multivariate functional data.
 
 ## Highlights ##
