@@ -63,9 +63,14 @@ fixed.}
   \code{\link[funData]{multiFunData}} object containing the estimated
   multivariate functional principal components \eqn{\hat \psi_1, \ldots, \hat
   \psi_M}.} \item{scores}{ A matrix of dimension \code{N x M} containing the
-  estimated scores \eqn{\hat \rho_{im}}.} \item{meanFunction}{A multivariate
-  functional data object, corresponding to the mean function. The MFPCA is
-  applied to the de-meaned functions in \code{mFData}.}\item{fit}{A
+  estimated scores \eqn{\hat \rho_{im}}.} \item{vectors}{A matrix
+  representing the eigenvectors associated with the combined univariate score
+  vectors. This might be helpful for calculating predictions.}
+  \item{normFactors}{The normalizing factors used for calculating the
+  multivariate eigenfunctions and scores. This might be helpful when
+  calculation predictions.} \item{meanFunction}{A multivariate functional
+  data object, corresponding to the mean function. The MFPCA is applied to
+  the de-meaned functions in \code{mFData}.}\item{fit}{A
   \code{\link[funData]{multiFunData}} object containing estimated
   trajectories for each observation based on the truncated Karhunen-Loeve
   representation and the estimated scores and eigenfunctions.} \item{CI}{A
