@@ -176,11 +176,11 @@ test_that("test univariate decompositions 2D", {
   expect_equal(nObs(fcptpa2D$functions), 4)
   expect_equal(norm(fcptpa2D$functions)[1], 0.000520573393)
   expect_equal(fcptpa2D$values[1], 643.5194)
-  expect_equal(sum(fcptpa2D$values), 658.5576201)
+  expect_equal(sum(fcptpa2D$values), 658.5576, tolerance = 1e-6)
   
   set.seed(2)
   fcptpa2Dnorm <- MFPCA:::fcptpaBasis(f2, npc = 4, alphaRange = list(v = c(1e-4, 1e4), w = c(1e-4, 1e4)), normalize = TRUE)
-  expect_equal(mean(fcptpa2Dnorm$scores), -278.15999) 
+  expect_equal(mean(fcptpa2Dnorm$scores), -278.1599, tolerance = 1e-6) 
   expect_true(fcptpa2Dnorm$ortho)
   expect_null(fcptpa2Dnorm$B)
   expect_equal(norm(fcptpa2Dnorm$functions), rep(1, nObs(fcptpa2Dnorm$functions)))
