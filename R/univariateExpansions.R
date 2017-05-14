@@ -182,9 +182,36 @@ expandBasisFunction <- function(scores, argvals = functions@argvals, functions)
 
   # collapse higher-dimensional functions, multiply with scores and resize the result
   d <- dim(functions@X)
-  dim(functions@X) <- c(d[1], prod(d[-1]))
-  resX <- scores %*% functions@X
-  dim(resX) <- c(dim(scores)[1],d[-1])
+  nd <- length(d)
+  
+  if(nd == 2)
+    resX <- scores %*% functions@X
+  
+  if(nd == 3)
+  {
+    resX <- array(NA, dim = c(dim(scores)[1], d[-1]))
+    
+    for(i in 1:d[2])
+      resX[,i,] <- scores %*% functions@X[,i,]
+  }
+  
+  if(nd == 4)
+  {
+    resX <- array(NA, dim = c(dim(scores)[1], d[-1]))
+    
+    for(i in 1:d[2])
+      for(j in 1:d[3])
+          resX[,i,j,] <- scores %*% functions@X[,i,j,]
+  }
+    
+  if(nd > 4) # slow solution due to aperm
+  {
+    resX <- aperm(plyr::aaply(.data = functions@X, .margins = 3:nd, 
+                        .fun = function(x,y){y %*% x}, y = scores), 
+                  c(nd-1,nd, 1:(nd-2)))
+    dimnames(resX) <- NULL
+  }  
+  
   return( funData(argvals, resX) )
 }
 

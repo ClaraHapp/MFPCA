@@ -108,3 +108,20 @@ test_that("test univariate expansions 3D", {
                                                                      funData:::efFourier(argvals[[3]], M = 5)))
   expect_equal(expandDefault3D, default3D)
 })
+
+test_that("test univariate expansions 4D and higher", {
+  set.seed(4)
+  scores <- sapply(10:1, function(x){rnorm(20, sd = x/25)})
+  argvals <- list(1:5,1:4,1:3,1:2)
+  X <- array(runif(10*5*4*3*2), dim = c(10,5,4,3,2))
+  
+  default4D <- MFPCA:::expandBasisFunction(scores = scores, functions = funData(argvals, X))
+  expect_equal(nObs(default4D), 20)
+  expect_equal(nObsPoints(default4D), c(5,4,3,2))
+  expect_equal(default4D@X[1,1,1,1,], c(0.2971338, 0.5745175), tol = 1e-6) # minimal check, as norm etc. are not implemented for 4D data
+  
+  # wrapper function
+  expandDefault4D <- MFPCA:::univExpansion(type = "default", scores = scores, argvals = argvals,
+                                           functions = funData(argvals, X))
+  expect_equal(expandDefault4D, default4D)
+})
