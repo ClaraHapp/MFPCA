@@ -52,12 +52,12 @@ test_that("test MFPCA main function", {
   
   # check functionality
   expect_warning(uFPCA <- MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "uFPCA"),
-                                                          list(type = "uFPCA")), approx.eigen = TRUE), 
+                                                          list(type = "uFPCA")), approx.eigen = TRUE, fit = TRUE), 
                  "Calculating a large percentage of principal components, approximation may not be appropriate.
             'approx.eigen' set to FALSE.")
   splines <- MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "splines1D", k = 10),
                                                             list(type = "splines1D", k = 10)),
-                   approx.eigen = TRUE)
+                   approx.eigen = TRUE, fit = TRUE)
   
   # values
   expect_equal(length(uFPCA$values), length(splines$values))
@@ -69,6 +69,10 @@ test_that("test MFPCA main function", {
   expect_equal(nObs(uFPCA$functions), nObs(splines$functions))
   expect_equal(norm(uFPCA$functions[[1]])[1], 0.579550598)
   expect_equal(norm(splines$functions[[1]])[1], 0.57956679)
+  
+  # fits
+  expect_equal(sum(norm(uFPCA$fit - sim$simData)), 0.86272423)
+  expect_equal(sum(norm(splines$fit - sim$simData)), 3.135592e-07)
   
   ### Test bootstrap
   set.seed(2)
