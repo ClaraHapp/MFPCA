@@ -75,10 +75,26 @@ test_that("test MFPCA main function", {
   splinesBoot <- MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "splines1D", k = 10),
                                                             list(type = "splines1D", k = 10)),
                    approx.eigen = FALSE, bootstrap = TRUE, nBootstrap = 100, bootstrapAlpha = 0.05, verbose = FALSE)
-  all.equal(splinesBoot$CIvalues$alpha_0.05$upper[1], 1.39715714 )
-  all.equal(sum(splinesBoot$CIvalues$alpha_0.05$upper), 3.5155807)
-  all.equal(splinesBoot$CIvalues$alpha_0.05$lower[1], 0.82536666 )
-  all.equal(sum(splinesBoot$CIvalues$alpha_0.05$lower), 2.2491912)
+  expect_equal(splinesBoot$CIvalues$alpha_0.05$upper[1], 1.39715714 )
+  expect_equal(sum(splinesBoot$CIvalues$alpha_0.05$upper), 3.5155807)
+  expect_equal(splinesBoot$CIvalues$alpha_0.05$lower[1], 0.82536666 )
+  expect_equal(sum(splinesBoot$CIvalues$alpha_0.05$lower), 2.2491912)
+  expect_equal(norm(splinesBoot$CI$alpha_0.05$upper)[1], 0.26693871)
+  expect_equal(sum(norm(splinesBoot$CI$alpha_0.05$upper)), 7.2797155)
+  expect_equal(norm(splinesBoot$CI$alpha_0.05$lower)[1], 2.0226501, tol = 1e-6)
+  expect_equal(sum(norm(splinesBoot$CI$alpha_0.05$lower)), 9.2470745)
+  
+  uFPCABoot <- MFPCA(sim$simData, M = 3, uniExpansions = list(list(type = "uFPCA", npc = 3),
+                                                                list(type = "uFPCA", npc = 3)),
+                       approx.eigen = FALSE, bootstrap = TRUE, nBootstrap = 10, bootstrapAlpha = 0.1, verbose = FALSE)
+  expect_equal(uFPCABoot$CIvalues$alpha_0.1$upper[1], 1.1477863 )
+  expect_equal(sum(uFPCABoot$CIvalues$alpha_0.1$upper), 2.4099565)
+  expect_equal(uFPCABoot$CIvalues$alpha_0.1$lower[1], 0.84856532 )
+  expect_equal(sum(uFPCABoot$CIvalues$alpha_0.1$lower), 1.8092398, tol = 1e-6)
+  expect_equal(norm(uFPCABoot$CI$alpha_0.1$upper)[1], 1.6649342, tol = 1e-6)
+  expect_equal(sum(norm(uFPCABoot$CI$alpha_0.1$upper)), 4.9297221)
+  expect_equal(norm(uFPCABoot$CI$alpha_0.1$lower)[1], 0.44705663)
+  expect_equal(sum(norm(uFPCABoot$CI$alpha_0.1$lower)), 2.5504374)
 })
 
 test_that("MFPCA calculation function", {
