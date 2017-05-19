@@ -46,6 +46,10 @@ test_that("test MFPCA main function", {
                      bootstrap = TRUE, nBootstrap = 10, bootstrapStrat = as.factor(1:5)), 
                "bootstrapStrat must have the same length as the number of observations in the mFData object.", fixed = TRUE)
   
+  # check warning
+  expect_warning(MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "uFPCA", npc = 2), list(type = "uFPCA", npc = 2))),
+                 "Function MFPCA: total number of univariate basis functions is smaller than given M. M was set to 4")
+  
   # check functionality
   expect_warning(uFPCA <- MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "uFPCA"),
                                                           list(type = "uFPCA")), approx.eigen = TRUE), 
