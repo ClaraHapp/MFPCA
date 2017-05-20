@@ -87,6 +87,36 @@ test_that("test MFPCA main function", {
   expect_equal(uFPCA$meanFunction[[1]], mixed$meanFunction[[1]])
   expect_equal(splines$meanFunction[[2]], mixed$meanFunction[[2]])
   
+  # vectors
+  expect_is(uFPCA$vectors, "matrix")
+  expect_s4_class(splines$vectors, "dgeMatrix")
+  expect_s4_class(mixed$vectors, "dgeMatrix")
+  
+  expect_equal(dim(uFPCA$vectors), c(6,5))
+  expect_equal(dim(splines$vectors), c(20,5))
+  expect_equal(dim(mixed$vectors), c(13,5))
+  
+  expect_equal(sum(uFPCA$scores), -1.1286279)
+  expect_equal(sum(splines$scores), 0)
+  expect_equal(sum(mixed$scores), -1.0371844)
+  
+  expect_equal(uFPCA$scores[1,1],  -0.16778892)
+  expect_equal(splines$scores[1,1], 0.17022297)
+  expect_equal(mixed$scores[1,1], -0.17057426)
+  
+  # norm factors
+  expect_length(uFPCA$normFactors, 5)
+  expect_length(splines$normFactors, 5)
+  expect_length(mixed$normFactors, 5)
+  
+  expect_equal(sum(uFPCA$normFactors), 7.1837392)
+  expect_equal(sum(splines$normFactors), 7.1675318)
+  expect_equal(sum(mixed$normFactors), 7.1751594)
+  
+  expect_equal(uFPCA$normFactors[1], 0.97509001)
+  expect_equal(splines$normFactors[1], 0.97466583)
+  expect_equal(mixed$normFactors[1], 0.97474938)
+  
   ### Test bootstrap
   set.seed(2)
   splinesBoot <- MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "splines1D", k = 10),
