@@ -96,9 +96,9 @@ test_that("test MFPCA main function", {
   expect_equal(dim(splines$vectors), c(20,5))
   expect_equal(dim(mixed$vectors), c(13,5))
   
-  expect_equal(sum(uFPCA$scores), -1.1286279)
+  expect_equal(sum(uFPCA$scores), -1.12862787)
   expect_equal(sum(splines$scores), 0)
-  expect_equal(sum(mixed$scores), -1.0371844)
+  expect_equal(sum(mixed$scores),  0.644291947)
   
   expect_equal(uFPCA$scores[1,1],  -0.16778892)
   expect_equal(splines$scores[1,1], 0.17022297)
