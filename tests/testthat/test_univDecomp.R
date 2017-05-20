@@ -71,6 +71,20 @@ test_that("PACE function", {
   expect_equal(pca1D$values[1], 1.35690262)
   expect_equal(pca1D$sigma2, 0.0131059337)
   
+  pcaPD <- PACE(f1, pve = 0.95, makePD = TRUE)
+  expect_equal(pcaPD$npc, 5)
+  expect_equal(nObs(pcaPD$fit), 10)
+  expect_equal(mean(norm(pcaPD$fit)), 4.4173401)
+  expect_equal(dim(pcaPD$scores), c(10,5))
+  expect_equal(mean(abs(pcaPD$scores)), 0.71487472)
+  expect_equal(nObs(pcaPD$mu), 1)
+  expect_equal(norm(pcaPD$mu), 0.54801585)
+  expect_equal(nObs(pcaPD$functions), 5)
+  expect_equal(norm(pcaPD$functions), rep(1,5))
+  expect_equal(sum(pcaPD$values), 3.7756738)
+  expect_equal(pcaPD$values[1], 1.35694146)
+  expect_equal(pcaPD$sigma2, 0.011018331)
+  
   # test also for irregular data
   f1sparse <- sparsify(f1, minObs=  20, maxObs = 50)
   i1 <- irregFunData(argvals = apply(f1sparse@X,1, function(x){f1sparse@argvals[[1]][which(!is.na(x))]}), X = apply(f1sparse@X, 1, na.omit))
