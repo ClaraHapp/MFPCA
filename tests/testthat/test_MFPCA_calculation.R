@@ -58,21 +58,34 @@ test_that("test MFPCA main function", {
   splines <- MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "splines1D", k = 10),
                                                             list(type = "splines1D", k = 10)),
                    approx.eigen = TRUE, fit = TRUE)
+  mixed <- MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "uFPCA"),
+                                                            list(type = "splines1D", k = 10)),
+                   approx.eigen = TRUE, fit = TRUE)
   
   # values
   expect_equal(length(uFPCA$values), length(splines$values))
-  expect_equal(sum(uFPCA$values), sum(uFPCA$values))
+  expect_equal(length(uFPCA$values), length(mixed$values))
+  expect_equal(sum(uFPCA$values), sum(splines$values), tol = 5e-2)
+  expect_equal(sum(uFPCA$values), sum(mixed$values), tol = 5e-2)
   expect_equal(uFPCA$values[1], 1.05174404)
   expect_equal(splines$values[1], 1.05266096)
+  expect_equal(mixed$values[1], 1.0524805)
   
   # functions
   expect_equal(nObs(uFPCA$functions), nObs(splines$functions))
+  expect_equal(nObs(uFPCA$functions), nObs(mixed$functions))
   expect_equal(norm(uFPCA$functions[[1]])[1], 0.579550598)
   expect_equal(norm(splines$functions[[1]])[1], 0.57956679)
+  expect_equal(norm(mixed$functions[[1]])[1], 0.57969984)
   
   # fits
   expect_equal(sum(norm(uFPCA$fit - sim$simData)), 0.86272423)
   expect_equal(sum(norm(splines$fit - sim$simData)), 3.135592e-07)
+  expect_equal(sum(norm(mixed$fit - sim$simData)), 0.40766935)
+  
+  # mean function
+  expect_equal(uFPCA$meanFunction[[1]], mixed$meanFunction[[1]])
+  expect_equal(splines$meanFunction[[2]], mixed$meanFunction[[2]])
   
   ### Test bootstrap
   set.seed(2)
@@ -116,3 +129,4 @@ test_that("MFPCA calculation function", {
     
             
           })
+
