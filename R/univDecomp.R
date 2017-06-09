@@ -806,7 +806,7 @@ dctBasis2D <- function(funDataObject, qThresh, parallel = FALSE)
 #' 
 #' @importFrom stats quantile
 #'
-#' @useDynLib MFPCA calcCoefs
+#' @useDynLib MFPCA, .registration = TRUE calcCoefs
 #'
 #' @keywords internal
 dct2D <- function(image, qThresh)
@@ -868,7 +868,7 @@ dctBasis3D <- function(funDataObject, qThresh, parallel = FALSE)
 #' 
 #' @importFrom stats quantile
 #'
-#' @useDynLib MFPCA calcCoefs3D
+#' @useDynLib MFPCA, .registration = TRUE calcCoefs3D
 #'
 #' @keywords internal
 dct3D <- function(image, qThresh)
