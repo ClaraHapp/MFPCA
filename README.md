@@ -1,6 +1,7 @@
 # MFPCA
 
 [![Travis-CI Build Status](https://travis-ci.org/ClaraHapp/MFPCA.svg?branch=master)](https://travis-ci.org/ClaraHapp/MFPCA) 
+[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/clarahapp/MFPCA?branch=master&svg=true)](https://ci.appveyor.com/project/clarahapp/MFPCA)
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/MFPCA)](http://cran.r-project.org/package=MFPCA)
 [![Coverage Status](https://img.shields.io/codecov/c/github/ClaraHapp/MFPCA/master.svg)](https://codecov.io/github/ClaraHapp/MFPCA?branch=master)
 

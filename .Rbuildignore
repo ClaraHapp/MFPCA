@@ -3,3 +3,4 @@
 
 # Travis
 .travis.yml
+^appveyor\.yml$
