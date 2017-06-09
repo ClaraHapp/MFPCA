@@ -225,7 +225,7 @@ PACE <- function(funDataObject, predData = NULL, nbasis = 10, pve = 0.99, npc = 
   if(dimSupp(funDataObject) != 1)
     stop("PACE: Implemented only for funData objects with one-dimensional support.")
   
-  if(is(funDataObject, "irregFunData")) # for irregular functional data, use funData representation
+  if(methods::is(funDataObject, "irregFunData")) # for irregular functional data, use funData representation
     funDataObject <- as.funData(funDataObject)
   
   if(!is.null(predData))
