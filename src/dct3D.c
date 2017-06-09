@@ -1,14 +1,6 @@
 // compile with R CMD SHLIB dct.c -lfftw3
 
-# ifdef HAVE_FFTW
-# include <fftw3.h>
-# endif
-
-#include <R.h> 
-#include <Rmath.h>
-
-#define rho(i) ( (i) == 0 ? 1/sqrt(M_PI) : sqrt(2/M_PI) )
-#define z(i) ( (i) == 0 ? 1 : 1/sqrt(2) )
+#include "MFPCA.h"
 
 void calcCoefs3D(int* dim, double* image, double* coefs)
 {	
