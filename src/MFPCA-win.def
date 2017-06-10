@@ -1,0 +1,3 @@
+LIBRARY MFPCA.dll
+EXPORTS
+  R_init_MFPCA
