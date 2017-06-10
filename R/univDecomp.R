@@ -112,7 +112,7 @@ univDecomp <- function(type, funDataObject, ...)
 #' @param makePD Logical: should positive definiteness be enforced for the 
 #'   covariance surface estimate? Defaults to \code{FALSE} (cf. 
 #'   \code{\link[refund]{fpca.sc}}).
-#'   @param cov.weight.type The type of weighting used for the smooth covariance
+#' @param cov.weight.type The type of weighting used for the smooth covariance
 #'   estimate in \code{\link{PACE}}. Defaults to \code{"none"}, i.e. no weighting. Alternatively, 
 #'   \code{"counts"} (corresponds to \code{\link[refund]{fpca.sc}} ) weights the pointwise estimates of the covariance function
 #'   by the number of observation points.
@@ -807,7 +807,7 @@ dctBasis2D <- function(funDataObject, qThresh, parallel = FALSE)
 #' 
 #' @importFrom stats quantile
 #'
-#' @useDynLib MFPCA, .registration = TRUE calcCoefs
+#' @useDynLib MFPCA, .registration = TRUE
 #'
 #' @keywords internal
 dct2D <- function(image, qThresh)
@@ -869,7 +869,7 @@ dctBasis3D <- function(funDataObject, qThresh, parallel = FALSE)
 #' 
 #' @importFrom stats quantile
 #'
-#' @useDynLib MFPCA, .registration = TRUE calcCoefs3D
+#' @useDynLib MFPCA, .registration = TRUE
 #'
 #' @keywords internal
 dct3D <- function(image, qThresh)

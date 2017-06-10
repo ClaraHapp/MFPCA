@@ -28,8 +28,9 @@ principal components. Defaults to \code{NULL}. If given, this overrides
 
 \item{makePD}{Logical: should positive definiteness be enforced for the 
 covariance surface estimate? Defaults to \code{FALSE} (cf. 
-\code{\link[refund]{fpca.sc}}).
-@param cov.weight.type The type of weighting used for the smooth covariance
+\code{\link[refund]{fpca.sc}}).}
+
+\item{cov.weight.type}{The type of weighting used for the smooth covariance
 estimate in \code{\link{PACE}}. Defaults to \code{"none"}, i.e. no weighting. Alternatively, 
 \code{"counts"} (corresponds to \code{\link[refund]{fpca.sc}} ) weights the pointwise estimates of the covariance function
 by the number of observation points.}
