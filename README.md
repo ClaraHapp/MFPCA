@@ -35,7 +35,13 @@ If you would like to use the cosine bases make sure that the `C`-library [`fftw3
 
 ## Dependencies ##
 
-The `MFPCA` package depends on the `R`-package [`funData`](https://github.com/ClaraHapp/funData) for representing (multivariate) functional data.
+The `MFPCA` package depends on the `R`-package [`funData`](https://CRAN.R-project.org/package=funData) for representing (multivariate) functional data. It uses functionalities from 
+[`abind`](https://CRAN.R-project.org/package=abind), 
+[`foreach`](https://CRAN.R-project.org/package=foreach), 
+[`irlba`](https://CRAN.R-project.org/package=irlba), 
+[`Matrix`](https://CRAN.R-project.org/package=Matrix), 
+[`mgcv`](https://CRAN.R-project.org/package=mgcv) and
+[`plyr`](https://CRAN.R-project.org/package=plyr).
 
 ## References ##
 
