@@ -487,7 +487,7 @@ dctFunction2D <- function(scores, argvals, parallel = FALSE)
 #'
 #' @seealso \code{\link{dctBasis2D}}
 #'
-#' @useDynLib MFPCA calcImage
+#' @useDynLib MFPCA, .registration = TRUE
 #'
 #' @keywords internal
 idct2D <- function(scores, ind, dim)
@@ -565,7 +565,7 @@ dctFunction3D <- function(scores, argvals, parallel = FALSE)
 #'
 #' @seealso \code{\link{dctBasis3D}}
 #'
-#' @useDynLib MFPCA calcImage3D
+#' @useDynLib MFPCA, .registration = TRUE
 #'
 #' @keywords internal
 idct3D <- function(scores, ind, dim)
