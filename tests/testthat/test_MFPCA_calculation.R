@@ -126,10 +126,10 @@ test_that("test MFPCA main function", {
   expect_equal(sum(splinesBoot$CIvalues$alpha_0.05$upper), 3.5155807)
   expect_equal(splinesBoot$CIvalues$alpha_0.05$lower[1], 0.82536666 )
   expect_equal(sum(splinesBoot$CIvalues$alpha_0.05$lower), 2.2491912)
+  expect_equal(nObs(splinesBoot$CI$alpha_0.05$upper), 5)
   expect_equal(norm(splinesBoot$CI$alpha_0.05$upper)[1], 0.26693871)
-  expect_equal(sum(norm(splinesBoot$CI$alpha_0.05$upper)), 7.2797155)
+  expect_equal(nObs(splinesBoot$CI$alpha_0.05$lower), 5)
   expect_equal(norm(splinesBoot$CI$alpha_0.05$lower)[1], 2.0226501, tol = 1e-6)
-  expect_equal(sum(norm(splinesBoot$CI$alpha_0.05$lower)), 9.2470745)
   
   uFPCABoot <- MFPCA(sim$simData, M = 3, uniExpansions = list(list(type = "uFPCA", npc = 3),
                                                                 list(type = "uFPCA", npc = 3)),
