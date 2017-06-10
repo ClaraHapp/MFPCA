@@ -29,13 +29,13 @@ The representation of the data is based on the object-oriented [`funData`](https
 
 ## Installation ##
 
-To install the latest version directly from GitHub, please use `devtools::install_github("ClaraHapp/MFPCA")` (install [`devtools`](https://cran.r-project.org/package=devtools) before).
+The `MFPCA` pacakge is available on [`CRAN`](https://CRAN.R-project.org/package=MFPCA). To install the latest version directly from GitHub, please use `devtools::install_github("ClaraHapp/MFPCA")` (install [`devtools`](https://cran.r-project.org/package=devtools) before).
 
 If you would like to use the cosine bases make sure that the `C`-library [`fftw3`](http://www.fftw.org/) is installed on your computer before you install `MFPCA`. Otherwise, `MFPCA` is installed without the cosine bases and will throw an error if you attempt to use functions that need `fftw3`.
 
 ## Dependencies ##
 
-The `funData` package depends on the `R`-package [`funData`](https://github.com/ClaraHapp/funData) for representing (multivariate) functional data.
+The `MFPCA` package depends on the `R`-package [`funData`](https://github.com/ClaraHapp/funData) for representing (multivariate) functional data.
 
 ## References ##
 
@@ -47,5 +47,3 @@ C. Happ, S. Greven (2016+): Multivariate Functional Principal Component Analysis
 ## Bug reports ##
 
 Please use [GitHub issues](https://github.com/ClaraHapp/MFPCA/issues) for reporting bugs or issues.
-
-
