@@ -295,14 +295,15 @@ makeDiffOp <- function(degree, dim){
 #'  image. Defaults to \code{2} for each direction (2nd differences).
 #'@param alphaRange A list of length 2 with entries \code{v} and \code{w} 
 #'  containing the range of smoothness parameters to test for each direction.
-#'@param normalize Logical. If \code{TRUE} the eigenfunctions are normalized to
+#'@param normalize Logical. If \code{TRUE} the eigenfunctions are normalized to 
 #'  have norm 1. Defaults to \code{FALSE}.
 #'  
 #'@return \item{scores}{A matrix of scores (coefficients) with dimension \code{N
 #'  x npc}, reflecting the weights for principal component in each observation.}
-#'  \item{B}{A matrix containing the scalar product of all pairs of basis
-#'  functions.} \item{ortho}{Logical, set to \code{FALSE}, as basis functions
-#'  are not orthonormal.} \item{functions}{A functional data object, 
+#'  \item{B}{A matrix containing the scalar product of all pairs of basis 
+#'  functions.} \item{ortho}{Logical, indicating whether the eigenfunctions are
+#'  normalized. Set to \code{normalize}, as this influences whether a
+#'  normalization is done or not.} \item{functions}{A functional data object, 
 #'  representing the functional principal component basis functions.} 
 #'  \item{values}{A vector of length \code{npc}, containing the eigenvalues in 
 #'  decreasing order.}
@@ -310,7 +311,7 @@ makeDiffOp <- function(degree, dim){
 #'@seealso \code{\link{univDecomp}}, \code{\link{FCP_TPA}}
 #'  
 #'@references G. I. Allen, "Multi-way Functional Principal Components Analysis",
-#'  In IEEE International Workshop on Computational Advances in Multi-Sensor
+#'  In IEEE International Workshop on Computational Advances in Multi-Sensor 
 #'  Adaptive Processing, 2013.
 #'  
 #'@export fcptpaBasis
