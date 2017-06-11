@@ -84,7 +84,7 @@
   if (makePD) { # see fpca.sc
     npc.0 <- {
       tmp <- Matrix::nearPD(npc.0, corr = FALSE, keepDiag = FALSE,
-                            do2eigen = TRUE, trace = TRUE)
+                            do2eigen = TRUE, trace = options()$verbose)
       as.matrix(tmp$mat)
     }
   }
