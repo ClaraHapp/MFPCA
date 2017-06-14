@@ -295,14 +295,17 @@ makeDiffOp <- function(degree, dim){
 #'  image. Defaults to \code{2} for each direction (2nd differences).
 #'@param alphaRange A list of length 2 with entries \code{v} and \code{w} 
 #'  containing the range of smoothness parameters to test for each direction.
+#'@param orderValues Logical. If \code{TRUE}, the eigenvalues are ordered
+#'  decreasingly, together with their associated eigenimages and scores.
+#'  Defaults to \code{TRUE}.
 #'@param normalize Logical. If \code{TRUE} the eigenfunctions are normalized to 
 #'  have norm 1. Defaults to \code{FALSE}.
 #'  
 #'@return \item{scores}{A matrix of scores (coefficients) with dimension \code{N
 #'  x npc}, reflecting the weights for principal component in each observation.}
 #'  \item{B}{A matrix containing the scalar product of all pairs of basis 
-#'  functions.} \item{ortho}{Logical, indicating whether the eigenfunctions are
-#'  normalized. Set to \code{normalize}, as this influences whether a
+#'  functions.} \item{ortho}{Logical, indicating whether the eigenfunctions are 
+#'  orthonormal. Set to \code{normalize}, as this influences whether a 
 #'  normalization is done or not.} \item{functions}{A functional data object, 
 #'  representing the functional principal component basis functions.} 
 #'  \item{values}{A vector of length \code{npc}, containing the eigenvalues in 
@@ -337,7 +340,7 @@ makeDiffOp <- function(degree, dim){
 #' plot(fcptpa$functions, obs = i, main = paste("Basis function", i)) # plot first basis function
 #' 
 #' par(oldpar)}
-fcptpaBasis <- function(funDataObject, npc, smoothingDegree = rep(2,2), alphaRange, normalize = FALSE)
+fcptpaBasis <- function(funDataObject, npc, smoothingDegree = rep(2,2), alphaRange, orderValues = TRUE, normalize = FALSE)
 {
   if(dimSupp(funDataObject) != 2)
     stop("FCP_TPA is implemented for (2D) image data only!")
@@ -364,17 +367,18 @@ fcptpaBasis <- function(funDataObject, npc, smoothingDegree = rep(2,2), alphaRan
   {
     norms <- norm(functions, squared = FALSE)
     
-    # calculate normalized values and define ordering
+    # calculate normalized values
     values <- values * norms^2
-    ord <- order(values, decreasing = TRUE)
     
     # re-order and normalize scores and eigenfunctions
-    scores <- sweep(scores[, ord], MARGIN = 2, norms[ord], "/") # divide columns by norms
+    scores <- sweep(scores, MARGIN = 2, norms, "/") # divide columns by norms
     B <- NULL
-    functions@X <- sweep(functions@X[ord, , , drop = FALSE], MARGIN = 1, norms[ord], "/") # divide "rows" by norms
-    values <- values[ord]
+    functions@X <- sweep(functions@X, MARGIN = 1, norms, "/") # divide "rows" by norms
   }
-  else
+  else # calculate scalar products between basis functions
+    B <- calcBasisIntegrals(functions@X, dimSupp(funDataObject), funDataObject@argvals)
+  
+  if(orderValues)
   {
     # ordering of non-normalized eigenvalues
     ord <- order(values, decreasing = TRUE)
@@ -383,13 +387,11 @@ fcptpaBasis <- function(funDataObject, npc, smoothingDegree = rep(2,2), alphaRan
     scores <- scores[, ord]
     functions@X <- functions@X[ord, , , drop = FALSE]
     values <- values[ord]
-    
-    B <- calcBasisIntegrals(functions@X, dimSupp(funDataObject), funDataObject@argvals)
   }
   
   return(list(scores = scores,
               B = B,
-              ortho = normalize, # Functions are orthogonal by definition
+              ortho = normalize, # If normalize = TRUE, functions are (ortho)normalized
               functions = functions,
               values = values))
 }
