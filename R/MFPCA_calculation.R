@@ -601,7 +601,7 @@ calcMFPCA <- function(N, p, Bchol, M, type, weights, npc, argvals, uniBasis, fit
   tmpWeights <- as.matrix(Matrix::crossprod(Z, Z %*%vectors))
   eFunctions <- foreach::foreach(j = 1:p) %do% {
     univExpansion(type = type[j],
-                  scores = 1/sqrt(weights[j] * values) * normFactors * t(tmpWeights[npcCum[j]+1:npc[j],]),
+                  scores = 1/sqrt(weights[j] * values) * normFactors * t(tmpWeights[npcCum[j]+1:npc[j], , drop = FALSE]),
                   argvals = argvals[[j]],
                   functions = uniBasis[[j]]$functions,
                   params = uniBasis[[j]]$settings)
