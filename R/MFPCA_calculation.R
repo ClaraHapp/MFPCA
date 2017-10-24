@@ -515,6 +515,8 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fi
 
     res$CI <- CI
   }
+  
+  class(res) <- "MFPCAfit"
 
   return(res)
 }
