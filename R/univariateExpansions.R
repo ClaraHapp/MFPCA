@@ -94,6 +94,7 @@ univExpansion <- function(type, scores, argvals, functions, params = NULL)
   params$argvals <- argvals
 
   res <- switch(type,
+                "given" = do.call(expandBasisFunction, params),
                 "uFPCA" = do.call(expandBasisFunction, params),
                 "UMPCA" = do.call(expandBasisFunction, params),
                 "FCP_TPA" = do.call(expandBasisFunction, params),
