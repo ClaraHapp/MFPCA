@@ -49,25 +49,23 @@
 #' str(decSplines)
 univDecomp <- function(type, funDataObject, ...)
 {
-  params <- as.list(match.call()) # get all arguments
-  params$funDataObject <- funDataObject # add funDataObject (-> make sure is evaluated in correct env.)
-  
+  # get all arguments (except for function call and type)
+  params <- list(...) #lapply(as.list(match.call())[-(1:2)], eval, parent.frame()) 
+
   # check if type and data are of correct type
-  if(is.null(params$type))
+  if(is.null(type))
     stop("univDecomp: must specify 'type'.")
   
-  if(!inherits(params$type, "character"))
+  if(!inherits(type, "character"))
     stop("univDecomp: 'type' must be of class character.")
   
-  if(is.null(params$funDataObject))
+  if(is.null(funDataObject))
     stop("univDecomp: must specify 'funDataObject'.")
   
-  if(class(params$funDataObject) != "funData")
+  if(class(funDataObject) != "funData")
     stop("univDecomp: 'funDataObject' must be of class funData.")
   
-  # delete function call and type information in params
-  params[[1]] <- NULL
-  params$type <- NULL  
+  params$funDataObject <- funDataObject
   
   res <- switch(type,
                 "given" = do.call(givenBasis, params),
