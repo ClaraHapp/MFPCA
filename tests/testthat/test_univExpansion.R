@@ -35,6 +35,9 @@ test_that("test univariate expansions 1D", {
   
   expandFPCA1D <- MFPCA:::univExpansion(type = "uFPCA", scores = scores, argvals = argvals, functions = funData:::efPoly(argvals[[1]], M = 5))
   expect_equal(expandFPCA1D, default1D)
+  
+  expandGiven <- MFPCA:::univExpansion(type = "given", scores = scores, argvals = argvals, functions = funData:::efPoly(argvals[[1]], M = 5))
+  expect_equal(expandGiven, default1D)
 })
 
 test_that("test univariate expansions 2D", {
