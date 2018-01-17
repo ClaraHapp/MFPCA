@@ -615,18 +615,10 @@ calcMFPCA <- function(N, p, Bchol, M, type, weights, npc, argvals, uniBasis, fit
               vectors = vectors,
               normFactors = normFactors)
 
+  # calculate truncated Karhunen-Loeve representation
+  # TODO do we need the mean function here?!
   if(fit)
-  {
-    # calculate truncated Karhunen-Loeve representation
-    fit <- foreach::foreach(j = 1:p) %do% {
-      univExpansion(type = "default", # calculate linear combination of multivariate basis functions
-                    scores = scores,
-                    argvals = argvals[[j]],
-                    functions = eFunctions[[j]],
-                    params = NULL)
-    }
-    res$fit <- multiFunData(fit)
-  }
+    res$fit <- multivExpansion(multiFuns = res$functions, scores = scores)
 
   return(res)
 }

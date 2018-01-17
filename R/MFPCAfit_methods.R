@@ -115,30 +115,30 @@ plot.MFPCAfit <- function(MFPCAobj, plotPCs = 1:nObs(MFPCAobj$functions), stretc
 predict.MFPCAfit <- function(MFPCAobj, scores = MFPCAobj$scores)
 {
   return(MFPCAobj$meanFunction  + 
-           #taken from MFPCAcalc -> export in separate function
-           multiFunData(
-    foreach::foreach(j = 1:length(MFPCAobj$functions)) %do% { # %do% might require extra loading
-             univExpansion(type = "default", # calculate linear combination of multivariate basis functions
-                           scores = scores,
-                           argvals = MFPCAobj$functions[[j]]@argvals, # TODO set this as default!
-                           functions = MFPCAobj$functions[[j]],
-                           params = NULL)
-           }))
-  
-  
+           multivExpansion(multiFuns = MFPCAobj$functions, scores = scores))
 }
 
-print.MFPCAfit <- function()
+print.MFPCAfit <- function(MFPCAobj)
 {
+  cat(nObs(MFPCAobj$functions), "multivariate functional principal components estimated with",
+      length(MFPCAobj$functions), "elements, each.\n", rep(c(" ", "*", " "), each = 10), "\n")
   
-  
-  
+  cat("Eigenvalues:\n")
+  print(MFPCAobj$values)
 }
 
-summary.MFPCAfit <- function()
+summary.MFPCAfit <- function(MFPCAobj)
 {
+  cat(nObs(MFPCAobj$functions), "multivariate functional principal components estimated with",
+      length(MFPCAobj$functions), "elements, each.\n", rep(c(" ", "*", " "), each = 10), "\n")
   
+  vals <- MFPCAobj$values
   
+  res <- rbind(`Eigenvalue` = vals, 
+               `Proportion of variance explained` = vals/sum(vals),
+               `Cumulative proportion` = cumsum(vals)/sum(vals))
+  colnames(res) <- paste("PC", 1:length(vals))
   
+  return(res)
 }
 
