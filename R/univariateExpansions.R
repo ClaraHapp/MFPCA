@@ -21,7 +21,7 @@ NULL
 #' @param type A character string, specifying the basis for which the 
 #'   decomposition is to be calculated.
 #' @param argvals A list, representing the domain of the basis functions. If
-#'   functions is not \code{NULL}, the usual default is
+#'   \code{functions} is not \code{NULL}, the usual default is
 #'   \code{functions@@argvals}. See \linkS4class{funData} and the underlying
 #'   expansion functions for details.
 #' @param scores A matrix of scores (coefficients) for each observation based on
@@ -83,7 +83,7 @@ NULL
 #' plot(funs, main = "PCA reconstruction")                     
 #' 
 #' par(oldPar)
-univExpansion <- function(type, scores, argvals, functions, params = NULL)
+univExpansion <- function(type, scores, argvals = ifelse(!is.null(functions), functions@argvals, NULL), functions, params = NULL)
 {
   params$scores <- scores
   params$functions <- functions
