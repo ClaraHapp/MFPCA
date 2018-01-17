@@ -33,83 +33,63 @@ plot.MFPCAfit <- function(MFPCAobj, plotPCs = 1:nObs(MFPCAobj$functions), stretc
   dims <- dimSupp(MFPCAobj$functions)
   if(any(dims > 2))
     stop("Cannot plot principal components having a 3- or higher dimensional domain.")
-  
+  else
+    allDims1 <- all(dims == 1)
   oldPar <- par(no.readonly = TRUE)
   
   par(ask = TRUE)
   
-  if(all(dims == 1))
+  if(allDims1)
   {
     # all dimensions from left to right
     par(mfrow = c(1, length(MFPCAobj$functions)))
-    
-    for(ord in plotPCs) # for each order
-    {
-      stretchFactor <- median(abs(MFPCAobj$scores[,ord]))
-      
-      PCplus <- MFPCAobj$meanFunction + stretchFactor * MFPCAobj$functions
-      PCminus <- MFPCAobj$meanFunction - stretchFactor * MFPCAobj$functions
-      
-      for(i in 1:length(MFPCAobj$functions)) # for each element
-      {
-          plot(MFPCAobj$meanFunction[[i]], lwd = 2, col = "black", 
-               main = paste("PC", ord, "(explains", round(MFPCAobj$values[ord]/sum(MFPCAobj$values)*100, 2), "% of total variability)"),
-               ylim =  range(PCplus[[i]]@X, PCminus[[i]]@X), ...)
-          plot( PCplus[[i]], obs = ord, 
-                add = TRUE, type = "p", pch = "+", col = "grey50", ...)
-          plot( PCminus[[i]], obs = ord,
-                add = TRUE, type = "p", pch = "-", col = "grey50", ...)
-      }
-    }
   }
   else
   {
-      # all dimensions from left to right, upper column for "+", lower for "-"
-      par(mfrow = c(2, length(MFPCAobj$functions)))
-      
-      for(ord in plotPCs) # for each order
+    # all dimensions from left to right, upper row for "+", lower for "-"
+    par(mfrow = c(2, length(MFPCAobj$functions)))
+  }
+  
+  for(ord in plotPCs) # for each order
+  {
+    # calculate stretch factor if not given
+    if(is.null(stretchFactor))
+      stretchFactor <- median(abs(MFPCAobj$scores[,ord]))
+    
+    PCplus <- MFPCAobj$meanFunction + stretchFactor * MFPCAobj$functions
+    PCminus <- MFPCAobj$meanFunction - stretchFactor * MFPCAobj$functions
+    
+    for(rows in 1:ifelse(allDims1 == TRUE, 1, 2))
+    {
+      for(i in 1:length(MFPCAobj$functions)) # for each element
       {
-        stretchFactor <- median(abs(MFPCAobj$scores[,ord]))
-        
-        PCplus <- MFPCAobj$meanFunction + stretchFactor * MFPCAobj$functions
-        PCminus <- MFPCAobj$meanFunction - stretchFactor * MFPCAobj$functions
-        
-        # plot PCplus first
-        for(i in 1:length(MFPCAobj$functions)) # for each element
+        if(dims[i] == 1)
         {
-          if(dims[i] == 1)
-          {
-            plot(MFPCAobj$meanFunction[[i]], lwd = 2, col = "black", 
+          plot(MFPCAobj$meanFunction[[i]], lwd = 2, col = "black", 
                main = paste("PC", ord, "(explains", round(MFPCAobj$values[ord]/sum(MFPCAobj$values)*100, 2), "% of total variability)"),
-               ylim = range(PCplus[[i]]@X, PCminus[[i]]@X), ...)
-             plot( PCplus[[i]], obs = ord, 
-                add = TRUE, type = "p", pch = "+", col = "grey50", ...)
-          }
-          else
+               ylim =  range(PCplus[[i]]@X, PCminus[[i]]@X), ...)
+          if(rows == 1)
+            plot(PCplus[[i]], obs = ord, 
+                 add = TRUE, type = "p", pch = "+", col = "grey50", ...)
+          if(allDims1 == TRUE | rows == 2)
+            plot( PCminus[[i]], obs = ord,
+                  add = TRUE, type = "p", pch = "-", col = "grey50", ...)
+        }  
+        else # dims[i] == 2 (higher dimensional domains are not supported)
+        {
+          if(rows == 1)
             plot(PCplus[[i]], obs = ord, main = paste("PC", ord, "(explains", round(MFPCAobj$values[ord]/sum(MFPCAobj$values)*100, 2), "% of total variability)"),
                  ylim = range(PCplus[[i]]@X, PCminus[[i]]@X), ...)
-        }        
-          
-        # the same for PCminus
-        for(i in 1:length(MFPCAobj$functions)) # for each element
-        {
-          # plot PCplus first
-          if(dims[i] == 1)
-          {
-            plot(MFPCAobj$meanFunction[[i]], lwd = 2, col = "black", 
-                 main = paste("PC", ord, "(explains", round(MFPCAobj$values[ord]/sum(MFPCAobj$values)*100, 2), "% of total variability)"),
-                 ylim = range(PCplus[[i]]@X, PCminus[[i]]@X), ...)
-            plot( PCminus[[i]], obs = ord, 
-                  add = TRUE, type = "p", pch = "-", col = "grey50", ...)
-          }
           else
             plot(PCminus[[i]], obs = ord, main = paste("PC", ord, "(explains", round(MFPCAobj$values[ord]/sum(MFPCAobj$values)*100, 2), "% of total variability)"),
                  ylim = range(PCplus[[i]]@X, PCminus[[i]]@X), ...)
-        }        
+          
+        }
       }
     }
-  par(oldPar)
+  }
   
+  par(oldPar)
 }
 
 predict.MFPCAfit <- function(MFPCAobj, scores = MFPCAobj$scores)
