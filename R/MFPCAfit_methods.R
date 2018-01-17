@@ -112,9 +112,18 @@ plot.MFPCAfit <- function(MFPCAobj, plotPCs = 1:nObs(MFPCAobj$functions), stretc
   
 }
 
-predict.MFPCAfit <- function()
+predict.MFPCAfit <- function(MFPCAobj, scores = MFPCAobj$scores)
 {
-  
+  return(MFPCAobj$meanFunction  + 
+           #taken from MFPCAcalc -> export in separate function
+           multiFunData(
+    foreach::foreach(j = 1:length(MFPCAobj$functions)) %do% { # %do% might require extra loading
+             univExpansion(type = "default", # calculate linear combination of multivariate basis functions
+                           scores = scores,
+                           argvals = MFPCAobj$functions[[j]]@argvals, # TODO set this as default!
+                           functions = MFPCAobj$functions[[j]],
+                           params = NULL)
+           }))
   
   
 }
