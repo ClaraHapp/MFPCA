@@ -24,31 +24,37 @@ biplot.MFPCAfit <- function(MFPCAobj, choices = 1:2, ...)
   return(invisible)
 }
 
-#' @param plotPCs The principal components to be plotted. By default all components in the \code{MFPCAfit} object
+#' @param plotPCs The principal components to be plotted. By default all
+#'   components in the \code{MFPCAfit} object
+#'  @param combined Logical: Should the plots be combined? (Works only if all dimensions are one-dimensional). Defaults to FALSE
 #' @param stretchFactor The factor by which the principal components are 
-#'   multiplied before adding / subtracting them from the mean function. If
-#'   \code{NULL} (the default), the median absolute value of the scores is used.
-plot.MFPCAfit <- function(MFPCAobj, plotPCs = 1:nObs(MFPCAobj$functions), stretchFactor = NULL , ...)
+#'   multiplied before adding / subtracting them from the mean function. If 
+#'   \code{NULL} (the default), the median absolute value of the scores of each eigenfunction is used.
+plot.MFPCAfit <- function(MFPCAobj, plotPCs = 1:nObs(MFPCAobj$functions), stretchFactor = NULL, combined = FALSE, ...)
 {
+  # check dimensions
   dims <- dimSupp(MFPCAobj$functions)
+  
   if(any(dims > 2))
     stop("Cannot plot principal components having a 3- or higher dimensional domain.")
-  else
-    allDims1 <- all(dims == 1)
-  oldPar <- par(no.readonly = TRUE)
   
+  # Wait for user input for each new eigenfunction
+  oldPar <- par(no.readonly = TRUE)
   par(ask = TRUE)
   
-  if(allDims1)
+  # set number of rows:
+  # 1: all dimensions from left to right, "+" and "-" in one plot
+  # 2: all dimensions from left to right, upper row for "+", lower for "-"
+  nRows <- if(combined == TRUE)
   {
-    # all dimensions from left to right
-    par(mfrow = c(1, length(MFPCAobj$functions)))
-  }
-  else
-  {
-    # all dimensions from left to right, upper row for "+", lower for "-"
-    par(mfrow = c(2, length(MFPCAobj$functions)))
-  }
+    if(all(dims == 1)) {1} else {
+      warning("Cannot combine plots for two-dimensional elements. Will use separate plots (combined = FALSE)")
+      2
+    } 
+  } else{2}
+  
+  par(mfrow = c(nRows, length(MFPCAobj$functions)))
+  
   
   for(ord in plotPCs) # for each order
   {
@@ -59,30 +65,30 @@ plot.MFPCAfit <- function(MFPCAobj, plotPCs = 1:nObs(MFPCAobj$functions), stretc
     PCplus <- MFPCAobj$meanFunction + stretchFactor * MFPCAobj$functions
     PCminus <- MFPCAobj$meanFunction - stretchFactor * MFPCAobj$functions
     
-    for(rows in 1:ifelse(allDims1 == TRUE, 1, 2))
+    for(rows in 1:nRows)
     {
       for(i in 1:length(MFPCAobj$functions)) # for each element
       {
+        yRange <- range(PCplus[[i]]@X, PCminus[[i]]@X)
+        main <- paste("PC", ord, "(explains", round(MFPCAobj$values[ord]/sum(MFPCAobj$values)*100, 2), "% of total variability)")
+        
         if(dims[i] == 1)
         {
           plot(MFPCAobj$meanFunction[[i]], lwd = 2, col = "black", 
-               main = paste("PC", ord, "(explains", round(MFPCAobj$values[ord]/sum(MFPCAobj$values)*100, 2), "% of total variability)"),
-               ylim =  range(PCplus[[i]]@X, PCminus[[i]]@X), ...)
+               main = main, ylim = yRange, ...)
           if(rows == 1)
             plot(PCplus[[i]], obs = ord, 
                  add = TRUE, type = "p", pch = "+", col = "grey50", ...)
-          if(allDims1 == TRUE | rows == 2)
+          if(rows == 2 | combined == TRUE)
             plot( PCminus[[i]], obs = ord,
                   add = TRUE, type = "p", pch = "-", col = "grey50", ...)
         }  
         else # dims[i] == 2 (higher dimensional domains are not supported)
         {
           if(rows == 1)
-            plot(PCplus[[i]], obs = ord, main = paste("PC", ord, "(explains", round(MFPCAobj$values[ord]/sum(MFPCAobj$values)*100, 2), "% of total variability)"),
-                 ylim = range(PCplus[[i]]@X, PCminus[[i]]@X), ...)
+            plot(PCplus[[i]], obs = ord, main = main, ylim = yRange, ...)
           else
-            plot(PCminus[[i]], obs = ord, main = paste("PC", ord, "(explains", round(MFPCAobj$values[ord]/sum(MFPCAobj$values)*100, 2), "% of total variability)"),
-                 ylim = range(PCplus[[i]]@X, PCminus[[i]]@X), ...)
+            plot(PCminus[[i]], obs = ord, main = main, ylim = yRange, ...)
           
         }
       }
