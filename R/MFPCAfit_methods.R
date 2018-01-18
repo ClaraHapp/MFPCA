@@ -24,12 +24,44 @@ biplot.MFPCAfit <- function(MFPCAobj, choices = 1:2, ...)
   return(invisible)
 }
 
-#' @param plotPCs The principal components to be plotted. By default all
-#'   components in the \code{MFPCAfit} object
-#'  @param combined Logical: Should the plots be combined? (Works only if all dimensions are one-dimensional). Defaults to FALSE
+#' Plot MFPCA results
+#' 
+#' Plots the eigenfunctions as perturbations of the mean (i.e. the mean function
+#' plus/minus a constant factor times each eigenfunction separately). If all 
+#' elements have a one-dimensional domain, the plots can be combined, otherwise 
+#' the effects of adding and subtracting are shown in two separate rows for each
+#' eigenfunction.
+#' 
+#' @param MFPCAobj An object of class \code{MFPCAfit}, typically returned by the
+#'   \link{MFPCA} function.
+#' @param plotPCs The principal components to be plotted. Defaults to all 
+#'   components in the \code{MFPCAfit} object.
 #' @param stretchFactor The factor by which the principal components are 
 #'   multiplied before adding / subtracting them from the mean function. If 
-#'   \code{NULL} (the default), the median absolute value of the scores of each eigenfunction is used.
+#'   \code{NULL} (the default), the median absolute value of the scores of each 
+#'   eigenfunction is used.
+#' @param combined Logical: Should the plots be combined? (Works only if all 
+#'   dimensions are one-dimensional). Defaults to \code{FALSE}.
+#' @param .. Further graphical parameters passed to the \link[funData]{plot}
+#'   functions for functional data.
+#'   
+#' @return A plot of the principal components as perturbations of the mean.
+#' 
+#' @seealso \link{MFPCA}, \link[funData]{plot}
+#' 
+#' @examples 
+#' # Simulate multivariate functional data on one-dimensonal domains
+#' # and calculate MFPCA (cf. MFPCA help)
+#' set.seed(1)
+#' # simulate data (one-dimensional domains)
+#' sim <-  simMultiFunData(type = "split", argvals = list(seq(0,1,0.01), seq(-0.5,0.5,0.02)),
+#'                        M = 5, eFunType = "Poly", eValType = "linear", N = 100)
+#' # MFPCA based on univariate FPCA
+#' PCA <- MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "uFPCA"),
+#'                                                      list(type = "uFPCA")))
+#' 
+#' # Plot the results
+#' plot(PCA, combined = TRUE) # combine addition and subtraction in one plot
 plot.MFPCAfit <- function(MFPCAobj, plotPCs = 1:nObs(MFPCAobj$functions), stretchFactor = NULL, combined = FALSE, ...)
 {
   # check dimensions
