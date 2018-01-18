@@ -128,6 +128,8 @@ plot.MFPCAfit <- function(MFPCAobj, plotPCs = 1:nObs(MFPCAobj$functions), stretc
   }
   
   par(oldPar)
+  
+  invisible(NULL)
 }
 
 predict.MFPCAfit <- function(MFPCAobj, scores = MFPCAobj$scores)
