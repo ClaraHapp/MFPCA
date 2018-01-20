@@ -216,8 +216,8 @@ calcBasisIntegrals <- function(basisFunctions, dimSupp, argvals)
 #'   
 #' @seealso \code{\link[funData]{multiFunData}}, \code{\link{PACE}}, 
 #'   \code{\link{univDecomp}}, \code{\link{univExpansion}}, 
-#'   \code{\link{summary.MFPCAfit}}, \code{\link{plot.MFPCAfit}}, 
-#'   \code{\link{scoreplot.MFPCAfit}}
+#'   \code{\link[=summary.MFPCAfit]{summary}}, \code{\link[=plot.MFPCAfit]{plot}}, 
+#'   \code{\link[=scoreplot.MFPCAfit]{scoreplot}}
 #'   
 #' @examples
 #' oldPar <- par(no.readonly = TRUE)
@@ -231,6 +231,7 @@ calcBasisIntegrals <- function(basisFunctions, dimSupp, argvals)
 #' # MFPCA based on univariate FPCA
 #' uFPCA <- MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "uFPCA"),
 #'                                                                   list(type = "uFPCA")))
+
 #' summary(uFPCA)
 #' plot(uFPCA) # plot the eigenfunctions as perturbations of the mean
 #' scoreplot(uFPCA) # plot the scores

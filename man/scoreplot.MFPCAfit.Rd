@@ -4,10 +4,10 @@
 \alias{scoreplot.MFPCAfit}
 \title{Plot the Scores of a Multivariate Functional Principal Component Analysis}
 \usage{
-scoreplot.MFPCAfit(MFPCAobj, choices = 1:2, scale = FALSE, ...)
+\method{scoreplot}{MFPCAfit}(PCAobject, choices = 1:2, scale = FALSE, ...)
 }
 \arguments{
-\item{MFPCAobj}{An object of class \code{MFPCAfit}, typically returned by the
+\item{PCAobject}{An object of class \code{MFPCAfit}, typically returned by the
 \link{MFPCA} function.}
 
 \item{choices}{The indices of the scores that should by displayed. Defaults 

@@ -4,17 +4,19 @@
 \alias{predict.MFPCAfit}
 \title{Function prediction based on MFPCA results}
 \usage{
-\method{predict}{MFPCAfit}(MFPCAobj, scores = MFPCAobj$scores)
+\method{predict}{MFPCAfit}(object, scores = object$scores, ...)
 }
 \arguments{
-\item{MFPCAobj}{An object of class \code{MFPCAfit}, typically resulting from 
+\item{object}{An object of class \code{MFPCAfit}, typically resulting from 
 a \link{MFPCA} function call.}
 
 \item{scores}{A matrix containing the score values. The number of columns in 
 \code{scores} must equal the number of principal components in 
-\code{MFPCAobj}. Each row represents one curve. Defaults to the estimated
-scores in \code{MFPCAobj}, which yields reconstructions of the original
+\code{object}. Each row represents one curve. Defaults to the estimated
+scores in \code{object}, which yields reconstructions of the original
 data used for the MFPCA calculation.}
+
+\item{...}{Arguments passed to or from other methods.}
 }
 \value{
 A \code{multiFunData} object containing the predicted functions.

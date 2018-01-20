@@ -4,11 +4,13 @@
 \alias{summary.MFPCAfit}
 \title{Summarize a Multivariate Functional Principal Component Analysis}
 \usage{
-\method{summary}{MFPCAfit}(MFPCAobj)
+\method{summary}{MFPCAfit}(object, ...)
 }
 \arguments{
-\item{MFPCAobj}{An object of class \code{MFPCAfit}, usually returned by a
+\item{object}{An object of class \code{MFPCAfit}, usually returned by a
 call to \link{MFPCA}.}
+
+\item{...}{Arguments passed to or from other methods.}
 }
 \description{
 A \code{summary} method for class \code{MFPCAfit}

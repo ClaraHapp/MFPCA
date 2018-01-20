@@ -1,9 +1,17 @@
+# Scoreplot Default
+#' @keywords internal
+scoreplot <- function(PCAobject, ...) UseMethod("scoreplot")
+scoreplot.default <- function(PCAobject, ...) graphics::plot.default(PCAobject, ...)
+
+
+
+
 #' Plot the Scores of a Multivariate Functional Principal Component Analysis
 #' 
 #' This function plots two scores of a multivariate functional principal 
 #' component analysis for each observation.
 #' 
-#' @param MFPCAobj An object of class \code{MFPCAfit}, typically returned by the
+#' @param PCAobject An object of class \code{MFPCAfit}, typically returned by the
 #'   \link{MFPCA} function.
 #' @param choices The indices of the scores that should by displayed. Defaults 
 #'   to \code{1:2}, i.e. the scores corresponding to the two leading modes of 
@@ -18,7 +26,7 @@
 #' 
 #' @seealso \code{\link{MFPCA}}
 #' 
-#' @export scoreplot.MFPCAfit
+#' @export
 #' 
 #' @examples 
 # Simulate multivariate functional data on one-dimensonal domains
@@ -34,27 +42,27 @@
 #' # Plot the first two scores
 #' scoreplot(PCA) # no scaling (default)
 #' scoreplot(PCA, scaling = TRUE) # scale the scores by the first two eigenvalues 
-scoreplot.MFPCAfit <- function(MFPCAobj, choices = 1:2, scale = FALSE, ...)
+scoreplot.MFPCAfit <- function(PCAobject, choices = 1:2, scale = FALSE, ...)
 {
   if(length(choices) != 2)
     stop("Length of choices must be 2.")
   
-  if(NCOL(MFPCAobj$scores) < max(choices))
+  if(NCOL(PCAobject$scores) < max(choices))
     stop(paste("Argument choices requires", max(choices), 
-               "scores, MFPCA object contains only", NCOL(MFPCAobj$scores), "."))
+               "scores, MFPCA object contains only", NCOL(PCAobject$scores), "."))
   
   # check for labels, otherwise construct them TODO: rownames for scores in MFPCA
-  lab <- {if(is.null(rownames(MFPCAobj$scores)))
-    1:NROW(MFPCAobj$scores)
+  lab <- {if(is.null(rownames(PCAobject$scores)))
+    1:NROW(PCAobject$scores)
     else
-      rownames(MFPCAobj$scores)}
+      rownames(PCAobject$scores)}
   
   # scale scores if scale = TRUE
   plotScore <- {
     if(scale) # multiply row-wise by eigenvalues
-      t(MFPCAobj$values[choices] * t(MFPCAobj$scores[, choices]))
+      t(PCAobject$values[choices] * t(PCAobject$scores[, choices]))
     else
-      MFPCAobj$scores[, choices]
+      PCAobject$scores[, choices]
   }
   
   # plot scores
@@ -76,7 +84,7 @@ scoreplot.MFPCAfit <- function(MFPCAobj, choices = 1:2, scale = FALSE, ...)
 #' the effects of adding and subtracting are shown in two separate rows for each
 #' eigenfunction.
 #' 
-#' @param MFPCAobj An object of class \code{MFPCAfit}, typically returned by the
+#' @param x An object of class \code{MFPCAfit}, typically returned by the 
 #'   \link{MFPCA} function.
 #' @param plotPCs The principal components to be plotted. Defaults to all 
 #'   components in the \code{MFPCAfit} object.
@@ -86,17 +94,15 @@ scoreplot.MFPCAfit <- function(MFPCAobj, choices = 1:2, scale = FALSE, ...)
 #'   eigenfunction is used.
 #' @param combined Logical: Should the plots be combined? (Works only if all 
 #'   dimensions are one-dimensional). Defaults to \code{FALSE}.
-#' @param .. Further graphical parameters passed to the \link[funData]{plot} 
-#'   functions for functional data.
-#' @param ... Further parameters passed to the
-#'   \code{\link[graphics]{plot.default}} function.
-#'   
+#' @param ... Further graphical parameters passed to the
+#'   \link[funData]{plot.funData} functions for functional data.
+#'      
 #' @return A plot of the principal components as perturbations of the mean.
 #'   
-#' @seealso \link{MFPCA}, \link[funData]{plot}
-#' 
-#' @export plot.MFPCAfit
+#' @seealso \code{\link{MFPCA}}, \code{\link[funData]{plot.funData}}
 #'   
+#' @export
+#' 
 #' @examples 
 #' # Simulate multivariate functional data on one-dimensonal domains
 #' # and calculate MFPCA (cf. MFPCA help)
@@ -110,10 +116,10 @@ scoreplot.MFPCAfit <- function(MFPCAobj, choices = 1:2, scale = FALSE, ...)
 #' 
 #' # Plot the results
 #' plot(PCA, combined = TRUE) # combine addition and subtraction in one plot
-plot.MFPCAfit <- function(MFPCAobj, plotPCs = 1:nObs(MFPCAobj$functions), stretchFactor = NULL, combined = FALSE, ...)
+plot.MFPCAfit <- function(x, plotPCs = 1:nObs(x$functions), stretchFactor = NULL, combined = FALSE, ...)
 {
   # check dimensions
-  dims <- dimSupp(MFPCAobj$functions)
+  dims <- dimSupp(x$functions)
   
   if(any(dims > 2))
     stop("Cannot plot principal components having a 3- or higher dimensional domain.")
@@ -133,28 +139,28 @@ plot.MFPCAfit <- function(MFPCAobj, plotPCs = 1:nObs(MFPCAobj$functions), stretc
     } 
   } else{2}
   
-  par(mfrow = c(nRows, length(MFPCAobj$functions)))
+  par(mfrow = c(nRows, length(x$functions)))
   
   
   for(ord in plotPCs) # for each order
   {
     # calculate stretch factor if not given
     if(is.null(stretchFactor))
-      stretchFactor <- median(abs(MFPCAobj$scores[,ord]))
+      stretchFactor <- median(abs(x$scores[,ord]))
     
-    PCplus <- MFPCAobj$meanFunction + stretchFactor * MFPCAobj$functions
-    PCminus <- MFPCAobj$meanFunction - stretchFactor * MFPCAobj$functions
+    PCplus <- x$meanFunction + stretchFactor * x$functions
+    PCminus <- x$meanFunction - stretchFactor * x$functions
     
     for(rows in 1:nRows)
     {
-      for(i in 1:length(MFPCAobj$functions)) # for each element
+      for(i in 1:length(x$functions)) # for each element
       {
         yRange <- range(PCplus[[i]]@X, PCminus[[i]]@X)
-        main <- paste("PC", ord, "(explains", round(MFPCAobj$values[ord]/sum(MFPCAobj$values)*100, 2), "% of total variability)")
+        main <- paste("PC", ord, "(explains", round(x$values[ord]/sum(x$values)*100, 2), "% of total variability)")
         
         if(dims[i] == 1)
         {
-          plot(MFPCAobj$meanFunction[[i]], lwd = 2, col = "black", 
+          plot(x$meanFunction[[i]], lwd = 2, col = "black", 
                main = main, ylim = yRange, ...)
           if(rows == 1)
             plot(PCplus[[i]], obs = ord, 
@@ -189,19 +195,20 @@ plot.MFPCAfit <- function(MFPCAobj, plotPCs = 1:nObs(MFPCAobj$functions), stretc
 #' \eqn{\psi_m}. The scores \eqn{\rho_m} can be either estimated (reconstruction
 #' of observed functions) or user-defined (construction of new functions).
 #' 
-#' @param MFPCAobj An object of class \code{MFPCAfit}, typically resulting from 
+#' @param object An object of class \code{MFPCAfit}, typically resulting from 
 #'   a \link{MFPCA} function call.
 #' @param scores A matrix containing the score values. The number of columns in 
 #'   \code{scores} must equal the number of principal components in 
-#'   \code{MFPCAobj}. Each row represents one curve. Defaults to the estimated
-#'   scores in \code{MFPCAobj}, which yields reconstructions of the original
+#'   \code{object}. Each row represents one curve. Defaults to the estimated
+#'   scores in \code{object}, which yields reconstructions of the original
 #'   data used for the MFPCA calculation.
+#' @param ... Arguments passed to or from other methods.
 #'   
 #' @return A \code{multiFunData} object containing the predicted functions. 
 #' 
 #' @seealso \link{MFPCA}
 #' 
-#' @export predict.MFPCAfit
+#' @export
 #' 
 #' @examples 
 #' #' # Simulate multivariate functional data on one-dimensonal domains
@@ -224,10 +231,10 @@ plot.MFPCAfit <- function(MFPCAobj, plotPCs = 1:nObs(MFPCAobj$functions), stretc
 #' # plot the results: 2nd element
 #' plot(sim$simData[[2]]) # original data
 #' plot(pred[[2]], add = TRUE, lty = 2) # reconstruction
-predict.MFPCAfit <- function(MFPCAobj, scores = MFPCAobj$scores)
+predict.MFPCAfit <- function(object, scores = object$scores, ...)
 {
-  return(MFPCAobj$meanFunction  + 
-           multivExpansion(multiFuns = MFPCAobj$functions, scores = scores))
+  return(object$meanFunction  + 
+           multivExpansion(multiFuns = object$functions, scores = scores))
 }
 
 
@@ -235,17 +242,18 @@ predict.MFPCAfit <- function(MFPCAobj, scores = MFPCAobj$scores)
 #' 
 #' A \code{print} function for class \code{MFPCAfit}.
 #' 
-#' @param MFPCAobj An object of class \code{MFPCAfit}, usually returned by a
+#' @param x An object of class \code{MFPCAfit}, usually returned by a
 #'   call to \link{MFPCA}.
+#' @param ... Arguments passed to or from other methods.
 #'   
-#' @export print.MFPCAfit
-print.MFPCAfit <- function(MFPCAobj)
+#' @export
+print.MFPCAfit <- function(x, ...)
 {
-  cat(nObs(MFPCAobj$functions), "multivariate functional principal components estimated with",
-      length(MFPCAobj$functions), "elements, each.\n", rep(c(" ", "*", " "), each = 10), "\n")
+  cat(nObs(x$functions), "multivariate functional principal components estimated with",
+      length(x$functions), "elements, each.\n", rep(c(" ", "*", " "), each = 10), "\n")
   
   cat("Eigenvalues:\n")
-  print(MFPCAobj$values)
+  print(x$values)
 }
 
 
@@ -253,16 +261,17 @@ print.MFPCAfit <- function(MFPCAobj)
 #' 
 #' A \code{summary} method for class \code{MFPCAfit}
 #' 
-#' @param MFPCAobj An object of class \code{MFPCAfit}, usually returned by a
+#' @param object An object of class \code{MFPCAfit}, usually returned by a
 #'   call to \link{MFPCA}.
+#' @param ... Arguments passed to or from other methods.
 #'   
-#' @export summary.MFPCAfit
-summary.MFPCAfit <- function(MFPCAobj)
+#' @export
+summary.MFPCAfit <- function(object, ...)
 {
-  cat(nObs(MFPCAobj$functions), "multivariate functional principal components estimated with",
-      length(MFPCAobj$functions), "elements, each.\n", rep(c(" ", "*", " "), each = 10), "\n")
+  cat(nObs(object$functions), "multivariate functional principal components estimated with",
+      length(object$functions), "elements, each.\n", rep(c(" ", "*", " "), each = 10), "\n")
   
-  vals <- MFPCAobj$values
+  vals <- object$values
   
   res <- rbind(`Eigenvalue` = vals, 
                `Proportion of variance explained` = vals/sum(vals),

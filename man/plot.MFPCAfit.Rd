@@ -4,11 +4,11 @@
 \alias{plot.MFPCAfit}
 \title{Plot MFPCA results}
 \usage{
-plot.MFPCAfit(MFPCAobj, plotPCs = 1:nObs(MFPCAobj$functions),
-  stretchFactor = NULL, combined = FALSE, ...)
+plot.MFPCAfit(x, plotPCs = 1:nObs(x$functions), stretchFactor = NULL,
+  combined = FALSE, ...)
 }
 \arguments{
-\item{MFPCAobj}{An object of class \code{MFPCAfit}, typically returned by the
+\item{x}{An object of class \code{MFPCAfit}, typically returned by the 
 \link{MFPCA} function.}
 
 \item{plotPCs}{The principal components to be plotted. Defaults to all 
@@ -22,11 +22,8 @@ eigenfunction is used.}
 \item{combined}{Logical: Should the plots be combined? (Works only if all 
 dimensions are one-dimensional). Defaults to \code{FALSE}.}
 
-\item{...}{Further parameters passed to the
-\code{\link[graphics]{plot.default}} function.}
-
-\item{..}{Further graphical parameters passed to the \link[funData]{plot} 
-functions for functional data.}
+\item{...}{Further graphical parameters passed to the
+\link[funData]{plot.funData} functions for functional data.}
 }
 \value{
 A plot of the principal components as perturbations of the mean.
@@ -53,6 +50,6 @@ PCA <- MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "uFPCA"),
 plot(PCA, combined = TRUE) # combine addition and subtraction in one plot
 }
 \seealso{
-\link{MFPCA}, \link[funData]{plot}
+\code{\link{MFPCA}}, \code{\link[funData]{plot.funData}}
 }
 

@@ -4,11 +4,13 @@
 \alias{print.MFPCAfit}
 \title{Print the results of a Multivariate Functional Principal Component Analysis}
 \usage{
-\method{print}{MFPCAfit}(MFPCAobj)
+\method{print}{MFPCAfit}(x, ...)
 }
 \arguments{
-\item{MFPCAobj}{An object of class \code{MFPCAfit}, usually returned by a
+\item{x}{An object of class \code{MFPCAfit}, usually returned by a
 call to \link{MFPCA}.}
+
+\item{...}{Arguments passed to or from other methods.}
 }
 \description{
 A \code{print} function for class \code{MFPCAfit}.

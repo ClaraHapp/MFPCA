@@ -295,7 +295,7 @@ C. Happ, S. Greven (2016+):Multivariate Functional Principal
 \seealso{
 \code{\link[funData]{multiFunData}}, \code{\link{PACE}}, 
   \code{\link{univDecomp}}, \code{\link{univExpansion}}, 
-  \code{\link{summary.MFPCAfit}}, \code{\link{plot.MFPCAfit}}, 
-  \code{\link{scoreplot.MFPCAfit}}
+  \code{\link[=summary.MFPCAfit]{summary}}, \code{\link[=plot.MFPCAfit]{plot}}, 
+  \code{\link[=scoreplot.MFPCAfit]{scoreplot}}
 }
 
