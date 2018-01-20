@@ -242,7 +242,7 @@ calcBasisIntegrals <- function(basisFunctions, dimSupp, argvals)
 #'                  fit = TRUE) # calculate reconstruction, too
 #' summary(splines)
 #' plot(splines) # plot the eigenfunctions as perturbations of the mean
-#' scorePlot(splines) # plot the scores
+#' scoreplot(splines) # plot the scores
 #' 
 #' ### Compare estimates to true eigenfunctions
 #' # flip to make results more clear
