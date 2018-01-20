@@ -58,8 +58,9 @@ extra-information about the progress (incl. timestamps). Defaults to
 \code{options()$verbose}.}
 }
 \value{
-\item{values}{A vector of estimated eigenvalues \eqn{\hat \nu_1 , 
-  \ldots , \hat \nu_M}.} \item{functions}{A 
+An object of class \code{MFPCAfit} containing the following
+  components: \item{values}{A vector of estimated eigenvalues \eqn{\hat \nu_1
+  , \ldots , \hat \nu_M}.} \item{functions}{A 
   \code{\link[funData]{multiFunData}} object containing the estimated 
   multivariate functional principal components \eqn{\hat \psi_1, \ldots, \hat
   \psi_M}.} \item{scores}{ A matrix of dimension \code{N x M} containing the 
@@ -293,8 +294,8 @@ C. Happ, S. Greven (2016+):Multivariate Functional Principal
 }
 \seealso{
 \code{\link[funData]{multiFunData}}, \code{\link{PACE}}, 
-  \code{\link{univDecomp}}, \code{\link{univExpansion}},
-  \code{\link{summary.MFPCAfit}}, \code{\link{plot.MFPCAfit}},
+  \code{\link{univDecomp}}, \code{\link{univExpansion}}, 
+  \code{\link{summary.MFPCAfit}}, \code{\link{plot.MFPCAfit}}, 
   \code{\link{scoreplot.MFPCAfit}}
 }
 
