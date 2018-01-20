@@ -180,6 +180,13 @@ predict.MFPCAfit <- function(MFPCAobj, scores = MFPCAobj$scores)
            multivExpansion(multiFuns = MFPCAobj$functions, scores = scores))
 }
 
+
+#' Print the results of a Multivariate Functional Principal Component Analysis
+#' 
+#' A \code{print} function for class \code{MFPCAfit}.
+#' 
+#' @param MFPCAobj An object of class \code{MFPCAfit}, usually returned by a
+#'   call to \link{MFPCA}.
 print.MFPCAfit <- function(MFPCAobj)
 {
   cat(nObs(MFPCAobj$functions), "multivariate functional principal components estimated with",
@@ -189,6 +196,13 @@ print.MFPCAfit <- function(MFPCAobj)
   print(MFPCAobj$values)
 }
 
+
+#' Summarize a Multivariate Functional Principal Component Analysis
+#' 
+#' A \code{summary} method for class \code{MFPCAfit}
+#' 
+#' @param MFPCAobj An object of class \code{MFPCAfit}, usually returned by a
+#'   call to \link{MFPCA}.
 summary.MFPCAfit <- function(MFPCAobj)
 {
   cat(nObs(MFPCAobj$functions), "multivariate functional principal components estimated with",
@@ -203,4 +217,3 @@ summary.MFPCAfit <- function(MFPCAobj)
   
   return(res)
 }
-
