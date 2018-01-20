@@ -1,4 +1,36 @@
-biplot.MFPCAfit <- function(MFPCAobj, choices = 1:2, ...)
+#' Plot the Scores of a Multivariate Functional Principal Component Analysis
+#' 
+#' This function plots two scores of a multivariate functional principal 
+#' component analysis for each observation.
+#' 
+#' @param MFPCAobj An object of class \code{MFPCAfit}, typically returned by the
+#'   \link{MFPCA} function.
+#' @param choices The indices of the scores that should by displayed. Defaults 
+#'   to \code{1:2}, i.e. the scores corresponding to the two leading modes of 
+#'   variability in the data.
+#' @param scale Logical. Should the scores be scaled by the estimated
+#'   eigenvalues to emphasize the proportions of total variance explained by the
+#'   components. Defaults to \code{FALSE}.
+#'   
+#' @return A bivariate plot of scores.
+#' 
+#' @seealso \code{\link{MFPCA}}
+#' 
+#' @examples 
+# Simulate multivariate functional data on one-dimensonal domains
+#' # and calculate MFPCA (cf. MFPCA help)
+#' set.seed(1)
+#' # simulate data (one-dimensional domains)
+#' sim <-  simMultiFunData(type = "split", argvals = list(seq(0,1,0.01), seq(-0.5,0.5,0.02)),
+#'                        M = 5, eFunType = "Poly", eValType = "linear", N = 100)
+#' # MFPCA based on univariate FPCA
+#' PCA <- MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "uFPCA"),
+#'                                                      list(type = "uFPCA")))
+#' 
+#' # Plot the first two scores
+#' scoreplot(PCA) # no scaling (default)
+#' scoreplot(PCA, scaling = TRUE) # scale the scores by the first two eigenvalues 
+scoreplot.MFPCAfit <- function(MFPCAobj, choices = 1:2, scale = FALSE, ...)
 {
   if(length(choices) != 2)
     stop("Length of choices must be 2.")
@@ -13,15 +45,23 @@ biplot.MFPCAfit <- function(MFPCAobj, choices = 1:2, ...)
     else
       rownames(MFPCAobj$scores)}
   
+  # scale scores if scale = TRUE
+  plotScore <- {
+    if(scale) # multiply row-wise by eigenvalues
+      t(MFPCAobj$values[choices] * t(MFPCAobj$scores[, choices]))
+    else
+      MFPCAobj$scores[, choices]
+  }
   
-  graphics::plot.default(x = MFPCAobj$scores[, choices], y = NULL, type = "n", 
+  # plot scores
+  graphics::plot.default(x = plotScore, y = NULL, type = "n", 
                          xlab = paste("Scores PC", choices[1]), ylab = paste("Scores PC", choices[2]), ...)
-  graphics::text(x = MFPCAobj$scores[, choices], y = NULL, labels = lab, ...)
+  graphics::text(x = plotScore, y = NULL, labels = lab, ...)
   
   abline(h = 0, lty = 3, col = "gray")
   abline(v = 0, lty = 3, col = "gray")
   
-  return(invisible)
+  invisible(NULL)
 }
 
 #' Plot MFPCA results
