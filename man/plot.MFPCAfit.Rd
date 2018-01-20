@@ -22,7 +22,10 @@ eigenfunction is used.}
 \item{combined}{Logical: Should the plots be combined? (Works only if all 
 dimensions are one-dimensional). Defaults to \code{FALSE}.}
 
-\item{..}{Further graphical parameters passed to the \link[funData]{plot}
+\item{...}{Further parameters passed to the
+\code{\link[graphics]{plot.default}} function.}
+
+\item{..}{Further graphical parameters passed to the \link[funData]{plot} 
 functions for functional data.}
 }
 \value{

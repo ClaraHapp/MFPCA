@@ -11,10 +11,14 @@
 #' @param scale Logical. Should the scores be scaled by the estimated
 #'   eigenvalues to emphasize the proportions of total variance explained by the
 #'   components. Defaults to \code{FALSE}.
+#' @param ... Further parameters passed to the
+#'   \code{\link[graphics]{plot.default}} function.
 #'   
 #' @return A bivariate plot of scores.
 #' 
 #' @seealso \code{\link{MFPCA}}
+#' 
+#' @export scoreplot.MFPCAfit
 #' 
 #' @examples 
 # Simulate multivariate functional data on one-dimensonal domains
@@ -82,13 +86,17 @@ scoreplot.MFPCAfit <- function(MFPCAobj, choices = 1:2, scale = FALSE, ...)
 #'   eigenfunction is used.
 #' @param combined Logical: Should the plots be combined? (Works only if all 
 #'   dimensions are one-dimensional). Defaults to \code{FALSE}.
-#' @param .. Further graphical parameters passed to the \link[funData]{plot}
+#' @param .. Further graphical parameters passed to the \link[funData]{plot} 
 #'   functions for functional data.
+#' @param ... Further parameters passed to the
+#'   \code{\link[graphics]{plot.default}} function.
 #'   
 #' @return A plot of the principal components as perturbations of the mean.
-#' 
+#'   
 #' @seealso \link{MFPCA}, \link[funData]{plot}
 #' 
+#' @export plot.MFPCAfit
+#'   
 #' @examples 
 #' # Simulate multivariate functional data on one-dimensonal domains
 #' # and calculate MFPCA (cf. MFPCA help)
@@ -193,6 +201,8 @@ plot.MFPCAfit <- function(MFPCAobj, plotPCs = 1:nObs(MFPCAobj$functions), stretc
 #' 
 #' @seealso \link{MFPCA}
 #' 
+#' @export predict.MFPCAfit
+#' 
 #' @examples 
 #' #' # Simulate multivariate functional data on one-dimensonal domains
 #' # and calculate MFPCA (cf. MFPCA help)
@@ -227,6 +237,8 @@ predict.MFPCAfit <- function(MFPCAobj, scores = MFPCAobj$scores)
 #' 
 #' @param MFPCAobj An object of class \code{MFPCAfit}, usually returned by a
 #'   call to \link{MFPCA}.
+#'   
+#' @export print.MFPCAfit
 print.MFPCAfit <- function(MFPCAobj)
 {
   cat(nObs(MFPCAobj$functions), "multivariate functional principal components estimated with",
@@ -243,6 +255,8 @@ print.MFPCAfit <- function(MFPCAobj)
 #' 
 #' @param MFPCAobj An object of class \code{MFPCAfit}, usually returned by a
 #'   call to \link{MFPCA}.
+#'   
+#' @export summary.MFPCAfit
 summary.MFPCAfit <- function(MFPCAobj)
 {
   cat(nObs(MFPCAobj$functions), "multivariate functional principal components estimated with",

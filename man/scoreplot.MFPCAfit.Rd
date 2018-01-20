@@ -17,6 +17,9 @@ variability in the data.}
 \item{scale}{Logical. Should the scores be scaled by the estimated
 eigenvalues to emphasize the proportions of total variance explained by the
 components. Defaults to \code{FALSE}.}
+
+\item{...}{Further parameters passed to the
+\code{\link[graphics]{plot.default}} function.}
 }
 \value{
 A bivariate plot of scores.
