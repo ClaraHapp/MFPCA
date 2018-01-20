@@ -1,5 +1,11 @@
-# Scoreplot Default
-#' @keywords internal
+#' Scoreplot Generic
+#'
+#'  Redirects to \code{\link[graphics]{plot.default}}
+#'
+#' @param PCAobject A principal component object
+#' @param ... Arguments passed from or to other methods
+#' 
+#' @export
 scoreplot <- function(PCAobject, ...) UseMethod("scoreplot")
 scoreplot.default <- function(PCAobject, ...) graphics::plot.default(PCAobject, ...)
 
@@ -101,6 +107,7 @@ scoreplot.MFPCAfit <- function(PCAobject, choices = 1:2, scale = FALSE, ...)
 #'   
 #' @seealso \code{\link{MFPCA}}, \code{\link[funData]{plot.funData}}
 #'   
+#' @method plot MFPCAfit 
 #' @export
 #' 
 #' @examples 
