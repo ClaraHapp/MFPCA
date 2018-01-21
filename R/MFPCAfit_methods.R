@@ -50,6 +50,9 @@ scoreplot.default <- function(PCAobject, ...) graphics::plot.default(PCAobject, 
 #' scoreplot(PCA, scaling = TRUE) # scale the scores by the first two eigenvalues 
 scoreplot.MFPCAfit <- function(PCAobject, choices = 1:2, scale = FALSE, ...)
 {
+  if(class(PCAobject) != "MFPCAfit")
+    stop("Argument is not of of class 'MFPCAfit'.")
+  
   if(length(choices) != 2)
     stop("Length of choices must be 2.")
   
@@ -125,6 +128,9 @@ scoreplot.MFPCAfit <- function(PCAobject, choices = 1:2, scale = FALSE, ...)
 #' plot(PCA, combined = TRUE) # combine addition and subtraction in one plot
 plot.MFPCAfit <- function(x, plotPCs = 1:nObs(x$functions), stretchFactor = NULL, combined = FALSE, ...)
 {
+  if(class(x) != "MFPCAfit")
+    stop("Argument is not of of class 'MFPCAfit'.")
+  
   # check dimensions
   dims <- dimSupp(x$functions)
   
@@ -240,6 +246,9 @@ plot.MFPCAfit <- function(x, plotPCs = 1:nObs(x$functions), stretchFactor = NULL
 #' plot(pred[[2]], add = TRUE, lty = 2) # reconstruction
 predict.MFPCAfit <- function(object, scores = object$scores, ...)
 {
+  if(class(object) != "MFPCAfit")
+    stop("Argument is not of of class 'MFPCAfit'.")
+  
   return(object$meanFunction  + 
            multivExpansion(multiFuns = object$functions, scores = scores))
 }
@@ -256,6 +265,9 @@ predict.MFPCAfit <- function(object, scores = object$scores, ...)
 #' @export
 print.MFPCAfit <- function(x, ...)
 {
+  if(class(x) != "MFPCAfit")
+    stop("Argument is not of of class 'MFPCAfit'.")
+  
   cat(nObs(x$functions), "multivariate functional principal components estimated with",
       length(x$functions), "elements, each.\n", rep(c(" ", "*", " "), each = 10), "\n")
   
@@ -275,6 +287,9 @@ print.MFPCAfit <- function(x, ...)
 #' @export
 summary.MFPCAfit <- function(object, ...)
 {
+  if(class(object) != "MFPCAfit")
+    stop("Argument is not of of class 'MFPCAfit'.")
+  
   cat(nObs(object$functions), "multivariate functional principal components estimated with",
       length(object$functions), "elements, each.\n", rep(c(" ", "*", " "), each = 10), "\n")
   
