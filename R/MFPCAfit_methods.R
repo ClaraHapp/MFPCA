@@ -79,8 +79,8 @@ scoreplot.MFPCAfit <- function(PCAobject, choices = 1:2, scale = FALSE, ...)
                          xlab = paste("Scores PC", choices[1]), ylab = paste("Scores PC", choices[2]), ...)
   graphics::text(x = plotScore, y = NULL, labels = lab, ...)
   
-  abline(h = 0, lty = 3, col = "gray")
-  abline(v = 0, lty = 3, col = "gray")
+  graphics::abline(h = 0, lty = 3, col = "gray")
+  graphics::abline(v = 0, lty = 3, col = "gray")
   
   invisible(NULL)
 }
@@ -132,14 +132,14 @@ plot.MFPCAfit <- function(x, plotPCs = 1:nObs(x$functions), stretchFactor = NULL
     stop("Argument is not of of class 'MFPCAfit'.")
   
   # check dimensions
-  dims <- dimSupp(x$functions)
+  dims <- funData::dimSupp(x$functions)
   
   if(any(dims > 2))
     stop("Cannot plot principal components having a 3- or higher dimensional domain.")
   
   # Wait for user input for each new eigenfunction
-  oldPar <- par(no.readonly = TRUE)
-  par(ask = TRUE)
+  oldPar <- graphics::par(no.readonly = TRUE)
+  graphics::par(ask = TRUE)
   
   # set number of rows:
   # 1: all dimensions from left to right, "+" and "-" in one plot
@@ -152,14 +152,14 @@ plot.MFPCAfit <- function(x, plotPCs = 1:nObs(x$functions), stretchFactor = NULL
     } 
   } else{2}
   
-  par(mfrow = c(nRows, length(x$functions)))
+  graphics::par(mfrow = c(nRows, length(x$functions)))
   
   
   for(ord in plotPCs) # for each order
   {
     # calculate stretch factor if not given
     if(is.null(stretchFactor))
-      stretchFactor <- median(abs(x$scores[,ord]))
+      stretchFactor <- stats::median(abs(x$scores[,ord]))
     
     PCplus <- x$meanFunction + stretchFactor * x$functions
     PCminus <- x$meanFunction - stretchFactor * x$functions
@@ -173,28 +173,28 @@ plot.MFPCAfit <- function(x, plotPCs = 1:nObs(x$functions), stretchFactor = NULL
         
         if(dims[i] == 1)
         {
-          plot(x$meanFunction[[i]], lwd = 2, col = "black", 
+          funData::plot(x$meanFunction[[i]], lwd = 2, col = "black", 
                main = main, ylim = yRange, ...)
           if(rows == 1)
-            plot(PCplus[[i]], obs = ord, 
+            funData::plot(PCplus[[i]], obs = ord, 
                  add = TRUE, type = "p", pch = "+", col = "grey50", ...)
           if(rows == 2 | combined == TRUE)
-            plot( PCminus[[i]], obs = ord,
+            funData::plot( PCminus[[i]], obs = ord,
                   add = TRUE, type = "p", pch = "-", col = "grey50", ...)
         }  
         else # dims[i] == 2 (higher dimensional domains are not supported)
         {
           if(rows == 1)
-            plot(PCplus[[i]], obs = ord, main = main, ylim = yRange, ...)
+            funData::plot(PCplus[[i]], obs = ord, main = main, ylim = yRange, ...)
           else
-            plot(PCminus[[i]], obs = ord, main = main, ylim = yRange, ...)
+            funData::plot(PCminus[[i]], obs = ord, main = main, ylim = yRange, ...)
           
         }
       }
     }
   }
   
-  par(oldPar)
+  graphics::par(oldPar)
   
   invisible(NULL)
 }
@@ -268,7 +268,7 @@ print.MFPCAfit <- function(x, ...)
   if(class(x) != "MFPCAfit")
     stop("Argument is not of of class 'MFPCAfit'.")
   
-  cat(nObs(x$functions), "multivariate functional principal components estimated with",
+  cat(funData::nObs(x$functions), "multivariate functional principal components estimated with",
       length(x$functions), "elements, each.\n", rep(c(" ", "*", " "), each = 10), "\n")
   
   cat("Eigenvalues:\n")
@@ -290,7 +290,7 @@ summary.MFPCAfit <- function(object, ...)
   if(class(object) != "MFPCAfit")
     stop("Argument is not of of class 'MFPCAfit'.")
   
-  cat(nObs(object$functions), "multivariate functional principal components estimated with",
+  cat(funData::nObs(object$functions), "multivariate functional principal components estimated with",
       length(object$functions), "elements, each.\n", rep(c(" ", "*", " "), each = 10), "\n")
   
   vals <- object$values
