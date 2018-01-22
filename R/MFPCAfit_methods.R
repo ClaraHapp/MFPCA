@@ -85,6 +85,65 @@ scoreplot.MFPCAfit <- function(PCAobject, choices = 1:2, scale = FALSE, ...)
   invisible(NULL)
 }
 
+#' Screeplot for Multivariate Functional Principal Component Analysis
+#' 
+#' This function plots the proportion of variance explained by the leading 
+#' eigenvalues in an MFPCA against the number of the principal component.
+#' 
+#' @param x An object of class MFPCAfit, typically returned by a call to 
+#'   \code{\link{MFPCA}}.
+#' @param npcs The number of eigenvalued to be plotted. Defaults to all 
+#'   eigenvalues if their number is less or equal to 10, otherwise show only the
+#'   leading first 10 eigenvalues.
+#' @param type The type of screeplot to be plotted. Can be either \code{"lines"}
+#'   or \code{"barplot}. Defaults to \code{"lines"}.
+#' @param main The plot of the title. Defaults to the variable name of \code{x}.
+#' @param ... Other graphic parameters passed to
+#'   \code{\link[graphics]{plot.default}} (for \code{type = "lines"}) or
+#'   \code{\link[graphics]{barplot}} (for \code{type = "barplot"}).
+#'   
+#' @seealso \code{\link{MFPCA}}, \code{\link[stats]{screeplot}}
+#' 
+#' @examples
+#' # Simulate multivariate functional data on one-dimensonal domains
+#' # and calculate MFPCA (cf. MFPCA help)
+#' set.seed(1)
+#' # simulate data (one-dimensional domains)
+#' sim <-  simMultiFunData(type = "split", argvals = list(seq(0,1,0.01), seq(-0.5,0.5,0.02)),
+#'                        M = 5, eFunType = "Poly", eValType = "linear", N = 100)
+#' # MFPCA based on univariate FPCA
+#' PCA <- MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "uFPCA"),
+#'                                                      list(type = "uFPCA")))
+#'                                                      
+#' # screeplot
+#' screeplot(PCA) # default options
+#' screeplot(PCA, npcs = 3, type = "barplot", main = "Screeplot")
+screeplot.MFPCAfit <- function(x, npcs = min(10, length(x$values)), type = "lines",
+                               main = deparse(substitute(x)), ...)
+{
+  if(class(x) != "MFPCAfit")
+    stop("Argument is not of class 'MFPCAfit'.")
+
+  ylab <- "Proportion of Variance Explained"
+  pve <- x$values[1:npcs]/sum(x$values)
+  ylim <- c(0,max(pve))
+  
+  if(type == "lines")
+    plot(x = 1:npcs, y = pve, type = "b", ylim = ylim,
+         main = main, xlab = "PCs", ylab = ylab)
+  else
+  {
+   if(type == "barplot")
+     barplot(height = pve, main = main, 
+             names.arg = paste("PC", 1:npcs), ylab = ylab)
+    else
+      stop("Type", type, "not defined in screeplot.")
+  }
+  
+  invisible(NULL)
+}
+
+
 #' Plot MFPCA results
 #' 
 #' Plots the eigenfunctions as perturbations of the mean (i.e. the mean function
@@ -174,13 +233,13 @@ plot.MFPCAfit <- function(x, plotPCs = 1:nObs(x$functions), stretchFactor = NULL
         if(dims[i] == 1)
         {
           funData::plot(x$meanFunction[[i]], lwd = 2, col = "black", 
-               main = main, ylim = yRange, ...)
+                        main = main, ylim = yRange, ...)
           if(rows == 1)
             funData::plot(PCplus[[i]], obs = ord, 
-                 add = TRUE, type = "p", pch = "+", col = "grey50", ...)
+                          add = TRUE, type = "p", pch = "+", col = "grey50", ...)
           if(rows == 2 | combined == TRUE)
             funData::plot( PCminus[[i]], obs = ord,
-                  add = TRUE, type = "p", pch = "-", col = "grey50", ...)
+                           add = TRUE, type = "p", pch = "-", col = "grey50", ...)
         }  
         else # dims[i] == 2 (higher dimensional domains are not supported)
         {
