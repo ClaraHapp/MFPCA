@@ -16,7 +16,7 @@ eigenvalues if their number is less or equal to 10, otherwise show only the
 leading first 10 eigenvalues.}
 
 \item{type}{The type of screeplot to be plotted. Can be either \code{"lines"}
-or \code{"barplot}. Defaults to \code{"lines"}.}
+or \code{"barplot"}. Defaults to \code{"lines"}.}
 
 \item{main}{The plot of the title. Defaults to the variable name of \code{x}.}
 
@@ -41,7 +41,7 @@ PCA <- MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "uFPCA"),
                                                      
 # screeplot
 screeplot(PCA) # default options
-screeplot(PCA, npcs = 3, type = "barplot", main = "Screeplot")
+screeplot(PCA, npcs = 3, type = "barplot", main= "Screeplot")
 }
 \seealso{
 \code{\link{MFPCA}}, \code{\link[stats]{screeplot}}

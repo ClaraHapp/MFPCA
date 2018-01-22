@@ -89,3 +89,15 @@ test_that("Test scoreplot function", {
   expect_null(scoreplot(pca1D))
   expect_null(scoreplot(pca2D))
   })
+
+
+#### scoreplot function ####
+test_that("Test screeplot function", {
+  expect_error(MFPCA:::screeplot.MFPCAfit(1:4),
+               "Argument is not of class 'MFPCAfit'.")
+  expect_error(MFPCA::screeplot(pca1D, type = "xxx"),
+               "Type xxx not defined in screeplot.")
+  
+  expect_null(screeplot(pca1D))
+  expect_null(screeplot(pca2D))
+})

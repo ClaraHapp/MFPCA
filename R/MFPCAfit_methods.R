@@ -96,7 +96,7 @@ scoreplot.MFPCAfit <- function(PCAobject, choices = 1:2, scale = FALSE, ...)
 #'   eigenvalues if their number is less or equal to 10, otherwise show only the
 #'   leading first 10 eigenvalues.
 #' @param type The type of screeplot to be plotted. Can be either \code{"lines"}
-#'   or \code{"barplot}. Defaults to \code{"lines"}.
+#'   or \code{"barplot"}. Defaults to \code{"lines"}.
 #' @param main The plot of the title. Defaults to the variable name of \code{x}.
 #' @param ... Other graphic parameters passed to
 #'   \code{\link[graphics]{plot.default}} (for \code{type = "lines"}) or
@@ -119,7 +119,7 @@ scoreplot.MFPCAfit <- function(PCAobject, choices = 1:2, scale = FALSE, ...)
 #'                                                      
 #' # screeplot
 #' screeplot(PCA) # default options
-#' screeplot(PCA, npcs = 3, type = "barplot", main = "Screeplot")
+#' screeplot(PCA, npcs = 3, type = "barplot", main= "Screeplot")
 screeplot.MFPCAfit <- function(x, npcs = min(10, length(x$values)), type = "lines",
                                main = deparse(substitute(x)), ...)
 {
