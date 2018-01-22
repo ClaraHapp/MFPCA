@@ -104,6 +104,8 @@ scoreplot.MFPCAfit <- function(PCAobject, choices = 1:2, scale = FALSE, ...)
 #'   
 #' @seealso \code{\link{MFPCA}}, \code{\link[stats]{screeplot}}
 #' 
+#' @export
+#' 
 #' @examples
 #' # Simulate multivariate functional data on one-dimensonal domains
 #' # and calculate MFPCA (cf. MFPCA help)
