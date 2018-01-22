@@ -26,7 +26,7 @@ pca2D <- MFPCA::MFPCA(sim2$simData, M = 10,
 #### print function ####
 test_that("Test print function", {
   expect_error(MFPCA:::print.MFPCAfit(1:4),
-               "Argument is not of of class 'MFPCAfit'.")
+               "Argument is not of class 'MFPCAfit'.")
   
   expect_known_output(print(pca1D), file = "outputs/print_MFPCAfit.txt")
   expect_known_output(print(pca2D), file = "outputs/print_MFPCAfit_2D.txt")
@@ -35,7 +35,7 @@ test_that("Test print function", {
 #### summary function ####
 test_that("Test summary function", {
   expect_error(MFPCA:::summary.MFPCAfit(1:4),
-               "Argument is not of of class 'MFPCAfit'.")
+               "Argument is not of class 'MFPCAfit'.")
   
   expect_known_output(summary(pca1D), file = "outputs/summary_MFPCAfit.txt")
   expect_known_output(summary(pca2D), file = "outputs/summary_MFPCAfit_2D.txt")
@@ -44,7 +44,7 @@ test_that("Test summary function", {
 #### predict function ####
 test_that("Test predict function", {
   expect_error(MFPCA:::predict.MFPCAfit(1:4),
-               "Argument is not of of class 'MFPCAfit'.")
+               "Argument is not of class 'MFPCAfit'.")
   
   pred <- predict(pca1D)
   
@@ -59,7 +59,7 @@ test_that("Test predict function", {
 #### plot function ####
 test_that("Test plot function", {
   expect_error(MFPCA:::plot.MFPCAfit(1:4),
-               "Argument is not of of class 'MFPCAfit'.")
+               "Argument is not of class 'MFPCAfit'.")
   # create eigenfunction of 3-dimensional domain to generate error
   p <- pca1D
   p$functions[[1]] <- funData::tensorProduct(funData::eFun(argvals = c(1:5), M = 2, type = "Fourier"), funData::eFun(argvals = c(2:5), M = 2, type = "Fourier"), funData::eFun(argvals = c(3:5), M = 2, type = "Fourier"))
@@ -77,7 +77,7 @@ test_that("Test plot function", {
 #### scoreplot function ####
 test_that("Test scoreplot function", {
   expect_error(MFPCA:::scoreplot.MFPCAfit(1:4),
-               "Argument is not of of class 'MFPCAfit'.")
+               "Argument is not of class 'MFPCAfit'.")
   # create eigenfunction of 3-dimensional domain to generate error
   expect_error(scoreplot(pca1D, choices = 1),
                "Length of choices must be 2.")
