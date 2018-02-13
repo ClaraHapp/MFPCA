@@ -139,7 +139,7 @@ screeplot.MFPCAfit <- function(x, npcs = min(10, length(x$values)), type = "line
      barplot(height = pve, main = main, 
              names.arg = paste("PC", 1:npcs), ylab = ylab)
     else
-      stop("Type", type, "not defined in screeplot.")
+      stop("Type ", type, " not defined in screeplot.")
   }
   
   invisible(NULL)
