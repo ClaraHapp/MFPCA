@@ -104,6 +104,9 @@ scoreplot.MFPCAfit <- function(PCAobject, choices = 1:2, scale = FALSE, ...)
 #'   
 #' @seealso \code{\link{MFPCA}}, \code{\link[stats]{screeplot}}
 #' 
+#' @importFrom stats screeplot
+#' @importFrom graphics barplot
+#' 
 #' @export
 #' 
 #' @examples
@@ -136,7 +139,7 @@ screeplot.MFPCAfit <- function(x, npcs = min(10, length(x$values)), type = "line
   else
   {
    if(type == "barplot")
-     barplot(height = pve, main = main, 
+     graphics::barplot(height = pve, main = main, 
              names.arg = paste("PC", 1:npcs), ylab = ylab)
     else
       stop("Type ", type, " not defined in screeplot.")

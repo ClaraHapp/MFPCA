@@ -91,7 +91,7 @@ test_that("Test scoreplot function", {
   })
 
 
-#### scoreplot function ####
+#### screeplot function ####
 test_that("Test screeplot function", {
   expect_error(MFPCA:::screeplot.MFPCAfit(1:4),
                "Argument is not of class 'MFPCAfit'.")
