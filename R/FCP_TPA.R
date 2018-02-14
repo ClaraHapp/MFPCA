@@ -305,7 +305,8 @@ normVec <- function(x)
 findAlphaVopt <- function(alphaRange, data, u, w, alphaW, OmegaW, GammaV, lambdaV)
 {
   z <-  crossprod(GammaV, ttv(data, list(u,w), c(1,3))) / (normVec(u) * normVec(w))
-  eta <- 1/(1 + alphaW * crossprod(w, OmegaW %*% w)/normVec(w))
+  wOw <- as.numeric(crossprod(w, OmegaW %*% w)) # without as.numeric, this is a 1x1 matrix
+  eta <- 1/(1 + alphaW * wOw/normVec(w))
   
   res <- stats::optimize(f=gcv, interval=c(min(alphaRange), max(alphaRange)), 
                  n = length(lambdaV), z = z, eta = eta, lambda = lambdaV)$minimum
@@ -319,7 +320,8 @@ findAlphaVopt <- function(alphaRange, data, u, w, alphaW, OmegaW, GammaV, lambda
 findAlphaWopt <- function(alphaRange, data, u, v, alphaV, OmegaV, GammaW, lambdaW)
 {
   z <-  crossprod(GammaW, ttv(data, list(u,v), c(1,2))) / (normVec(u) * normVec(v))
-  eta <- 1/(1 + alphaV * crossprod(v, OmegaV %*% v)/normVec(v))
+  vOv <- as.numeric(crossprod(v, OmegaV %*% v))
+  eta <- 1/(1 + alphaV * vOv/normVec(v)) # without as.numeric, this is a 1x1 matrix
 
   res <- stats::optimize(f=gcv, interval=c(min(alphaRange), max(alphaRange)), 
                   n = length(lambdaW), z = z, eta = eta, lambda = lambdaW)$minimum
