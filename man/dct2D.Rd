@@ -28,8 +28,8 @@ an image and returns thresholded DCT coefficients using the C-library
   an error. For full functionality install the C-library \code{fftw3} from
   \url{http://www.fftw.org/} and reinstall \code{MFPCA}.
 }
+
 \seealso{
 \code{\link{dctBasis2D}}
 }
 \keyword{internal}
-

@@ -45,4 +45,3 @@ scoreplot(PCA, scaling = TRUE) # scale the scores by the first two eigenvalues
 \seealso{
 \code{\link{MFPCA}}
 }
-

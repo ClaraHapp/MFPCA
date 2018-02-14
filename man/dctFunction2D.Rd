@@ -42,6 +42,7 @@ three-dimensional domains using the C-library \code{fftw3} (see
   an error. For full functionality install the C-library \code{fftw3} from 
   \url{http://www.fftw.org/} and reinstall \code{MFPCA}.
 }
+
 \examples{
 # set seed
 set.seed(12345)
@@ -71,4 +72,3 @@ par(oldPar)
 \code{\link{univExpansion}}, \code{\link{idct2D}}, 
   \code{\link{idct3D}}, \code{\link{dctBasis2D}}, \code{\link{dctBasis3D}}
 }
-

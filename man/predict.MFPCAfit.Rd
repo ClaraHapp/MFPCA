@@ -53,4 +53,3 @@ plot(pred[[2]], add = TRUE, lty = 2) # reconstruction
 \seealso{
 \link{MFPCA}
 }
-

@@ -76,6 +76,7 @@ the two-dimensional case.
   an error. For full functionality install the C-library \code{fftw3} from 
   \url{http://www.fftw.org/} and reinstall \code{MFPCA}.
 }
+
 \examples{
 # Simulate data with 10 observations on two-dimensional domain (images)
 x1 <- seq(0, 1, length.out = 50)
@@ -96,4 +97,3 @@ dct2D$scores[,1:25] # the first 25 scores for each observation
 \seealso{
 \code{\link{univDecomp}}, \code{\link{dct2D}}, \code{\link{dct3D}}
 }
-

@@ -17,4 +17,3 @@ maxeig(A)
 MATLAB Function: Copyright 1999 by Todd K. Moon
 }
 \keyword{internal}
-

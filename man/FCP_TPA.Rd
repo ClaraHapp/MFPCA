@@ -114,4 +114,3 @@ G. I. Allen, "Multi-way Functional Principal Components
 \seealso{
 \code{\link{fcptpaBasis}}
 }
-

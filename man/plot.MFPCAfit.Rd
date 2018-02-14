@@ -52,4 +52,3 @@ plot(PCA, combined = TRUE) # combine addition and subtraction in one plot
 \seealso{
 \code{\link{MFPCA}}, \code{\link[funData]{plot.funData}}
 }
-

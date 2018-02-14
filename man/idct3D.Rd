@@ -32,8 +32,8 @@ values only of non-zero coefficients).
   an error. For full functionality install the C-library \code{fftw3} from
   \url{http://www.fftw.org/} and reinstall \code{MFPCA}.
 }
+
 \seealso{
 \code{\link{dctBasis3D}}
 }
 \keyword{internal}
-

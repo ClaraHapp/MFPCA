@@ -71,6 +71,7 @@ analysis by smoothed covariance based on code from
  This function works only for univariate functional data 
   observed on one-dimensional domains.
 }
+
 \examples{
 \donttest{
   oldPar <- par(no.readonly = TRUE)
@@ -100,4 +101,3 @@ analysis by smoothed covariance based on code from
 \code{\link[funData]{funData}}, \code{\link[refund]{fpca.sc}}, 
   \code{\link{fpcaBasis}}, \code{\link{univDecomp}}
 }
-

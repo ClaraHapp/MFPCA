@@ -15,4 +15,3 @@ call to \link{MFPCA}.}
 \description{
 A \code{print} function for class \code{MFPCAfit}.
 }
-

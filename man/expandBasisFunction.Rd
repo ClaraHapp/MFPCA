@@ -73,4 +73,3 @@ par(oldpar)
 \seealso{
 \code{\link{univExpansion}}
 }
-

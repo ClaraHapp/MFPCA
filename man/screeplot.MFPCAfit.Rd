@@ -46,4 +46,3 @@ screeplot(PCA, npcs = 3, type = "barplot", main= "Screeplot")
 \seealso{
 \code{\link{MFPCA}}, \code{\link[stats]{screeplot}}
 }
-

@@ -32,4 +32,4 @@ Suggests:
     testthat
 NeedsCompilation: yes
 SystemRequirements: libfftw3 (>= 3.3.4)
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1

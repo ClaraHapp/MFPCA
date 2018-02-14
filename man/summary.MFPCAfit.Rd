@@ -15,4 +15,3 @@ call to \link{MFPCA}.}
 \description{
 A \code{summary} method for class \code{MFPCAfit}
 }
-

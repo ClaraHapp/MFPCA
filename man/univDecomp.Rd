@@ -59,4 +59,3 @@ str(decSplines)
   \code{\link{umpcaBasis}}, \code{\link{fcptpaBasis}},
   \code{\link{dctBasis2D}}, \code{\link{dctBasis3D}}
 }
-

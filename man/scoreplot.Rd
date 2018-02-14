@@ -14,4 +14,3 @@ scoreplot(PCAobject, ...)
 \description{
 Redirects to \code{\link[graphics]{plot.default}}
 }
-

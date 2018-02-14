@@ -41,6 +41,7 @@ references).
   when used for the univariate decomposition of images in MFPCA. The function
   therefore throws a warning.
 }
+
 \examples{
 # simulate image data for N = 100 observations
 N <- 100
@@ -74,4 +75,3 @@ Haiping Lu, K.N. Plataniotis, and A.N. Venetsanopoulos,
 \seealso{
 \code{\link{univDecomp}}
 }
-

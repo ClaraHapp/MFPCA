@@ -298,4 +298,3 @@ C. Happ, S. Greven (2016+):Multivariate Functional Principal
   \code{\link[=summary.MFPCAfit]{summary}}, \code{\link[=plot.MFPCAfit]{plot}}, 
   \code{\link[=scoreplot.MFPCAfit]{scoreplot}}
 }
-
