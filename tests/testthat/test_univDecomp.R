@@ -1,9 +1,9 @@
 context("Testing functions in univDecomp.R")
 
+set.seed(1)
+f1 <- simFunData(seq(0,1,0.01), M = 10, eFunType = "Poly", eValType = "linear", N = 10)$simData
+
 test_that("test univariate decompositions 1D", {
-  set.seed(1)
-  f1 <- simFunData(seq(0,1,0.01), M = 10, eFunType = "Poly", eValType = "linear", N = 10)$simData
-  
   # splines1D
   # check error
   expect_error(MFPCA:::splineBasis1D(tensorProduct(f1,f1), bs = "ps", m = 3, k = 10), 
@@ -53,9 +53,6 @@ test_that("test univariate decompositions 1D", {
 })
 
 test_that("PACE function", {
-  set.seed(1)
-  f1 <- simFunData(seq(0,1,0.01), M = 10, eFunType = "Poly", eValType = "linear", N = 10)$simData
-  
   expect_error(PACE(f1, predData = extractObs(f1, argvals = seq(0,0.5, 0.01))),
                "PACE: funDataObject and predData must be defined on the same domains!")
   
