@@ -51,8 +51,8 @@ test_that("Test predict function", {
   expect_s4_class(pred, "multiFunData")
   expect_equal(dimSupp(pred), c(1,1))
   expect_equal(nObs(pred), 100)
-  expect_equal(norm(pred)[[1]], 2.2947591)
-  expect_equal(mean(norm(pred)),  2.8857019)
+  expect_equal(norm(pred)[[1]], 2.29476, tolerance = 1e-5)
+  expect_equal(mean(norm(pred)),  2.88570, tolerance = 1e-5)
 })
 
 
