@@ -11,12 +11,12 @@ test_that("test calcBasisIntegrals", {
   calcBasis2D <- MFPCA:::calcBasisIntegrals(basis2D@X, dimSupp = dimSupp(basis2D), argvals = basis2D@argvals)
   
   # check 1D row sums
-  expect_equal(rowSums(calcBasis1D), c(139.7564, 146.9259, 154.0953), tolerance = 1e-6)
+  expect_equal(rowSums(calcBasis1D), c(139.7564, 146.9259, 154.0953), tolerance = 1e-5)
   # check symmetry
   expect_equal(calcBasis1D, t(calcBasis1D))
   
   # check 2D row sums
-  expect_equal(rowSums(calcBasis2D), c(3552908, 3572102, 3591295), tolerance = 1e-6)
+  expect_equal(rowSums(calcBasis2D), c(3552908, 3572102, 3591295), tolerance = 1e-5)
   # check symmetry
   expect_equal(calcBasis2D, t(calcBasis2D))
 })
@@ -67,21 +67,21 @@ test_that("test MFPCA main function", {
   expect_equal(length(uFPCA$values), length(mixed$values))
   expect_equal(sum(uFPCA$values), sum(splines$values), tol = 5e-2)
   expect_equal(sum(uFPCA$values), sum(mixed$values), tol = 5e-2)
-  expect_equal(uFPCA$values[1], 1.05174404)
-  expect_equal(splines$values[1], 1.05266096)
-  expect_equal(mixed$values[1], 1.0524805)
+  expect_equal(uFPCA$values[1], 1.05174, tolerance = 1e-5)
+  expect_equal(splines$values[1], 1.05266, tolerance = 1e-5)
+  expect_equal(mixed$values[1], 1.05248, tolerance = 1e-5)
   
   # functions
   expect_equal(nObs(uFPCA$functions), nObs(splines$functions))
   expect_equal(nObs(uFPCA$functions), nObs(mixed$functions))
-  expect_equal(norm(uFPCA$functions[[1]])[1], 0.579550598)
-  expect_equal(norm(splines$functions[[1]])[1], 0.57956679)
-  expect_equal(norm(mixed$functions[[1]])[1], 0.57969984)
+  expect_equal(norm(uFPCA$functions[[1]])[1], 0.57955, tolerance = 1e-5)
+  expect_equal(norm(splines$functions[[1]])[1], 0.57957, tolerance = 1e-5)
+  expect_equal(norm(mixed$functions[[1]])[1], 0.57970, tolerance = 1e-5)
   
   # fits
-  expect_equal(sum(norm(uFPCA$fit - sim$simData)), 0.86272423)
-  expect_equal(sum(norm(splines$fit - sim$simData)), 3.135592e-07)
-  expect_equal(sum(norm(mixed$fit - sim$simData)), 0.40766935)
+  expect_equal(sum(norm(uFPCA$fit - sim$simData)), 0.86272, tolerance = 1e-5)
+  expect_equal(sum(norm(splines$fit - sim$simData)), 3.135592e-07, tolerance = 1e-5) ###
+  expect_equal(sum(norm(mixed$fit - sim$simData)), 0.40767, tolerance = 1e-5)
   
   # mean function
   expect_equal(uFPCA$meanFunction[[1]], mixed$meanFunction[[1]])
@@ -96,52 +96,52 @@ test_that("test MFPCA main function", {
   expect_equal(dim(splines$vectors), c(20,5))
   expect_equal(dim(mixed$vectors), c(13,5))
   
-  expect_equal(sum(abs(uFPCA$scores)), 291.501155)
-  expect_equal(sum(abs(splines$scores)), 292.128346)
-  expect_equal(sum(abs(mixed$scores)),  291.834245)
+  expect_equal(sum(abs(uFPCA$scores)), 291.50116, tolerance = 1e-5)
+  expect_equal(sum(abs(splines$scores)), 292.12835, tolerance = 1e-5)
+  expect_equal(sum(abs(mixed$scores)),  291.83424, tolerance = 1e-5)
   
-  expect_equal(abs(uFPCA$scores[1,1]),  0.16778892)
-  expect_equal(abs(splines$scores[1,1]), 0.17022297)
-  expect_equal(abs(mixed$scores[1,1]), 0.17057426)
+  expect_equal(abs(uFPCA$scores[1,1]),  0.16779, tolerance = 1e-5)
+  expect_equal(abs(splines$scores[1,1]), 0.17022, tolerance = 1e-5)
+  expect_equal(abs(mixed$scores[1,1]), 0.17057, tolerance = 1e-5)
   
   # norm factors
   expect_length(uFPCA$normFactors, 5)
   expect_length(splines$normFactors, 5)
   expect_length(mixed$normFactors, 5)
   
-  expect_equal(sum(uFPCA$normFactors), 7.1837392)
-  expect_equal(sum(splines$normFactors), 7.1675318)
-  expect_equal(sum(mixed$normFactors), 7.1751594)
+  expect_equal(sum(uFPCA$normFactors), 7.18374, tolerance = 1e-5)
+  expect_equal(sum(splines$normFactors), 7.16753, tolerance = 1e-5)
+  expect_equal(sum(mixed$normFactors), 7.17516, tolerance = 1e-5)
   
-  expect_equal(uFPCA$normFactors[1], 0.97509001)
-  expect_equal(splines$normFactors[1], 0.97466583)
-  expect_equal(mixed$normFactors[1], 0.97474938)
+  expect_equal(uFPCA$normFactors[1], 0.97509, tolerance = 1e-5)
+  expect_equal(splines$normFactors[1], 0.97467, tolerance = 1e-5)
+  expect_equal(mixed$normFactors[1], 0.97475, tolerance = 1e-5)
   
   ### Test bootstrap
   set.seed(2)
   splinesBoot <- MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "splines1D", k = 10),
                                                             list(type = "splines1D", k = 10)),
                    approx.eigen = FALSE, bootstrap = TRUE, nBootstrap = 100, bootstrapAlpha = 0.05, verbose = FALSE)
-  expect_equal(splinesBoot$CIvalues$alpha_0.05$upper[1], 1.39715714 )
-  expect_equal(sum(splinesBoot$CIvalues$alpha_0.05$upper), 3.5155807)
-  expect_equal(splinesBoot$CIvalues$alpha_0.05$lower[1], 0.82536666 )
-  expect_equal(sum(splinesBoot$CIvalues$alpha_0.05$lower), 2.2491912)
+  expect_equal(splinesBoot$CIvalues$alpha_0.05$upper[1], 1.39716, tolerance = 1e-5)
+  expect_equal(sum(splinesBoot$CIvalues$alpha_0.05$upper), 3.51558, tolerance = 1e-5)
+  expect_equal(splinesBoot$CIvalues$alpha_0.05$lower[1], 0.82537, tolerance = 1e-5)
+  expect_equal(sum(splinesBoot$CIvalues$alpha_0.05$lower), 2.24919, tolerance = 1e-5)
   expect_equal(nObs(splinesBoot$CI$alpha_0.05$upper), 5)
-  expect_equal(norm(splinesBoot$CI$alpha_0.05$upper)[1], 0.26693871)
+  expect_equal(norm(splinesBoot$CI$alpha_0.05$upper)[1], 0.266934, tolerance = 1e-5)
   expect_equal(nObs(splinesBoot$CI$alpha_0.05$lower), 5)
-  expect_equal(norm(splinesBoot$CI$alpha_0.05$lower)[1], 2.0226501, tol = 1e-6)
+  expect_equal(norm(splinesBoot$CI$alpha_0.05$lower)[1], 2.02265, tolerance = 1e-5)
   
   uFPCABoot <- MFPCA(sim$simData, M = 3, uniExpansions = list(list(type = "uFPCA", npc = 3),
                                                                 list(type = "uFPCA", npc = 3)),
                        approx.eigen = FALSE, bootstrap = TRUE, nBootstrap = 10, bootstrapAlpha = 0.1, verbose = FALSE)
-  expect_equal(uFPCABoot$CIvalues$alpha_0.1$upper[1], 1.1477863, tol = 1e-6)
-  expect_equal(sum(uFPCABoot$CIvalues$alpha_0.1$upper), 2.4099565, tol = 1e-6)
-  expect_equal(uFPCABoot$CIvalues$alpha_0.1$lower[1], 0.84856532, tol = 1e-6)
-  expect_equal(sum(uFPCABoot$CIvalues$alpha_0.1$lower), 1.8092398, tol = 1e-6)
-  expect_equal(norm(uFPCABoot$CI$alpha_0.1$upper)[1], 1.6649342, tol = 1e-6)
-  expect_equal(sum(norm(uFPCABoot$CI$alpha_0.1$upper)), 4.9297221, tol = 1e-6)
-  expect_equal(norm(uFPCABoot$CI$alpha_0.1$lower)[1], 0.44705663, tol = 1e-6)
-  expect_equal(sum(norm(uFPCABoot$CI$alpha_0.1$lower)), 2.5504374, tol = 1e-6)
+  expect_equal(uFPCABoot$CIvalues$alpha_0.1$upper[1], 1.14779, tolerance = 1e-5)
+  expect_equal(sum(uFPCABoot$CIvalues$alpha_0.1$upper), 2.40996, tolerance = 1e-5)
+  expect_equal(uFPCABoot$CIvalues$alpha_0.1$lower[1], 0.84857, tolerance = 1e-5)
+  expect_equal(sum(uFPCABoot$CIvalues$alpha_0.1$lower), 1.8092398, tolerance = 1e-5)
+  expect_equal(norm(uFPCABoot$CI$alpha_0.1$upper)[1], 1.66493, tolerance = 1e-5)
+  expect_equal(sum(norm(uFPCABoot$CI$alpha_0.1$upper)), 4.92972, tolerance = 1e-5)
+  expect_equal(norm(uFPCABoot$CI$alpha_0.1$lower)[1], 0.44706, tolerance = 1e-5)
+  expect_equal(sum(norm(uFPCABoot$CI$alpha_0.1$lower)), 2.55044, tolerance = 1e-5)
 })
 
 test_that("MFPCA calculation function", {
@@ -155,8 +155,5 @@ test_that("MFPCA calculation function", {
   # for p = 1, the univariate and multivariate results should coincide...
   expect_equal(abs(res$scores), abs(uniB$scores), tol = 2e-3, check.attributes = F)
   expect_equal(flipFuns(uniB$functions, res$functions[[1]]), uniB$functions, tol = 2e-3)
-  expect_equal(res$values, c(1.307880364, 0.790022175, 0.421445368))
-    
-            
-          })
-
+  expect_equal(res$values, c(1.30788, 0.79002, 0.42145), tolerance = 1e-5)
+})
