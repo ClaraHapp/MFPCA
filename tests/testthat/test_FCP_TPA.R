@@ -75,7 +75,7 @@ test_that("gcv", {
 
   # rather plausibility check...
   expect_equal(MFPCA:::gcv(alpha = 1, n=  5, z = c(1,0,0,0,0), eta = 0.5, lambda = 5:1),
-               0.229890299)
+               0.22989, tolerance = 1e-5)
 })
 
 
