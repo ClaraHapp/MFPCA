@@ -13,14 +13,14 @@ test_that("test univariate expansions 1D", {
   default1D <- MFPCA:::expandBasisFunction(scores = scores, argvals = argvals, functions = funData:::efPoly(argvals[[1]], M = 5))
   expect_equal(nObs(default1D), 20)
   expect_equal(nObsPoints(default1D), 101)
-  expect_equal(mean(norm(default1D)),  0.12734517) 
-  expect_equal(norm(default1D)[1], 0.0706192863)
+  expect_equal(mean(norm(default1D)),  0.12735, tolerance = 1e-5)
+  expect_equal(norm(default1D)[1], 0.07062, tolerance = 1e-5)
   
   spline1D <- MFPCA:::splineFunction1D(scores = scores, argvals = argvals, bs = "ps", m = 3, k = 5)
   expect_equal(nObs(spline1D), 20)
   expect_equal(nObsPoints(spline1D), 101)
-  expect_equal(mean(norm(spline1D)),  0.112358657) 
-  expect_equal(norm(spline1D)[1], 0.0532589197)
+  expect_equal(mean(norm(spline1D)),  0.11236, tolerance = 1e-5) 
+  expect_equal(norm(spline1D)[1], 0.05326, tolerance = 1e-5)
   
   
   # wrapper function
@@ -48,15 +48,15 @@ test_that("test univariate expansions 2D", {
   expect_equal(nObsPoints(default2D), c(101,101))
   if(packageVersion("funData") != "1.0") # in 1.0, the tensor product was defined differently
   {
-    expect_equal(mean(norm(default2D)),   10.2717312) 
-    expect_equal(norm(default2D)[1], 12.0851797)
+    expect_equal(mean(norm(default2D)),   10.27173, tolerance = 1e-5) 
+    expect_equal(norm(default2D)[1], 12.08518, tolerance = 1e-5)
   }
   
   spline2D <- MFPCA:::splineFunction2D(scores = scores, argvals = argvals, bs = "ps", m = 3, k = 5)
   expect_equal(nObs(spline2D), 20)
   expect_equal(nObsPoints(spline2D), c(101,101))
-  expect_equal(mean(norm(spline2D)),  2.84807347) 
-  expect_equal(norm(spline2D)[1], 2.27016721)
+  expect_equal(mean(norm(spline2D)),  2.84807, tolerance = 1e-5) 
+  expect_equal(norm(spline2D)[1], 2.27017, tolerance = 1e-5)
   
   spline2Dpen <- MFPCA:::splineFunction2Dpen(scores = scores, argvals = argvals, bs = "ps", m = 3, k = 5)
   expect_equal(nObs(spline2Dpen), 20)
@@ -65,8 +65,8 @@ test_that("test univariate expansions 2D", {
     skip("Regression tests for spline2Dpen skipped on this architecture.")
   else
   {
-    expect_equal(mean(norm(spline2Dpen)),  2.80048833) 
-    expect_equal(norm(spline2Dpen)[1], 2.15059827)
+    expect_equal(mean(norm(spline2Dpen)),  2.80049, tolerance = 1e-5) 
+    expect_equal(norm(spline2Dpen)[1], 2.15060, tolerance = 1e-5)
   }
   
   # wrapper function
@@ -103,8 +103,8 @@ test_that("test univariate expansions 3D", {
   expect_equal(nObsPoints(default3D), c(101,101,21))
   if(packageVersion("funData") != "1.0") # in 1.0, the tensor product was defined differently
   {
-    expect_equal(mean(norm(default3D)),  117.447302) 
-    expect_equal(norm(extractObs(default3D,1)), 118.648544)
+    expect_equal(mean(norm(default3D)),  117.44730, tolerance = 1e-5) 
+    expect_equal(norm(extractObs(default3D,1)), 118.64854, tolerance = 1e-5)
   }
 
   # wrapper function
@@ -124,7 +124,7 @@ test_that("test univariate expansions 4D and higher", {
   default4D <- MFPCA:::expandBasisFunction(scores = scores, functions = funData(argvals, X))
   expect_equal(nObs(default4D), 20)
   expect_equal(nObsPoints(default4D), c(5,4,3,2))
-  expect_equal(default4D@X[1,1,1,1,], c(0.2971338, 0.5745175), tol = 1e-6) # minimal check, as norm etc. are not implemented for 4D data
+  expect_equal(default4D@X[1,1,1,1,], c(0.29713, 0.57452), tol = 1e-5) # minimal check, as norm etc. are not implemented for 4D data
   
   # wrapper function
   expandDefault4D <- MFPCA:::univExpansion(type = "default", scores = scores, argvals = argvals,
