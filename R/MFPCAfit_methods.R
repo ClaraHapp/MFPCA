@@ -50,7 +50,7 @@ scoreplot.default <- function(PCAobject, ...) graphics::plot.default(PCAobject, 
 #' scoreplot(PCA, scaling = TRUE) # scale the scores by the first two eigenvalues 
 scoreplot.MFPCAfit <- function(PCAobject, choices = 1:2, scale = FALSE, ...)
 {
-  if(class(PCAobject) != "MFPCAfit")
+  if(!inherits(PCAobject,"MFPCAfit"))
     stop("Argument is not of class 'MFPCAfit'.")
   
   if(length(choices) != 2)
@@ -126,7 +126,7 @@ scoreplot.MFPCAfit <- function(PCAobject, choices = 1:2, scale = FALSE, ...)
 screeplot.MFPCAfit <- function(x, npcs = min(10, length(x$values)), type = "lines",
                                main = deparse(substitute(x)), ...)
 {
-  if(class(x) != "MFPCAfit")
+  if(!inherits(x, "MFPCAfit"))
     stop("Argument is not of class 'MFPCAfit'.")
 
   ylab <- "Proportion of Variance Explained"
@@ -192,7 +192,7 @@ screeplot.MFPCAfit <- function(x, npcs = min(10, length(x$values)), type = "line
 #' plot(PCA, combined = TRUE) # combine addition and subtraction in one plot
 plot.MFPCAfit <- function(x, plotPCs = 1:nObs(x$functions), stretchFactor = NULL, combined = FALSE, ...)
 {
-  if(class(x) != "MFPCAfit")
+  if(!inherits(x, "MFPCAfit"))
     stop("Argument is not of class 'MFPCAfit'.")
   
   # check dimensions
@@ -310,7 +310,7 @@ plot.MFPCAfit <- function(x, plotPCs = 1:nObs(x$functions), stretchFactor = NULL
 #' plot(pred[[2]], add = TRUE, lty = 2) # reconstruction
 predict.MFPCAfit <- function(object, scores = object$scores, ...)
 {
-  if(class(object) != "MFPCAfit")
+  if(!inherits(object, "MFPCAfit"))
     stop("Argument is not of class 'MFPCAfit'.")
   
   return(object$meanFunction  + 
@@ -329,7 +329,7 @@ predict.MFPCAfit <- function(object, scores = object$scores, ...)
 #' @export
 print.MFPCAfit <- function(x, ...)
 {
-  if(class(x) != "MFPCAfit")
+  if(!inherits(x, "MFPCAfit"))
     stop("Argument is not of class 'MFPCAfit'.")
   
   cat(funData::nObs(x$functions), "multivariate functional principal components estimated with",
@@ -351,7 +351,7 @@ print.MFPCAfit <- function(x, ...)
 #' @export
 summary.MFPCAfit <- function(object, ...)
 {
-  if(class(object) != "MFPCAfit")
+  if(!inherits(object, "MFPCAfit"))
     stop("Argument is not of class 'MFPCAfit'.")
   
   cat(funData::nObs(object$functions), "multivariate functional principal components estimated with",
