@@ -129,7 +129,7 @@ univExpansion <- function(type, scores, argvals = ifelse(!is.null(functions), fu
 #'   
 #' @seealso \code{\link{univExpansion}}
 #' 
-#' @export expandBasisFunction
+#' @keywords internal
 #' 
 #' @examples
 #' # set seed
@@ -243,7 +243,7 @@ expandBasisFunction <- function(scores, argvals = functions@argvals, functions)
 #'   
 #' @importFrom mgcv gam s
 #' 
-#' @export splineFunction1D
+#' @keywords internal
 #' 
 #' @examples  
 #' set.seed(1234)
@@ -316,7 +316,7 @@ splineFunction1D <- function(scores, argvals, bs, m, k)
 #'   
 #' @importFrom mgcv gam te
 #'   
-#' @export splineFunction2D
+#' @keywords internal
 #' 
 #' @examples
 #' set.seed(1234)
@@ -362,7 +362,7 @@ splineFunction2D <- function(scores, argvals, bs, m, k)
 #'   
 #' @importFrom mgcv gam te
 #'   
-#' @export splineFunction2Dpen
+#' @keywords internal
 splineFunction2Dpen <- function(scores, argvals, bs, m, k)
 {
   N <- nrow(scores)
@@ -416,7 +416,7 @@ splineFunction2Dpen <- function(scores, argvals, bs, m, k)
 #'   
 #' @importFrom abind abind
 #'   
-#' @export dctFunction2D
+#' @keywords internal
 #'   
 #' @examples
 #' # set seed
@@ -519,7 +519,7 @@ idct2D <- function(scores, ind, dim)
 
 #' @rdname dctFunction2D
 #'   
-#' @export dctFunction3D
+#' @keywords internal
 dctFunction3D <- function(scores, argvals, parallel = FALSE)
 {
   # dimension of the image

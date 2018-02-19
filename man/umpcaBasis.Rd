@@ -75,3 +75,4 @@ Haiping Lu, K.N. Plataniotis, and A.N. Venetsanopoulos,
 \seealso{
 \code{\link{univDecomp}}
 }
+\keyword{internal}

@@ -97,3 +97,4 @@ dct2D$scores[,1:25] # the first 25 scores for each observation
 \seealso{
 \code{\link{univDecomp}}, \code{\link{dct2D}}, \code{\link{dct3D}}
 }
+\keyword{internal}

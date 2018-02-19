@@ -72,3 +72,4 @@ par(oldpar)
 \seealso{
 \code{\link{univDecomp}}, \code{\link{PACE}}
 }
+\keyword{internal}

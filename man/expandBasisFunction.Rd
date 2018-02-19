@@ -73,3 +73,4 @@ par(oldpar)
 \seealso{
 \code{\link{univExpansion}}
 }
+\keyword{internal}

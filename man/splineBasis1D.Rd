@@ -74,3 +74,4 @@ dat <- simFunData(argvals = seq(0,1,0.01), M = 5,
 \code{\link{univDecomp}}, \code{\link[mgcv]{gam}},
   \code{\link[foreach]{foreach}}
 }
+\keyword{internal}

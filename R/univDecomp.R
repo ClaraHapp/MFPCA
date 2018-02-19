@@ -127,7 +127,7 @@ univDecomp <- function(type, funDataObject, ...)
 #'   
 #' @seealso \code{\link{univDecomp}}, \code{\link{PACE}}
 #' 
-#' @export fpcaBasis
+#' @keywords internal
 #' 
 #' @examples
 #' # simulate N = 100 observations of functional data based on polynomial eigenfunctions on [0,1]
@@ -197,7 +197,7 @@ fpcaBasis <- function(funDataObject, nbasis = 10, pve = 0.99, npc = NULL, makePD
 #'   Multilinear Subspace Learning", IEEE Transactions on Neural Networks, Vol. 
 #'   20, No. 11, Page: 1820-1836, Nov. 2009.
 #'   
-#' @export umpcaBasis
+#' @keywords internal
 #' 
 #' @examples
 #' # simulate image data for N = 100 observations
@@ -317,7 +317,7 @@ makeDiffOp <- function(degree, dim){
 #'  In IEEE International Workshop on Computational Advances in Multi-Sensor 
 #'  Adaptive Processing, 2013.
 #'  
-#'@export fcptpaBasis
+#' @keywords internal
 #'  
 #' @examples
 #' # simulate image data for N = 100 observations
@@ -438,7 +438,7 @@ fcptpaBasis <- function(funDataObject, npc, smoothingDegree = rep(2,2), alphaRan
 #' @importFrom stats lm
 #' @importFrom mgcv gam s
 #'   
-#' @export splineBasis1D
+#' @keywords internal
 #' 
 #' @examples
 #' # generate some data
@@ -491,7 +491,7 @@ splineBasis1D <- function(funDataObject, bs = "ps", m = NA, k = -1)
 #' @importFrom foreach %dopar%
 #' @importFrom mgcv gam model.matrix.gam s
 #' 
-#' @export splineBasis1Dpen
+#' @keywords internal
 splineBasis1Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel = FALSE)
 {
   if(dimSupp(funDataObject) != 1)
@@ -582,7 +582,7 @@ splineBasis1Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
 #' @importFrom stats lm
 #' @importFrom mgcv gam te
 #'   
-#' @export splineBasis2D
+#' @keywords internal
 #' 
 #' @examples
 #' # simulate image data for N = 100 observations
@@ -641,7 +641,7 @@ splineBasis2D <- function(funDataObject, bs = "ps", m = NA, k = -1)
 #' @importFrom foreach %dopar%
 #' @importFrom mgcv bam model.matrix.gam te
 #' 
-#' @export splineBasis2Dpen
+#' @keywords internal
 splineBasis2Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel = FALSE)
 {
   if(dimSupp(funDataObject) != 2)
@@ -749,7 +749,7 @@ splineBasis2Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
 #'   
 #' @seealso \code{\link{univDecomp}}, \code{\link{dct2D}}, \code{\link{dct3D}}
 #'   
-#' @export dctBasis2D
+#' @keywords internal
 #'   
 #' @examples
 #' # Simulate data with 10 observations on two-dimensional domain (images)
@@ -828,7 +828,7 @@ dct2D <- function(image, qThresh)
 
 #' @rdname dctBasis2D
 #' 
-#' @export dctBasis3D
+#' @keywords internal
 dctBasis3D <- function(funDataObject, qThresh, parallel = FALSE)
 {
   if(dimSupp(funDataObject) != 3)

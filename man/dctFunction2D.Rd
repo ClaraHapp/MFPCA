@@ -72,3 +72,4 @@ par(oldPar)
 \code{\link{univExpansion}}, \code{\link{idct2D}}, 
   \code{\link{idct3D}}, \code{\link{dctBasis2D}}, \code{\link{dctBasis3D}}
 }
+\keyword{internal}

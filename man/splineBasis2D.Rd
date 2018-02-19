@@ -88,3 +88,4 @@ noisyDataDec <- splineBasis2Dpen(noisyDat, k = c(5,5)) # use 5 basis functions i
   \code{\link[mgcv]{gam}}, \code{\link[mgcv]{bam}}, 
   \code{\link[foreach]{foreach}}
 }
+\keyword{internal}

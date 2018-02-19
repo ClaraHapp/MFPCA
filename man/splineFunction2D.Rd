@@ -72,3 +72,4 @@ par(oldPar)
 \code{\link{univExpansion}},  \code{\link{gam}}, 
   \code{\link{splineBasis2D}}
 }
+\keyword{internal}

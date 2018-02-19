@@ -87,3 +87,4 @@ G. I. Allen, "Multi-way Functional Principal Components Analysis",
 \seealso{
 \code{\link{univDecomp}}, \code{\link{FCP_TPA}}
 }
+\keyword{internal}
