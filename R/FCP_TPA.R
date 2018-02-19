@@ -99,44 +99,11 @@
 #'  legend("topleft", legend = c("True", "Estimated"), pch = c(20, 1))
 FCP_TPA <- function(X, K, penMat, alphaRange, verbose = FALSE, tol = 1e-4, maxIter = 15, adaptTol = TRUE)
 {
+  ### check input parameters
+  check_FCP_TPA_input(X, K, penMat, alphaRange, verbose, tol, maxIter, adaptTol)
+  
   dimX <- dim(X)
   
-  ### check input parameters
-  
-  # penMat: correct list names
-  if(!identical(names(penMat), c("v", "w")))
-    stop("Function FCP_TPA: penMat must be a list of matrices with entries 'v' and 'w'.")
-  
-  # penMat$v: correct dimensions and symmetric
-  if(any(dim(penMat$v) != rep(dimX[2],2)))
-    stop("Function FCP_TPA: the penalization matrix for dimension v must be ", dimX[2], " x ", dimX[2], ".")
-  
-  if(!isSymmetric(penMat$v))
-    stop("Function FCP_TPA: the penalization matrix for dimension v must be symmetric.")
-  
-  # penMat$w: correct dimensions and symmetric
-  if(any(dim(penMat$w) != rep(dimX[3],2)))
-    stop("Function FCP_TPA: the penalization matrix for dimension w must be ", dimX[3], " x ", dimX[3], ".")
-  
-  if(!isSymmetric(penMat$w))
-    stop("Function FCP_TPA: the penalization matrix for dimension w must be symmetric.")
-    
-  # alphaRange: correct list names, length and values
-  if(!identical(names(alphaRange), c("v", "w")))
-    stop("Function FCP_TPA: alphaRange must be a list of vectors with entries 'v' and 'w'.")
-  
-  if(length(alphaRange$v) != 2)
-    stop("Function FCP_TPA: alphaRange$v must be a vector of length 2.")
-  
-  if(any(alphaRange$v < 0))
-    stop("Function FCP_TPA: Values for alphaV must not be negative.")
-  
-  if(length(alphaRange$w) != 2)
-    stop("Function FCP_TPA: alphaRange$w must be a vector of length 2.")
-  
-  if(any(alphaRange$w < 0))
-    stop("Function FCP_TPA: Values for alphaW must not be negative.")
-
   ### initialize all relevant values
   
   # initialize the norm-one vectors u, v, w randomly
@@ -247,6 +214,89 @@ FCP_TPA <- function(X, K, penMat, alphaRange, verbose = FALSE, tol = 1e-4, maxIt
   }
   
   return(list(d = d, U = U, V = V, W = W))
+}
+
+#' Check input of FCP TPA function
+#' 
+#' @keywords internal
+check_FCP_TPA_input <- function(X, K, penMat, alphaRange, verbose, tol, maxIter, adaptTol)
+{
+  # X
+  if(!is.array(X))
+    stop("Parameter 'X' must be passed as an array.")
+  else
+  {
+    if(length(dim(X)) != 3)
+      stop("Parameter 'X' must have three dimensions.")
+  }
+  
+  dimX <- dim(X)
+  
+  # K
+  if(! (is.numeric(K) & length(K) == 1))
+    stop("Parameter 'K' must be passed as a number.")
+  
+  # penMat
+  if(!is.list(penMat))
+    stop("Parameter 'penMat' must be passed as a list.")
+  else
+  {
+    if(!identical(names(penMat), c("v", "w")))
+      stop("Function FCP_TPA: penMat must be a list of matrices with entries 'v' and 'w'.")
+    
+    # penMat$v: correct dimensions and symmetric
+    if(any(dim(penMat$v) != rep(dimX[2],2)))
+      stop("Function FCP_TPA: the penalization matrix for dimension v must be ", dimX[2], " x ", dimX[2], ".")
+    
+    if(!isSymmetric(penMat$v))
+      stop("Function FCP_TPA: the penalization matrix for dimension v must be symmetric.")
+    
+    # penMat$w: correct dimensions and symmetric
+    if(any(dim(penMat$w) != rep(dimX[3],2)))
+      stop("Function FCP_TPA: the penalization matrix for dimension w must be ", dimX[3], " x ", dimX[3], ".")
+    
+    if(!isSymmetric(penMat$w))
+      stop("Function FCP_TPA: the penalization matrix for dimension w must be symmetric.")
+  }
+  
+  # alphaRange
+  if(!is.list(alphaRange))
+    stop("Parameter 'alphaRange' must be passed as a list.")
+  else
+  {
+    if(!identical(names(alphaRange), c("v", "w")))
+      stop("Function FCP_TPA: alphaRange must be a list of vectors with entries 'v' and 'w'.")
+    
+    if(length(alphaRange$v) != 2)
+      stop("Function FCP_TPA: alphaRange$v must be a vector of length 2.")
+    
+    if(any(alphaRange$v < 0))
+      stop("Function FCP_TPA: Values for alphaV must not be negative.")
+    
+    if(length(alphaRange$w) != 2)
+      stop("Function FCP_TPA: alphaRange$w must be a vector of length 2.")
+    
+    if(any(alphaRange$w < 0))
+      stop("Function FCP_TPA: Values for alphaW must not be negative.")
+  }
+  
+  # verbose
+  if(!is.logical(verbose))
+    stop("Parameter 'verbose' must be passed as a logical.")
+  
+  # tol
+  if(! (is.numeric(tol) & length(tol) == 1))
+    stop("Parameter 'tol' must be passed as a number.")
+  
+  # maxIter
+  if(! (is.numeric(maxIter) & length(maxIter) == 1))
+    stop("Parameter 'maxIter' must be passed as a number.")
+  
+  # adaptTol
+  if(!is.logical(adaptTol))
+    stop("Parameter 'adaptTol' must be passed as a logical.")
+  
+  return()
 }
 
 #' Calculate the euclidean norm of a vector
