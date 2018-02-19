@@ -66,11 +66,11 @@ b <- tensorProduct(b1,b2) # 2D basis functions
 scores <- matrix(rnorm(N*56), nrow = N)
 
 # calculate observations (= linear combination of basis functions)
-f <- expandBasisFunction(scores = scores, functions = b)
+f <- MFPCA:::expandBasisFunction(scores = scores, functions = b)
 
 # calculate basis functions based on FCP_TPA algorithm (needs some time)
 \donttest{
-fcptpa <- fcptpaBasis(f, npc = 5, alphaRange = list(v = c(1e-5, 1e5), w = c(1e-5, 1e5)))
+fcptpa <- MFPCA:::fcptpaBasis(f, npc = 5, alphaRange = list(v = c(1e-5, 1e5), w = c(1e-5, 1e5)))
 
 oldpar <- par(no.readonly = TRUE)
 

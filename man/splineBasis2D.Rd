@@ -68,11 +68,11 @@ b <- tensorProduct(b1,b2) # 2D basis functions
 scores <- matrix(rnorm(N*56), nrow = N)
 
 # calculate observations (= linear combination of basis functions)
-dat <- expandBasisFunction(scores = scores, functions = b)
+dat <- MFPCA:::expandBasisFunction(scores = scores, functions = b)
 
 # calculate 2D spline basis decomposition (needs some time)
 \donttest{
-dataDec <- splineBasis2D(dat, k = c(5,5)) # use 5 basis functions in each direction
+dataDec <- MFPCA:::splineBasis2D(dat, k = c(5,5)) # use 5 basis functions in each direction
 }
 
 # add some noise to the data
@@ -80,7 +80,7 @@ noisyDat <- addError(dat, sd = 0.5)
 
 # calculate 2D spline basis decomposition with penalization (needs A LOT more time)
 \donttest{
-noisyDataDec <- splineBasis2Dpen(noisyDat, k = c(5,5)) # use 5 basis functions in each direction
+noisyDataDec <- MFPCA:::splineBasis2Dpen(noisyDat, k = c(5,5)) # use 5 basis functions in each direction
 }
 }
 \seealso{

@@ -88,7 +88,7 @@ f2 <- funData(argvals = list(x1, x2),
 
 # Calculate basis functions: This will throw an error if fftw3 is not installed.           
 \dontrun{
-dct2D <- dctBasis2D(f2, qThresh = 0.95)
+dct2D <- MFPCA:::dctBasis2D(f2, qThresh = 0.95)
 
 # verify that scores are saved in a sparse matrix
 dct2D$scores[,1:25] # the first 25 scores for each observation

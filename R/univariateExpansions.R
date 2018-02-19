@@ -58,7 +58,7 @@ NULL
 #' dim(scores)
 #' 
 #' # expand spline basis on [0,1]
-#' funs <- univExpansion(type = "splines1D", scores = scores, argvals = seq(0,1,0.01),
+#' funs <- univExpansion(type = "splines1D", scores = scores, argvals = list(seq(0,1,0.01)),
 #'                       functions = NULL, # spline functions are known, need not be given
 #'                       params = list(bs = "ps", m = 2, k = K)) # params for mgcv
 #' 
@@ -198,7 +198,7 @@ univExpansion <- function(type, scores, argvals = ifelse(!is.null(functions), fu
 #' scores <- t(replicate(N, rnorm(K, sd = 1 / (1:10))))
 #' 
 #' # calculate basis expansion
-#' f <- expandBasisFunction(scores = scores, functions = b) # default value for argvals
+#' f <- MFPCA:::expandBasisFunction(scores = scores, functions = b) # default value for argvals
 #' 
 #' oldpar <- par(no.readonly = TRUE)
 #' 
@@ -218,7 +218,7 @@ univExpansion <- function(type, scores, argvals = ifelse(!is.null(functions), fu
 #' b <- funData(argvals = list(x1, x2), X = 1:K %o% exp(x1) %o% sin(x2))
 #' 
 #' # calculate PCA expansion
-#' f <- expandBasisFunction(scores = scores, functions = b)
+#' f <- MFPCA:::expandBasisFunction(scores = scores, functions = b)
 #' 
 #' # plot the resulting observations
 #' for(i in 1:4)
@@ -305,7 +305,7 @@ expandBasisFunction <- function(scores, argvals = functions@argvals, functions)
 #' dim(scores)
 #' 
 #' # expand spline basis on [0,1]
-#' funs <- splineFunction1D(scores = scores, argvals = list(seq(0,1,0.01)),
+#' funs <- MFPCA:::splineFunction1D(scores = scores, argvals = list(seq(0,1,0.01)),
 #'                          bs = "ps", m = 2, k = K) # params for mgcv
 #'                          
 #' oldPar <- par(no.readonly = TRUE)
@@ -379,7 +379,7 @@ splineFunction1D <- function(scores, argvals, bs, m, k)
 #' dim(scores)
 #' 
 #' # expand spline basis on [0,1] x [-0.5, 0.5]
-#' funs <- splineFunction2D(scores = scores, argvals = list(seq(0,1,0.01), seq(-0.5, 0.5, 0.01)),
+#' funs <- MFPCA:::splineFunction2D(scores = scores, argvals = list(seq(0,1,0.01), seq(-0.5, 0.5, 0.01)),
 #'                          bs = "ps", m = 2, k = c(7,8)) # params for mgcv
 #' 
 #' oldPar <- par(no.readonly = TRUE)
@@ -481,7 +481,7 @@ splineFunction2Dpen <- function(scores, argvals, bs, m, k)
 #' 
 #' \dontrun{
 #' # calculate basis expansion on [0,1] x [0,1]
-#' f <- dctFunction2D(scores = scores, argvals = list(seq(0,1,0.01), seq(0,1,0.01)))
+#' f <- MFPCA:::dctFunction2D(scores = scores, argvals = list(seq(0,1,0.01), seq(0,1,0.01)))
 #' nObs(f) # f has 10 observations
 #' 
 #' oldPar <- par(no.readonly = TRUE)

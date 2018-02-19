@@ -147,7 +147,7 @@ univDecomp <- function(type, funDataObject, ...)
 #' sim <- simFunData(argvals = seq(0,1,0.01), M = 5, eFunType = "Poly", eValType = "linear", N = 100)
 #' 
 #' # estimate the first 5 functional principal components from the data
-#' fpca <- fpcaBasis(sim$simData, npc = 5)
+#' fpca <- MFPCA:::fpcaBasis(sim$simData, npc = 5)
 #' 
 #' oldpar <- par(no.readonly = TRUE)
 #' par(mfrow = c(1,2))
@@ -221,13 +221,13 @@ fpcaBasis <- function(funDataObject, nbasis = 10, pve = 0.99, npc = NULL, makePD
 #' scores <- matrix(rnorm(N*56), nrow = N)
 #' 
 #' # calculate observations (= linear combination of basis functions)
-#' f <- expandBasisFunction(scores = scores, functions = b)
+#' f <- MFPCA:::expandBasisFunction(scores = scores, functions = b)
 #' 
 #' # calculate basis functions based on UMPCA algorithm (needs some time)
 #' \donttest{
 #' # throws warning as the function aims more at  uncorrelated features than at
 #' # optimal data reconstruction (see help)
-#' umpca <- umpcaBasis(f, npc = 5) 
+#' umpca <- MFPCA:::umpcaBasis(f, npc = 5) 
 #' 
 #' oldpar <- par(no.readonly = TRUE)
 #' 
@@ -341,11 +341,11 @@ makeDiffOp <- function(degree, dim){
 #' scores <- matrix(rnorm(N*56), nrow = N)
 #' 
 #' # calculate observations (= linear combination of basis functions)
-#' f <- expandBasisFunction(scores = scores, functions = b)
+#' f <- MFPCA:::expandBasisFunction(scores = scores, functions = b)
 #' 
 #' # calculate basis functions based on FCP_TPA algorithm (needs some time)
 #' \donttest{
-#' fcptpa <- fcptpaBasis(f, npc = 5, alphaRange = list(v = c(1e-5, 1e5), w = c(1e-5, 1e5)))
+#' fcptpa <- MFPCA:::fcptpaBasis(f, npc = 5, alphaRange = list(v = c(1e-5, 1e5), w = c(1e-5, 1e5)))
 #' 
 #' oldpar <- par(no.readonly = TRUE)
 #' 
@@ -459,14 +459,14 @@ fcptpaBasis <- function(funDataObject, npc, smoothingDegree = rep(2,2), alphaRan
 #'                   eFunType = "Poly", eValType = "linear", N = 100)$simData
 #'                   
 #'  # calculate spline basis decomposition
-#'  dataDec <- splineBasis1D(dat) # use mgcv's default parameters
+#'  dataDec <- MFPCA:::splineBasis1D(dat) # use mgcv's default parameters
 #'  str(dataDec)
 #'  
 #'  # add some noise to the data
 #'  noisyDat <- addError(dat, sd = 0.5)
 #'  
 #'  # calculate spline basis decomposition with penalization to reduce noise
-#'  noisyDataDec <- splineBasis1Dpen(dat) # use mgcv's default parameters
+#'  noisyDataDec <- MFPCA:::splineBasis1Dpen(dat) # use mgcv's default parameters
 #'  str(noisyDataDec)
 #'  
 #'  # check if noise has been filtered out by penalization
@@ -606,11 +606,11 @@ splineBasis1Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
 #' scores <- matrix(rnorm(N*56), nrow = N)
 #' 
 #' # calculate observations (= linear combination of basis functions)
-#' dat <- expandBasisFunction(scores = scores, functions = b)
+#' dat <- MFPCA:::expandBasisFunction(scores = scores, functions = b)
 #' 
 #' # calculate 2D spline basis decomposition (needs some time)
 #' \donttest{
-#' dataDec <- splineBasis2D(dat, k = c(5,5)) # use 5 basis functions in each direction
+#' dataDec <- MFPCA:::splineBasis2D(dat, k = c(5,5)) # use 5 basis functions in each direction
 #' }
 #' 
 #' # add some noise to the data
@@ -618,7 +618,7 @@ splineBasis1Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
 #' 
 #' # calculate 2D spline basis decomposition with penalization (needs A LOT more time)
 #' \donttest{
-#' noisyDataDec <- splineBasis2Dpen(noisyDat, k = c(5,5)) # use 5 basis functions in each direction
+#' noisyDataDec <- MFPCA:::splineBasis2Dpen(noisyDat, k = c(5,5)) # use 5 basis functions in each direction
 #' }
 splineBasis2D <- function(funDataObject, bs = "ps", m = NA, k = -1)
 {
@@ -775,7 +775,7 @@ splineBasis2Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
 #' 
 #' # Calculate basis functions: This will throw an error if fftw3 is not installed.           
 #' \dontrun{
-#' dct2D <- dctBasis2D(f2, qThresh = 0.95)
+#' dct2D <- MFPCA:::dctBasis2D(f2, qThresh = 0.95)
 #' 
 #' # verify that scores are saved in a sparse matrix
 #' dct2D$scores[,1:25] # the first 25 scores for each observation

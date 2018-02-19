@@ -56,7 +56,7 @@ scores
 
 \dontrun{
 # calculate basis expansion on [0,1] x [0,1]
-f <- dctFunction2D(scores = scores, argvals = list(seq(0,1,0.01), seq(0,1,0.01)))
+f <- MFPCA:::dctFunction2D(scores = scores, argvals = list(seq(0,1,0.01), seq(0,1,0.01)))
 nObs(f) # f has 10 observations
 
 oldPar <- par(no.readonly = TRUE)

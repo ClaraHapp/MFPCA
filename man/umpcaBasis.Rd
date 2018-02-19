@@ -51,13 +51,13 @@ b <- tensorProduct(b1,b2) # 2D basis functions
 scores <- matrix(rnorm(N*56), nrow = N)
 
 # calculate observations (= linear combination of basis functions)
-f <- expandBasisFunction(scores = scores, functions = b)
+f <- MFPCA:::expandBasisFunction(scores = scores, functions = b)
 
 # calculate basis functions based on UMPCA algorithm (needs some time)
 \donttest{
 # throws warning as the function aims more at  uncorrelated features than at
 # optimal data reconstruction (see help)
-umpca <- umpcaBasis(f, npc = 5) 
+umpca <- MFPCA:::umpcaBasis(f, npc = 5) 
 
 oldpar <- par(no.readonly = TRUE)
 
