@@ -372,7 +372,8 @@ print.MFPCAfit <- function(x, ...)
 #'   call to \link{MFPCA}.
 #' @param ... Arguments passed to or from other methods.
 #'   
-#' @export
+#' @export 
+#' @method summary MFPCAfit
 summary.MFPCAfit <- function(object, ...)
 {
   if(!inherits(object, "MFPCAfit"))

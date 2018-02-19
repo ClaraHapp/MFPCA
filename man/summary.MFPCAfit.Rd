@@ -4,7 +4,7 @@
 \alias{summary.MFPCAfit}
 \title{Summarize a Multivariate Functional Principal Component Analysis}
 \usage{
-summary.MFPCAfit(object, ...)
+\method{summary}{MFPCAfit}(object, ...)
 }
 \arguments{
 \item{object}{An object of class \code{MFPCAfit}, usually returned by a
