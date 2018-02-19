@@ -173,7 +173,7 @@ test_that("MFPCA calculation function", {
   uniB <- univDecomp("uFPCA", sim$simData, npc = 3)
   
   res <- MFPCA:::calcMFPCA(N = 100, p = 1, Bchol = diag(3), M = 3, type = "uFPCA", weights = 1, npc = 3, 
-            argvals = sim$simData@argvals, uniBasis = list(uniB))
+            argvals = list(sim$simData@argvals), uniBasis = list(uniB))
   
   # for p = 1, the univariate and multivariate results should coincide...
   expect_equal(abs(res$scores), abs(uniB$scores), tol = 2e-3, check.attributes = F)
