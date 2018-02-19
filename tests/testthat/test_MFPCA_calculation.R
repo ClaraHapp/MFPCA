@@ -27,24 +27,47 @@ test_that("test MFPCA main function", {
   set.seed(1)
   sim <-  simMultiFunData(type = "split", argvals = list(seq(0,1,0.01), seq(-0.5,0.5,0.02)),
                           M = 5, eFunType = "Poly", eValType = "linear", N = 100)
+  uniExpansions <- list(list(type = "uFPCA"), list(type = "uFPCA"))
   
   # check errors
+  expect_error(MFPCA(sim$simData[[1]], M = 5, uniExpansions = uniExpansions),
+               "Parameter 'mFData' must be passed as a multiFunData object.")
+  expect_error(MFPCA(sim$simData, M = "5", uniExpansions = uniExpansions),
+               "Parameter 'M' must be passed as a number > 0.")
+  expect_error(MFPCA(sim$simData, M = 1:5, uniExpansions = uniExpansions),
+               "Parameter 'M' must be passed as a number > 0.")
+  expect_error(MFPCA(sim$simData, M = -5, uniExpansions = uniExpansions),
+               "Parameter 'M' must be passed as a number > 0.")
+  expect_error(MFPCA(sim$simData, M = 5, uniExpansions = uniExpansions[[1]]),
+               "Parameter 'uniExpansions' must be passed as a list with the same length as 'mFData'.")
   expect_error(MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "uFPCA"))), 
-                 "Function MFPCA_multidim: multivariate functional data object and univariate expansions must have the same length!")
-  expect_error(MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "uFPCA"), list(type = "uFPCA")), bootstrap = TRUE), 
+               "Parameter 'uniExpansions' must be passed as a list with the same length as 'mFData'.")
+  expect_error(MFPCA(sim$simData, M = 5, uniExpansions = uniExpansions, weights = "1"),
+               "Parameter 'weights' must be passed as a vector with the same length as 'mFData'.")
+  expect_error(MFPCA(sim$simData, M = 5, uniExpansions = uniExpansions, weights = 1),
+               "Parameter 'weights' must be passed as a vector with the same length as 'mFData'.")
+  expect_error(MFPCA(sim$simData, M = 5, uniExpansions = uniExpansions, fit = "Yes"),
+               "Parameter 'fit' must be passed as a logical.")
+  expect_error(MFPCA(sim$simData, M = 5, uniExpansions = uniExpansions, approx.eigen = "Yes"),
+               "Parameter 'approx.eigen' must be passed as a logical.")
+  expect_error(MFPCA(sim$simData, M = 5, uniExpansions = uniExpansions, bootstrap = "Yes"),
+               "Parameter 'bootstrap' must be passed as a logical.")
+  expect_error(MFPCA(sim$simData, M = 5, uniExpansions = uniExpansions, bootstrap = TRUE), 
                "Specify number of bootstrap iterations.")
-  expect_error(MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "uFPCA"), list(type = "uFPCA")), 
+  expect_error(MFPCA(sim$simData, M = 5, uniExpansions = uniExpansions, 
                      bootstrap = TRUE, nBootstrap = 10, bootstrapAlpha = -.1), 
                "Significance level for bootstrap confidence bands must be in (0,1).", fixed = TRUE) # fixed: do not interprete as reg. exp.
-  expect_error(MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "uFPCA"), list(type = "uFPCA")), 
+  expect_error(MFPCA(sim$simData, M = 5, uniExpansions = uniExpansions, 
                      bootstrap = TRUE, nBootstrap = 10, bootstrapAlpha = 1.5), 
                "Significance level for bootstrap confidence bands must be in (0,1).", fixed = TRUE) # fixed: do not interprete as reg. exp.
-  expect_error(MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "uFPCA"), list(type = "uFPCA")), 
+  expect_error(MFPCA(sim$simData, M = 5, uniExpansions = uniExpansions, 
                      bootstrap = TRUE, nBootstrap = 10, bootstrapStrat = 1:nObs(sim$simData)), 
                "bootstrapStrat must be either NULL or a factor.", fixed = TRUE)
-  expect_error(MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "uFPCA"), list(type = "uFPCA")), 
+  expect_error(MFPCA(sim$simData, M = 5, uniExpansions = uniExpansions, 
                      bootstrap = TRUE, nBootstrap = 10, bootstrapStrat = as.factor(1:5)), 
                "bootstrapStrat must have the same length as the number of observations in the mFData object.", fixed = TRUE)
+  expect_error(MFPCA(sim$simData, M = 5, uniExpansions = uniExpansions, verbose = "Yes"),
+               "Parameter 'verbose' must be passed as a logical.")
   
   # check warning
   expect_warning(MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "uFPCA", npc = 2), list(type = "uFPCA", npc = 2))),

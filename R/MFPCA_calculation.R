@@ -339,15 +339,32 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fi
                   bootstrap = FALSE, nBootstrap = NULL, bootstrapAlpha = 0.05, bootstrapStrat = NULL, 
                   verbose = options()$verbose)
 {
+  if(! inherits(mFData, "multiFunData"))
+    stop("Parameter 'mFData' must be passed as a multiFunData object.")
+  
   # number of components
   p <- length(mFData)
-
   # number of observations
   N <- nObs(mFData)
-
-  if(length(uniExpansions) != p)
-    stop("Function MFPCA_multidim: multivariate functional data object and univariate expansions must have the same length!")
-
+  
+  if(!all(is.numeric(M), length(M) == 1, M > 0))
+    stop("Parameter 'M' must be passed as a number > 0.")
+  
+  if(!(is.list(uniExpansions) & length(uniExpansions) == p))
+    stop("Parameter 'uniExpansions' must be passed as a list with the same length as 'mFData'.")
+  
+  if(!(is.numeric(weights) & length(weights) == p))
+    stop("Parameter 'weights' must be passed as a vector with the same length as 'mFData'.")
+  
+  if(!is.logical(fit))
+    stop("Parameter 'fit' must be passed as a logical.")
+  
+  if(!is.logical(approx.eigen))
+    stop("Parameter 'approx.eigen' must be passed as a logical.")
+  
+  if(!is.logical(bootstrap))
+    stop("Parameter 'bootstrap' must be passed as a logical.")
+  
   if(bootstrap)
   {
     if(is.null(nBootstrap))
@@ -365,6 +382,9 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fi
         stop("bootstrapStrat must have the same length as the number of observations in the mFData object.")
     }
   }
+  
+  if(!is.logical(verbose))
+    stop("Parameter 'verbose' must be passed as a logical.")
   
   # dimension for each component
   dimSupp <- dimSupp(mFData)
