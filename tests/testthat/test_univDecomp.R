@@ -3,6 +3,15 @@ context("Testing functions in univDecomp.R")
 set.seed(1)
 f1 <- simFunData(seq(0,1,0.01), M = 10, eFunType = "Poly", eValType = "linear", N = 10)$simData
 
+test_that("test univDecomp", {
+  expect_error(MFPCA:::univDecomp(type = NULL, funDataObject = f1), 
+               "Parameter 'type' is missing.")   
+  expect_error(MFPCA:::univDecomp(type = 5, funDataObject = f1), 
+               "Parameter 'type' must be a character string. See ?univDecomp for details.", fixed = TRUE)   
+  expect_error(MFPCA:::univDecomp(type = "Test", funDataObject = 5), 
+               "Parameter 'funDataObject' must be a funData object.")   
+          })
+
 test_that("test univariate decompositions 1D", {
   # splines1D
   # check error

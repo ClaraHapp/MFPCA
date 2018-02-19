@@ -49,6 +49,19 @@
 #' str(decSplines)
 univDecomp <- function(type, funDataObject, ...)
 {
+  # Parameter checking
+  if(is.null(type))
+    stop("Parameter 'type' is missing.")
+  else
+  {
+    if(!is.character(type))
+      stop("Parameter 'type' must be a character string. See ?univDecomp for details.")
+  } 
+  
+  if(class(funDataObject) != "funData")
+    stop("Parameter 'funDataObject' must be a funData object.")
+  
+  
   params <- as.list(match.call()) # get all arguments
   params$funDataObject <- funDataObject # add funDataObject (-> make sure is evaluated in correct env.)
   
