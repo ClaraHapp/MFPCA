@@ -3,6 +3,12 @@ context("Testing functions in univDecomp.R")
 set.seed(1)
 f1 <- simFunData(seq(0,1,0.01), M = 10, eFunType = "Poly", eValType = "linear", N = 10)$simData
 
+set.seed(1)
+x1 <- seq(0,1,length.out=50)
+x2 <- seq(-1,1, length.out=75)
+f2 <- funData(argvals = list(x1, x2),
+              X = aperm(replicate(10, outer(x1, cos(pi*x2))+matrix(rnorm(50*75, sd = 0.1), nrow = 50)), c(3,1,2)))
+
 test_that("test univDecomp", {
   expect_error(MFPCA:::univDecomp(type = NULL, funDataObject = f1), 
                "Parameter 'type' is missing.")   
@@ -169,12 +175,6 @@ test_that("test UMPCA functionality", {
 })
 
 test_that("test univariate decompositions 2D", {
-  set.seed(1)
-  x1 <- seq(0,1,length.out=50)
-  x2 <- seq(-1,1, length.out=75)
-  f2 <- funData(argvals = list(x1, x2),
-                X = aperm(replicate(10, outer(x1, cos(pi*x2))+matrix(rnorm(50*75, sd = 0.1), nrow = 50)), c(3,1,2)))
-  
   # splines2D
   # check error
   expect_error(MFPCA:::splineBasis2D(funData(x1, rnorm(10)%o%x1), bs = "ps", m = 3, k = 10),
