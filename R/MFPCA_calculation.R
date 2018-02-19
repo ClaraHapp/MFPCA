@@ -447,8 +447,27 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fi
   
   res$meanFunction <- m # return mean function, too
   
+  names(res$functions) <- names(mFData)
+  
   if(fit)
+  {
     res$fit <- m + res$fit # add mean function to fits
+    names(res$fit) <- names(mFData)
+  } 
+  
+  # give correct names
+  namesList <- lapply(mFData, names)
+  if(!all(sapply(namesList, is.null))) 
+  {
+    if(length(unique(namesList)) != 1)
+      warning("Elements have different curve names. Use names of the first element for the results.")
+    
+    row.names(res$scores) <- namesList[[1]]
+    
+    if(fit)
+      for(i in 1:p)
+        names(res$fit[[i]]) <- namesList[[1]]
+  }
 
   # bootstrap for eigenfunctions
   if(bootstrap)
