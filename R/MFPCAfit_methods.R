@@ -53,12 +53,15 @@ scoreplot.MFPCAfit <- function(PCAobject, choices = 1:2, scale = FALSE, ...)
   if(!inherits(PCAobject,"MFPCAfit"))
     stop("Argument is not of class 'MFPCAfit'.")
   
-  if(length(choices) != 2)
-    stop("Length of choices must be 2.")
+  if(!(is.numeric(choices) & length(choices) == 2 & all(choices > 0)))
+    stop("Parameter 'choices' must be a vector of length 2 with positive entries.")
   
   if(NCOL(PCAobject$scores) < max(choices))
     stop(paste("Argument choices requires", max(choices), 
                "scores, MFPCA object contains only", NCOL(PCAobject$scores), "."))
+  
+  if(!is.logical(scale))
+    stop("Parameter 'scale' must be passed as a logical.")
   
   # check for labels, otherwise construct them TODO: rownames for scores in MFPCA
   lab <- {if(is.null(rownames(PCAobject$scores)))
@@ -128,6 +131,15 @@ screeplot.MFPCAfit <- function(x, npcs = min(10, length(x$values)), type = "line
 {
   if(!inherits(x, "MFPCAfit"))
     stop("Argument is not of class 'MFPCAfit'.")
+  
+  if(!all(is.numeric(npcs), length(npcs) == 1, npcs > 0, npcs <= length(x$values)))
+    stop("Parameter 'npcs' must be a number between 1 and ", length(x$values), ".")
+  
+  if(!is.character(type))
+    stop("Parameter 'type' must be passed as a character.")
+  
+  if(!(is.character(main) | is.null(main)))
+    stop("Parameter 'main' must be either NULL or passed as a character.")
 
   ylab <- "Proportion of Variance Explained"
   pve <- x$values[1:npcs]/sum(x$values)
@@ -194,6 +206,15 @@ plot.MFPCAfit <- function(x, plotPCs = 1:nObs(x$functions), stretchFactor = NULL
 {
   if(!inherits(x, "MFPCAfit"))
     stop("Argument is not of class 'MFPCAfit'.")
+  
+  if(!(is.numeric(plotPCs) & 0 < length(plotPCs) & length(plotPCs) <= length(x$values) & all(0 < plotPCs, plotPCs <= length(x$values))))
+    stop("Parameter 'plotPCs' must be a vector with values between 1 and ", length(x$values), ".")
+  
+  if(!(is.null(stretchFactor) | all(is.numeric(stretchFactor), length(stretchFactor) == 1, stretchFactor > 0)))
+    stop("Parameter 'stretchFactor' must be either NULL or a positive number.")
+  
+  if(!is.logical(combined))
+    stop("Parameter 'combined' must be passed as a logical.")
   
   # check dimensions
   dims <- funData::dimSupp(x$functions)
@@ -312,6 +333,9 @@ predict.MFPCAfit <- function(object, scores = object$scores, ...)
 {
   if(!inherits(object, "MFPCAfit"))
     stop("Argument is not of class 'MFPCAfit'.")
+  
+  if(!(is.numeric(scores) & NCOL(scores) == length(object$values)))
+     stop("Argument 'scores' must be a matrix with ", length(object$values), " columns.")
   
   return(object$meanFunction  + 
            multivExpansion(multiFuns = object$functions, scores = scores))
