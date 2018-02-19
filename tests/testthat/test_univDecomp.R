@@ -117,6 +117,9 @@ test_that("test UMPCA functionality", {
   A <- array(1:24, dim = c(3,4,2))
   
   # check ttv errors
+  expect_error(MFPCA:::ttv(NULL, list(rep(1,3)), 1), "Parameter 'A' must be an array.")
+  expect_error(MFPCA:::ttv(A, rep(1,3), 1), "Parameter 'v' must be passed as a list.")
+  expect_error(MFPCA:::ttv(A, list(rep(1,3)), "Test"), "Parameter 'dim' must be passed as a vector of numerics.")
   expect_error(MFPCA:::ttv(A, list(rep(1,3)), 2), "A and v have wrong dimensions!")
   expect_error(MFPCA:::ttv(A, list(rep(1,3), rep(2,3)), 1), "The parameters 'dim' and 'v' must have the same length!")
   
