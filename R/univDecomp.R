@@ -610,7 +610,8 @@ splineBasis1Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
 #' 
 #' # calculate 2D spline basis decomposition (needs some time)
 #' \donttest{
-#' dataDec <- MFPCA:::splineBasis2D(dat, k = c(5,5)) # use 5 basis functions in each direction
+#' # use 5 basis functions in each direction
+#' dataDec <- MFPCA:::splineBasis2D(dat, k = c(5,5)) 
 #' }
 #' 
 #' # add some noise to the data
@@ -618,7 +619,8 @@ splineBasis1Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
 #' 
 #' # calculate 2D spline basis decomposition with penalization (needs A LOT more time)
 #' \donttest{
-#' noisyDataDec <- MFPCA:::splineBasis2Dpen(noisyDat, k = c(5,5)) # use 5 basis functions in each direction
+#' # use 5 basis functions in each direction
+#' noisyDataDec <- MFPCA:::splineBasis2Dpen(noisyDat, k = c(5,5)) 
 #' }
 splineBasis2D <- function(funDataObject, bs = "ps", m = NA, k = -1)
 {

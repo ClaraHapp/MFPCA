@@ -56,8 +56,9 @@ scores <- t(replicate(n = N, rnorm(K, sd = (K:1)/K)))
 dim(scores)
 
 # expand spline basis on [0,1] x [-0.5, 0.5]
-funs <- MFPCA:::splineFunction2D(scores = scores, argvals = list(seq(0,1,0.01), seq(-0.5, 0.5, 0.01)),
-                         bs = "ps", m = 2, k = c(7,8)) # params for mgcv
+funs <- MFPCA:::splineFunction2D(scores = scores, 
+                     argvals = list(seq(0,1,0.01), seq(-0.5, 0.5, 0.01)),
+                     bs = "ps", m = 2, k = c(7,8)) # params for mgcv
 
 oldPar <- par(no.readonly = TRUE)
 par(mfrow = c(1,1))

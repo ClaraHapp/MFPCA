@@ -72,7 +72,8 @@ dat <- MFPCA:::expandBasisFunction(scores = scores, functions = b)
 
 # calculate 2D spline basis decomposition (needs some time)
 \donttest{
-dataDec <- MFPCA:::splineBasis2D(dat, k = c(5,5)) # use 5 basis functions in each direction
+# use 5 basis functions in each direction
+dataDec <- MFPCA:::splineBasis2D(dat, k = c(5,5)) 
 }
 
 # add some noise to the data
@@ -80,7 +81,8 @@ noisyDat <- addError(dat, sd = 0.5)
 
 # calculate 2D spline basis decomposition with penalization (needs A LOT more time)
 \donttest{
-noisyDataDec <- MFPCA:::splineBasis2Dpen(noisyDat, k = c(5,5)) # use 5 basis functions in each direction
+# use 5 basis functions in each direction
+noisyDataDec <- MFPCA:::splineBasis2Dpen(noisyDat, k = c(5,5)) 
 }
 }
 \seealso{
