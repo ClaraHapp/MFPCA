@@ -54,6 +54,11 @@
 #'  legend("topleft", legend = c("True", "Estimated"), pch = c(20, 1))
 UMPCA <- function(TX, numP)
 {
+  if(!is.array(TX))
+    stop("Parameter 'TX' must be passed as an array.")
+  if(! (is.numeric(numP) & length(numP) == 1))
+    stop("Parameter 'numP' must be passed as a number.")
+  
   # TX: (N+1)-dimensional tensor Tensor Sample Dimension x NumSamples
   N <- length(dim(TX)) - 1 # the order of samples
   IsTX <- dim(TX)  
