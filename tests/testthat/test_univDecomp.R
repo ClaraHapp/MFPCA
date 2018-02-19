@@ -116,22 +116,23 @@ test_that("PACE function", {
   expect_equal(pcaPD$sigma2, 0.01102, tolerance = 1e-5)
   
   # test also for irregular data
+  set.seed(2)
   f1sparse <- sparsify(f1, minObs=  20, maxObs = 50)
   i1 <- irregFunData(argvals = apply(f1sparse@X,1, function(x){f1sparse@argvals[[1]][which(!is.na(x))]}), X = apply(f1sparse@X, 1, na.omit))
   
   pca1Dirreg <- PACE(i1, pve = 0.95)
-  expect_equal(pca1Dirreg$npc, 5)
+  expect_equal(pca1Dirreg$npc, 4)
   expect_equal(nObs(pca1Dirreg$fit), 10)
-  expect_equal(mean(norm(pca1Dirreg$fit)), 4.27793, tolerance = 1e-5)
-  expect_equal(dim(pca1Dirreg$scores), c(10,5))
-  expect_equal(mean(abs(pca1Dirreg$scores)), 0.63886, tolerance = 1e-5)
+  expect_equal(mean(norm(pca1Dirreg$fit)), 4.12973, tolerance = 1e-5)
+  expect_equal(dim(pca1Dirreg$scores), c(10,4))
+  expect_equal(mean(abs(pca1Dirreg$scores)), 0.71889, tolerance = 1e-5)
   expect_equal(nObs(pca1Dirreg$mu), 1)
-  expect_equal(norm(pca1Dirreg$mu), 0.72933, tolerance = 1e-5)
-  expect_equal(nObs(pca1Dirreg$functions), 5)
-  expect_equal(norm(pca1Dirreg$functions), rep(1,5))
-  expect_equal(sum(pca1Dirreg$values), 4.08228, tolerance = 1e-5)
-  expect_equal(pca1Dirreg$values[1], 1.80229, tolerance = 1e-5)
-  expect_equal(pca1Dirreg$sigma2, 0)
+  expect_equal(norm(pca1Dirreg$mu), 0.99891, tolerance = 1e-5)
+  expect_equal(nObs(pca1Dirreg$functions), 4)
+  expect_equal(norm(pca1Dirreg$functions), rep(1,4), tolerance = 1e-5)
+  expect_equal(sum(pca1Dirreg$values), 3.65081, tolerance = 1e-5)
+  expect_equal(pca1Dirreg$values[1], 2.10068, tolerance = 1e-5)
+  expect_equal(pca1Dirreg$sigma2, 0.48830, tolerance = 1e-5)
 })
 
 test_that("test UMPCA functionality", {
