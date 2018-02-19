@@ -47,7 +47,7 @@ scoreplot.default <- function(PCAobject, ...) graphics::plot.default(PCAobject, 
 #' 
 #' # Plot the first two scores
 #' scoreplot(PCA) # no scaling (default)
-#' scoreplot(PCA, scaling = TRUE) # scale the scores by the first two eigenvalues 
+#' scoreplot(PCA, scale = TRUE) # scale the scores by the first two eigenvalues 
 scoreplot.MFPCAfit <- function(PCAobject, choices = 1:2, scale = FALSE, ...)
 {
   if(!inherits(PCAobject,"MFPCAfit"))

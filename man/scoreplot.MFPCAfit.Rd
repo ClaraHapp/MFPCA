@@ -40,7 +40,7 @@ PCA <- MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "uFPCA"),
 
 # Plot the first two scores
 scoreplot(PCA) # no scaling (default)
-scoreplot(PCA, scaling = TRUE) # scale the scores by the first two eigenvalues 
+scoreplot(PCA, scale = TRUE) # scale the scores by the first two eigenvalues 
 }
 \seealso{
 \code{\link{MFPCA}}
