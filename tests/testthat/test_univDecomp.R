@@ -62,9 +62,24 @@ test_that("test univariate decompositions 1D", {
 })
 
 test_that("PACE function", {
+  # check inputs
+  expect_error(PACE(funDataObject = 1), "Parameter 'funDataObject' must be a funData or irregFunData object.")
+  expect_error(PACE(funDataObject = f2), "PACE: Implemented only for funData objects with one-dimensional support.")
   expect_error(PACE(f1, predData = extractObs(f1, argvals = seq(0,0.5, 0.01))),
                "PACE: funDataObject and predData must be defined on the same domains!")
-  
+  expect_error(PACE(funDataObject = f1, nbasis = "10"), "Parameter 'nbasis' must be passed as a number > 0.")
+  expect_error(PACE(funDataObject = f1, nbasis = 1:10), "Parameter 'nbasis' must be passed as a number > 0.")
+  expect_error(PACE(funDataObject = f1, nbasis = -1), "Parameter 'nbasis' must be passed as a number > 0.")
+  expect_error(PACE(funDataObject = f1, pve = "0"), "Parameter 'pve' must be passed as a number between 0 and 1.")
+  expect_error(PACE(funDataObject = f1, pve = 0:1), "Parameter 'pve' must be passed as a number between 0 and 1.")
+  expect_error(PACE(funDataObject = f1, pve = -1), "Parameter 'pve' must be passed as a number between 0 and 1.")
+  expect_error(PACE(funDataObject = f1, pve = 2), "Parameter 'pve' must be passed as a number between 0 and 1.")
+  expect_error(PACE(funDataObject = f1, npc = "10"), "Parameter 'npc' must be either NULL or passed as a number > 0.")
+  expect_error(PACE(funDataObject = f1, npc = 1:10), "Parameter 'npc' must be either NULL or passed as a number > 0.")
+  expect_error(PACE(funDataObject = f1, npc = -1), "Parameter 'npc' must be either NULL or passed as a number > 0.")
+  expect_error(PACE(funDataObject = f1, makePD = "yes"), "Parameter 'makePD' must be passed as a logical.")
+  expect_error(PACE(funDataObject = f1, cov.weight.type = 0), "Parameter 'cov.weight.type' must be passed as a character.")
+
   # see also 1D decompositions, fpcaBasis
   pca1D <- PACE(f1, pve = 0.95)
   expect_equal(pca1D$npc, 5)
