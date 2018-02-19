@@ -59,7 +59,7 @@ scores <- t(replicate(n = N, rnorm(K, sd = (K:1)/K)))
 dim(scores)
 
 # expand spline basis on [0,1]
-funs <- univExpansion(type = "splines1D", scores = scores, argvals = seq(0,1,0.01),
+funs <- univExpansion(type = "splines1D", scores = scores, argvals = list(seq(0,1,0.01)),
                       functions = NULL, # spline functions are known, need not be given
                       params = list(bs = "ps", m = 2, k = K)) # params for mgcv
 
