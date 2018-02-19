@@ -85,6 +85,56 @@ NULL
 #' par(oldPar)
 univExpansion <- function(type, scores, argvals = ifelse(!is.null(functions), functions@argvals, NULL), functions, params = NULL)
 {
+  # Parameter checking
+  if(is.null(type))
+    stop("Parameter 'type' is missing.")
+  else
+ {
+   if(!is.character(type))
+     stop("Parameter 'type' must be a character string. See ?univExpansion for details.")
+ }   
+  
+  if(is.null(scores))
+    stop("Parameter 'scores' is missing.")
+  else
+    {
+      if(!is.matrix(scores))
+      stop("Parameter 'scores' must be passed as a matrix.")
+    }
+  
+  if(is.numeric(argvals))
+  {
+    argvals <- list(argvals)
+    warning("Parameter 'argvals' was passed as a vector and transformed to a list.")
+  }  
+  
+  if(is.null(functions))
+  {
+    if(is.null(argvals))
+      stop("Must pass 'argvals' if 'functions' is NULL.")
+    else
+      {
+        if(!is.list(argvals)) 
+          stop("Parameter 'argvals' must be passed as a list.")
+      }
+  }
+  else
+  {
+    if(class(functions) != "funData")
+      stop("Parameter 'functions' must be a funData object.")
+    
+    # check interaction with other parameters
+    if(nObs(functions) != NCOL(scores))
+      stop("Number of scores per curve does not match the number of basis functions.")
+    
+    if(!is.null(argvals) & !isTRUE(all.equal(argvals, functions@argvals)))
+      stop("The parameter 'argvals' does not match the argument values of 'functions'.")
+  }
+  
+  if(!is.null(params) & !is.list(params))
+    stop("The parameter 'params' must be passed as a list.")
+  
+  # start calculations
   params$scores <- scores
   params$functions <- functions
 

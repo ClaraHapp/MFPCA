@@ -5,12 +5,38 @@ test_that("test expandBasis function", {
                "expandBasisFunction: number of scores for each observation and number of eigenfunctions does not match.")  
 })
 
+set.seed(1)
+scores <- sapply(1:5, function(x){rnorm(20, sd = exp(-x))})
+argvals <- list(seq(0, 1, 0.01))
+functions <- funData:::efPoly(argvals[[1]], M = 5)
+
+test_that("test univExpansion", {
+  expect_error(MFPCA:::univExpansion(type = NULL, scores = scores, argvals = argvals, functions = functions),
+              "Parameter 'type' is missing.")
+  expect_error(MFPCA:::univExpansion(type = 5, scores = scores, argvals = argvals, functions = functions),
+               "Parameter 'type' must be a character string. See ?univExpansion for details.", fixed = TRUE)
+  expect_error(MFPCA:::univExpansion(type = "default", scores = NULL, argvals = argvals, functions = functions),
+               "Parameter 'scores' is missing.")
+  expect_error(MFPCA:::univExpansion(type = "default", scores = 1:5, argvals = argvals, functions = functions),
+               "Parameter 'scores' must be passed as a matrix.")
+  expect_error(MFPCA:::univExpansion(type = "default", scores = scores, argvals = NULL, functions = NULL),
+               "Must pass 'argvals' if 'functions' is NULL.")
+  expect_error(MFPCA:::univExpansion(type = "default", scores = scores, argvals = "Test", functions = NULL),
+               "Parameter 'argvals' must be passed as a list.")
+  expect_warning(MFPCA:::univExpansion(type = "default", scores = scores, argvals = argvals[[1]], functions = functions),
+               "Parameter 'argvals' was passed as a vector and transformed to a list.")
+  expect_error(MFPCA:::univExpansion(type = "default", scores = scores, argvals = argvals, functions = 5),
+               "Parameter 'functions' must be a funData object.")
+  expect_error(MFPCA:::univExpansion(type = "default", scores = scores[,1:4], argvals = argvals, functions = functions),
+               "Number of scores per curve does not match the number of basis functions.")
+  expect_error(MFPCA:::univExpansion(type = "default", scores = scores, argvals = argvals, functions = extractObs(functions, argvals = seq(0,0.5,0.01))),
+               "The parameter 'argvals' does not match the argument values of 'functions'.")
+  expect_error(MFPCA:::univExpansion(type = "default", scores = scores, argvals = argvals, functions = functions, params = c(a = 4)),
+               "The parameter 'params' must be passed as a list.")
+})
+
 test_that("test univariate expansions 1D", {
-  set.seed(1)
-  scores <- sapply(1:5, function(x){rnorm(20, sd = exp(-x))})
-  argvals <- list(seq(0, 1, 0.01))
-  
-  default1D <- MFPCA:::expandBasisFunction(scores = scores, argvals = argvals, functions = funData:::efPoly(argvals[[1]], M = 5))
+  default1D <- MFPCA:::expandBasisFunction(scores = scores, argvals = argvals, functions = functions)
   expect_equal(nObs(default1D), 20)
   expect_equal(nObsPoints(default1D), 101)
   expect_equal(mean(norm(default1D)),  0.12735, tolerance = 1e-5)
@@ -24,7 +50,7 @@ test_that("test univariate expansions 1D", {
   
   
   # wrapper function
-  expandDefault1D <- MFPCA:::univExpansion(type = "default", scores = scores, argvals = argvals, funData:::efPoly(argvals[[1]], M = 5))
+  expandDefault1D <- MFPCA:::univExpansion(type = "default", scores = scores, argvals = argvals, functions = functions)
   expect_equal(expandDefault1D, default1D)
   
   expandSpline1D <- MFPCA:::univExpansion(type = "splines1D", scores = scores, argvals = argvals, functions = NULL, params = list(bs = "ps", m = 3, k = 5))
@@ -33,15 +59,15 @@ test_that("test univariate expansions 1D", {
   expandSpline1Dpen <- MFPCA:::univExpansion(type = "splines1Dpen", scores = scores, argvals = argvals, functions = NULL, params = list(bs = "ps", m = 3, k = 5))
   expect_equal(expandSpline1Dpen, spline1D) # spline1D, spline1Dpen have the same basis
   
-  expandFPCA1D <- MFPCA:::univExpansion(type = "uFPCA", scores = scores, argvals = argvals, functions = funData:::efPoly(argvals[[1]], M = 5))
+  expandFPCA1D <- MFPCA:::univExpansion(type = "uFPCA", scores = scores, argvals = argvals, functions = functions)
   expect_equal(expandFPCA1D, default1D)
 })
 
+set.seed(2)
+scores <- sapply(25:1, function(x){rnorm(20, sd = x/25)})
+argvals <- list(seq(0, 1, 0.01), seq(-1, 1, 0.02))
+
 test_that("test univariate expansions 2D", {
-  set.seed(2)
-  scores <- sapply(25:1, function(x){rnorm(20, sd = x/25)})
-  argvals <- list(seq(0, 1, 0.01), seq(-1, 1, 0.02))
-  
   default2D <- MFPCA:::expandBasisFunction(scores = scores, argvals = argvals, 
                                        functions = tensorProduct(funData:::efPoly(argvals[[1]], M = 5), funData:::efWiener(argvals[[2]], M = 5)))
   expect_equal(nObs(default2D), 20)
