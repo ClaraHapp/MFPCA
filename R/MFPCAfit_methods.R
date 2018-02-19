@@ -6,7 +6,7 @@
 #' @param ... Arguments passed from or to other methods
 #' 
 #' @export
-scoreplot <- function(PCAobject, ...) UseMethod("scoreplot")
+scoreplot <- function(PCAobject, ...) UseMethod("scoreplot", PCAobject)
 scoreplot.default <- function(PCAobject, ...) graphics::plot.default(PCAobject, ...)
 
 
