@@ -2,8 +2,8 @@ Package: MFPCA
 Type: Package
 Title: Multivariate Functional Principal Component Analysis for Data Observed on
     Different Dimensional Domains
-Version: 1.1
-Date: 2017-06-17
+Version: 1.2
+Date: 2018-02-21
 Authors@R: person("Clara", "Happ", email = "clara.happ@stat.uni-muenchen.de",
                   role = c("aut", "cre"))
 Author: Clara Happ [aut, cre]
@@ -26,7 +26,7 @@ Imports:
     stats
 Depends:
     R (>= 3.1.0),
-    funData
+    funData (>= 1.2)
 Suggests:
     covr,
     testthat

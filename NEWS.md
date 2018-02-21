@@ -1,3 +1,14 @@
+# MFPCA 1.2
+
+## New features
+* The main `MFPCA` method now returns an object of class `MFPCAfit` for which new functions (`plot`, `predict`, `summary`, ...) have been implemented. The methods can use `names`of functional data objects (requires funData 1.2)
+* Univariate decompositions (xxxBasis) and expansions (xxxFunction) are not exported any more, but should be accessed using the `univDecomp` and `univExpansion` meta-functions.
+* New function `multivExpansion` to calculate a multivariate basis expansion.
+* More argument checking for user-facing functions including unit tests.
+* Tolerance for regression tests reduced to 1e-5.
+* References have been updated.
+
+
 # MFPCA 1.1
 
 ## New features
