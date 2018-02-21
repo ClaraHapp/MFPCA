@@ -209,9 +209,9 @@ calcBasisIntegrals <- function(basisFunctions, dimSupp, argvals)
 #'   
 #' @importFrom foreach %do%
 #'   
-#' @references C. Happ, S. Greven (2016+):Multivariate Functional Principal 
+#' @references C. Happ, S. Greven (2018): Multivariate Functional Principal 
 #'   Component Analysis for Data Observed on Different (Dimensional) Domains. 
-#'   Journal of the American Statistical Association, to appear. DOI: 
+#'   Journal of the American Statistical Association. Advance online publication. DOI: 
 #'   \url{http://dx.doi.org/10.1080/01621459.2016.1273115}
 #'   
 #' @seealso \code{\link[funData]{multiFunData}}, \code{\link{PACE}}, 

@@ -47,8 +47,8 @@ The `MFPCA` package depends on the `R`-package [`funData`](https://CRAN.R-projec
 
 The theoretical foundations of multivariate functional principal component analysis are described in:
 
-C. Happ, S. Greven (2016+): Multivariate Functional Principal Component Analysis for Data Observed on Different (Dimensional) Domains.
-    *Journal of the American Statistical Association*, to appear. [Accepted author version](http://dx.doi.org/10.1080/01621459.2016.1273115), [ArXiv link](http://arxiv.org/abs/1509.02029).
+C. Happ, S. Greven (2018): Multivariate Functional Principal Component Analysis for Data Observed on Different (Dimensional) Domains.
+    *Journal of the American Statistical Association*. [Advance online publication.](http://dx.doi.org/10.1080/01621459.2016.1273115).
 
 ## Bug reports ##
 
