@@ -1,7 +1,8 @@
 context("Testing functions in univDecomp.R")
 
 set.seed(1)
-f1 <- simFunData(seq(0,1,0.01), M = 10, eFunType = "Poly", eValType = "linear", N = 10)$simData
+s1 <- simFunData(seq(0,1,0.01), M = 10, eFunType = "Poly", eValType = "linear", N = 10)
+f1 <- s1$simData
 
 set.seed(1)
 x1 <- seq(0,1,length.out=50)
@@ -58,13 +59,13 @@ test_that("test univariate decompositions 1D", {
   
   # given
   expect_error(MFPCA:::givenBasis(funDataObject = f1, 
-                                 functions = extractObs(s$trueFuns, argvals = getArgvals(s$trueFuns)[[1]][1:10])),
+                                 functions = extractObs(s1$trueFuns, argvals = getArgvals(s1$trueFuns)[[1]][1:10])),
               "Basis functions must be defined on the same domain as the observations.")
   
-  expect_error(MFPCA:::givenBasis(funDataObject = f1, functions = s$trueFuns, scores = as.matrix(1:5)),
+  expect_error(MFPCA:::givenBasis(funDataObject = f1, functions = s1$trueFuns, scores = as.matrix(1:5)),
                "Scores have wrong dimensions. Must be an N x K matrix with N the number of observations and K the number of basis functions.", fixed = FALSE)
   
-  given <- MFPCA:::givenBasis(funDataObject = f1, functions = s$trueFuns)
+  given <- MFPCA:::givenBasis(funDataObject = f1, functions = s1$trueFuns)
   expect_equal(dim(given$scores), c(10,10))
   expect_equal(sum(given$scores), 8.029624)
   expect_equal(given$scores[1,1], -0.62431558)
@@ -73,10 +74,10 @@ test_that("test univariate decompositions 1D", {
   expect_equal(sum(given$B), 10.6327967)
   expect_equal(given$B[1,1], 1)
   expect_false(given$ortho)
-  expect_equal(given$functions, s$trueFuns)
+  expect_equal(given$functions, s1$trueFuns)
   
   # currently, inputs are not checked for plausibility!
-  given2 <- MFPCA:::givenBasis(funDataObject = f1, functions = s$trueFuns, scores = diag(10), ortho = TRUE)
+  given2 <- MFPCA:::givenBasis(funDataObject = f1, functions = s1$trueFuns, scores = diag(10), ortho = TRUE)
   expect_true(given2$ortho)
   expect_null(given2$B)
   expect_equal(given2$scores, diag(10))
@@ -91,10 +92,10 @@ test_that("test univariate decompositions 1D", {
   decompFPCA1D <- MFPCA:::univDecomp(type = "uFPCA", funDataObject = f1, pve = 0.95)
   expect_equal(decompFPCA1D, fpca)
   
-  decompGiven <- MFPCA:::univDecomp(type = "given", funDataObject = f1, functions = s$trueFuns)
+  decompGiven <- MFPCA:::univDecomp(type = "given", funDataObject = f1, functions = s1$trueFuns)
   expect_equal(decompGiven, given)
   
-  decompGiven2 <- MFPCA:::univDecomp(type = "given", funDataObject = f1, functions = s$trueFuns, scores = diag(10), ortho = TRUE)
+  decompGiven2 <- MFPCA:::univDecomp(type = "given", funDataObject = f1, functions = s1$trueFuns, scores = diag(10), ortho = TRUE)
   expect_equal(decompGiven2, given2)
 })
 
