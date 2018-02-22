@@ -120,7 +120,19 @@ calcBasisIntegrals <- function(basisFunctions, dimSupp, argvals)
 #' object, i.e. having one entry for each element of the multivariate functional
 #' data. For each element, \code{uniExpansion} must specify at least the type of
 #' basis functions to use. Additionally, one may add further parameters. The 
-#' following basis representations are supported: \itemize{ \item Univariate 
+#' following basis representations are supported: \itemize{\item Given basis functions. Then \code{uniExpansions[[j]] = 
+#' list(type = "given", functions, scores, ortho)}, where \code{functions} is
+#' a \code{funData} object on the same domain as \code{mFData}, containing 
+#' the given basis functions. The parameters \code{scores} and \code{ortho} 
+#' are optional. \code{scores} is an \code{N x K} matrix containing the 
+#' scores (or coefficients) of the observed functions for the given basis 
+#' functions, where \code{N} is the number of observed functions and \code{K}
+#' is the number of basis functions. If this is not supplied, the scores are 
+#' calculated. The parameter \code{ortho} specifies whether the given basis 
+#' functions are orthonormal \code{orhto = TRUE} or not \code{ortho = FALSE}.
+#' If \code{ortho} is not supplied, the functions are treated as 
+#' non-orthogonal. \code{scores} and \code{ortho} are not checked for
+#' plausibility, use them on your own risk!  \item Univariate 
 #' functional principal component analysis. Then \code{uniExpansions[[j]] = 
 #' list(type = "uFPCA", nbasis, pve, npc, makePD)}, where 
 #' \code{nbasis,pve,npc,makePD} are parameters passed to the \code{\link{PACE}} 
@@ -670,8 +682,7 @@ calcMFPCA <- function(N, p, Bchol, M, type, weights, npc, argvals, uniBasis, fit
               vectors = vectors,
               normFactors = normFactors)
 
-  # calculate truncated Karhunen-Loeve representation
-  # TODO do we need the mean function here?!
+  # calculate truncated Karhunen-Loeve representation (no mean here)
   if(fit)
     res$fit <- multivExpansion(multiFuns = res$functions, scores = scores)
 

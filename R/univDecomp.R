@@ -62,27 +62,26 @@ univDecomp <- function(type, funDataObject, ...)
     stop("Parameter 'funDataObject' must be a funData object.")
   
   
-  params <- as.list(match.call()) # get all arguments
-  params$funDataObject <- funDataObject # add funDataObject (-> make sure is evaluated in correct env.)
-  
+  # get all arguments (except for function call and type)
+  params <- list(...) 
+
   # check if type and data are of correct type
-  if(is.null(params$type))
+  if(is.null(type))
     stop("univDecomp: must specify 'type'.")
   
-  if(!inherits(params$type, "character"))
+  if(!inherits(type, "character"))
     stop("univDecomp: 'type' must be of class character.")
   
-  if(is.null(params$funDataObject))
+  if(is.null(funDataObject))
     stop("univDecomp: must specify 'funDataObject'.")
   
-  if(class(params$funDataObject) != "funData")
+  if(class(funDataObject) != "funData")
     stop("univDecomp: 'funDataObject' must be of class funData.")
   
-  # delete function call and type information in params
-  params[[1]] <- NULL
-  params$type <- NULL  
+  params$funDataObject <- funDataObject # add funDataObject (-> make sure is evaluated in correct env.)
   
   res <- switch(type,
+                "given" = do.call(givenBasis, params),
                 "uFPCA" = do.call(fpcaBasis, params),
                 "UMPCA" = do.call(umpcaBasis, params),
                 "FCP_TPA" = do.call(fcptpaBasis, params),
@@ -99,6 +98,61 @@ univDecomp <- function(type, funDataObject, ...)
     stop("UnivDecomp: must provide integral matrix B for non-orthonormal basis functions.")
   
   return(res)
+}
+
+#' Use given basis functions for univariate representation
+#' 
+#' @param funDataObject An object of class \code{\link[funData]{funData}} 
+#'   containing the observed functional data samples and for which the basis 
+#'   representation is to be calculated.
+#' @param functions A \code{funData} object that contains the basis 
+#'   functions.
+#' @param scores An optional matrix containing the scores or coefficients of 
+#'   the individual observations and each basis function. If \code{N} denotes
+#'   the number of observations and \code{K} denotes the number of basis 
+#'   functions, then \code{scores} must be a matrix of dimensions \code{N x 
+#'   K}. If not supplied, the scores are calculated as projection of each 
+#'   observation on the basis functions.
+#' @param ortho An optional parameter, specifying whether the given basis 
+#'   functions are orthornomal (\code{ortho = TRUE}) or not (\code{ortho = 
+#'   FALSE}). If not supplied, the basis functions are considered as 
+#'   non-orthonormal and their pairwise scalar product is calculated for 
+#'   later use in the MFPCA.
+#'   
+#' @return \item{scores}{The coefficient matrix.} \item{B}{A matrix
+#'   containing the scalar product of all pairs of basis functions. This is
+#'   \code{NULL}, if \code{ortho = TRUE}.}\item{ortho}{Logical, set to 
+#'   \code{TRUE}, if basis functions are orthonormal.} \item{functions}{A 
+#'   functional data object containig the basis functions.}
+#'  
+#'  @keywords internal
+givenBasis <- function(funDataObject, functions, scores = NULL, ortho = NULL)
+{
+  # check if funDataObject and functions are defined on the same domain
+  if( ! isTRUE(all.equal(getArgvals(funDataObject), getArgvals(functions))) )
+    stop("Basis functions must be defined on the same domain as the observations.")
+  
+  # check if scores have to be calculated
+  if(is.null(scores))
+    scores <- sapply(1:nObs(functions), function(i){ scalarProduct(funDataObject, extractObs(functions, i))})
+  
+  # check if scores have correct dimensions
+  if( ! isTRUE(all.equal(dim(scores), c(nObs(funDataObject), nObs(functions)))) )
+    stop("Scores have wrong dimensions. Must be an N x K matrix with N the number of observations and K the number of basis functions.")
+  
+  if(is.null(ortho))
+    ortho <- FALSE
+  
+  if(ortho == TRUE)
+    B <- NULL
+  else
+    B <- calcBasisIntegrals(functions@X, dimSupp(functions), funDataObject@argvals)
+  
+  return(list(scores = scores,
+              B = B,
+              ortho = ortho,
+              functions = functions
+  ))
 }
 
 #' Calculate a functional principal component basis representation for 
