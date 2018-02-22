@@ -20,6 +20,6 @@ citEntry(
   journal = "Journal of the American Statistical Association",
   note = "Advance online publication.",
   year = "2018",
-  doi =  "10.1080/01621459.2016.1273115"
+  doi =  "10.1080/01621459.2016.1273115",
   textVersion = "C. Happ and S. Greven (2018). Multivariate Functional Principal Component Analysis for Data Observed on Different (Dimensional) Domains. Journal of the American Statistical Association. Advance online publication. http://dx.doi.org/10.1080/01621459.2016.1273115."
 )
