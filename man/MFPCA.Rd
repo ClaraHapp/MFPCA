@@ -235,7 +235,8 @@ legend("bottomleft", c("True", "Reconstruction"), lty = c(1,2), lwd = c(2,1))
 splinesBoot <- MFPCA(sim$simData, M = 2, uniExpansions = list(list(type = "splines1D", k = 10),
                                                           list(type = "splines1D", k = 10)),
                  bootstrap = TRUE, nBootstrap = 100, bootstrapAlpha = c(0.05, 0.1), verbose = TRUE)
-                 
+summary(splinesBoot)
+                                 
 plot(splinesBoot$functions[[1]], ylim = c(-2,1.5))
 plot(splinesBoot$CI$alpha_0.05$lower[[1]], lty = 2, add = TRUE)
 plot(splinesBoot$CI$alpha_0.05$upper[[1]], lty = 2, add = TRUE)
