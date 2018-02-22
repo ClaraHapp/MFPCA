@@ -157,14 +157,16 @@ test_that("test MFPCA main function", {
   uFPCABoot <- MFPCA(sim$simData, M = 3, uniExpansions = list(list(type = "uFPCA", npc = 3),
                                                                 list(type = "uFPCA", npc = 3)),
                        approx.eigen = FALSE, bootstrap = TRUE, nBootstrap = 10, bootstrapAlpha = 0.1, verbose = FALSE)
+  
+  # check values
   expect_equal(uFPCABoot$CIvalues$alpha_0.1$upper[1], 1.14779, tolerance = 1e-5)
   expect_equal(sum(uFPCABoot$CIvalues$alpha_0.1$upper), 2.40996, tolerance = 1e-5)
   expect_equal(uFPCABoot$CIvalues$alpha_0.1$lower[1], 0.84857, tolerance = 1e-5)
   expect_equal(sum(uFPCABoot$CIvalues$alpha_0.1$lower), 1.8092398, tolerance = 1e-5)
-  expect_equal(norm(uFPCABoot$CI$alpha_0.1$upper)[1], 1.66493, tolerance = 1e-5)
-  expect_equal(sum(norm(uFPCABoot$CI$alpha_0.1$upper)), 4.92972, tolerance = 1e-5)
-  expect_equal(norm(uFPCABoot$CI$alpha_0.1$lower)[1], 0.44706, tolerance = 1e-5)
-  expect_equal(sum(norm(uFPCABoot$CI$alpha_0.1$lower)), 2.55044, tolerance = 1e-5)
+  
+  # check CI
+  expect_equal(norm(uFPCABoot$CI$alpha_0.1$upper - uFPCABoot$CI$alpha_0.1$lower)[1], 0.52392, tolerance = 1e-5)
+  expect_equal(sum(norm(uFPCABoot$CI$alpha_0.1$upper - uFPCABoot$CI$alpha_0.1$lower)), 8.98431, tolerance = 1e-5)
 })
 
 test_that("MFPCA calculation function", {
