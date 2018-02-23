@@ -54,6 +54,11 @@
 #'  legend("topleft", legend = c("True", "Estimated"), pch = c(20, 1))
 UMPCA <- function(TX, numP)
 {
+  if(!is.array(TX))
+    stop("Parameter 'TX' must be passed as an array.")
+  if(! (is.numeric(numP) & length(numP) == 1))
+    stop("Parameter 'numP' must be passed as a number.")
+  
   # TX: (N+1)-dimensional tensor Tensor Sample Dimension x NumSamples
   N <- length(dim(TX)) - 1 # the order of samples
   IsTX <- dim(TX)  
@@ -253,6 +258,13 @@ ttvCalculation <- function(A, v, dim)
 #' length(ttv(A = A, v = list(rnorm(10), rnorm(15)), dim = c(1,3)))
 ttv <- function(A, v, dim)
 {
+  if(!is.array(A))
+    stop("Parameter 'A' must be an array.")
+  if(!is.list(v))
+    stop("Parameter 'v' must be passed as a list.")
+  if(!is.numeric(dim))
+    stop("Parameter 'dim' must be passed as a vector of numerics.")
+  
   # check input arguments
   if(any(dim(A)[dim] != sapply(v, length)))
     stop("A and v have wrong dimensions!")

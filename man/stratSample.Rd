@@ -26,4 +26,3 @@ sampleInd <- MFPCA:::stratSample(f)
 table(f[sampleInd])
 }
 \keyword{internal}
-

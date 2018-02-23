@@ -42,7 +42,7 @@ b <- eFun(argvals = x, M = K, type = "Fourier")
 scores <- t(replicate(N, rnorm(K, sd = 1 / (1:10))))
 
 # calculate basis expansion
-f <- expandBasisFunction(scores = scores, functions = b) # default value for argvals
+f <- MFPCA:::expandBasisFunction(scores = scores, functions = b) # default value for argvals
 
 oldpar <- par(no.readonly = TRUE)
 
@@ -62,7 +62,7 @@ x2 <- seq(-pi, pi, 0.05)
 b <- funData(argvals = list(x1, x2), X = 1:K \%o\% exp(x1) \%o\% sin(x2))
 
 # calculate PCA expansion
-f <- expandBasisFunction(scores = scores, functions = b)
+f <- MFPCA:::expandBasisFunction(scores = scores, functions = b)
 
 # plot the resulting observations
 for(i in 1:4)
@@ -73,4 +73,4 @@ par(oldpar)
 \seealso{
 \code{\link{univExpansion}}
 }
-
+\keyword{internal}

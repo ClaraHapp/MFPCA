@@ -1,0 +1,2 @@
+5 multivariate functional principal components estimated with 2 elements, each.
+                     * * * * * * * * * *                     

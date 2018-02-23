@@ -55,7 +55,7 @@ calculated via the \code{\link{PACE}} function, which is built on
 sim <- simFunData(argvals = seq(0,1,0.01), M = 5, eFunType = "Poly", eValType = "linear", N = 100)
 
 # estimate the first 5 functional principal components from the data
-fpca <- fpcaBasis(sim$simData, npc = 5)
+fpca <- MFPCA:::fpcaBasis(sim$simData, npc = 5)
 
 oldpar <- par(no.readonly = TRUE)
 par(mfrow = c(1,2))
@@ -72,4 +72,4 @@ par(oldpar)
 \seealso{
 \code{\link{univDecomp}}, \code{\link{PACE}}
 }
-
+\keyword{internal}

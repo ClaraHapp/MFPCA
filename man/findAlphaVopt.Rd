@@ -48,6 +48,7 @@ criterion using the function \code{\link[stats]{optimize}}.
 \itemize{
 \item \code{findAlphaWopt}: 
 }}
+
 \references{
 G. I. Allen (2013), "Multi-way Functional Principal Components 
   Analysis", IEEE International Workshop on Computational Advances in 
@@ -62,4 +63,3 @@ J. Z. Huang, H. Shen and A. Buja (2009), "The Analysis of Two-Way
 \code{\link{FCP_TPA}}, \code{\link{gcv}}
 }
 \keyword{internal}
-

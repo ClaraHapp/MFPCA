@@ -39,4 +39,3 @@ later use in the MFPCA.}
 \description{
 Use given basis functions for univariate representation
 }
-

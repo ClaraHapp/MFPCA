@@ -56,14 +56,14 @@ dat <- simFunData(argvals = seq(0,1,0.01), M = 5,
                   eFunType = "Poly", eValType = "linear", N = 100)$simData
                   
  # calculate spline basis decomposition
- dataDec <- splineBasis1D(dat) # use mgcv's default parameters
+ dataDec <- MFPCA:::splineBasis1D(dat) # use mgcv's default parameters
  str(dataDec)
  
  # add some noise to the data
  noisyDat <- addError(dat, sd = 0.5)
  
  # calculate spline basis decomposition with penalization to reduce noise
- noisyDataDec <- splineBasis1Dpen(dat) # use mgcv's default parameters
+ noisyDataDec <- MFPCA:::splineBasis1Dpen(dat) # use mgcv's default parameters
  str(noisyDataDec)
  
  # check if noise has been filtered out by penalization
@@ -74,4 +74,4 @@ dat <- simFunData(argvals = seq(0,1,0.01), M = 5,
 \code{\link{univDecomp}}, \code{\link[mgcv]{gam}},
   \code{\link[foreach]{foreach}}
 }
-
+\keyword{internal}

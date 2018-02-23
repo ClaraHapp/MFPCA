@@ -4,7 +4,8 @@
 \alias{univExpansion}
 \title{Calculate a univariate basis expansion}
 \usage{
-univExpansion(type, scores, argvals, functions, params = NULL)
+univExpansion(type, scores, argvals = ifelse(!is.null(functions),
+  functions@argvals, NULL), functions, params = NULL)
 }
 \arguments{
 \item{type}{A character string, specifying the basis for which the 
@@ -14,7 +15,7 @@ decomposition is to be calculated.}
 the given basis functions.}
 
 \item{argvals}{A list, representing the domain of the basis functions. If
-functions is not \code{NULL}, the usual default is
+\code{functions} is not \code{NULL}, the usual default is
 \code{functions@argvals}. See \linkS4class{funData} and the underlying
 expansion functions for details.}
 
@@ -58,7 +59,7 @@ scores <- t(replicate(n = N, rnorm(K, sd = (K:1)/K)))
 dim(scores)
 
 # expand spline basis on [0,1]
-funs <- univExpansion(type = "splines1D", scores = scores, argvals = seq(0,1,0.01),
+funs <- univExpansion(type = "splines1D", scores = scores, argvals = list(seq(0,1,0.01)),
                       functions = NULL, # spline functions are known, need not be given
                       params = list(bs = "ps", m = 2, k = K)) # params for mgcv
 
@@ -91,4 +92,3 @@ par(oldPar)
   \code{\link{dctFunction2D}},
   \code{\link{dctFunction3D}}, \code{\link{expandBasisFunction}}
 }
-

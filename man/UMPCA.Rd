@@ -35,6 +35,7 @@ references).
   at an optimal reconstruction of the data, hence it might give poor results 
   when used for the univariate decomposition of images in MFPCA.
 }
+
 \examples{
 set.seed(12345)
 
@@ -63,4 +64,3 @@ Haiping Lu, K.N. Plataniotis, and A.N. Venetsanopoulos,
   Multilinear Subspace Learning", IEEE Transactions on Neural Networks, Vol. 
   20, No. 11, Page: 1820-1836, Nov. 2009.
 }
-

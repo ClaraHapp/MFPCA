@@ -21,7 +21,7 @@ NULL
 #' @param type A character string, specifying the basis for which the 
 #'   decomposition is to be calculated.
 #' @param argvals A list, representing the domain of the basis functions. If
-#'   functions is not \code{NULL}, the usual default is
+#'   \code{functions} is not \code{NULL}, the usual default is
 #'   \code{functions@@argvals}. See \linkS4class{funData} and the underlying
 #'   expansion functions for details.
 #' @param scores A matrix of scores (coefficients) for each observation based on
@@ -58,7 +58,7 @@ NULL
 #' dim(scores)
 #' 
 #' # expand spline basis on [0,1]
-#' funs <- univExpansion(type = "splines1D", scores = scores, argvals = seq(0,1,0.01),
+#' funs <- univExpansion(type = "splines1D", scores = scores, argvals = list(seq(0,1,0.01)),
 #'                       functions = NULL, # spline functions are known, need not be given
 #'                       params = list(bs = "ps", m = 2, k = K)) # params for mgcv
 #' 
@@ -83,8 +83,58 @@ NULL
 #' plot(funs, main = "PCA reconstruction")                     
 #' 
 #' par(oldPar)
-univExpansion <- function(type, scores, argvals, functions, params = NULL)
+univExpansion <- function(type, scores, argvals = ifelse(!is.null(functions), functions@argvals, NULL), functions, params = NULL)
 {
+  # Parameter checking
+  if(is.null(type))
+    stop("Parameter 'type' is missing.")
+  else
+ {
+   if(!is.character(type))
+     stop("Parameter 'type' must be a character string. See ?univExpansion for details.")
+ }   
+  
+  if(is.null(scores))
+    stop("Parameter 'scores' is missing.")
+  else
+    {
+      if(!is.matrix(scores))
+      stop("Parameter 'scores' must be passed as a matrix.")
+    }
+  
+  if(is.numeric(argvals))
+  {
+    argvals <- list(argvals)
+    warning("Parameter 'argvals' was passed as a vector and transformed to a list.")
+  }  
+  
+  if(is.null(functions))
+  {
+    if(is.null(argvals))
+      stop("Must pass 'argvals' if 'functions' is NULL.")
+    else
+      {
+        if(!is.list(argvals)) 
+          stop("Parameter 'argvals' must be passed as a list.")
+      }
+  }
+  else
+  {
+    if(class(functions) != "funData")
+      stop("Parameter 'functions' must be a funData object.")
+    
+    # check interaction with other parameters
+    if(nObs(functions) != NCOL(scores))
+      stop("Number of scores per curve does not match the number of basis functions.")
+    
+    if(!is.null(argvals) & !isTRUE(all.equal(argvals, functions@argvals)))
+      stop("The parameter 'argvals' does not match the argument values of 'functions'.")
+  }
+  
+  if(!is.null(params) & !is.list(params))
+    stop("The parameter 'params' must be passed as a list.")
+  
+  # start calculations
   params$scores <- scores
   params$functions <- functions
 
@@ -130,7 +180,7 @@ univExpansion <- function(type, scores, argvals, functions, params = NULL)
 #'   
 #' @seealso \code{\link{univExpansion}}
 #' 
-#' @export expandBasisFunction
+#' @keywords internal
 #' 
 #' @examples
 #' # set seed
@@ -149,7 +199,7 @@ univExpansion <- function(type, scores, argvals, functions, params = NULL)
 #' scores <- t(replicate(N, rnorm(K, sd = 1 / (1:10))))
 #' 
 #' # calculate basis expansion
-#' f <- expandBasisFunction(scores = scores, functions = b) # default value for argvals
+#' f <- MFPCA:::expandBasisFunction(scores = scores, functions = b) # default value for argvals
 #' 
 #' oldpar <- par(no.readonly = TRUE)
 #' 
@@ -169,7 +219,7 @@ univExpansion <- function(type, scores, argvals, functions, params = NULL)
 #' b <- funData(argvals = list(x1, x2), X = 1:K %o% exp(x1) %o% sin(x2))
 #' 
 #' # calculate PCA expansion
-#' f <- expandBasisFunction(scores = scores, functions = b)
+#' f <- MFPCA:::expandBasisFunction(scores = scores, functions = b)
 #' 
 #' # plot the resulting observations
 #' for(i in 1:4)
@@ -244,7 +294,7 @@ expandBasisFunction <- function(scores, argvals = functions@argvals, functions)
 #'   
 #' @importFrom mgcv gam s
 #' 
-#' @export splineFunction1D
+#' @keywords internal
 #' 
 #' @examples  
 #' set.seed(1234)
@@ -256,7 +306,7 @@ expandBasisFunction <- function(scores, argvals = functions@argvals, functions)
 #' dim(scores)
 #' 
 #' # expand spline basis on [0,1]
-#' funs <- splineFunction1D(scores = scores, argvals = list(seq(0,1,0.01)),
+#' funs <- MFPCA:::splineFunction1D(scores = scores, argvals = list(seq(0,1,0.01)),
 #'                          bs = "ps", m = 2, k = K) # params for mgcv
 #'                          
 #' oldPar <- par(no.readonly = TRUE)
@@ -317,7 +367,7 @@ splineFunction1D <- function(scores, argvals, bs, m, k)
 #'   
 #' @importFrom mgcv gam te
 #'   
-#' @export splineFunction2D
+#' @keywords internal
 #' 
 #' @examples
 #' set.seed(1234)
@@ -330,8 +380,9 @@ splineFunction1D <- function(scores, argvals, bs, m, k)
 #' dim(scores)
 #' 
 #' # expand spline basis on [0,1] x [-0.5, 0.5]
-#' funs <- splineFunction2D(scores = scores, argvals = list(seq(0,1,0.01), seq(-0.5, 0.5, 0.01)),
-#'                          bs = "ps", m = 2, k = c(7,8)) # params for mgcv
+#' funs <- MFPCA:::splineFunction2D(scores = scores, 
+#'                      argvals = list(seq(0,1,0.01), seq(-0.5, 0.5, 0.01)),
+#'                      bs = "ps", m = 2, k = c(7,8)) # params for mgcv
 #' 
 #' oldPar <- par(no.readonly = TRUE)
 #' par(mfrow = c(1,1))
@@ -363,7 +414,7 @@ splineFunction2D <- function(scores, argvals, bs, m, k)
 #'   
 #' @importFrom mgcv gam te
 #'   
-#' @export splineFunction2Dpen
+#' @keywords internal
 splineFunction2Dpen <- function(scores, argvals, bs, m, k)
 {
   N <- nrow(scores)
@@ -417,7 +468,7 @@ splineFunction2Dpen <- function(scores, argvals, bs, m, k)
 #'   
 #' @importFrom abind abind
 #'   
-#' @export dctFunction2D
+#' @keywords internal
 #'   
 #' @examples
 #' # set seed
@@ -432,7 +483,7 @@ splineFunction2Dpen <- function(scores, argvals, bs, m, k)
 #' 
 #' \dontrun{
 #' # calculate basis expansion on [0,1] x [0,1]
-#' f <- dctFunction2D(scores = scores, argvals = list(seq(0,1,0.01), seq(0,1,0.01)))
+#' f <- MFPCA:::dctFunction2D(scores = scores, argvals = list(seq(0,1,0.01), seq(0,1,0.01)))
 #' nObs(f) # f has 10 observations
 #' 
 #' oldPar <- par(no.readonly = TRUE)
@@ -520,7 +571,7 @@ idct2D <- function(scores, ind, dim)
 
 #' @rdname dctFunction2D
 #'   
-#' @export dctFunction3D
+#' @keywords internal
 dctFunction3D <- function(scores, argvals, parallel = FALSE)
 {
   # dimension of the image

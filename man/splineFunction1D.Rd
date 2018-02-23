@@ -45,7 +45,7 @@ scores <- t(replicate(n = N, rnorm(K, sd = (K:1)/K)))
 dim(scores)
 
 # expand spline basis on [0,1]
-funs <- splineFunction1D(scores = scores, argvals = list(seq(0,1,0.01)),
+funs <- MFPCA:::splineFunction1D(scores = scores, argvals = list(seq(0,1,0.01)),
                          bs = "ps", m = 2, k = K) # params for mgcv
                          
 oldPar <- par(no.readonly = TRUE)
@@ -59,4 +59,4 @@ par(oldPar)
 \code{\link{univExpansion}}, \code{\link{gam}},
   \code{\link{splineBasis1D}}
 }
-
+\keyword{internal}

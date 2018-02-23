@@ -19,8 +19,8 @@ test_that("Test fftw: DCT", {
   {
     expect_equal(length(fftw2D$ind), 510)
     expect_equal(fftw2D$ind[1:3], c(2,92,102))
-    expect_equal(mean(fftw2D$val), -0.00049897171)
-    expect_equal(fftw2D$val[1], 0.018282019)
+    expect_equal(mean(fftw2D$val), -0.000499, tolerance = 1e-7)
+    expect_equal(fftw2D$val[1], 0.01828, tolerance = 1e-5)
   }
   
   
@@ -31,8 +31,8 @@ test_that("Test fftw: DCT", {
   {
     expect_equal(length(fftw3D$ind), 10711)
     expect_equal(fftw3D$ind[1:3], c(102, 103, 110))
-    expect_equal(mean(fftw3D$val), 0.00027522909)
-    expect_equal(fftw3D$val[1], -0.32200299)
+    expect_equal(mean(fftw3D$val), 0.0002752, tolerance = 1e-7)
+    expect_equal(fftw3D$val[1], -0.32200, tolerance = 1e-5)
   }
 })
 
@@ -51,9 +51,9 @@ test_that("test univariate DCT 2D", {
   {
     expect_equal(dim(dct2D$scores), c(10, 3750))
     expect_equal(length(dct2D$scores@i),  1880) 
-    expect_equal(dct2D$scores@x[1],  -0.0196469613) 
+    expect_equal(dct2D$scores@x[1],  -0.01965, tolerance = 1e-5) 
     expect_equal(dim(dct2D$B), c(3750, 3750))
-    expect_equal(dct2D$B@x[1], 0.202642367)
+    expect_equal(dct2D$B@x[1], 0.20264, tolerance = 1e-5)
     expect_equal(var(diff(dct2D$B@x)), 0)
     expect_false(dct2D$ortho)  
     expect_null(dct2D$functions)
@@ -81,9 +81,9 @@ test_that("test univariate DCT 3D", {
   {
     expect_equal(dim(dct3D$scores), c(10, 23998))
     expect_equal(length(dct3D$scores@i),  12000) 
-    expect_equal(dct3D$scores@x[1],  -0.071277532) 
+    expect_equal(dct3D$scores@x[1],  -0.07128, tolerance = 1e-5) 
     expect_equal(dim(dct3D$B), c(23998, 23998))
-    expect_equal(dct3D$B@x[1], 0.032251534)
+    expect_equal(dct3D$B@x[1], 0.03225, tolerance = 1e-5)
     expect_equal(var(diff(dct3D$B@x)), 0)
     expect_false(dct3D$ortho)  
     expect_null(dct3D$functions)
@@ -118,7 +118,7 @@ test_that("Test fftw: IDCT", {
   {
     expect_equal(dim(idct2D), c(10, 20))
     expect_equal(mean(idct2D), 0)
-    expect_equal(idct2D[1,1], 1.08970077)
+    expect_equal(idct2D[1,1], 1.08970, tolerance = 1e-5)
   }
   
   # check correct handling of empty scores
@@ -131,7 +131,7 @@ test_that("Test fftw: IDCT", {
   {
     expect_equal(dim(idct3D), c(10, 20, 10))
     expect_equal(mean(idct3D), 0)
-    expect_equal(idct3D[1,1,1], 0.877946026)
+    expect_equal(idct3D[1,1,1], 0.87795, tolerance = 1e-5)
   }
   
   # check correct handling of empty scores
@@ -151,8 +151,8 @@ test_that("test univariate IDCT 2D", {
   {
     expect_equal(nObs(dct2D), 20)
     expect_equal(nObsPoints(dct2D),  c(101,101))
-    expect_equal(mean(norm(dct2D)),  2.06938459) 
-    expect_equal(norm(dct2D)[1], 2.45252941)
+    expect_equal(mean(norm(dct2D)),  2.06938, tolerance = 1e-5) 
+    expect_equal(norm(dct2D)[1], 2.45253, tolerance = 1e-5)
     
     # wrapper function
     expandDCT2D <- MFPCA:::univExpansion(type = "DCT2D", scores = scores, argvals = argvals, functions = NULL)
@@ -173,8 +173,8 @@ test_that("test univariate IDCT 3D", {
   {
     expect_equal(nObs(dct3D), 20)
     expect_equal(nObsPoints(dct3D),  c(101, 101, 21))
-    expect_equal(mean(norm(dct3D)),  7.57861399) 
-    expect_equal(norm(extractObs(dct3D, obs = 1)), 7.64625103)
+    expect_equal(mean(norm(dct3D)),  7.57861, tolerance = 1e-5) 
+    expect_equal(norm(extractObs(dct3D, obs = 1)), 7.64625, tolerance = 1e-5)
     
     # wrapper function
     expandDCT3D <- MFPCA:::univExpansion(type = "DCT3D", scores = scores, argvals = argvals, functions = NULL)

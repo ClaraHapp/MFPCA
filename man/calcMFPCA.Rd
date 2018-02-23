@@ -11,4 +11,3 @@ calcMFPCA(N, p, Bchol, M, type, weights, npc, argvals, uniBasis, fit = FALSE,
 Internal function that implements the MFPCA algorithm for given univariate decompositions
 }
 \keyword{internal}
-

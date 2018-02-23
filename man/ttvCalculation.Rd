@@ -13,4 +13,3 @@ Internal function for the Tensor times Vector calculation
 \code{\link{ttv}}
 }
 \keyword{internal}
-

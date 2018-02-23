@@ -1,0 +1,4 @@
+5 multivariate functional principal components estimated with 2 elements, each.
+                     * * * * * * * * * *                     
+Eigenvalues:
+[1] 1.0517440 0.5956629 0.5287386 0.4388748 0.2430166

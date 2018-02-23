@@ -60,4 +60,3 @@ B. W. Bader and T. G. Kolda. Algorithm 862: MATLAB tensor classes
 \seealso{
 \code{\link{UMPCA}}
 }
-

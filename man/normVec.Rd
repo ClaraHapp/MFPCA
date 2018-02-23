@@ -16,4 +16,3 @@ The euclidean norm of \code{x}.
 Calculate the euclidean norm of a vector
 }
 \keyword{internal}
-

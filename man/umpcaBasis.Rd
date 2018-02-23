@@ -41,6 +41,7 @@ references).
   when used for the univariate decomposition of images in MFPCA. The function
   therefore throws a warning.
 }
+
 \examples{
 # simulate image data for N = 100 observations
 N <- 100
@@ -50,13 +51,13 @@ b <- tensorProduct(b1,b2) # 2D basis functions
 scores <- matrix(rnorm(N*56), nrow = N)
 
 # calculate observations (= linear combination of basis functions)
-f <- expandBasisFunction(scores = scores, functions = b)
+f <- MFPCA:::expandBasisFunction(scores = scores, functions = b)
 
 # calculate basis functions based on UMPCA algorithm (needs some time)
 \donttest{
 # throws warning as the function aims more at  uncorrelated features than at
 # optimal data reconstruction (see help)
-umpca <- umpcaBasis(f, npc = 5) 
+umpca <- MFPCA:::umpcaBasis(f, npc = 5) 
 
 oldpar <- par(no.readonly = TRUE)
 
@@ -74,4 +75,4 @@ Haiping Lu, K.N. Plataniotis, and A.N. Venetsanopoulos,
 \seealso{
 \code{\link{univDecomp}}
 }
-
+\keyword{internal}

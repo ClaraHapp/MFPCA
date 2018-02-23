@@ -42,6 +42,7 @@ three-dimensional domains using the C-library \code{fftw3} (see
   an error. For full functionality install the C-library \code{fftw3} from 
   \url{http://www.fftw.org/} and reinstall \code{MFPCA}.
 }
+
 \examples{
 # set seed
 set.seed(12345)
@@ -55,7 +56,7 @@ scores
 
 \dontrun{
 # calculate basis expansion on [0,1] x [0,1]
-f <- dctFunction2D(scores = scores, argvals = list(seq(0,1,0.01), seq(0,1,0.01)))
+f <- MFPCA:::dctFunction2D(scores = scores, argvals = list(seq(0,1,0.01), seq(0,1,0.01)))
 nObs(f) # f has 10 observations
 
 oldPar <- par(no.readonly = TRUE)
@@ -71,4 +72,4 @@ par(oldPar)
 \code{\link{univExpansion}}, \code{\link{idct2D}}, 
   \code{\link{idct3D}}, \code{\link{dctBasis2D}}, \code{\link{dctBasis3D}}
 }
-
+\keyword{internal}

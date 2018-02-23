@@ -222,23 +222,40 @@
 #' }
 PACE <- function(funDataObject, predData = NULL, nbasis = 10, pve = 0.99, npc = NULL, makePD = FALSE, cov.weight.type = "none")
 {
+  # check inputs
+  if(! class(funDataObject) %in% c("funData", "irregFunData"))
+    stop("Parameter 'funDataObject' must be a funData or irregFunData object.")
   if(dimSupp(funDataObject) != 1)
     stop("PACE: Implemented only for funData objects with one-dimensional support.")
-  
   if(methods::is(funDataObject, "irregFunData")) # for irregular functional data, use funData representation
     funDataObject <- as.funData(funDataObject)
   
-  if(!is.null(predData))
+  if(is.null(predData))
+    Y.pred = NULL # use only funDataObject
+  else
   {
     if(!isTRUE(all.equal(funDataObject@argvals, predData@argvals)))
       stop("PACE: funDataObject and predData must be defined on the same domains!")
     
     Y.pred = predData@X
   }
-  else
-  {
-    Y.pred = NULL # use only funDataObject
-  }
+  
+  
+  if(!all(is.numeric(nbasis), length(nbasis) == 1, nbasis > 0))
+    stop("Parameter 'nbasis' must be passed as a number > 0.")
+  
+  if(!all(is.numeric(pve), length(pve) == 1, 0 <= pve, pve <= 1))
+    stop("Parameter 'pve' must be passed as a number between 0 and 1.")
+  
+  if(!is.null(npc) & !all(is.numeric(npc), length(npc) == 1, npc > 0))
+    stop("Parameter 'npc' must be either NULL or passed as a number > 0.")
+    
+  if(!is.logical(makePD))
+    stop("Parameter 'makePD' must be passed as a logical.")
+  
+  if(!is.character(cov.weight.type))
+    stop("Parameter 'cov.weight.type' must be passed as a character.")
+  
   
   res <- .PACE(X = funDataObject@argvals[[1]], funDataObject@X, Y.pred = Y.pred,
                nbasis = nbasis, pve = pve, npc = npc, makePD = makePD,

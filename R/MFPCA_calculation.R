@@ -63,67 +63,64 @@ calcBasisIntegrals <- function(basisFunctions, dimSupp, argvals)
 #' multivariate functional data-generating process \eqn{X = (X^{(1)}, \ldots 
 #' X^{(p)})}{X = X^(1), \ldots, X^(p)} with elements \eqn{X^{(j)} \in 
 #' L^2(\mathcal{T}_j)}{X^(j) in L^2(calT_j)} defined on a domain 
-#' \eqn{\mathcal{T}_j \subset IR^{d_j}}{calT_j of IR^{d_j}}. In particular, 
-#' the elements can be defined on different (dimensional) domains. The 
-#' results contain the mean function, the estimated multivariate functional 
-#' principal components \eqn{\hat \psi_1, \ldots, \hat \psi_M} (having the 
-#' same structure as \eqn{x_i}), the associated eigenvalues \eqn{\hat \nu_1 
-#' \geq \ldots \geq \hat \nu_M > 0} and the individual scores \eqn{\hat 
-#' \rho_{im} = \widehat{<x_i, \psi_m>}}{\hat \rho_{im} = \hat{<x_i, 
-#' \psi_m>}}. Moreover, estimated trajectories for each observation based on 
-#' the truncated Karhunen-Loeve representation \deqn{\hat x_i = \sum_{m = 
-#' 1}^M \hat \rho_{im} \hat \psi_m}{\hat x_i = \sum_{m = 1}^M \hat \rho_{im} 
-#' \hat \psi_m} are given if desired (\code{fit = TRUE}). The implementation 
-#' of the observations \eqn{x_i = (x_i^{(1)}, \ldots , x_i^{(p)}),~ i = 1 , 
-#' \ldots, N}{x_i = (x_i^(1), \ldots , x_i^(p)), i = 1 , \ldots, N}, the mean
-#' function and multivariate functional principal components \eqn{\hat 
-#' \psi_1, \ldots, \hat \psi_M} uses the \code{\link[funData]{multiFunData}} 
-#' class, which is defined in the package \pkg{funData}.
+#' \eqn{\mathcal{T}_j \subset IR^{d_j}}{calT_j of IR^{d_j}}. In particular, the 
+#' elements can be defined on different (dimensional) domains. The results 
+#' contain the mean function, the estimated multivariate functional principal 
+#' components \eqn{\hat \psi_1, \ldots, \hat \psi_M} (having the same structure 
+#' as \eqn{x_i}), the associated eigenvalues \eqn{\hat \nu_1 \geq \ldots \geq 
+#' \hat \nu_M > 0} and the individual scores \eqn{\hat \rho_{im} = 
+#' \widehat{<x_i, \psi_m>}}{\hat \rho_{im} = \hat{<x_i, \psi_m>}}. Moreover, 
+#' estimated trajectories for each observation based on the truncated 
+#' Karhunen-Loeve representation \deqn{\hat x_i = \sum_{m = 1}^M \hat \rho_{im} 
+#' \hat \psi_m}{\hat x_i = \sum_{m = 1}^M \hat \rho_{im} \hat \psi_m} are given 
+#' if desired (\code{fit = TRUE}). The implementation of the observations 
+#' \eqn{x_i = (x_i^{(1)}, \ldots , x_i^{(p)}),~ i = 1 , \ldots, N}{x_i = 
+#' (x_i^(1), \ldots , x_i^(p)), i = 1 , \ldots, N}, the mean function and 
+#' multivariate functional principal components \eqn{\hat \psi_1, \ldots, \hat 
+#' \psi_M} uses the \code{\link[funData]{multiFunData}} class, which is defined 
+#' in the package \pkg{funData}.
 #' 
 #' \subsection{Weighted MFPCA}{If the elements vary considerably in domain, 
-#' range or variation, a weight vector \eqn{w_1 , \ldots, w_p} can be 
-#' supplied and the MFPCA is based on the weighted scalar product 
-#' \deqn{<<f,g>>_w = \sum_{j = 1}^p w_j \int_{\mathcal{T}_j} f^{(j)}(t) 
-#' g^{(j)}(t) \mathrm{d} t}{<<f,g>>_w = \sum_{j = 1}^p w_j \int_\calT_j 
-#' f^(j)(t) g^(j)(t) d t} and the corresponding weighted covariance operator 
-#' \eqn{\Gamma_w}.}
+#' range or variation, a weight vector \eqn{w_1 , \ldots, w_p} can be supplied 
+#' and the MFPCA is based on the weighted scalar product \deqn{<<f,g>>_w = 
+#' \sum_{j = 1}^p w_j \int_{\mathcal{T}_j} f^{(j)}(t) g^{(j)}(t) \mathrm{d} 
+#' t}{<<f,g>>_w = \sum_{j = 1}^p w_j \int_\calT_j f^(j)(t) g^(j)(t) d t} and the
+#' corresponding weighted covariance operator \eqn{\Gamma_w}.}
 #' 
 #' \subsection{Bootstrap}{If \code{bootstrap = TRUE}, pointwise bootstrap 
 #' confidence bands are generated for the multivariate eigenvalues \eqn{\hat 
-#' \nu_1, \ldots, \hat \nu_M } as well as for multivariate functional 
-#' principal components \eqn{\hat \psi_1, \ldots, \hat \psi_M}{\hat \psi_1, 
-#' \ldots, \hat \psi_M}. The parameter \code{nBootstrap} gives the number of 
-#' bootstrap iterations. In each iteration, the observations are resampled on
-#' the level of (multivariate) functions and the whole MFPCA is recalculated.
-#' In particular, if the univariate basis depends on the data (FPCA 
-#' approaches), basis functions and scores are both re-estimated. If the 
-#' basis functions are fixed (e.g. splines), the scores from the original 
-#' estimate are used to speed up the calculations. The confidence bands for 
-#' the eigenfunctions are calculated separately for each element as pointwise
-#' percentile bootstrap confidence intervals. Analogously, the confidence 
-#' bands for the eigenvalues are also percentile bootstrap confidence bands. 
-#' The significance level(s) can be defined by the \code{bootstrapAlpha} 
-#' parameter, which defaults to 5\%. As a result, the \code{MFPCA} function 
-#' returns a list \code{CI} of the same length as \code{bootstrapAlpha}, 
-#' containing the lower and upper bounds of the confidence bands for the 
-#' principal components as \code{multiFunData} objects of the same structure 
-#' as \code{mFData}. The confidence bands for the eigenvalues are returned in
-#' a list \code{CIvalues}, containing the upper and lower bounds for each 
-#' significance level.}
+#' \nu_1, \ldots, \hat \nu_M } as well as for multivariate functional principal 
+#' components \eqn{\hat \psi_1, \ldots, \hat \psi_M}{\hat \psi_1, \ldots, \hat 
+#' \psi_M}. The parameter \code{nBootstrap} gives the number of bootstrap 
+#' iterations. In each iteration, the observations are resampled on the level of
+#' (multivariate) functions and the whole MFPCA is recalculated. In particular, 
+#' if the univariate basis depends on the data (FPCA approaches), basis 
+#' functions and scores are both re-estimated. If the basis functions are fixed 
+#' (e.g. splines), the scores from the original estimate are used to speed up 
+#' the calculations. The confidence bands for the eigenfunctions are calculated 
+#' separately for each element as pointwise percentile bootstrap confidence 
+#' intervals. Analogously, the confidence bands for the eigenvalues are also 
+#' percentile bootstrap confidence bands. The significance level(s) can be 
+#' defined by the \code{bootstrapAlpha} parameter, which defaults to 5\%. As a 
+#' result, the \code{MFPCA} function returns a list \code{CI} of the same length
+#' as \code{bootstrapAlpha}, containing the lower and upper bounds of the 
+#' confidence bands for the principal components as \code{multiFunData} objects 
+#' of the same structure as \code{mFData}. The confidence bands for the 
+#' eigenvalues are returned in a list \code{CIvalues}, containing the upper and 
+#' lower bounds for each significance level.}
 #' 
 #' 
 #' \subsection{Univariate Expansions}{The multivariate functional principal 
-#' component analysis relies on a univariate basis expansion for each element
-#' \eqn{X^{(j)}}{X^(j)}. The univariate basis representation is calculated 
-#' using the \code{\link{univDecomp}} function, that passes the univariate 
-#' functional observations and optional parameters to the specific function. 
-#' The univariate decompositions are specified via the \code{uniExpansions} 
-#' argument in the \code{MFPCA} function. It is a list of the same length as 
-#' the \code{mFData} object, i.e. having one entry for each element of the 
-#' multivariate functional data. For each element, \code{uniExpansion} must 
-#' specify at least the type of basis functions to use. Additionally, one may
-#' add further parameters. The following basis representations are supported:
-#' \itemize{\item Given basis functions. Then \code{uniExpansions[[j]] = 
+#' component analysis relies on a univariate basis expansion for each element 
+#' \eqn{X^{(j)}}{X^(j)}. The univariate basis representation is calculated using
+#' the \code{\link{univDecomp}} function, that passes the univariate functional 
+#' observations and optional parameters to the specific function. The univariate
+#' decompositions are specified via the \code{uniExpansions} argument in the 
+#' \code{MFPCA} function. It is a list of the same length as the \code{mFData} 
+#' object, i.e. having one entry for each element of the multivariate functional
+#' data. For each element, \code{uniExpansion} must specify at least the type of
+#' basis functions to use. Additionally, one may add further parameters. The 
+#' following basis representations are supported: \itemize{\item Given basis functions. Then \code{uniExpansions[[j]] = 
 #' list(type = "given", functions, scores, ortho)}, where \code{functions} is
 #' a \code{funData} object on the same domain as \code{mFData}, containing 
 #' the given basis functions. The parameters \code{scores} and \code{ortho} 
@@ -135,103 +132,104 @@ calcBasisIntegrals <- function(basisFunctions, dimSupp, argvals)
 #' functions are orthonormal \code{orhto = TRUE} or not \code{ortho = FALSE}.
 #' If \code{ortho} is not supplied, the functions are treated as 
 #' non-orthogonal. \code{scores} and \code{ortho} are not checked for
-#' plausibility, use them on your own risk! \item Univariate functional
-#' principal component analysis. Then \code{uniExpansions[[j]] = list(type =
-#' "uFPCA", nbasis, pve, npc, makePD)}, where \code{nbasis,pve,npc,makePD}
-#' are parameters passed to the \code{\link{PACE}} function for calculating
-#' the univariate functional principal component analysis. \item Spline basis
-#' functions (not penalized). Then \code{uniExpansions[[j]] = list(type =
-#' "splines1D", bs, m, k)}, where \code{bs,m,k} are passed to the functions 
-#' \code{\link{univDecomp}} and \code{\link{univExpansion}}. For 
-#' two-dimensional tensor product splines, use \code{type = "splines2D"}. 
-#' \item Spline basis functions (with smoothness penalty). Then 
-#' \code{uniExpansions[[j]] = list(type = "splines1Dpen", bs, m, k)}, where 
+#' plausibility, use them on your own risk!  \item Univariate 
+#' functional principal component analysis. Then \code{uniExpansions[[j]] = 
+#' list(type = "uFPCA", nbasis, pve, npc, makePD)}, where 
+#' \code{nbasis,pve,npc,makePD} are parameters passed to the \code{\link{PACE}} 
+#' function for calculating the univariate functional principal component 
+#' analysis. \item Spline basis functions (not penalized). Then 
+#' \code{uniExpansions[[j]] = list(type = "splines1D", bs, m, k)}, where 
 #' \code{bs,m,k} are passed to the functions \code{\link{univDecomp}} and 
-#' \code{\link{univExpansion}}. Analogously to the unpenalized case, use 
-#' \code{type = "splines2Dpen"} for 2D penalized tensor product splines. 
-#' \item Cosine basis functions. Use \code{uniExpansions[[j]] = list(type = 
-#' "DCT2D", qThresh, parallel)} for functions one two-dimensional domains 
-#' (images) and \code{type = "DCT3D"} for 3D images. The calculation is based
-#' on the discrete cosine transform (DCT) implemented in the C-library 
-#' \code{fftw3}. If this library is not available, the function will throw  a
-#' warning. \code{qThresh} gives the quantile for hard thresholding the basis
-#' coefficients based on their absolute value. If \code{parallel = TRUE}, the
-#' coefficients for different images are calcualated in parallel.} See 
-#' \code{\link{univDecomp}} and \code{\link{univExpansion}} for details.}
+#' \code{\link{univExpansion}}. For two-dimensional tensor product splines, use 
+#' \code{type = "splines2D"}. \item Spline basis functions (with smoothness 
+#' penalty). Then \code{uniExpansions[[j]] = list(type = "splines1Dpen", bs, m, 
+#' k)}, where \code{bs,m,k} are passed to the functions \code{\link{univDecomp}}
+#' and \code{\link{univExpansion}}. Analogously to the unpenalized case, use 
+#' \code{type = "splines2Dpen"} for 2D penalized tensor product splines. \item 
+#' Cosine basis functions. Use \code{uniExpansions[[j]] = list(type = "DCT2D", 
+#' qThresh, parallel)} for functions one two-dimensional domains (images) and 
+#' \code{type = "DCT3D"} for 3D images. The calculation is based on the discrete
+#' cosine transform (DCT) implemented in the C-library \code{fftw3}. If this 
+#' library is not available, the function will throw  a warning. \code{qThresh} 
+#' gives the quantile for hard thresholding the basis coefficients based on 
+#' their absolute value. If \code{parallel = TRUE}, the coefficients for 
+#' different images are calcualated in parallel.} See \code{\link{univDecomp}} 
+#' and \code{\link{univExpansion}} for details.}
 #' 
-#' @param mFData A  \code{\link[funData]{multiFunData}} object containing the
+#' @param mFData A  \code{\link[funData]{multiFunData}} object containing the 
 #'   \code{N} observations.
 #' @param M The number of multivariate functional principal components to 
 #'   calculate.
-#' @param uniExpansions A list characterizing the (univariate) expansion that
-#'   is calculated for each element. See Details.
-#' @param weights An optional vector of weights, defaults to \code{1} for 
-#'   each element. See Details.
-#' @param fit Logical. If \code{TRUE}, a truncated multivariate 
-#'   Karhunen-Loeve representation for the data is calculated based on the 
-#'   estimated scores and eigenfunctions.
-#' @param approx.eigen Logical. If \code{TRUE}, the eigenanalysis problem for
+#' @param uniExpansions A list characterizing the (univariate) expansion that is
+#'   calculated for each element. See Details.
+#' @param weights An optional vector of weights, defaults to \code{1} for each 
+#'   element. See Details.
+#' @param fit Logical. If \code{TRUE}, a truncated multivariate Karhunen-Loeve 
+#'   representation for the data is calculated based on the estimated scores and
+#'   eigenfunctions.
+#' @param approx.eigen Logical. If \code{TRUE}, the eigenanalysis problem for 
 #'   the estimated covariance matrix is solved approximately using the 
 #'   \pkg{irlba} package, which is much faster. If the number \code{M} of 
-#'   eigenvalues to calculate is high with respect to the number of 
-#'   observations in \code{mFData} or the number of estimated univariate 
-#'   eigenfunctions, the approximation may be inappropriate. In this case, 
-#'   approx.eigen is set to \code{FALSE} and the function throws a warning. 
-#'   Defaults to \code{FALSE}.
+#'   eigenvalues to calculate is high with respect to the number of observations
+#'   in \code{mFData} or the number of estimated univariate eigenfunctions, the 
+#'   approximation may be inappropriate. In this case, approx.eigen is set to 
+#'   \code{FALSE} and the function throws a warning. Defaults to \code{FALSE}.
 #' @param bootstrap Logical. If \code{TRUE}, pointwise bootstrap confidence 
-#'   bands are calculated for the multivariate functional principal 
-#'   components. Defaults to \code{FALSE}. See Details.
+#'   bands are calculated for the multivariate functional principal components. 
+#'   Defaults to \code{FALSE}. See Details.
 #' @param nBootstrap The number of bootstrap iterations to use. Defaults to 
 #'   \code{NULL}, which leads to an error, if \code{bootstrap = TRUE}.
-#' @param bootstrapAlpha A vector of numerics (or a single number) giving the
+#' @param bootstrapAlpha A vector of numerics (or a single number) giving the 
 #'   significance level for bootstrap intervals. Defaults to \code{0.05}.
 #' @param bootstrapStrat A stratification variable for bootstrap. Must be a 
 #'   factor of length \code{nObs(mFData)} or \code{NULL} (default). If 
-#'   \code{NULL}, no stratification is made in the bootstrap resampling, i.e.
-#'   the curves are sampled with replacement. If \code{bootstrapStrat} is not
-#'   \code{NULL}, the curves are resampled with replacement within the groups
+#'   \code{NULL}, no stratification is made in the bootstrap resampling, i.e. 
+#'   the curves are sampled with replacement. If \code{bootstrapStrat} is not 
+#'   \code{NULL}, the curves are resampled with replacement within the groups 
 #'   defined by \code{bootstrapStrat}, hence keeping the group proportions 
 #'   fixed.
 #' @param verbose Logical. If \code{TRUE}, the function reports 
 #'   extra-information about the progress (incl. timestamps). Defaults to 
 #'   \code{options()$verbose}.
 #'   
-#' @return \item{values}{A vector of estimated eigenvalues \eqn{\hat \nu_1 , 
-#'   \ldots , \hat \nu_M}.} \item{functions}{A 
+#' @return An object of class \code{MFPCAfit} containing the following
+#'   components: \item{values}{A vector of estimated eigenvalues \eqn{\hat \nu_1
+#'   , \ldots , \hat \nu_M}.} \item{functions}{A 
 #'   \code{\link[funData]{multiFunData}} object containing the estimated 
-#'   multivariate functional principal components \eqn{\hat \psi_1, \ldots, 
-#'   \hat \psi_M}.} \item{scores}{ A matrix of dimension \code{N x M} 
-#'   containing the estimated scores \eqn{\hat \rho_{im}}.} \item{vectors}{A 
-#'   matrix representing the eigenvectors associated with the combined 
-#'   univariate score vectors. This might be helpful for calculating 
-#'   predictions.} \item{normFactors}{The normalizing factors used for 
-#'   calculating the multivariate eigenfunctions and scores. This might be 
-#'   helpful when calculation predictions.} \item{meanFunction}{A 
-#'   multivariate functional data object, corresponding to the mean function.
-#'   The MFPCA is applied to the de-meaned functions in 
-#'   \code{mFData}.}\item{fit}{A \code{\link[funData]{multiFunData}} object 
-#'   containing estimated trajectories for each observation based on the 
-#'   truncated Karhunen-Loeve representation and the estimated scores and 
-#'   eigenfunctions.} \item{CI}{A list of the same length as 
-#'   \code{bootstrapAlpha}, containing the pointwise lower and upper 
-#'   bootstrap confidence bands for each eigenfunction and each significance 
-#'   level in form of \code{\link[funData]{multiFunData}} objects (only if 
-#'   \code{bootstrap = TRUE}).} \item{CIvalues}{A list of the same length as 
-#'   \code{bootstrapAlpha}, containing the lower and upper bootstrap 
-#'   confidence bands for each eigenvalue and each significance level (only 
-#'   if \code{bootstrap = TRUE}).}
+#'   multivariate functional principal components \eqn{\hat \psi_1, \ldots, \hat
+#'   \psi_M}.} \item{scores}{ A matrix of dimension \code{N x M} containing the 
+#'   estimated scores \eqn{\hat \rho_{im}}.} \item{vectors}{A matrix 
+#'   representing the eigenvectors associated with the combined univariate score
+#'   vectors. This might be helpful for calculating predictions.} 
+#'   \item{normFactors}{The normalizing factors used for calculating the 
+#'   multivariate eigenfunctions and scores. This might be helpful when 
+#'   calculation predictions.} \item{meanFunction}{A multivariate functional 
+#'   data object, corresponding to the mean function. The MFPCA is applied to 
+#'   the de-meaned functions in \code{mFData}.}\item{fit}{A 
+#'   \code{\link[funData]{multiFunData}} object containing estimated 
+#'   trajectories for each observation based on the truncated Karhunen-Loeve 
+#'   representation and the estimated scores and eigenfunctions.} \item{CI}{A 
+#'   list of the same length as \code{bootstrapAlpha}, containing the pointwise 
+#'   lower and upper bootstrap confidence bands for each eigenfunction and each 
+#'   significance level in form of \code{\link[funData]{multiFunData}} objects 
+#'   (only if \code{bootstrap = TRUE}).} \item{CIvalues}{A list of the same 
+#'   length as \code{bootstrapAlpha}, containing the lower and upper bootstrap 
+#'   confidence bands for each eigenvalue and each significance level (only if 
+#'   \code{bootstrap = TRUE}).}
 #'   
 #' @export MFPCA
 #'   
 #' @importFrom foreach %do%
 #'   
-#' @references C. Happ, S. Greven (2016+):Multivariate Functional Principal 
-#'   Component Analysis for Data Observed on Different (Dimensional) Domains.
-#'   Journal of the American Statistical Association, to appear. DOI: 
+#' @references C. Happ, S. Greven (2018): Multivariate Functional Principal 
+#'   Component Analysis for Data Observed on Different (Dimensional) Domains. 
+#'   Journal of the American Statistical Association. Advance online publication. DOI: 
 #'   \url{http://dx.doi.org/10.1080/01621459.2016.1273115}
 #'   
 #' @seealso \code{\link[funData]{multiFunData}}, \code{\link{PACE}}, 
-#'   \code{\link{univDecomp}}, \code{\link{univExpansion}}
+#'   \code{\link{univDecomp}}, \code{\link{univExpansion}}, 
+#'   \code{\link[=summary.MFPCAfit]{summary}}, \code{\link[=plot.MFPCAfit]{plot}}, 
+#'   \code{\link[=scoreplot.MFPCAfit]{scoreplot}}
 #'   
 #' @examples
 #' oldPar <- par(no.readonly = TRUE)
@@ -245,12 +243,20 @@ calcBasisIntegrals <- function(basisFunctions, dimSupp, argvals)
 #' # MFPCA based on univariate FPCA
 #' uFPCA <- MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "uFPCA"),
 #'                                                                   list(type = "uFPCA")))
+
+#' summary(uFPCA)
+#' plot(uFPCA) # plot the eigenfunctions as perturbations of the mean
+#' scoreplot(uFPCA) # plot the scores
 #' 
 #' # MFPCA based on univariate spline expansions
 #' splines <- MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "splines1D", k = 10),
 #'                                                           list(type = "splines1D", k = 10)),
 #'                  fit = TRUE) # calculate reconstruction, too
+#' summary(splines)
+#' plot(splines) # plot the eigenfunctions as perturbations of the mean
+#' scoreplot(splines) # plot the scores
 #' 
+#' ### Compare estimates to true eigenfunctions
 #' # flip to make results more clear
 #' uFPCA$functions <- flipFuns(sim$trueFuns, uFPCA$functions)
 #' splines$functions <- flipFuns(sim$trueFuns, splines$functions)
@@ -279,7 +285,8 @@ calcBasisIntegrals <- function(basisFunctions, dimSupp, argvals)
 #' splinesBoot <- MFPCA(sim$simData, M = 2, uniExpansions = list(list(type = "splines1D", k = 10),
 #'                                                           list(type = "splines1D", k = 10)),
 #'                  bootstrap = TRUE, nBootstrap = 100, bootstrapAlpha = c(0.05, 0.1), verbose = TRUE)
-#'                  
+#' summary(splinesBoot)
+#'                                  
 #' plot(splinesBoot$functions[[1]], ylim = c(-2,1.5))
 #' plot(splinesBoot$CI$alpha_0.05$lower[[1]], lty = 2, add = TRUE)
 #' plot(splinesBoot$CI$alpha_0.05$upper[[1]], lty = 2, add = TRUE)
@@ -319,7 +326,11 @@ calcBasisIntegrals <- function(basisFunctions, dimSupp, argvals)
 #' pca <- MFPCA(sim$simData, M = 10,
 #'              uniExpansions = list(list(type = "splines2D", k = c(10,12)),
 #'                              list(type = "uFPCA")))
+#' summary(pca)
+#' plot(pca) # plot the eigenfunctions as perturbations of the mean
+#' scoreplot(pca) # plot the scores
 #' 
+#' ### Compare to true eigenfunctions
 #' # flip to make results more clear
 #' pca$functions <- flipFuns(extractObs(sim$trueFuns, obs = 1:10), pca$functions)
 #' 
@@ -340,15 +351,32 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fi
                   bootstrap = FALSE, nBootstrap = NULL, bootstrapAlpha = 0.05, bootstrapStrat = NULL, 
                   verbose = options()$verbose)
 {
+  if(! inherits(mFData, "multiFunData"))
+    stop("Parameter 'mFData' must be passed as a multiFunData object.")
+  
   # number of components
   p <- length(mFData)
-
   # number of observations
   N <- nObs(mFData)
-
-  if(length(uniExpansions) != p)
-    stop("Function MFPCA_multidim: multivariate functional data object and univariate expansions must have the same length!")
-
+  
+  if(!all(is.numeric(M), length(M) == 1, M > 0))
+    stop("Parameter 'M' must be passed as a number > 0.")
+  
+  if(!(is.list(uniExpansions) & length(uniExpansions) == p))
+    stop("Parameter 'uniExpansions' must be passed as a list with the same length as 'mFData'.")
+  
+  if(!(is.numeric(weights) & length(weights) == p))
+    stop("Parameter 'weights' must be passed as a vector with the same length as 'mFData'.")
+  
+  if(!is.logical(fit))
+    stop("Parameter 'fit' must be passed as a logical.")
+  
+  if(!is.logical(approx.eigen))
+    stop("Parameter 'approx.eigen' must be passed as a logical.")
+  
+  if(!is.logical(bootstrap))
+    stop("Parameter 'bootstrap' must be passed as a logical.")
+  
   if(bootstrap)
   {
     if(is.null(nBootstrap))
@@ -366,6 +394,9 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fi
         stop("bootstrapStrat must have the same length as the number of observations in the mFData object.")
     }
   }
+  
+  if(!is.logical(verbose))
+    stop("Parameter 'verbose' must be passed as a logical.")
   
   # dimension for each component
   dimSupp <- dimSupp(mFData)
@@ -428,8 +459,27 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fi
   
   res$meanFunction <- m # return mean function, too
   
+  names(res$functions) <- names(mFData)
+  
   if(fit)
+  {
     res$fit <- m + res$fit # add mean function to fits
+    names(res$fit) <- names(mFData)
+  } 
+  
+  # give correct names
+  namesList <- lapply(mFData, names)
+  if(!all(sapply(namesList, is.null))) 
+  {
+    if(length(unique(namesList)) != 1)
+      warning("Elements have different curve names. Use names of the first element for the results.")
+    
+    row.names(res$scores) <- namesList[[1]]
+    
+    if(fit)
+      for(i in 1:p)
+        names(res$fit[[i]]) <- namesList[[1]]
+  }
 
   # bootstrap for eigenfunctions
   if(bootstrap)
@@ -532,6 +582,8 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fi
 
     res$CI <- CI
   }
+  
+  class(res) <- "MFPCAfit"
 
   return(res)
 }
@@ -630,18 +682,9 @@ calcMFPCA <- function(N, p, Bchol, M, type, weights, npc, argvals, uniBasis, fit
               vectors = vectors,
               normFactors = normFactors)
 
+  # calculate truncated Karhunen-Loeve representation (no mean here)
   if(fit)
-  {
-    # calculate truncated Karhunen-Loeve representation
-    fit <- foreach::foreach(j = 1:p) %do% {
-      univExpansion(type = "default", # calculate linear combination of multivariate basis functions
-                    scores = scores,
-                    argvals = argvals[[j]],
-                    functions = eFunctions[[j]],
-                    params = NULL)
-    }
-    res$fit <- multiFunData(fit)
-  }
+    res$fit <- multivExpansion(multiFuns = res$functions, scores = scores)
 
   return(res)
 }

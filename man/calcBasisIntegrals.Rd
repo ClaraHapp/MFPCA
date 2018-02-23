@@ -24,8 +24,8 @@ this function calculates the \eqn{K_j \times K_j}{K_j  \times K_j} matrix \eqn{B
 \section{Warning}{
  This function is implemented only for functions on one- or two-dimensional domains.
 }
+
 \seealso{
 \code{\link{MFPCA}}, \code{\link[funData]{dimSupp}}
 }
 \keyword{internal}
-
