@@ -1,3 +1,9 @@
+# MFPCA 1.2-1
+
+## New features
+* Tolerance for `splineFunction2Dpen` unit tests reduced due to ATLAS/OpenBLAS/MKL issues.
+
+
 # MFPCA 1.2
 
 ## New features
