@@ -94,8 +94,8 @@ test_that("test univariate expansions 2D", {
     skip("Regression tests for spline2Dpen skipped on this architecture.")
   else
   {
-    expect_equal(mean(norm(spline2Dpen)),  2.80049, tolerance = 1e-5) 
-    expect_equal(norm(spline2Dpen)[1], 2.15060, tolerance = 1e-5)
+    expect_equal(mean(norm(spline2Dpen)),  2.80049, tolerance = 1e-2) 
+    expect_equal(norm(spline2Dpen)[1], 2.15060, tolerance = 1e-2)
   }
   
   # wrapper function
