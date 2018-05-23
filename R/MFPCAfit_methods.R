@@ -407,7 +407,7 @@ summary.MFPCAfit <- function(object, ...)
 #' A \code{print} method for class \code{MFPCAfit.summary}
 #' 
 #' @param x An object of class \code{MFPCAfit.summary}, usually returned by a
-#'   call to \link{MFPCAfit.summary}.
+#'   call to \code{MFPCAfit.summary}.
 #' @param ... Arguments passed to or from other methods.
 #'   
 #' @export
