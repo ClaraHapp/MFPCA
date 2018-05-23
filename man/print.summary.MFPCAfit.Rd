@@ -8,7 +8,7 @@
 }
 \arguments{
 \item{object}{An object of class \code{MFPCAfit.summary}, usually returned by a
-call to \link{MFPCA.summary}.}
+call to \link{MFPCAfit.summary}.}
 
 \item{...}{Arguments passed to or from other methods.}
 }
