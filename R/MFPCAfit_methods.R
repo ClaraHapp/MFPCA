@@ -404,21 +404,21 @@ summary.MFPCAfit <- function(object, ...)
 #' 
 #' A \code{print} method for class \code{MFPCAfit.summary}
 #' 
-#' @param object An object of class \code{MFPCAfit.summary}, usually returned by a
+#' @param x An object of class \code{MFPCAfit.summary}, usually returned by a
 #'   call to \link{MFPCAfit.summary}.
 #' @param ... Arguments passed to or from other methods.
 #'   
 #' @export
 #' @method print summary.MFPCAfit
-print.summary.MFPCAfit <- function(object, ...)
+print.summary.MFPCAfit <- function(x, ...)
 {
-  if(!inherits(object, "summary.MFPCAfit"))
+  if(!inherits(x, "summary.MFPCAfit"))
     stop("Argument is not of class 'summary.MFPCAfit'.")
   
-  cat(attr(object, "npc"), "multivariate functional principal components estimated with",
-      attr(object, "nel"), "elements, each.\n", rep(c(" ", "*", " "), each = 10), "\n")
+  cat(attr(x, "npc"), "multivariate functional principal components estimated with",
+      attr(x, "nel"), "elements, each.\n", rep(c(" ", "*", " "), each = 10), "\n")
   
-  print.table(object, ...)
+  print.table(x, ...)
   
-  invisible(object)
+  invisible(x)
 }

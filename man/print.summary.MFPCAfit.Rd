@@ -4,10 +4,10 @@
 \alias{print.summary.MFPCAfit}
 \title{Print summary of a Multivariate Functional Principal Component Analysis}
 \usage{
-\method{print}{summary.MFPCAfit}(object, ...)
+\method{print}{summary.MFPCAfit}(x, ...)
 }
 \arguments{
-\item{object}{An object of class \code{MFPCAfit.summary}, usually returned by a
+\item{x}{An object of class \code{MFPCAfit.summary}, usually returned by a
 call to \link{MFPCAfit.summary}.}
 
 \item{...}{Arguments passed to or from other methods.}
