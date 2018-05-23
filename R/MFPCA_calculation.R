@@ -609,7 +609,7 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fi
 #'
 #' @importFrom stats cov
 #' @importFrom Matrix t
-#' @importFrom Matrix cBind
+#' @importFrom Matrix cbind
 #' @importFrom foreach foreach
 #' @importFrom irlba irlba
 #'
@@ -617,7 +617,7 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fi
 calcMFPCA <- function(N, p, Bchol, M, type, weights, npc, argvals, uniBasis, fit = FALSE, approx.eigen = FALSE)
 {
   # combine all scores
-  allScores <- foreach::foreach(j = 1:p, .combine = "cBind")%do%{uniBasis[[j]]$scores}
+  allScores <- foreach::foreach(j = 1:p, .combine = "cbind")%do%{uniBasis[[j]]$scores}
 
   # block vector of weights
   allWeights <- foreach::foreach(j = 1:p, .combine = "c")%do%{rep(sqrt(weights[j]), npc[j])}
