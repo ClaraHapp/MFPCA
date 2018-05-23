@@ -384,9 +384,6 @@ summary.MFPCAfit <- function(object, ...)
   if(!inherits(object, "MFPCAfit"))
     stop("Argument is not of class 'MFPCAfit'.")
   
-  cat(funData::nObs(object$functions), "multivariate functional principal components estimated with",
-      length(object$functions), "elements, each.\n", rep(c(" ", "*", " "), each = 10), "\n")
-  
   vals <- object$values
   
   res <- rbind(`Eigenvalue` = vals, 
@@ -394,5 +391,34 @@ summary.MFPCAfit <- function(object, ...)
                `Cumulative proportion` = cumsum(vals)/sum(vals))
   colnames(res) <- paste("PC", 1:length(vals))
   
+  attr(res, "npc") <- funData::nObs(object$functions)
+  attr(res, "nel") <- length(object$functions)
+  
+  class(res) <- "summary.MFPCAfit"
+  
   return(res)
+}
+
+
+#' Print summary of a Multivariate Functional Principal Component Analysis
+#' 
+#' A \code{print} method for class \code{MFPCAfit.summary}
+#' 
+#' @param object An object of class \code{MFPCAfit.summary}, usually returned by a
+#'   call to \link{MFPCA.summary}.
+#' @param ... Arguments passed to or from other methods.
+#'   
+#' @export
+#' @method print summary.MFPCAfit
+print.summary.MFPCAfit <- function(object, ...)
+{
+  if(!inherits(object, "summary.MFPCAfit"))
+    stop("Argument is not of class 'summary.MFPCAfit'.")
+  
+  cat(attr(object, "npc"), "multivariate functional principal components estimated with",
+      attr(object, "nel"), "elements, each.\n", rep(c(" ", "*", " "), each = 10), "\n")
+  
+  print.table(object, ...)
+  
+  invisible(object)
 }
