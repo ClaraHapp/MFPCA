@@ -115,7 +115,6 @@ scoreplot.MFPCAfit <- function(PCAobject, choices = 1:2, scale = FALSE, ...)
 #'
 #' @importFrom stats screeplot
 #' @importFrom graphics barplot
-#' @importFrom graphics plot
 #' @importFrom graphics axis
 #'
 #' @export
@@ -156,7 +155,7 @@ screeplot.MFPCAfit <- function(x, npcs = min(10, length(x$values)), type = "line
      ylim <- c(0,max(pve))
   
   switch(type,
-         "lines" = {graphics::plot(x = 1:npcs, y = pve, type = "b", ylim = ylim,
+         "lines" = {plot(x = 1:npcs, y = pve, type = "b", ylim = ylim,
                                    main = main, xlab = "PCs", ylab = ylab, xaxt = "n", ...)
                     graphics::axis(1, at = 1:npcs)},
          "barplot" = graphics::barplot(height = pve, main = main, ylim = ylim,
