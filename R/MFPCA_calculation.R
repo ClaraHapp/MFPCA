@@ -609,7 +609,6 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fi
 #'
 #' @importFrom stats cov
 #' @importFrom Matrix t
-#' @importFrom Matrix cbind
 #' @importFrom foreach foreach
 #' @importFrom irlba irlba
 #'

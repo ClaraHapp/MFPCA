@@ -25,7 +25,7 @@ Imports:
     plyr,
     stats
 Depends:
-    R (>= 3.1.0),
+    R (>= 3.2.0),
     funData (>= 1.2)
 Suggests:
     covr,
