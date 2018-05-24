@@ -6,7 +6,6 @@ Version: 1.2-2
 Date: 2018-05-23
 Authors@R: person("Clara", "Happ", email = "clara.happ@stat.uni-muenchen.de",
                   role = c("aut", "cre"), comment = c(ORCID = "0000-0003-4737-3835"))
-Author: Clara Happ [aut, cre]
 Maintainer: Clara Happ <clara.happ@stat.uni-muenchen.de>
 Description: Calculate a multivariate functional principal component analysis
     for data observed on different dimensional domains. The estimation algorithm
