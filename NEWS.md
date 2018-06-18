@@ -1,3 +1,9 @@
+# MFPCA 1.2-3
+
+## New features
+* Skip third party tests on CRAN.
+
+
 # MFPCA 1.2-2
 
 ## New features
