@@ -87,6 +87,7 @@ test_that("test univariate expansions 2D", {
   expect_equal(mean(norm(spline2D)),  2.84807, tolerance = 1e-5) 
   expect_equal(norm(spline2D)[1], 2.27017, tolerance = 1e-5)
   
+
   spline2Dpen <- MFPCA:::splineFunction2Dpen(scores = scores, argvals = argvals, bs = "ps", m = 3, k = 5)
   expect_equal(nObs(spline2Dpen), 20)
   expect_equal(nObsPoints(spline2Dpen), c(101,101))
@@ -94,9 +95,11 @@ test_that("test univariate expansions 2D", {
     skip("Regression tests for spline2Dpen skipped on this architecture.")
   else
   {
+    skip_on_cran() # skip exact tests on CRAN as they depend solely on mgcv::bam
     expect_equal(mean(norm(spline2Dpen)),  2.80049, tolerance = 1e-5) 
     expect_equal(norm(spline2Dpen)[1], 2.15060, tolerance = 1e-5)
   }
+  
   
   # wrapper function
   expandDefault2D <- MFPCA:::univExpansion(type = "default", scores = scores, argvals = argvals, 
