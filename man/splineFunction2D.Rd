@@ -3,48 +3,53 @@
 \name{splineFunction2D}
 \alias{splineFunction2D}
 \alias{splineFunction2Dpen}
-\title{Calculate linear combinations of spline basis functions on two-dimensional 
-domains}
+\title{Calculate linear combinations of spline basis functions on
+two-dimensional domains}
 \usage{
 splineFunction2D(scores, argvals, bs, m, k)
 
 splineFunction2Dpen(scores, argvals, bs, m, k)
 }
 \arguments{
-\item{scores}{A matrix of dimension \code{N x K}, representing the \code{K} 
-scores (coefficients) for each of the \code{N} observations.}
+\item{scores}{A matrix of dimension \code{N x K}, representing the
+\code{K} scores (coefficients) for each of the \code{N} observations.}
 
-\item{argvals}{A list containing a two numeric vectors, corresponding to the 
-x- and y-values, on which the functions should be defined.}
+\item{argvals}{A list containing a two numeric vectors, corresponding
+to the x- and y-values, on which the functions should be defined.}
 
-\item{bs}{A vector of character strings (or a single character), the type of 
-basis functions to be used. Please refer to \code{\link[mgcv]{te}} for a 
-list of possible basis functions.}
+\item{bs}{A vector of character strings (or a single character), the
+type of basis functions to be used. Please refer to
+\code{\link[mgcv]{te}} for a list of possible basis functions.}
 
-\item{m}{A numeric vector (or a single number), the order of the spline 
+\item{m}{A numeric vector (or a single number), the order of the spline
 basis. See \code{\link[mgcv]{s}} for details.}
 
-\item{k}{A numeric vector (or a single number), the number of basis functions
-used.  See  \code{\link[mgcv]{s}} for details.}
+\item{k}{A numeric vector (or a single number), the number of basis
+functions used.  See  \code{\link[mgcv]{s}} for details.}
 }
 \value{
-An object of class \code{funData} with \code{N} observations on the 
-  two-dimensional domain specified by \code{argvals}, corresponding to the 
-  linear combination of spline basis functions.
+An object of class \code{funData} with \code{N} observations on
+  the two-dimensional domain specified by \code{argvals}, corresponding
+  to the linear combination of spline basis functions.
 }
 \description{
-Given scores (coefficients), these functions calculate a linear combination 
-of spline tensor basis functions on two-dimensional domains based on the 
-\code{\link[mgcv]{gam}}/\code{\link[mgcv]{bam}} functions in the \pkg{mgcv} package. See 
-Details.
+Given scores (coefficients), these functions calculate a linear
+combination of spline tensor basis functions on two-dimensional domains
+based on the \code{\link[mgcv]{gam}}/\code{\link[mgcv]{bam}} functions
+in the \pkg{mgcv} package. See Details.
 }
 \details{
-If the scores have been calculated based on an unpenalized tensor spline 
-basis, the linear combination is computed based on the
-\code{\link[mgcv]{gam}} functions ((\code{splineFunction2D})). If the scores
-were obtained using penalization, the expansion is calculated via 
-\link[mgcv]{bam} (\code{splineFunction2Dpen}).
+If the scores have been calculated based on an unpenalized tensor
+spline basis, the linear combination is computed based on the
+\code{\link[mgcv]{gam}} functions ((\code{splineFunction2D})). If the
+scores were obtained using penalization, the expansion is calculated
+via \link[mgcv]{bam} (\code{splineFunction2Dpen}).
 }
+\section{Warning}{
+ The function \code{splineFunction2Dpen}, which relies
+  on \link[mgcv]{bam} has not been tested with ATLAS/MKL/OpenBLAS.
+}
+
 \examples{
 set.seed(1234)
 
@@ -56,7 +61,7 @@ scores <- t(replicate(n = N, rnorm(K, sd = (K:1)/K)))
 dim(scores)
 
 # expand spline basis on [0,1] x [-0.5, 0.5]
-funs <- MFPCA:::splineFunction2D(scores = scores, 
+funs <- MFPCA:::splineFunction2D(scores = scores,
                      argvals = list(seq(0,1,0.01), seq(-0.5, 0.5, 0.01)),
                      bs = "ps", m = 2, k = c(7,8)) # params for mgcv
 
@@ -70,7 +75,7 @@ for(i in 1:4)
 par(oldPar)
 }
 \seealso{
-\code{\link{univExpansion}},  \code{\link{gam}}, 
+\code{\link{univExpansion}},  \code{\link{gam}},
   \code{\link{splineBasis2D}}
 }
 \keyword{internal}
