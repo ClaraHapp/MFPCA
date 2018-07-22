@@ -2,18 +2,17 @@ Package: MFPCA
 Type: Package
 Title: Multivariate Functional Principal Component Analysis for Data Observed on
     Different Dimensional Domains
-Version: 1.2-1
-Date: 2018-03-12
+Version: 1.2-3
+Date: 2018-06-18
 Authors@R: person("Clara", "Happ", email = "clara.happ@stat.uni-muenchen.de",
-                  role = c("aut", "cre"))
-Author: Clara Happ [aut, cre]
+                  role = c("aut", "cre"), comment = c(ORCID = "0000-0003-4737-3835"))
 Maintainer: Clara Happ <clara.happ@stat.uni-muenchen.de>
 Description: Calculate a multivariate functional principal component analysis
     for data observed on different dimensional domains. The estimation algorithm
     relies on univariate basis expansions for each element of the multivariate
-    functional data. Multivariate and univariate functional data objects are
+    functional data  (Happ & Greven, 2018) <doi:10.1080/01621459.2016.1273115>. Multivariate and univariate functional data objects are
     represented by S4 classes for this type of data implemented in the package
-    'funData'.
+    'funData'. For more details on the general concepts of both packages and a case study, see Happ (2018) <arXiv:1707.02129>.
 License: GPL-2
 Imports:
     abind,
@@ -25,7 +24,7 @@ Imports:
     plyr,
     stats
 Depends:
-    R (>= 3.1.0),
+    R (>= 3.2.0),
     funData (>= 1.2)
 Suggests:
     covr,

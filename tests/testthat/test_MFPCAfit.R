@@ -32,13 +32,27 @@ test_that("Test print function", {
   expect_known_output(print(pca2D), file = "outputs/print_MFPCAfit_2D.txt")
 })
 
-#### summary function ####
-test_that("Test summary function", {
+#### summary & print function ####
+test_that("Test summary and associated print function", {
   expect_error(MFPCA:::summary.MFPCAfit(1:4),
                "Argument is not of class 'MFPCAfit'.")
   
-  expect_known_output(summary(pca1D), file = "outputs/summary_MFPCAfit.txt")
-  expect_known_output(summary(pca2D), file = "outputs/summary_MFPCAfit_2D.txt")
+  s1 <- summary(pca1D)
+  s2 <- summary(pca2D)
+  
+  expect_s3_class(s1, "summary.MFPCAfit")
+  expect_equal(dim(s1), c(3,5))
+  expect_equal(attr(s1, "npc"), 5)
+  expect_equal(attr(s1, "nel"), 2)
+  
+  expect_s3_class(s2, "summary.MFPCAfit")
+  expect_equal(dim(s2), c(3,10))
+  expect_equal(attr(s2, "npc"), 10)
+  expect_equal(attr(s2, "nel"), 2)
+  
+  
+  expect_known_output(print(s1), file = "outputs/summary_MFPCAfit.txt")
+  expect_known_output(print(s2), file = "outputs/summary_MFPCAfit_2D.txt")
 })
 
 #### predict function ####

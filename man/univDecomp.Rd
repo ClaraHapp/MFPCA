@@ -10,39 +10,47 @@ univDecomp(type, funDataObject, ...)
 \item{type}{A character string, specifying the basis for which the
 decomposition is to be calculated.}
 
-\item{funDataObject}{A \code{funData} object, representing the (univariate) functional
-data samples.}
+\item{funDataObject}{A \code{funData} object, representing the
+(univariate) functional data samples.}
 
-\item{...}{Further parameters, passed to the function for the particular basis to
-use.}
+\item{...}{Further parameters, passed to the function for the
+particular basis to use.}
 }
 \value{
-\item{scores}{A matrix of scores (coefficients) for each observation
-  based on the prespecified basis functions.} \item{B}{A matrix containing
-  the scalar products of the basis functions. Can be \code{NULL} if the basis
-  functions are orthonormal.} \item{ortho}{Logical. If \code{TRUE}, the basis
-  functions are all orthonormal.} \item{functions}{A functional data object,
-  representing the basis functions. Can be \code{NULL} if the basis functions
-  are not estimated from the data, but have a predefined form. See Details.}
+\item{scores}{A matrix of scores (coefficients) for each
+  observation based on the prespecified basis functions.} \item{B}{A
+  matrix containing the scalar products of the basis functions. Can be
+  \code{NULL} if the basis functions are orthonormal.}
+  \item{ortho}{Logical. If \code{TRUE}, the basis functions are all
+  orthonormal.} \item{functions}{A functional data object, representing
+  the basis functions. Can be \code{NULL} if the basis functions are
+  not estimated from the data, but have a predefined form. See
+  Details.}
 }
 \description{
-This function calculates a univariate basis decomposition for a (univariate)
-functional data object.
+This function calculates a univariate basis decomposition for a
+(univariate) functional data object.
 }
 \details{
 Functional data \eqn{X_i(t)} can often be approximated by a linear
-combination of basis functions \eqn{b_k(t)} \deqn{X_i(t) = \sum_{k = 1}^K
-\theta_{ik} b_k(t), i = 1, \ldots, N.} The basis functions may be
-prespecified (such as spline basis functions or Fourier bases) or can be
-estimated from the data (e.g. by functional principal component analysis) and
-are the same for all observations \eqn{X_1(t), \ldots, X_n(t)}. The
-coefficients (or scores) \eqn{\theta_{ik}} reflect the weight of each basis
-function \eqn{b_k(t)} for the observed function \eqn{X_i(t)} and can be used
-to characterize the individual observations.
+combination of basis functions \eqn{b_k(t)} \deqn{X_i(t) = \sum_{k =
+1}^K \theta_{ik} b_k(t), i = 1, \ldots, N.} The basis functions may be
+prespecified (such as spline basis functions or Fourier bases) or can
+be estimated from the data (e.g. by functional principal component
+analysis) and are the same for all observations \eqn{X_1(t), \ldots,
+X_n(t)}. The coefficients (or scores) \eqn{\theta_{ik}} reflect the
+weight of each basis function \eqn{b_k(t)} for the observed function
+\eqn{X_i(t)} and can be used to characterize the individual
+observations.
 }
+\section{Warning}{
+ The options \code{type = "DCT2D"} and \code{type =
+  "DCT3D"} have not been tested with ATLAS/MKL/OpenBLAS.
+}
+
 \examples{
 # generate some data
-dat <- simFunData(argvals = seq(0,1,0.01), M = 5, 
+dat <- simFunData(argvals = seq(0,1,0.01), M = 5,
                   eFunType = "Poly", eValType = "linear", N = 100)$simData
 
 # decompose the data in univariate functional principal components...
@@ -54,8 +62,10 @@ decSplines <- univDecomp(type = "splines1Dpen", funDataObject = dat) # use mgcv'
 str(decSplines)
 }
 \seealso{
-\code{\link{MFPCA}}, \code{\link{univExpansion}}, \code{\link{fpcaBasis}}, \code{\link{splineBasis1D}},
-  \code{\link{splineBasis1Dpen}}, \code{\link{splineBasis2D}}, \code{\link{splineBasis2Dpen}},
-  \code{\link{umpcaBasis}}, \code{\link{fcptpaBasis}},
-  \code{\link{dctBasis2D}}, \code{\link{dctBasis3D}}
+\code{\link{MFPCA}}, \code{\link{univExpansion}},
+  \code{\link{fpcaBasis}}, \code{\link{splineBasis1D}},
+  \code{\link{splineBasis1Dpen}}, \code{\link{splineBasis2D}},
+  \code{\link{splineBasis2Dpen}}, \code{\link{umpcaBasis}},
+  \code{\link{fcptpaBasis}}, \code{\link{dctBasis2D}},
+  \code{\link{dctBasis3D}}
 }

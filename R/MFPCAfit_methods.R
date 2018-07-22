@@ -89,29 +89,36 @@ scoreplot.MFPCAfit <- function(PCAobject, choices = 1:2, scale = FALSE, ...)
 }
 
 #' Screeplot for Multivariate Functional Principal Component Analysis
-#' 
-#' This function plots the proportion of variance explained by the leading 
+#'
+#' This function plots the proportion of variance explained by the leading
 #' eigenvalues in an MFPCA against the number of the principal component.
-#' 
-#' @param x An object of class MFPCAfit, typically returned by a call to 
+#'
+#' @param x An object of class MFPCAfit, typically returned by a call to
 #'   \code{\link{MFPCA}}.
-#' @param npcs The number of eigenvalued to be plotted. Defaults to all 
-#'   eigenvalues if their number is less or equal to 10, otherwise show only the
-#'   leading first 10 eigenvalues.
-#' @param type The type of screeplot to be plotted. Can be either \code{"lines"}
-#'   or \code{"barplot"}. Defaults to \code{"lines"}.
-#' @param main The plot of the title. Defaults to the variable name of \code{x}.
+#' @param npcs The number of eigenvalued to be plotted. Defaults to all
+#'   eigenvalues if their number is less or equal to 10, otherwise show
+#'   only the leading first 10 eigenvalues.
+#' @param type The type of screeplot to be plotted. Can be either
+#'   \code{"lines"} or \code{"barplot"}. Defaults to \code{"lines"}.
+#' @param ylim The limits for the y axis. Can be passed either as a vector
+#'   of length 2 or as \code{NULL} (default). In the second case,
+#'   \code{ylim} is set to \code{(0,max(pve))}, with \code{pve} the
+#'   proportion of variance explained by the principal
+#'   components to be plotted.
+#' @param main The title of the plot. Defaults to the variable name of
+#'   \code{x}.
 #' @param ... Other graphic parameters passed to
 #'   \code{\link[graphics]{plot.default}} (for \code{type = "lines"}) or
 #'   \code{\link[graphics]{barplot}} (for \code{type = "barplot"}).
-#'   
+#'
 #' @seealso \code{\link{MFPCA}}, \code{\link[stats]{screeplot}}
-#' 
+#'
 #' @importFrom stats screeplot
 #' @importFrom graphics barplot
-#' 
+#' @importFrom graphics axis
+#'
 #' @export
-#' 
+#'
 #' @examples
 #' # Simulate multivariate functional data on one-dimensonal domains
 #' # and calculate MFPCA (cf. MFPCA help)
@@ -122,11 +129,11 @@ scoreplot.MFPCAfit <- function(PCAobject, choices = 1:2, scale = FALSE, ...)
 #' # MFPCA based on univariate FPCA
 #' PCA <- MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "uFPCA"),
 #'                                                      list(type = "uFPCA")))
-#'                                                      
+#'
 #' # screeplot
 #' screeplot(PCA) # default options
 #' screeplot(PCA, npcs = 3, type = "barplot", main= "Screeplot")
-screeplot.MFPCAfit <- function(x, npcs = min(10, length(x$values)), type = "lines",
+screeplot.MFPCAfit <- function(x, npcs = min(10, length(x$values)), type = "lines", ylim = NULL,
                                main = deparse(substitute(x)), ...)
 {
   if(!inherits(x, "MFPCAfit"))
@@ -143,19 +150,18 @@ screeplot.MFPCAfit <- function(x, npcs = min(10, length(x$values)), type = "line
 
   ylab <- "Proportion of Variance Explained"
   pve <- x$values[1:npcs]/sum(x$values)
-  ylim <- c(0,max(pve))
   
-  if(type == "lines")
-    plot(x = 1:npcs, y = pve, type = "b", ylim = ylim,
-         main = main, xlab = "PCs", ylab = ylab)
-  else
-  {
-   if(type == "barplot")
-     graphics::barplot(height = pve, main = main, 
-             names.arg = paste("PC", 1:npcs), ylab = ylab)
-    else
-      stop("Type ", type, " not defined in screeplot.")
-  }
+  if(is.null(ylim))
+     ylim <- c(0,max(pve))
+  
+  switch(type,
+         "lines" = {plot(x = 1:npcs, y = pve, type = "b", ylim = ylim,
+                                   main = main, xlab = "PCs", ylab = ylab, xaxt = "n", ...)
+                    graphics::axis(1, at = 1:npcs)},
+         "barplot" = graphics::barplot(height = pve, main = main, ylim = ylim,
+                                       names.arg = paste("PC", 1:npcs), ylab = ylab, ...),
+         stop("Type ", type, " not defined in screeplot.")
+  )
   
   invisible(NULL)
 }
@@ -379,9 +385,6 @@ summary.MFPCAfit <- function(object, ...)
   if(!inherits(object, "MFPCAfit"))
     stop("Argument is not of class 'MFPCAfit'.")
   
-  cat(funData::nObs(object$functions), "multivariate functional principal components estimated with",
-      length(object$functions), "elements, each.\n", rep(c(" ", "*", " "), each = 10), "\n")
-  
   vals <- object$values
   
   res <- rbind(`Eigenvalue` = vals, 
@@ -389,5 +392,34 @@ summary.MFPCAfit <- function(object, ...)
                `Cumulative proportion` = cumsum(vals)/sum(vals))
   colnames(res) <- paste("PC", 1:length(vals))
   
+  attr(res, "npc") <- funData::nObs(object$functions)
+  attr(res, "nel") <- length(object$functions)
+  
+  class(res) <- "summary.MFPCAfit"
+  
   return(res)
+}
+
+
+#' Print summary of a Multivariate Functional Principal Component Analysis
+#' 
+#' A \code{print} method for class \code{MFPCAfit.summary}
+#' 
+#' @param x An object of class \code{MFPCAfit.summary}, usually returned by a
+#'   call to \code{MFPCAfit.summary}.
+#' @param ... Arguments passed to or from other methods.
+#'   
+#' @export
+#' @method print summary.MFPCAfit
+print.summary.MFPCAfit <- function(x, ...)
+{
+  if(!inherits(x, "summary.MFPCAfit"))
+    stop("Argument is not of class 'summary.MFPCAfit'.")
+  
+  cat(attr(x, "npc"), "multivariate functional principal components estimated with",
+      attr(x, "nel"), "elements, each.\n", rep(c(" ", "*", " "), each = 10), "\n")
+  
+  print.table(x, ...)
+  
+  invisible(x)
 }

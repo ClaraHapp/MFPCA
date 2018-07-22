@@ -17,6 +17,7 @@ test_that("Test fftw: DCT", {
     expect_error(stop(fftw2D), "dctBasis2D requires C-library fftw3 to be installed. Check http://www.fftw.org/ for more information.")
   else
   {
+    skip_on_cran() # skip this on CRAN, depends on third party code
     expect_equal(length(fftw2D$ind), 510)
     expect_equal(fftw2D$ind[1:3], c(2,92,102))
     expect_equal(mean(fftw2D$val), -0.000499, tolerance = 1e-7)
@@ -29,6 +30,7 @@ test_that("Test fftw: DCT", {
     expect_error(stop(fftw3D), "dctBasis3D requires C-library fftw3 to be installed. Check http://www.fftw.org/ for more information.")
   else
   {
+    skip_on_cran() # skip this on CRAN, depends on third party code
     expect_equal(length(fftw3D$ind), 10711)
     expect_equal(fftw3D$ind[1:3], c(102, 103, 110))
     expect_equal(mean(fftw3D$val), 0.0002752, tolerance = 1e-7)
@@ -38,6 +40,8 @@ test_that("Test fftw: DCT", {
 
 
 test_that("test univariate DCT 2D", {
+  skip_on_cran() # skip this on CRAN, depends on third party code
+  
   set.seed(1)
   x1 <- seq(0,1,length.out=50)
   x2 <- seq(-1,1, length.out=75)
@@ -62,12 +66,12 @@ test_that("test univariate DCT 2D", {
     decompDCT2D <- MFPCA:::univDecomp(type = "DCT2D", funDataObject = f2, qThresh = 0.95)
     expect_equal(decompDCT2D, dct2D)
   }
-  
-  
 })
 
 
 test_that("test univariate DCT 3D", {
+  skip_on_cran() # skip this on CRAN, depends on third party code
+  
   set.seed(3)
   x1 <- seq(0, 1, length.out = 40)
   x2 <- seq(-1, 1, length.out = 30)
@@ -116,26 +120,30 @@ test_that("Test fftw: IDCT", {
     expect_error(stop(idct2D), "dctBasis2D requires C-library fftw3 to be installed. Check http://www.fftw.org/ for more information.")
   else
   {
+    skip_on_cran() # skip this on CRAN, depends on third party code
     expect_equal(dim(idct2D), c(10, 20))
     expect_equal(mean(idct2D), 0)
     expect_equal(idct2D[1,1], 1.08970, tolerance = 1e-5)
+    
+    # check correct handling of empty scores
+    expect_equal(MFPCA:::idct2D(scores = NULL, ind = NULL, dim = c(5,5)), array(0, dim = c(5,5)))
   }
   
-  # check correct handling of empty scores
-  expect_equal(MFPCA:::idct2D(scores = NULL, ind = NULL, dim = c(5,5)), array(0, dim = c(5,5)))
+  
   
   idct3D <- try(MFPCA:::idct3D(scores = scores, ind = sample(2000, 25), dim = c(10, 20, 10)), silent = TRUE)
   if(class(idct3D) == "try-error")
     expect_error(stop(idct3D), "dctBasis3D requires C-library fftw3 to be installed. Check http://www.fftw.org/ for more information.")
   else 
   {
+    skip_on_cran() # skip this on CRAN, depends on third party code
     expect_equal(dim(idct3D), c(10, 20, 10))
     expect_equal(mean(idct3D), 0)
     expect_equal(idct3D[1,1,1], 0.87795, tolerance = 1e-5)
+    
+    # check correct handling of empty scores
+    expect_equal(MFPCA:::idct3D(scores = NULL, ind = NULL, dim = c(5,5,5)), array(0,c(5,5,5)))
   }
-  
-  # check correct handling of empty scores
-  expect_equal(MFPCA:::idct3D(scores = NULL, ind = NULL, dim = c(5,5,5)), array(0,c(5,5,5)))
 })
 
 
@@ -149,6 +157,7 @@ test_that("test univariate IDCT 2D", {
     expect_error(stop(dct2D), "dctBasis2D requires C-library fftw3 to be installed. Check http://www.fftw.org/ for more information.\"")
   else
   {
+    skip_on_cran() # skip this on CRAN, depends on third party code
     expect_equal(nObs(dct2D), 20)
     expect_equal(nObsPoints(dct2D),  c(101,101))
     expect_equal(mean(norm(dct2D)),  2.06938, tolerance = 1e-5) 
@@ -171,6 +180,7 @@ test_that("test univariate IDCT 3D", {
     expect_error(stop(dct3D), "dctBasis3D requires C-library fftw3 to be installed. Check http://www.fftw.org/ for more information.")
   else
   {
+    skip_on_cran() # skip this on CRAN, depends on third party code
     expect_equal(nObs(dct3D), 20)
     expect_equal(nObsPoints(dct3D),  c(101, 101, 21))
     expect_equal(mean(norm(dct3D)),  7.57861, tolerance = 1e-5) 

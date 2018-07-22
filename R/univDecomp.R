@@ -1,49 +1,57 @@
 #' Univariate basis decomposition
 #'
-#' This function calculates a univariate basis decomposition for a (univariate)
-#' functional data object.
+#' This function calculates a univariate basis decomposition for a
+#' (univariate) functional data object.
 #'
 #' Functional data \eqn{X_i(t)} can often be approximated by a linear
-#' combination of basis functions \eqn{b_k(t)} \deqn{X_i(t) = \sum_{k = 1}^K
-#' \theta_{ik} b_k(t), i = 1, \ldots, N.} The basis functions may be
-#' prespecified (such as spline basis functions or Fourier bases) or can be
-#' estimated from the data (e.g. by functional principal component analysis) and
-#' are the same for all observations \eqn{X_1(t), \ldots, X_n(t)}. The
-#' coefficients (or scores) \eqn{\theta_{ik}} reflect the weight of each basis
-#' function \eqn{b_k(t)} for the observed function \eqn{X_i(t)} and can be used
-#' to characterize the individual observations.
+#' combination of basis functions \eqn{b_k(t)} \deqn{X_i(t) = \sum_{k =
+#' 1}^K \theta_{ik} b_k(t), i = 1, \ldots, N.} The basis functions may be
+#' prespecified (such as spline basis functions or Fourier bases) or can
+#' be estimated from the data (e.g. by functional principal component
+#' analysis) and are the same for all observations \eqn{X_1(t), \ldots,
+#' X_n(t)}. The coefficients (or scores) \eqn{\theta_{ik}} reflect the
+#' weight of each basis function \eqn{b_k(t)} for the observed function
+#' \eqn{X_i(t)} and can be used to characterize the individual
+#' observations.
+#'
+#' @section Warning: The options \code{type = "DCT2D"} and \code{type =
+#'   "DCT3D"} have not been tested with ATLAS/MKL/OpenBLAS.
 #'
 #' @param type A character string, specifying the basis for which the
 #'   decomposition is to be calculated.
-#' @param funDataObject A \code{funData} object, representing the (univariate) functional
-#'   data samples.
-#' @param ... Further parameters, passed to the function for the particular basis to
-#'   use.
+#' @param funDataObject A \code{funData} object, representing the
+#'   (univariate) functional data samples.
+#' @param ... Further parameters, passed to the function for the
+#'   particular basis to use.
 #'
-#' @return \item{scores}{A matrix of scores (coefficients) for each observation
-#'   based on the prespecified basis functions.} \item{B}{A matrix containing
-#'   the scalar products of the basis functions. Can be \code{NULL} if the basis
-#'   functions are orthonormal.} \item{ortho}{Logical. If \code{TRUE}, the basis
-#'   functions are all orthonormal.} \item{functions}{A functional data object,
-#'   representing the basis functions. Can be \code{NULL} if the basis functions
-#'   are not estimated from the data, but have a predefined form. See Details.}
+#' @return \item{scores}{A matrix of scores (coefficients) for each
+#'   observation based on the prespecified basis functions.} \item{B}{A
+#'   matrix containing the scalar products of the basis functions. Can be
+#'   \code{NULL} if the basis functions are orthonormal.}
+#'   \item{ortho}{Logical. If \code{TRUE}, the basis functions are all
+#'   orthonormal.} \item{functions}{A functional data object, representing
+#'   the basis functions. Can be \code{NULL} if the basis functions are
+#'   not estimated from the data, but have a predefined form. See
+#'   Details.}
 #'
-#' @seealso \code{\link{MFPCA}}, \code{\link{univExpansion}}, \code{\link{fpcaBasis}}, \code{\link{splineBasis1D}},
-#'   \code{\link{splineBasis1Dpen}}, \code{\link{splineBasis2D}}, \code{\link{splineBasis2Dpen}},
-#'   \code{\link{umpcaBasis}}, \code{\link{fcptpaBasis}},
-#'   \code{\link{dctBasis2D}}, \code{\link{dctBasis3D}}
-#'   
+#' @seealso \code{\link{MFPCA}}, \code{\link{univExpansion}},
+#'   \code{\link{fpcaBasis}}, \code{\link{splineBasis1D}},
+#'   \code{\link{splineBasis1Dpen}}, \code{\link{splineBasis2D}},
+#'   \code{\link{splineBasis2Dpen}}, \code{\link{umpcaBasis}},
+#'   \code{\link{fcptpaBasis}}, \code{\link{dctBasis2D}},
+#'   \code{\link{dctBasis3D}}
+#'
 #' @export univDecomp
-#'   
+#'
 #' @examples
 #' # generate some data
-#' dat <- simFunData(argvals = seq(0,1,0.01), M = 5, 
+#' dat <- simFunData(argvals = seq(0,1,0.01), M = 5,
 #'                   eFunType = "Poly", eValType = "linear", N = 100)$simData
-#' 
+#'
 #' # decompose the data in univariate functional principal components...
 #' decFPCA <- univDecomp(type = "uFPCA", funDataObject = dat, npc = 5)
 #' str(decFPCA)
-#' 
+#'
 #' # or in splines (penalized)
 #' decSplines <- univDecomp(type = "splines1Dpen", funDataObject = dat) # use mgcv's default params
 #' str(decSplines)
@@ -754,85 +762,90 @@ splineBasis2Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
 }
 
 
-#' Calculate a cosine basis representation for functional data on two- or 
+#' Calculate a cosine basis representation for functional data on two- or
 #' three-dimensional domains
-#' 
-#' These functions calculate  a tensor cosine basis representation for 
-#' functional data on two- or three-dimensional domains based on a discrete 
-#' cosine transformation (DCT) using the C-library \code{fftw3} 
-#' (\url{http://www.fftw.org/}). Coefficients under a given thershold are set to
-#' 0 to reduce complexity and for denoising.
-#' 
-#' Given the (discretized) observed functions \eqn{X_i}, the function 
-#' \code{dctBasis2D} calculates a basis representation \deqn{X_i(s,t) = \sum_{m 
-#' = 0}^{K_1-1} \sum_{n = 0}^{K_2-1} \theta_{mn} f_{mn}(s,t)} of a 
-#' two-dimensional function \eqn{X_i(s,t)} in terms of (orthogonal) tensor 
-#' cosine basis functions \deqn{f_{mn}(s,t) = c_m c_n \cos(ms) \cos(nt), \quad 
-#' (s,t) \in \mathcal{T}}{f_{mn}(s,t) = c_m c_n \cos(ms) \cos(nt), \quad (s,t) 
-#' \in \calT} with \eqn{c_m = \frac{1}{\sqrt{\pi}}} for \eqn{m=0} and \eqn{c_m =
-#' \sqrt{\frac{2}{\pi}}} for \eqn{m=1,2,\ldots} based on a discrete cosine 
-#' transform (DCT).
-#' 
-#' If not thresholded (\code{qThresh = 0}), the function returns all non-zero 
-#' coefficients \eqn{\theta_{mn}} in the basis representation in a 
-#' \code{\link[Matrix]{sparseMatrix}} (package \pkg{Matrix}) called
-#' \code{scores}. Otherwise, coefficients with \deqn{|\theta_{mn}| <= q } are
-#' set to zero, where \eqn{q} is the \code{qThresh}-quantile of
+#'
+#' These functions calculate  a tensor cosine basis representation for
+#' functional data on two- or three-dimensional domains based on a
+#' discrete cosine transformation (DCT) using the C-library \code{fftw3}
+#' (\url{http://www.fftw.org/}). Coefficients under a given thershold are
+#' set to 0 to reduce complexity and for denoising.
+#'
+#' Given the (discretized) observed functions \eqn{X_i}, the function
+#' \code{dctBasis2D} calculates a basis representation \deqn{X_i(s,t) =
+#' \sum_{m = 0}^{K_1-1} \sum_{n = 0}^{K_2-1} \theta_{mn} f_{mn}(s,t)} of a
+#' two-dimensional function \eqn{X_i(s,t)} in terms of (orthogonal) tensor
+#' cosine basis functions \deqn{f_{mn}(s,t) = c_m c_n \cos(ms) \cos(nt),
+#' \quad (s,t) \in \mathcal{T}}{f_{mn}(s,t) = c_m c_n \cos(ms) \cos(nt),
+#' \quad (s,t) \in \calT} with \eqn{c_m = \frac{1}{\sqrt{\pi}}} for
+#' \eqn{m=0} and \eqn{c_m = \sqrt{\frac{2}{\pi}}} for \eqn{m=1,2,\ldots}
+#' based on a discrete cosine transform (DCT).
+#'
+#' If not thresholded (\code{qThresh = 0}), the function returns all
+#' non-zero coefficients \eqn{\theta_{mn}} in the basis representation in
+#' a \code{\link[Matrix]{sparseMatrix}} (package \pkg{Matrix}) called
+#' \code{scores}. Otherwise, coefficients with \deqn{|\theta_{mn}| <= q }
+#' are set to zero, where \eqn{q} is the \code{qThresh}-quantile of
 #' \eqn{|\theta_{mn}|}.
-#' 
-#' For functions \eqn{X_i(s,t,u)} on three-dimensional domains, the function 
-#' \code{dctBasis3D} calculates a basis representation \deqn{X_i(s,t,u) = 
-#' \sum_{m = 0}^{K_1-1} \sum_{n = 0}^{K_2-1} \sum_{k = 0}^{K_3-1} \theta_{mnk} 
-#' f_{mnk}(s,t,u)} in terms of (orthogonal) tensor cosine basis functions 
-#' \deqn{f_{mnk}(s,t,u) = c_m c_n c_k \cos(ms) \cos(nt) \cos(ku), \quad (s,t,u) 
-#' \in \mathcal{T}}{f_{mnk}(s,t,u) = c_m c_n c_k \cos(ms) \cos(nt) \cos(ku), 
-#' \quad (s,t,u) \in \calT} again with \eqn{c_m = \frac{1}{\sqrt{pi}}} for 
-#' \eqn{m=0} and \eqn{c_m = \sqrt{\frac{2}{pi}}} for \eqn{m=1,2,\ldots} based on
-#' a discrete cosine transform (DCT). The thresholding works analogous as for 
-#' the two-dimensional case.
-#' 
-#' @section Warning: If the C-library \code{fftw3} is not available when the 
-#'   package \code{MFPCA} is installed, this function is disabled an will throw 
-#'   an error. For full functionality install the C-library \code{fftw3} from 
-#'   \url{http://www.fftw.org/} and reinstall \code{MFPCA}.
-#'   
-#' @param funDataObject An object of class \code{\link[funData]{funData}} 
-#'   containing the observed functional data samples and for which the basis 
-#'   representation is calculated.
-#' @param qThresh A numeric with value in \eqn{[0,1]}, giving the quantile for 
-#'   thresholding the coefficients. See Details.
-#' @param parallel Logical. If \code{TRUE}, the coefficients for the basis 
-#'   functions are calculated in parallel. The implementation is based on the 
-#'   \code{\link[foreach]{foreach}} function and requires a parallel backend 
-#'   that must be registered before; see \code{\link[foreach]{foreach}} for 
-#'   details. Defaults to \code{FALSE}.
-#'   
-#' @return \item{scores}{A \code{\link[Matrix]{sparseMatrix}} of scores 
-#'   (coefficients) with dimension \code{N x K}, reflecting the weights 
-#'   \eqn{\theta_{mn}} (\eqn{\theta_{mnk}}) for each basis function in each
-#'   observation, where \code{K} is the total number of basis functions used.}
-#'   \item{B}{A diagonal matrix, giving the norms of the different basis
-#'   functions used (as they are orthogonal).} \item{ortho}{Logical, set to
-#'   \code{FALSE}, as basis functions are orthogonal, but in genereal not
-#'   orthonormal.} \item{functions}{\code{NULL}, as basis functions are known.}
-#'   
-#' @seealso \code{\link{univDecomp}}, \code{\link{dct2D}}, \code{\link{dct3D}}
-#'   
+#'
+#' For functions \eqn{X_i(s,t,u)} on three-dimensional domains, the
+#' function \code{dctBasis3D} calculates a basis representation
+#' \deqn{X_i(s,t,u) = \sum_{m = 0}^{K_1-1} \sum_{n = 0}^{K_2-1} \sum_{k =
+#' 0}^{K_3-1} \theta_{mnk} f_{mnk}(s,t,u)} in terms of (orthogonal) tensor
+#' cosine basis functions \deqn{f_{mnk}(s,t,u) = c_m c_n c_k \cos(ms)
+#' \cos(nt) \cos(ku), \quad (s,t,u) \in \mathcal{T}}{f_{mnk}(s,t,u) = c_m
+#' c_n c_k \cos(ms) \cos(nt) \cos(ku), \quad (s,t,u) \in \calT} again with
+#' \eqn{c_m = \frac{1}{\sqrt{pi}}} for \eqn{m=0} and \eqn{c_m =
+#' \sqrt{\frac{2}{pi}}} for \eqn{m=1,2,\ldots} based on a discrete cosine
+#' transform (DCT). The thresholding works analogous as for the
+#' two-dimensional case.
+#'
+#' @section Warning: If the C-library \code{fftw3} is not available when
+#'   the package \code{MFPCA} is installed, this function is disabled an
+#'   will throw an error. For full functionality install the C-library
+#'   \code{fftw3} from \url{http://www.fftw.org/} and reinstall
+#'   \code{MFPCA}. This function has not been tested with
+#'   ATLAS/MKL/OpenBLAS.
+#'
+#' @param funDataObject An object of class \code{\link[funData]{funData}}
+#'   containing the observed functional data samples and for which the
+#'   basis representation is calculated.
+#' @param qThresh A numeric with value in \eqn{[0,1]}, giving the quantile
+#'   for thresholding the coefficients. See Details.
+#' @param parallel Logical. If \code{TRUE}, the coefficients for the basis
+#'   functions are calculated in parallel. The implementation is based on
+#'   the \code{\link[foreach]{foreach}} function and requires a parallel
+#'   backend that must be registered before; see
+#'   \code{\link[foreach]{foreach}} for details. Defaults to \code{FALSE}.
+#'
+#' @return \item{scores}{A \code{\link[Matrix]{sparseMatrix}} of scores
+#'   (coefficients) with dimension \code{N x K}, reflecting the weights
+#'   \eqn{\theta_{mn}} (\eqn{\theta_{mnk}}) for each basis function in
+#'   each observation, where \code{K} is the total number of basis
+#'   functions used.} \item{B}{A diagonal matrix, giving the norms of the
+#'   different basis functions used (as they are orthogonal).}
+#'   \item{ortho}{Logical, set to \code{FALSE}, as basis functions are
+#'   orthogonal, but in genereal not orthonormal.}
+#'   \item{functions}{\code{NULL}, as basis functions are known.}
+#'
+#' @seealso \code{\link{univDecomp}}, \code{\link{dct2D}},
+#'   \code{\link{dct3D}}
+#'
 #' @keywords internal
-#'   
+#'
 #' @examples
 #' # Simulate data with 10 observations on two-dimensional domain (images)
 #' x1 <- seq(0, 1, length.out = 50)
 #' x2 <- seq(-1, 1, length.out = 75)
 #' f2 <- funData(argvals = list(x1, x2),
-#'               X = aperm(replicate(10, x1 %o% cos(pi*x2) + 
+#'               X = aperm(replicate(10, x1 %o% cos(pi*x2) +
 #'                                   matrix(rnorm(50*75, sd = 0.1), nrow = 50)),
 #'                        c(3,1,2)))
-#' 
-#' # Calculate basis functions: This will throw an error if fftw3 is not installed.           
+#'
+#' # Calculate basis functions: This will throw an error if fftw3 is not installed.
 #' \dontrun{
 #' dct2D <- MFPCA:::dctBasis2D(f2, qThresh = 0.95)
-#' 
+#'
 #' # verify that scores are saved in a sparse matrix
 #' dct2D$scores[,1:25] # the first 25 scores for each observation
 #' }
@@ -857,25 +870,28 @@ dctBasis2D <- function(funDataObject, qThresh, parallel = FALSE)
 
 #' Calculate and threshold DCT for an image
 #'
-#' This function calculates the (orthonormal) discrete cosine transformation for
-#' an image and returns thresholded DCT coefficients using the C-library
-#' \code{fftw3} (see \url{http://www.fftw.org/}).
+#' This function calculates the (orthonormal) discrete cosine
+#' transformation for an image and returns thresholded DCT coefficients
+#' using the C-library \code{fftw3} (see \url{http://www.fftw.org/}).
 #'
-#' @section Warning: If the C-library \code{fftw3} is not available when the
-#'   package \code{MFPCA} is installed, this function is disabled an will throw
-#'   an error. For full functionality install the C-library \code{fftw3} from
-#'   \url{http://www.fftw.org/} and reinstall \code{MFPCA}.
+#' @section Warning: If the C-library \code{fftw3} is not available when
+#'   the package \code{MFPCA} is installed, this function is disabled an
+#'   will throw an error. For full functionality install the C-library
+#'   \code{fftw3} from \url{http://www.fftw.org/} and reinstall
+#'   \code{MFPCA}. This function has not been tested with
+#'   ATLAS/MKL/OpenBLAS.
 #'
 #' @param image An image (a 2D matrix with real values).
-#' @param qThresh A numeric with value in \eqn{[0,1]}, giving the quantile for
-#'   thresholding the coefficients. See \code{\link{dctBasis2D}} for details.
+#' @param qThresh A numeric with value in \eqn{[0,1]}, giving the quantile
+#'   for thresholding the coefficients. See \code{\link{dctBasis2D}} for
+#'   details.
 #'
 #' @return \item{ind}{An integer vector, containing the indices of
 #'   non-thresholded (hence non-zero) coefficients.} \item{val}{A numeric
 #'   vector, giving the values of the corresponding coefficients.}
 #'
 #' @seealso \code{\link{dctBasis2D}}
-#' 
+#'
 #' @importFrom stats quantile
 #'
 #' @useDynLib MFPCA, .registration = TRUE
@@ -919,25 +935,28 @@ dctBasis3D <- function(funDataObject, qThresh, parallel = FALSE)
 
 #' Calculate and threshold DCT for an 3D image
 #'
-#' This function calculates the (orthonormal) discrete cosine transformation for
-#' a 3D image and returns thresholded DCT coefficients using the C-library
-#' \code{fftw3} (see \url{http://www.fftw.org/}).
+#' This function calculates the (orthonormal) discrete cosine
+#' transformation for a 3D image and returns thresholded DCT coefficients
+#' using the C-library \code{fftw3} (see \url{http://www.fftw.org/}).
 #'
-#' @section Warning: If the C-library \code{fftw3} is not available when the
-#'   package \code{MFPCA} is installed, this function is disabled an will throw
-#'   an error. For full functionality install the C-library \code{fftw3} from
-#'   \url{http://www.fftw.org/} and reinstall \code{MFPCA}.
+#' @section Warning: If the C-library \code{fftw3} is not available when
+#'   the package \code{MFPCA} is installed, this function is disabled an
+#'   will throw an error. For full functionality install the C-library
+#'   \code{fftw3} from \url{http://www.fftw.org/} and reinstall
+#'   \code{MFPCA}. This function has not been tested with
+#'   ATLAS/MKL/OpenBLAS.
 #'
 #' @param image A 3D image (a 3D array with real values).
-#' @param qThresh A numeric with value in \eqn{[0,1]}, giving the quantile for
-#'   thresholding the coefficients. See \code{\link{dctBasis3D}} for details.
+#' @param qThresh A numeric with value in \eqn{[0,1]}, giving the quantile
+#'   for thresholding the coefficients. See \code{\link{dctBasis3D}} for
+#'   details.
 #'
 #' @return \item{ind}{An integer vector, containing the indices of
 #'   non-thresholded (hence non-zero) coefficients.} \item{val}{A numeric
 #'   vector, giving the values of the corresponding coefficients.}
 #'
 #' @seealso \code{\link{dctBasis3D}}
-#' 
+#'
 #' @importFrom stats quantile
 #'
 #' @useDynLib MFPCA, .registration = TRUE

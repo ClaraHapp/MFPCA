@@ -8,43 +8,50 @@ univExpansion(type, scores, argvals = ifelse(!is.null(functions),
   functions@argvals, NULL), functions, params = NULL)
 }
 \arguments{
-\item{type}{A character string, specifying the basis for which the 
+\item{type}{A character string, specifying the basis for which the
 decomposition is to be calculated.}
 
-\item{scores}{A matrix of scores (coefficients) for each observation based on
-the given basis functions.}
+\item{scores}{A matrix of scores (coefficients) for each observation
+based on the given basis functions.}
 
-\item{argvals}{A list, representing the domain of the basis functions. If
-\code{functions} is not \code{NULL}, the usual default is
-\code{functions@argvals}. See \linkS4class{funData} and the underlying
-expansion functions for details.}
+\item{argvals}{A list, representing the domain of the basis functions.
+If \code{functions} is not \code{NULL}, the usual default is
+\code{functions@argvals}. See \linkS4class{funData} and the
+underlying expansion functions for details.}
 
-\item{functions}{A functional data object, representing the basis functions. 
-Can be \code{NULL} if the basis functions are not estimated from observed 
-data, but have a predefined form. See Details.}
+\item{functions}{A functional data object, representing the basis
+functions. Can be \code{NULL} if the basis functions are not
+estimated from observed data, but have a predefined form. See
+Details.}
 
-\item{params}{A list containing the parameters for the particular basis to 
-use.}
+\item{params}{A list containing the parameters for the particular basis
+to use.}
 }
 \value{
-An object of class \code{funData} with \code{N} observations on 
-  \code{argvals}, corresponding to the linear combination of the basis 
+An object of class \code{funData} with \code{N} observations on
+  \code{argvals}, corresponding to the linear combination of the basis
   functions.
 }
 \description{
-This function calculates a univariate basis expansion based on given scores 
-(coefficients) and basis functions.
+This function calculates a univariate basis expansion based on given
+scores (coefficients) and basis functions.
 }
 \details{
-This function calculates functional data \eqn{X_i(t), i= 1 \ldots N} that is 
-represented as a linear combination of basis functions \eqn{b_k(t)} 
-\deqn{X_i(t) = \sum_{k = 1}^K \theta_{ik} b_k(t), i = 1, \ldots, N.} The 
-basis functions may be prespecified (such as spline basis functions or 
-Fourier bases) or can be estimated from observed data (e.g. by functional 
-principal component analysis). If \code{type = "default"} (i.e. a linear 
-combination of arbitrary basis functions is to be calculated), both scores
-and basis functions must be supplied.
+This function calculates functional data \eqn{X_i(t), i= 1 \ldots N}
+that is represented as a linear combination of basis functions
+\eqn{b_k(t)} \deqn{X_i(t) = \sum_{k = 1}^K \theta_{ik} b_k(t), i = 1,
+\ldots, N.} The basis functions may be prespecified (such as spline
+basis functions or Fourier bases) or can be estimated from observed
+data (e.g. by functional principal component analysis). If \code{type =
+"default"} (i.e. a linear combination of arbitrary basis functions is
+to be calculated), both scores and basis functions must be supplied.
 }
+\section{Warning}{
+ The options \code{type = "spline2Dpen"}, \code{type =
+  "DCT2D"} and \code{type = "DCT3D"} have not been tested with
+  ATLAS/MKL/OpenBLAS.
+}
+
 \examples{
 oldPar <- par(no.readonly = TRUE)
 par(mfrow = c(1,1))
@@ -77,18 +84,17 @@ dim(scores)
 eFuns <- eFun(argvals = seq(0,1,0.01), M = K, type = "Fourier")
 
 # expand eigenfunction basis
-funs <-  univExpansion(type = "uFPCA", scores = scores, 
+funs <-  univExpansion(type = "uFPCA", scores = scores,
                        argvals = NULL, # use argvals of eFuns (default)
                        functions = eFuns)
-                       
-plot(funs, main = "PCA reconstruction")                     
+
+plot(funs, main = "PCA reconstruction")
 
 par(oldPar)
 }
 \seealso{
-\code{\link{MFPCA}},
-  \code{\link{splineFunction1D}}, \code{\link{splineFunction2D}},
-  \code{\link{splineFunction2Dpen}}, 
-  \code{\link{dctFunction2D}},
-  \code{\link{dctFunction3D}}, \code{\link{expandBasisFunction}}
+\code{\link{MFPCA}}, \code{\link{splineFunction1D}},
+  \code{\link{splineFunction2D}}, \code{\link{splineFunction2Dpen}},
+  \code{\link{dctFunction2D}}, \code{\link{dctFunction3D}},
+  \code{\link{expandBasisFunction}}
 }

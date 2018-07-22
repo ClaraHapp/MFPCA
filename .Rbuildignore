@@ -1,6 +1,16 @@
+# R Studio
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^\.Rhistory$
 
-# Travis
-.travis.yml
+# Travis / Appveyor
+^\.travis\.yml$
 ^appveyor\.yml$
+
+# git/gitHub
+^\.README.md$
+^\.News.md$
+
+# autoreconf
+^autom4te\.cache$
+^aclocal.m4$

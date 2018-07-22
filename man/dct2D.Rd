@@ -9,8 +9,9 @@ dct2D(image, qThresh)
 \arguments{
 \item{image}{An image (a 2D matrix with real values).}
 
-\item{qThresh}{A numeric with value in \eqn{[0,1]}, giving the quantile for
-thresholding the coefficients. See \code{\link{dctBasis2D}} for details.}
+\item{qThresh}{A numeric with value in \eqn{[0,1]}, giving the quantile
+for thresholding the coefficients. See \code{\link{dctBasis2D}} for
+details.}
 }
 \value{
 \item{ind}{An integer vector, containing the indices of
@@ -18,15 +19,17 @@ thresholding the coefficients. See \code{\link{dctBasis2D}} for details.}
   vector, giving the values of the corresponding coefficients.}
 }
 \description{
-This function calculates the (orthonormal) discrete cosine transformation for
-an image and returns thresholded DCT coefficients using the C-library
-\code{fftw3} (see \url{http://www.fftw.org/}).
+This function calculates the (orthonormal) discrete cosine
+transformation for an image and returns thresholded DCT coefficients
+using the C-library \code{fftw3} (see \url{http://www.fftw.org/}).
 }
 \section{Warning}{
- If the C-library \code{fftw3} is not available when the
-  package \code{MFPCA} is installed, this function is disabled an will throw
-  an error. For full functionality install the C-library \code{fftw3} from
-  \url{http://www.fftw.org/} and reinstall \code{MFPCA}.
+ If the C-library \code{fftw3} is not available when
+  the package \code{MFPCA} is installed, this function is disabled an
+  will throw an error. For full functionality install the C-library
+  \code{fftw3} from \url{http://www.fftw.org/} and reinstall
+  \code{MFPCA}. This function has not been tested with
+  ATLAS/MKL/OpenBLAS.
 }
 
 \seealso{

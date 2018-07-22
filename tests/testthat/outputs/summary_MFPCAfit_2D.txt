@@ -1,2 +1,18 @@
 10 multivariate functional principal components estimated with 2 elements, each.
                      * * * * * * * * * *                     
+                                        PC 1        PC 2        PC 3
+Eigenvalue                       1.170445697 0.570110018 0.348190494
+Proportion of variance explained 0.441237302 0.214921381 0.131261650
+Cumulative proportion            0.441237302 0.656158683 0.787420334
+                                        PC 4        PC 5        PC 6
+Eigenvalue                       0.225427610 0.173400582 0.079538494
+Proportion of variance explained 0.084982217 0.065368949 0.029984604
+Cumulative proportion            0.872402551 0.937771500 0.967756103
+                                        PC 7        PC 8        PC 9
+Eigenvalue                       0.045866999 0.030471023 0.004830613
+Proportion of variance explained 0.017291046 0.011487036 0.001821056
+Cumulative proportion            0.985047150 0.996534186 0.998355241
+                                       PC 10
+Eigenvalue                       0.004362960
+Proportion of variance explained 0.001644759
+Cumulative proportion            1.000000000

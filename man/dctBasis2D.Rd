@@ -3,7 +3,7 @@
 \name{dctBasis2D}
 \alias{dctBasis2D}
 \alias{dctBasis3D}
-\title{Calculate a cosine basis representation for functional data on two- or 
+\title{Calculate a cosine basis representation for functional data on two- or
 three-dimensional domains}
 \usage{
 dctBasis2D(funDataObject, qThresh, parallel = FALSE)
@@ -11,70 +11,74 @@ dctBasis2D(funDataObject, qThresh, parallel = FALSE)
 dctBasis3D(funDataObject, qThresh, parallel = FALSE)
 }
 \arguments{
-\item{funDataObject}{An object of class \code{\link[funData]{funData}} 
-containing the observed functional data samples and for which the basis 
-representation is calculated.}
+\item{funDataObject}{An object of class \code{\link[funData]{funData}}
+containing the observed functional data samples and for which the
+basis representation is calculated.}
 
-\item{qThresh}{A numeric with value in \eqn{[0,1]}, giving the quantile for 
-thresholding the coefficients. See Details.}
+\item{qThresh}{A numeric with value in \eqn{[0,1]}, giving the quantile
+for thresholding the coefficients. See Details.}
 
-\item{parallel}{Logical. If \code{TRUE}, the coefficients for the basis 
-functions are calculated in parallel. The implementation is based on the 
-\code{\link[foreach]{foreach}} function and requires a parallel backend 
-that must be registered before; see \code{\link[foreach]{foreach}} for 
-details. Defaults to \code{FALSE}.}
+\item{parallel}{Logical. If \code{TRUE}, the coefficients for the basis
+functions are calculated in parallel. The implementation is based on
+the \code{\link[foreach]{foreach}} function and requires a parallel
+backend that must be registered before; see
+\code{\link[foreach]{foreach}} for details. Defaults to \code{FALSE}.}
 }
 \value{
-\item{scores}{A \code{\link[Matrix]{sparseMatrix}} of scores 
-  (coefficients) with dimension \code{N x K}, reflecting the weights 
-  \eqn{\theta_{mn}} (\eqn{\theta_{mnk}}) for each basis function in each
-  observation, where \code{K} is the total number of basis functions used.}
-  \item{B}{A diagonal matrix, giving the norms of the different basis
-  functions used (as they are orthogonal).} \item{ortho}{Logical, set to
-  \code{FALSE}, as basis functions are orthogonal, but in genereal not
-  orthonormal.} \item{functions}{\code{NULL}, as basis functions are known.}
+\item{scores}{A \code{\link[Matrix]{sparseMatrix}} of scores
+  (coefficients) with dimension \code{N x K}, reflecting the weights
+  \eqn{\theta_{mn}} (\eqn{\theta_{mnk}}) for each basis function in
+  each observation, where \code{K} is the total number of basis
+  functions used.} \item{B}{A diagonal matrix, giving the norms of the
+  different basis functions used (as they are orthogonal).}
+  \item{ortho}{Logical, set to \code{FALSE}, as basis functions are
+  orthogonal, but in genereal not orthonormal.}
+  \item{functions}{\code{NULL}, as basis functions are known.}
 }
 \description{
-These functions calculate  a tensor cosine basis representation for 
-functional data on two- or three-dimensional domains based on a discrete 
-cosine transformation (DCT) using the C-library \code{fftw3} 
-(\url{http://www.fftw.org/}). Coefficients under a given thershold are set to
-0 to reduce complexity and for denoising.
+These functions calculate  a tensor cosine basis representation for
+functional data on two- or three-dimensional domains based on a
+discrete cosine transformation (DCT) using the C-library \code{fftw3}
+(\url{http://www.fftw.org/}). Coefficients under a given thershold are
+set to 0 to reduce complexity and for denoising.
 }
 \details{
-Given the (discretized) observed functions \eqn{X_i}, the function 
-\code{dctBasis2D} calculates a basis representation \deqn{X_i(s,t) = \sum_{m 
-= 0}^{K_1-1} \sum_{n = 0}^{K_2-1} \theta_{mn} f_{mn}(s,t)} of a 
-two-dimensional function \eqn{X_i(s,t)} in terms of (orthogonal) tensor 
-cosine basis functions \deqn{f_{mn}(s,t) = c_m c_n \cos(ms) \cos(nt), \quad 
-(s,t) \in \mathcal{T}}{f_{mn}(s,t) = c_m c_n \cos(ms) \cos(nt), \quad (s,t) 
-\in \calT} with \eqn{c_m = \frac{1}{\sqrt{\pi}}} for \eqn{m=0} and \eqn{c_m =
-\sqrt{\frac{2}{\pi}}} for \eqn{m=1,2,\ldots} based on a discrete cosine 
-transform (DCT).
+Given the (discretized) observed functions \eqn{X_i}, the function
+\code{dctBasis2D} calculates a basis representation \deqn{X_i(s,t) =
+\sum_{m = 0}^{K_1-1} \sum_{n = 0}^{K_2-1} \theta_{mn} f_{mn}(s,t)} of a
+two-dimensional function \eqn{X_i(s,t)} in terms of (orthogonal) tensor
+cosine basis functions \deqn{f_{mn}(s,t) = c_m c_n \cos(ms) \cos(nt),
+\quad (s,t) \in \mathcal{T}}{f_{mn}(s,t) = c_m c_n \cos(ms) \cos(nt),
+\quad (s,t) \in \calT} with \eqn{c_m = \frac{1}{\sqrt{\pi}}} for
+\eqn{m=0} and \eqn{c_m = \sqrt{\frac{2}{\pi}}} for \eqn{m=1,2,\ldots}
+based on a discrete cosine transform (DCT).
 
-If not thresholded (\code{qThresh = 0}), the function returns all non-zero 
-coefficients \eqn{\theta_{mn}} in the basis representation in a 
-\code{\link[Matrix]{sparseMatrix}} (package \pkg{Matrix}) called
-\code{scores}. Otherwise, coefficients with \deqn{|\theta_{mn}| <= q } are
-set to zero, where \eqn{q} is the \code{qThresh}-quantile of
+If not thresholded (\code{qThresh = 0}), the function returns all
+non-zero coefficients \eqn{\theta_{mn}} in the basis representation in
+a \code{\link[Matrix]{sparseMatrix}} (package \pkg{Matrix}) called
+\code{scores}. Otherwise, coefficients with \deqn{|\theta_{mn}| <= q }
+are set to zero, where \eqn{q} is the \code{qThresh}-quantile of
 \eqn{|\theta_{mn}|}.
 
-For functions \eqn{X_i(s,t,u)} on three-dimensional domains, the function 
-\code{dctBasis3D} calculates a basis representation \deqn{X_i(s,t,u) = 
-\sum_{m = 0}^{K_1-1} \sum_{n = 0}^{K_2-1} \sum_{k = 0}^{K_3-1} \theta_{mnk} 
-f_{mnk}(s,t,u)} in terms of (orthogonal) tensor cosine basis functions 
-\deqn{f_{mnk}(s,t,u) = c_m c_n c_k \cos(ms) \cos(nt) \cos(ku), \quad (s,t,u) 
-\in \mathcal{T}}{f_{mnk}(s,t,u) = c_m c_n c_k \cos(ms) \cos(nt) \cos(ku), 
-\quad (s,t,u) \in \calT} again with \eqn{c_m = \frac{1}{\sqrt{pi}}} for 
-\eqn{m=0} and \eqn{c_m = \sqrt{\frac{2}{pi}}} for \eqn{m=1,2,\ldots} based on
-a discrete cosine transform (DCT). The thresholding works analogous as for 
-the two-dimensional case.
+For functions \eqn{X_i(s,t,u)} on three-dimensional domains, the
+function \code{dctBasis3D} calculates a basis representation
+\deqn{X_i(s,t,u) = \sum_{m = 0}^{K_1-1} \sum_{n = 0}^{K_2-1} \sum_{k =
+0}^{K_3-1} \theta_{mnk} f_{mnk}(s,t,u)} in terms of (orthogonal) tensor
+cosine basis functions \deqn{f_{mnk}(s,t,u) = c_m c_n c_k \cos(ms)
+\cos(nt) \cos(ku), \quad (s,t,u) \in \mathcal{T}}{f_{mnk}(s,t,u) = c_m
+c_n c_k \cos(ms) \cos(nt) \cos(ku), \quad (s,t,u) \in \calT} again with
+\eqn{c_m = \frac{1}{\sqrt{pi}}} for \eqn{m=0} and \eqn{c_m =
+\sqrt{\frac{2}{pi}}} for \eqn{m=1,2,\ldots} based on a discrete cosine
+transform (DCT). The thresholding works analogous as for the
+two-dimensional case.
 }
 \section{Warning}{
- If the C-library \code{fftw3} is not available when the 
-  package \code{MFPCA} is installed, this function is disabled an will throw 
-  an error. For full functionality install the C-library \code{fftw3} from 
-  \url{http://www.fftw.org/} and reinstall \code{MFPCA}.
+ If the C-library \code{fftw3} is not available when
+  the package \code{MFPCA} is installed, this function is disabled an
+  will throw an error. For full functionality install the C-library
+  \code{fftw3} from \url{http://www.fftw.org/} and reinstall
+  \code{MFPCA}. This function has not been tested with
+  ATLAS/MKL/OpenBLAS.
 }
 
 \examples{
@@ -82,11 +86,11 @@ the two-dimensional case.
 x1 <- seq(0, 1, length.out = 50)
 x2 <- seq(-1, 1, length.out = 75)
 f2 <- funData(argvals = list(x1, x2),
-              X = aperm(replicate(10, x1 \%o\% cos(pi*x2) + 
+              X = aperm(replicate(10, x1 \%o\% cos(pi*x2) +
                                   matrix(rnorm(50*75, sd = 0.1), nrow = 50)),
                        c(3,1,2)))
 
-# Calculate basis functions: This will throw an error if fftw3 is not installed.           
+# Calculate basis functions: This will throw an error if fftw3 is not installed.
 \dontrun{
 dct2D <- MFPCA:::dctBasis2D(f2, qThresh = 0.95)
 
@@ -95,6 +99,7 @@ dct2D$scores[,1:25] # the first 25 scores for each observation
 }
 }
 \seealso{
-\code{\link{univDecomp}}, \code{\link{dct2D}}, \code{\link{dct3D}}
+\code{\link{univDecomp}}, \code{\link{dct2D}},
+  \code{\link{dct3D}}
 }
 \keyword{internal}

@@ -16,21 +16,24 @@ coefficients.}
 dimensions.}
 }
 \value{
-A matrix of dimensions \code{dim}, which is a linear combination of
-  cosine tensor basis functions with the given coefficients.
+A matrix of dimensions \code{dim}, which is a linear
+  combination of cosine tensor basis functions with the given
+  coefficients.
 }
 \description{
 This function calculates an inverse (orthonormal) discrete cosine
-transformation for given coefficients in three dimensions using the C-library
-\code{fftw3} (see \url{http://www.fftw.org/}). As many coefficients are
-expected to be zero, the values are given in compressed format (indices and
-values only of non-zero coefficients).
+transformation for given coefficients in three dimensions using the
+C-library \code{fftw3} (see \url{http://www.fftw.org/}). As many
+coefficients are expected to be zero, the values are given in
+compressed format (indices and values only of non-zero coefficients).
 }
 \section{Warning}{
- If the C-library \code{fftw3} is not available when the
-  package \code{MFPCA} is installed, this function is disabled an will throw
-  an error. For full functionality install the C-library \code{fftw3} from
-  \url{http://www.fftw.org/} and reinstall \code{MFPCA}.
+ If the C-library \code{fftw3} is not available when
+  the package \code{MFPCA} is installed, this function is disabled an
+  will throw an error. For full functionality install the C-library
+  \code{fftw3} from \url{http://www.fftw.org/} and reinstall
+  \code{MFPCA}. This function has not been tested with
+  ATLAS/MKL/OpenBLAS.
 }
 
 \seealso{
