@@ -235,6 +235,7 @@ calcBasisIntegrals <- function(basisFunctions, dimSupp, argvals)
 #' @export MFPCA
 #'
 #' @importFrom foreach %do%
+#' @importFrom utils packageVersion
 #'
 #' @references C. Happ, S. Greven (2018): Multivariate Functional
 #'   Principal Component Analysis for Data Observed on Different
@@ -475,7 +476,7 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fi
   if(verbose)
     cat("Calculating MFPCA (", format(Sys.time(), "%T"), ")\n", sep = "")
   
-  mArgvals <- if (packageVersion("funData") <= "1.2") {
+  mArgvals <- if (utils::packageVersion("funData") <= "1.2") {
     getArgvals(mFData)
   } else {
     argvals(mFData)
