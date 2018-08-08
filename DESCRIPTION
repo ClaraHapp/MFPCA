@@ -29,6 +29,7 @@ Depends:
     funData (>= 1.2)
 Suggests:
     covr,
+    fda,
     testthat
 NeedsCompilation: yes
 SystemRequirements: libfftw3 (>= 3.3.4)

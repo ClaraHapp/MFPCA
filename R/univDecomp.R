@@ -38,8 +38,8 @@
 #'   \code{\link{fpcaBasis}}, \code{\link{splineBasis1D}},
 #'   \code{\link{splineBasis1Dpen}}, \code{\link{splineBasis2D}},
 #'   \code{\link{splineBasis2Dpen}}, \code{\link{umpcaBasis}},
-#'   \code{\link{fcptpaBasis}}, \code{\link{dctBasis2D}},
-#'   \code{\link{dctBasis3D}}
+#'   \code{\link{fcptpaBasis}}, \code{\link{fdaBasis}},
+#'   \code{\link{dctBasis2D}}, \code{\link{dctBasis3D}}
 #'
 #' @export univDecomp
 #'
@@ -97,6 +97,7 @@ univDecomp <- function(type, funDataObject, ...)
                 "splines1Dpen" = do.call(splineBasis1Dpen, params),
                 "splines2D" = do.call(splineBasis2D, params),
                 "splines2Dpen" = do.call(splineBasis2Dpen, params),
+                "fda" = do.call(fdaBasis, params),
                 "DCT2D" = do.call(dctBasis2D, params),
                 "DCT3D" = do.call(dctBasis3D, params),
                 stop("Univariate Decomposition for 'type' = ", type, " not defined!")
@@ -758,6 +759,42 @@ splineBasis2Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
               ortho = FALSE,
               functions = NULL,
               settings = list(bs = bs, k = k, m = m)
+  ))
+}
+
+
+#' Use a basis from package fda for univariate representation
+#'
+#' This function allows to use univariate basis representations from the
+#' \pkg{fda} package using the \code{\link[funData]{funData2fd}} function
+#' from package \pkg{funData}.
+#'
+#' @section Warning: The package \pkg{fda} has be be installed to use this
+#'   functionality.
+#'
+#' @param funDataObject An object of class \code{\link[funData]{funData}}
+#'   containing the observed functional data samples and for which the
+#'   basis representation is to be calculated.
+#' @param ... Other parameters passed to \code{\link[funData]{funData2fd}}.
+#'
+#' @return \item{scores}{The coefficient matrix.} \item{B}{A matrix
+#'   containing the scalar product of all pairs of basis functions. This
+#'   is \code{NULL}, if \code{ortho = TRUE}.}\item{ortho}{Logical, set to
+#'   \code{TRUE}, if basis functions are orthonormal.} \item{functions}{A
+#'   functional data object containig the basis functions.}
+#'   
+#'  @seealso \code{\link[funData]{funData2fd}}, \code{\link[fda]{eval.fd}}
+#'
+#' @keywords internal
+fdaBasis <- function(funDataObject, ...)
+{
+  # transform data to fd object (from fda). Function throws a warning if fda is not available
+  fdobj <- funData2fd(funDataObject, ...)
+    
+  return(list(scores = t(fdobj$coefs),
+              B = fda::inprod(fdobj$basis, fdobj$basis), # calculate scalar product anyway
+              ortho = FALSE,
+              functions = funData(funDataObject@argvals, t(fda::getbasismatrix(funDataObject@argvals[[1]], fdobj$basis)))
   ))
 }
 

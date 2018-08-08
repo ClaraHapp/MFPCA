@@ -82,6 +82,25 @@ test_that("test univariate decompositions 1D", {
   expect_null(given2$B)
   expect_equal(given2$scores, diag(10))
   
+  
+  # fda (only if available)
+  if(requireNamespace("fda", quietly = TRUE))
+  {
+    library("fda")
+    
+    # check functionality (all errors are checked in funData2fd)
+    Fbasis <- create.fourier.basis(range(f1@argvals), nbasis=15) # Fourier basis with 15 basis functions
+    fda <- MFPCA:::fdaBasis(f1, Fbasis)
+    expect_equal(dim(fda$scores), c(10,15))
+    expect_equal(mean(fda$scores),  0.086700, tolerance = 1e-5) 
+    expect_equal(dim(fda$B), c(15,15))
+    expect_equal(fda$B, diag(15), tolerance = 1e-5)
+    expect_false(fda$ortho)  
+    expect_false(is.null(fda$functions))  
+    expect_equal(nObs(fda$functions), 15)
+    expect_equal(norm(fda$functions), rep(1,15))
+  }
+  
   # wrapper function
   decompSpline1D <- MFPCA:::univDecomp(type = "splines1D", funDataObject = f1, bs = "ps", m = 3, k = 10)
   expect_equal(decompSpline1D, spline1D)
@@ -97,6 +116,12 @@ test_that("test univariate decompositions 1D", {
   
   decompGiven2 <- MFPCA:::univDecomp(type = "given", funDataObject = f1, functions = s1$trueFuns, scores = diag(10), ortho = TRUE)
   expect_equal(decompGiven2, given2)
+  
+  if(requireNamespace("fda", quietly = TRUE))
+  {
+    decompFDA <- MFPCA:::univDecomp(type = "fda", funDataObject = f1, Fbasis)
+    expect_equal(decompFDA, fda)
+  }
 })
 
 test_that("PACE function", {

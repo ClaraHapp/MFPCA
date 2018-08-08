@@ -172,19 +172,23 @@ principal component analysis. Then \code{uniExpansions[[j]] = list(type
 = "uFPCA", nbasis, pve, npc, makePD)}, where
 \code{nbasis,pve,npc,makePD} are parameters passed to the
 \code{\link{PACE}} function for calculating the univariate functional
-principal component analysis. \item Spline basis functions (not
-penalized). Then \code{uniExpansions[[j]] = list(type = "splines1D",
-bs, m, k)}, where \code{bs,m,k} are passed to the functions
-\code{\link{univDecomp}} and \code{\link{univExpansion}}. For
-two-dimensional tensor product splines, use \code{type = "splines2D"}.
-\item Spline basis functions (with smoothness penalty). Then
-\code{uniExpansions[[j]] = list(type = "splines1Dpen", bs, m, k)},
-where \code{bs,m,k} are passed to the functions
-\code{\link{univDecomp}} and \code{\link{univExpansion}}. Analogously
-to the unpenalized case, use \code{type = "splines2Dpen"} for 2D
-penalized tensor product splines. \item Cosine basis functions. Use
-\code{uniExpansions[[j]] = list(type = "DCT2D", qThresh, parallel)} for
-functions one two-dimensional domains (images) and \code{type =
+principal component analysis. \item Basis functions expansions from the
+package \pkg{fda}. Then \code{uniExpansions[[j]] = list(type = "fda",
+...)}, where \code{...} are passed to
+\code{\link[funData]{funData2fd}}, which heavily builds on
+\code{\link[fda]{eval.fd}}. If \pkg{fda} is not available, a warning is
+thrown. \item Spline basis functions (not penalized). Then
+\code{uniExpansions[[j]] = list(type = "splines1D", bs, m, k)}, where
+\code{bs,m,k} are passed to the functions \code{\link{univDecomp}} and
+\code{\link{univExpansion}}. For two-dimensional tensor product
+splines, use \code{type = "splines2D"}. \item Spline basis functions
+(with smoothness penalty). Then \code{uniExpansions[[j]] = list(type =
+"splines1Dpen", bs, m, k)}, where \code{bs,m,k} are passed to the
+functions \code{\link{univDecomp}} and \code{\link{univExpansion}}.
+Analogously to the unpenalized case, use \code{type = "splines2Dpen"}
+for 2D penalized tensor product splines. \item Cosine basis functions.
+Use \code{uniExpansions[[j]] = list(type = "DCT2D", qThresh, parallel)}
+for functions one two-dimensional domains (images) and \code{type =
 "DCT3D"} for 3D images. The calculation is based on the discrete cosine
 transform (DCT) implemented in the C-library \code{fftw3}. If this
 library is not available, the function will throw  a warning.
