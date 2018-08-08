@@ -788,6 +788,9 @@ splineBasis2Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
 #' @keywords internal
 fdaBasis <- function(funDataObject, ...)
 {
+  if(utils::packageVersion("funData") <= "1.2")
+    stop("fda basis expansion requires package funData, version 1.3 or higher")
+  
   # transform data to fd object (from fda). Function throws a warning if fda is not available
   fdobj <- funData2fd(funDataObject, ...)
     

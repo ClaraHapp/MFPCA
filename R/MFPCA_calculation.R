@@ -479,7 +479,7 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fi
   mArgvals <- if (utils::packageVersion("funData") <= "1.2") {
     getArgvals(mFData)
   } else {
-    argvals(mFData)
+    funData::argvals(mFData)
   }
 
   res <- calcMFPCA(N = N, p = p, Bchol = Bchol, M = M, type = type, weights = weights,

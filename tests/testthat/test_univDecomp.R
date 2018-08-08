@@ -84,7 +84,7 @@ test_that("test univariate decompositions 1D", {
   
   
   # fda (only if available)
-  if(requireNamespace("fda", quietly = TRUE))
+  if(requireNamespace("fda", quietly = TRUE) & utils::packageVersion("funData") > "1.2")
   {
     library("fda")
     
@@ -117,7 +117,7 @@ test_that("test univariate decompositions 1D", {
   decompGiven2 <- MFPCA:::univDecomp(type = "given", funDataObject = f1, functions = s1$trueFuns, scores = diag(10), ortho = TRUE)
   expect_equal(decompGiven2, given2)
   
-  if(requireNamespace("fda", quietly = TRUE))
+  if(requireNamespace("fda", quietly = TRUE) & utils::packageVersion("funData") > "1.2")
   {
     decompFDA <- MFPCA:::univDecomp(type = "fda", funDataObject = f1, Fbasis)
     expect_equal(decompFDA, fda)
