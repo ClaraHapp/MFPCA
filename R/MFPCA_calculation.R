@@ -240,7 +240,7 @@ calcBasisIntegrals <- function(basisFunctions, dimSupp, argvals)
 #' @references C. Happ, S. Greven (2018): Multivariate Functional
 #'   Principal Component Analysis for Data Observed on Different
 #'   (Dimensional) Domains. Journal of the American Statistical
-#'   Association. Advance online publication. DOI:
+#'   Association, 113(522): 649-659. DOI:
 #'   \doi{10.1080/01621459.2016.1273115}
 #'
 #' @seealso See \url{https://arxiv.org/abs/1707.02129} for a general
