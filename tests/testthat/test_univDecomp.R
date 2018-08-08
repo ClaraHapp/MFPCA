@@ -59,7 +59,7 @@ test_that("test univariate decompositions 1D", {
   
   # given
   expect_error(MFPCA:::givenBasis(funDataObject = f1, 
-                                 functions = extractObs(s1$trueFuns, argvals = getArgvals(s1$trueFuns)[[1]][1:10])),
+                                 functions = extractObs(s1$trueFuns, argvals = s1$trueFuns@argvals[[1]][1:10])),
               "Basis functions must be defined on the same domain as the observations.")
   
   expect_error(MFPCA:::givenBasis(funDataObject = f1, functions = s1$trueFuns, scores = as.matrix(1:5)),

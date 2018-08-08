@@ -470,9 +470,15 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fi
 
   if(verbose)
     cat("Calculating MFPCA (", format(Sys.time(), "%T"), ")\n", sep = "")
+  
+  mArgvals <- if (packageVersion("funData") <= "1.2") {
+    getArgvals(mFData)
+  } else {
+    argvals(mFData)
+  }
 
   res <- calcMFPCA(N = N, p = p, Bchol = Bchol, M = M, type = type, weights = weights,
-                   npc = npc, argvals = getArgvals(mFData), uniBasis = uniBasis, fit = fit, approx.eigen = approx.eigen)
+                   npc = npc, argvals = mArgvals, uniBasis = uniBasis, fit = fit, approx.eigen = approx.eigen)
   
   res$meanFunction <- m # return mean function, too
   
@@ -548,7 +554,7 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fi
 
       # calculate MFPCA for bootstrap sample (Bchol has been updated for UMPCA)
       bootMFPCA <- calcMFPCA(N = N, p = p, Bchol = Bchol, M = M, type = type, weights = weights,
-                           npc = npcBoot, argvals = getArgvals(mFData), uniBasis = bootBasis, fit = FALSE, approx.eigen = approx.eigen)
+                           npc = npcBoot, argvals = mArgvals, uniBasis = bootBasis, fit = FALSE, approx.eigen = approx.eigen)
 
       # save eigenvalues
       booteVals[n,] <- bootMFPCA$values

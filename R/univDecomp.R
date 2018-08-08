@@ -137,7 +137,7 @@ univDecomp <- function(type, funDataObject, ...)
 givenBasis <- function(funDataObject, functions, scores = NULL, ortho = NULL)
 {
   # check if funDataObject and functions are defined on the same domain
-  if( ! isTRUE(all.equal(getArgvals(funDataObject), getArgvals(functions))) )
+  if( ! isTRUE(all.equal(funDataObject@argvals, functions@argvals)) )
     stop("Basis functions must be defined on the same domain as the observations.")
   
   # check if scores have to be calculated
