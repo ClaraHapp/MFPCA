@@ -49,7 +49,7 @@
 #'   another \code{maxIter} steps are allowed with the increased tolerance, see 
 #'   Details. Use with caution. Defaults to \code{TRUE}.
 #'   
-#' @return \item{d}{A vector of length \code{K}, containing the numeric weigths 
+#' @return \item{d}{A vector of length \code{K}, containing the numeric weights 
 #'   \eqn{d_k} in the CP model.} \item{U}{A matrix of dimensions \code{N x K}, 
 #'   containing the eigenvectors \eqn{u_k} in the first dimension.} \item{V}{A 
 #'   matrix of dimensions \code{S1 x K}, containing the eigenvectors \eqn{v_k} 

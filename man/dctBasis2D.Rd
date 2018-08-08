@@ -32,14 +32,14 @@ backend that must be registered before; see
   functions used.} \item{B}{A diagonal matrix, giving the norms of the
   different basis functions used (as they are orthogonal).}
   \item{ortho}{Logical, set to \code{FALSE}, as basis functions are
-  orthogonal, but in genereal not orthonormal.}
+  orthogonal, but in general not orthonormal.}
   \item{functions}{\code{NULL}, as basis functions are known.}
 }
 \description{
 These functions calculate  a tensor cosine basis representation for
 functional data on two- or three-dimensional domains based on a
 discrete cosine transformation (DCT) using the C-library \code{fftw3}
-(\url{http://www.fftw.org/}). Coefficients under a given thershold are
+(\url{http://www.fftw.org/}). Coefficients under a given threshold are
 set to 0 to reduce complexity and for denoising.
 }
 \details{

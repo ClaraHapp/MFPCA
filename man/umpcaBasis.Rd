@@ -25,7 +25,7 @@ calculated.}
 }
 \description{
 This function calculates an uncorrelated multilinear principal component 
-analyis (UMPCA) representation for functional data on two-dimensional 
+analysis (UMPCA) representation for functional data on two-dimensional 
 domains. In this case, the data can be interpreted as images with \code{S1 x 
 S2} pixels (assuming \code{nObsPoints(funDataObject) = (S1, S2)}), i.e. the 
 total observed data are represented as third order tensor of dimension 

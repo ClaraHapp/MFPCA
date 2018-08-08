@@ -18,9 +18,7 @@ basis representation is to be calculated.}
   containing the scalar product of all pairs of basis functions. This
   is \code{NULL}, if \code{ortho = TRUE}.}\item{ortho}{Logical, set to
   \code{TRUE}, if basis functions are orthonormal.} \item{functions}{A
-  functional data object containig the basis functions.}
-  
- @seealso \code{\link[funData]{funData2fd}}, \code{\link[fda]{eval.fd}}
+  functional data object containing the basis functions.}
 }
 \description{
 This function allows to use univariate basis representations from the
@@ -32,4 +30,7 @@ from package \pkg{funData}.
   functionality.
 }
 
+\seealso{
+\code{\link[funData]{funData2fd}}, \code{\link[fda]{eval.fd}}
+}
 \keyword{internal}

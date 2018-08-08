@@ -87,7 +87,7 @@ An object of class \code{MFPCAfit} containing the following
   significance level (only if \code{bootstrap = TRUE}).}
 }
 \description{
-This function calculates a multivariate fuctional principal component
+This function calculates a multivariate functional principal component
 analysis (MFPCA) based on i.i.d. observations \eqn{x_1, \ldots, x_N} of
 a multivariate functional data-generating process \eqn{X = (X^{(1)},
 \ldots X^{(p)})}{X = X^(1), \ldots, X^(p)} with elements \eqn{X^{(j)}
@@ -194,7 +194,7 @@ transform (DCT) implemented in the C-library \code{fftw3}. If this
 library is not available, the function will throw  a warning.
 \code{qThresh} gives the quantile for hard thresholding the basis
 coefficients based on their absolute value. If \code{parallel = TRUE},
-the coefficients for different images are calcualated in parallel.} See
+the coefficients for different images are calculated in parallel.} See
 \code{\link{univDecomp}} and \code{\link{univExpansion}} for details.}
 }
 \examples{
@@ -317,7 +317,7 @@ par(oldPar)
 C. Happ, S. Greven (2018): Multivariate Functional
   Principal Component Analysis for Data Observed on Different
   (Dimensional) Domains. Journal of the American Statistical
-  Association. Advance online publication. DOI:
+  Association, 113(522): 649-659. DOI:
   \doi{10.1080/01621459.2016.1273115}
 }
 \seealso{

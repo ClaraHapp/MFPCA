@@ -58,7 +58,7 @@ calcBasisIntegrals <- function(basisFunctions, dimSupp, argvals)
 #' Multivariate functional principal component analysis for functions on
 #' different (dimensional) domains
 #'
-#' This function calculates a multivariate fuctional principal component
+#' This function calculates a multivariate functional principal component
 #' analysis (MFPCA) based on i.i.d. observations \eqn{x_1, \ldots, x_N} of
 #' a multivariate functional data-generating process \eqn{X = (X^{(1)},
 #' \ldots X^{(p)})}{X = X^(1), \ldots, X^(p)} with elements \eqn{X^{(j)}
@@ -165,7 +165,7 @@ calcBasisIntegrals <- function(basisFunctions, dimSupp, argvals)
 #' library is not available, the function will throw  a warning.
 #' \code{qThresh} gives the quantile for hard thresholding the basis
 #' coefficients based on their absolute value. If \code{parallel = TRUE},
-#' the coefficients for different images are calcualated in parallel.} See
+#' the coefficients for different images are calculated in parallel.} See
 #' \code{\link{univDecomp}} and \code{\link{univExpansion}} for details.}
 #'
 #' @param mFData A  \code{\link[funData]{multiFunData}} object containing

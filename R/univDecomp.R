@@ -123,7 +123,7 @@ univDecomp <- function(type, funDataObject, ...)
 #'   K}. If not supplied, the scores are calculated as projection of each 
 #'   observation on the basis functions.
 #' @param ortho An optional parameter, specifying whether the given basis 
-#'   functions are orthornomal (\code{ortho = TRUE}) or not (\code{ortho = 
+#'   functions are orthonormal (\code{ortho = TRUE}) or not (\code{ortho = 
 #'   FALSE}). If not supplied, the basis functions are considered as 
 #'   non-orthonormal and their pairwise scalar product is calculated for 
 #'   later use in the MFPCA.
@@ -132,7 +132,7 @@ univDecomp <- function(type, funDataObject, ...)
 #'   containing the scalar product of all pairs of basis functions. This is
 #'   \code{NULL}, if \code{ortho = TRUE}.}\item{ortho}{Logical, set to 
 #'   \code{TRUE}, if basis functions are orthonormal.} \item{functions}{A 
-#'   functional data object containig the basis functions.}
+#'   functional data object containing the basis functions.}
 #'  
 #'  @keywords internal
 givenBasis <- function(funDataObject, functions, scores = NULL, ortho = NULL)
@@ -238,7 +238,7 @@ fpcaBasis <- function(funDataObject, nbasis = 10, pve = 0.99, npc = NULL, makePD
 #' representation for functional data on two-dimensional domains
 #' 
 #' This function calculates an uncorrelated multilinear principal component 
-#' analyis (UMPCA) representation for functional data on two-dimensional 
+#' analysis (UMPCA) representation for functional data on two-dimensional 
 #' domains. In this case, the data can be interpreted as images with \code{S1 x 
 #' S2} pixels (assuming \code{nObsPoints(funDataObject) = (S1, S2)}), i.e. the 
 #' total observed data are represented as third order tensor of dimension 
@@ -781,10 +781,10 @@ splineBasis2Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
 #'   containing the scalar product of all pairs of basis functions. This
 #'   is \code{NULL}, if \code{ortho = TRUE}.}\item{ortho}{Logical, set to
 #'   \code{TRUE}, if basis functions are orthonormal.} \item{functions}{A
-#'   functional data object containig the basis functions.}
+#'   functional data object containing the basis functions.}
 #'   
-#'  @importFrom utils packageVersion
-#'  @seealso \code{\link[funData]{funData2fd}}, \code{\link[fda]{eval.fd}}
+#' @importFrom utils packageVersion
+#' @seealso \code{\link[funData]{funData2fd}}, \code{\link[fda]{eval.fd}}
 #'
 #' @keywords internal
 fdaBasis <- function(funDataObject, ...)
@@ -809,7 +809,7 @@ fdaBasis <- function(funDataObject, ...)
 #' These functions calculate  a tensor cosine basis representation for
 #' functional data on two- or three-dimensional domains based on a
 #' discrete cosine transformation (DCT) using the C-library \code{fftw3}
-#' (\url{http://www.fftw.org/}). Coefficients under a given thershold are
+#' (\url{http://www.fftw.org/}). Coefficients under a given threshold are
 #' set to 0 to reduce complexity and for denoising.
 #'
 #' Given the (discretized) observed functions \eqn{X_i}, the function
@@ -866,7 +866,7 @@ fdaBasis <- function(funDataObject, ...)
 #'   functions used.} \item{B}{A diagonal matrix, giving the norms of the
 #'   different basis functions used (as they are orthogonal).}
 #'   \item{ortho}{Logical, set to \code{FALSE}, as basis functions are
-#'   orthogonal, but in genereal not orthonormal.}
+#'   orthogonal, but in general not orthonormal.}
 #'   \item{functions}{\code{NULL}, as basis functions are known.}
 #'
 #' @seealso \code{\link{univDecomp}}, \code{\link{dct2D}},
