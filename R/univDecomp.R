@@ -783,6 +783,7 @@ splineBasis2Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
 #'   \code{TRUE}, if basis functions are orthonormal.} \item{functions}{A
 #'   functional data object containig the basis functions.}
 #'   
+#'  @importFrom utils packageVersion
 #'  @seealso \code{\link[funData]{funData2fd}}, \code{\link[fda]{eval.fd}}
 #'
 #' @keywords internal
