@@ -66,6 +66,6 @@ str(decSplines)
   \code{\link{fpcaBasis}}, \code{\link{splineBasis1D}},
   \code{\link{splineBasis1Dpen}}, \code{\link{splineBasis2D}},
   \code{\link{splineBasis2Dpen}}, \code{\link{umpcaBasis}},
-  \code{\link{fcptpaBasis}}, \code{\link{dctBasis2D}},
-  \code{\link{dctBasis3D}}
+  \code{\link{fcptpaBasis}}, \code{\link{fdaBasis}},
+  \code{\link{dctBasis2D}}, \code{\link{dctBasis3D}}
 }

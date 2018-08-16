@@ -38,8 +38,8 @@
 #'   \code{\link{fpcaBasis}}, \code{\link{splineBasis1D}},
 #'   \code{\link{splineBasis1Dpen}}, \code{\link{splineBasis2D}},
 #'   \code{\link{splineBasis2Dpen}}, \code{\link{umpcaBasis}},
-#'   \code{\link{fcptpaBasis}}, \code{\link{dctBasis2D}},
-#'   \code{\link{dctBasis3D}}
+#'   \code{\link{fcptpaBasis}}, \code{\link{fdaBasis}},
+#'   \code{\link{dctBasis2D}}, \code{\link{dctBasis3D}}
 #'
 #' @export univDecomp
 #'
@@ -97,6 +97,7 @@ univDecomp <- function(type, funDataObject, ...)
                 "splines1Dpen" = do.call(splineBasis1Dpen, params),
                 "splines2D" = do.call(splineBasis2D, params),
                 "splines2Dpen" = do.call(splineBasis2Dpen, params),
+                "fda" = do.call(fdaBasis, params),
                 "DCT2D" = do.call(dctBasis2D, params),
                 "DCT3D" = do.call(dctBasis3D, params),
                 stop("Univariate Decomposition for 'type' = ", type, " not defined!")
@@ -122,7 +123,7 @@ univDecomp <- function(type, funDataObject, ...)
 #'   K}. If not supplied, the scores are calculated as projection of each 
 #'   observation on the basis functions.
 #' @param ortho An optional parameter, specifying whether the given basis 
-#'   functions are orthornomal (\code{ortho = TRUE}) or not (\code{ortho = 
+#'   functions are orthonormal (\code{ortho = TRUE}) or not (\code{ortho = 
 #'   FALSE}). If not supplied, the basis functions are considered as 
 #'   non-orthonormal and their pairwise scalar product is calculated for 
 #'   later use in the MFPCA.
@@ -131,13 +132,13 @@ univDecomp <- function(type, funDataObject, ...)
 #'   containing the scalar product of all pairs of basis functions. This is
 #'   \code{NULL}, if \code{ortho = TRUE}.}\item{ortho}{Logical, set to 
 #'   \code{TRUE}, if basis functions are orthonormal.} \item{functions}{A 
-#'   functional data object containig the basis functions.}
+#'   functional data object containing the basis functions.}
 #'  
 #'  @keywords internal
 givenBasis <- function(funDataObject, functions, scores = NULL, ortho = NULL)
 {
   # check if funDataObject and functions are defined on the same domain
-  if( ! isTRUE(all.equal(getArgvals(funDataObject), getArgvals(functions))) )
+  if( ! isTRUE(all.equal(funDataObject@argvals, functions@argvals)) )
     stop("Basis functions must be defined on the same domain as the observations.")
   
   # check if scores have to be calculated
@@ -237,7 +238,7 @@ fpcaBasis <- function(funDataObject, nbasis = 10, pve = 0.99, npc = NULL, makePD
 #' representation for functional data on two-dimensional domains
 #' 
 #' This function calculates an uncorrelated multilinear principal component 
-#' analyis (UMPCA) representation for functional data on two-dimensional 
+#' analysis (UMPCA) representation for functional data on two-dimensional 
 #' domains. In this case, the data can be interpreted as images with \code{S1 x 
 #' S2} pixels (assuming \code{nObsPoints(funDataObject) = (S1, S2)}), i.e. the 
 #' total observed data are represented as third order tensor of dimension 
@@ -762,13 +763,53 @@ splineBasis2Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
 }
 
 
+#' Use a basis from package fda for univariate representation
+#'
+#' This function allows to use univariate basis representations from the
+#' \pkg{fda} package using the \code{\link[funData]{funData2fd}} function
+#' from package \pkg{funData}.
+#'
+#' @section Warning: The package \pkg{fda} has be be installed to use this
+#'   functionality.
+#'
+#' @param funDataObject An object of class \code{\link[funData]{funData}}
+#'   containing the observed functional data samples and for which the
+#'   basis representation is to be calculated.
+#' @param ... Other parameters passed to \code{\link[funData]{funData2fd}}.
+#'
+#' @return \item{scores}{The coefficient matrix.} \item{B}{A matrix
+#'   containing the scalar product of all pairs of basis functions. This
+#'   is \code{NULL}, if \code{ortho = TRUE}.}\item{ortho}{Logical, set to
+#'   \code{TRUE}, if basis functions are orthonormal.} \item{functions}{A
+#'   functional data object containing the basis functions.}
+#'   
+#' @importFrom utils packageVersion
+#' @seealso \code{\link[funData]{funData2fd}}, \code{\link[fda]{eval.fd}}
+#'
+#' @keywords internal
+fdaBasis <- function(funDataObject, ...)
+{
+  if(utils::packageVersion("funData") <= "1.2")
+    stop("fda basis expansion requires package funData, version 1.3 or higher")
+  
+  # transform data to fd object (from fda). Function throws a warning if fda is not available
+  fdobj <- funData2fd(funDataObject, ...)
+    
+  return(list(scores = t(fdobj$coefs),
+              B = fda::inprod(fdobj$basis, fdobj$basis), # calculate scalar product anyway
+              ortho = FALSE,
+              functions = funData(funDataObject@argvals, t(fda::getbasismatrix(funDataObject@argvals[[1]], fdobj$basis)))
+  ))
+}
+
+
 #' Calculate a cosine basis representation for functional data on two- or
 #' three-dimensional domains
 #'
 #' These functions calculate  a tensor cosine basis representation for
 #' functional data on two- or three-dimensional domains based on a
 #' discrete cosine transformation (DCT) using the C-library \code{fftw3}
-#' (\url{http://www.fftw.org/}). Coefficients under a given thershold are
+#' (\url{http://www.fftw.org/}). Coefficients under a given threshold are
 #' set to 0 to reduce complexity and for denoising.
 #'
 #' Given the (discretized) observed functions \eqn{X_i}, the function
@@ -825,7 +866,7 @@ splineBasis2Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
 #'   functions used.} \item{B}{A diagonal matrix, giving the norms of the
 #'   different basis functions used (as they are orthogonal).}
 #'   \item{ortho}{Logical, set to \code{FALSE}, as basis functions are
-#'   orthogonal, but in genereal not orthonormal.}
+#'   orthogonal, but in general not orthonormal.}
 #'   \item{functions}{\code{NULL}, as basis functions are known.}
 #'
 #' @seealso \code{\link{univDecomp}}, \code{\link{dct2D}},

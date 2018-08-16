@@ -87,7 +87,7 @@ An object of class \code{MFPCAfit} containing the following
   significance level (only if \code{bootstrap = TRUE}).}
 }
 \description{
-This function calculates a multivariate fuctional principal component
+This function calculates a multivariate functional principal component
 analysis (MFPCA) based on i.i.d. observations \eqn{x_1, \ldots, x_N} of
 a multivariate functional data-generating process \eqn{X = (X^{(1)},
 \ldots X^{(p)})}{X = X^(1), \ldots, X^(p)} with elements \eqn{X^{(j)}
@@ -172,25 +172,29 @@ principal component analysis. Then \code{uniExpansions[[j]] = list(type
 = "uFPCA", nbasis, pve, npc, makePD)}, where
 \code{nbasis,pve,npc,makePD} are parameters passed to the
 \code{\link{PACE}} function for calculating the univariate functional
-principal component analysis. \item Spline basis functions (not
-penalized). Then \code{uniExpansions[[j]] = list(type = "splines1D",
-bs, m, k)}, where \code{bs,m,k} are passed to the functions
-\code{\link{univDecomp}} and \code{\link{univExpansion}}. For
-two-dimensional tensor product splines, use \code{type = "splines2D"}.
-\item Spline basis functions (with smoothness penalty). Then
-\code{uniExpansions[[j]] = list(type = "splines1Dpen", bs, m, k)},
-where \code{bs,m,k} are passed to the functions
-\code{\link{univDecomp}} and \code{\link{univExpansion}}. Analogously
-to the unpenalized case, use \code{type = "splines2Dpen"} for 2D
-penalized tensor product splines. \item Cosine basis functions. Use
-\code{uniExpansions[[j]] = list(type = "DCT2D", qThresh, parallel)} for
-functions one two-dimensional domains (images) and \code{type =
+principal component analysis. \item Basis functions expansions from the
+package \pkg{fda}. Then \code{uniExpansions[[j]] = list(type = "fda",
+...)}, where \code{...} are passed to
+\code{\link[funData]{funData2fd}}, which heavily builds on
+\code{\link[fda]{eval.fd}}. If \pkg{fda} is not available, a warning is
+thrown. \item Spline basis functions (not penalized). Then
+\code{uniExpansions[[j]] = list(type = "splines1D", bs, m, k)}, where
+\code{bs,m,k} are passed to the functions \code{\link{univDecomp}} and
+\code{\link{univExpansion}}. For two-dimensional tensor product
+splines, use \code{type = "splines2D"}. \item Spline basis functions
+(with smoothness penalty). Then \code{uniExpansions[[j]] = list(type =
+"splines1Dpen", bs, m, k)}, where \code{bs,m,k} are passed to the
+functions \code{\link{univDecomp}} and \code{\link{univExpansion}}.
+Analogously to the unpenalized case, use \code{type = "splines2Dpen"}
+for 2D penalized tensor product splines. \item Cosine basis functions.
+Use \code{uniExpansions[[j]] = list(type = "DCT2D", qThresh, parallel)}
+for functions one two-dimensional domains (images) and \code{type =
 "DCT3D"} for 3D images. The calculation is based on the discrete cosine
 transform (DCT) implemented in the C-library \code{fftw3}. If this
 library is not available, the function will throw  a warning.
 \code{qThresh} gives the quantile for hard thresholding the basis
 coefficients based on their absolute value. If \code{parallel = TRUE},
-the coefficients for different images are calcualated in parallel.} See
+the coefficients for different images are calculated in parallel.} See
 \code{\link{univDecomp}} and \code{\link{univExpansion}} for details.}
 }
 \examples{
@@ -313,7 +317,7 @@ par(oldPar)
 C. Happ, S. Greven (2018): Multivariate Functional
   Principal Component Analysis for Data Observed on Different
   (Dimensional) Domains. Journal of the American Statistical
-  Association. Advance online publication. DOI:
+  Association, 113(522): 649-659. DOI:
   \doi{10.1080/01621459.2016.1273115}
 }
 \seealso{

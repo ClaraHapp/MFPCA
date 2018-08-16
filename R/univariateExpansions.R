@@ -156,6 +156,7 @@ univExpansion <- function(type, scores, argvals = ifelse(!is.null(functions), fu
                 "splines1Dpen" = do.call(splineFunction1D, params),
                 "splines2D" = do.call(splineFunction2D, params),
                 "splines2Dpen" = do.call(splineFunction2Dpen, params),
+                "fda" = do.call(expandBasisFunction, params),
                 "DCT2D" = do.call(dctFunction2D, params),
                 "DCT3D" = do.call(dctFunction3D, params),
                 "default" = do.call(expandBasisFunction, params),

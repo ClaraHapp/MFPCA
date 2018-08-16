@@ -58,7 +58,7 @@ calcBasisIntegrals <- function(basisFunctions, dimSupp, argvals)
 #' Multivariate functional principal component analysis for functions on
 #' different (dimensional) domains
 #'
-#' This function calculates a multivariate fuctional principal component
+#' This function calculates a multivariate functional principal component
 #' analysis (MFPCA) based on i.i.d. observations \eqn{x_1, \ldots, x_N} of
 #' a multivariate functional data-generating process \eqn{X = (X^{(1)},
 #' \ldots X^{(p)})}{X = X^(1), \ldots, X^(p)} with elements \eqn{X^{(j)}
@@ -143,25 +143,29 @@ calcBasisIntegrals <- function(basisFunctions, dimSupp, argvals)
 #' = "uFPCA", nbasis, pve, npc, makePD)}, where
 #' \code{nbasis,pve,npc,makePD} are parameters passed to the
 #' \code{\link{PACE}} function for calculating the univariate functional
-#' principal component analysis. \item Spline basis functions (not
-#' penalized). Then \code{uniExpansions[[j]] = list(type = "splines1D",
-#' bs, m, k)}, where \code{bs,m,k} are passed to the functions
-#' \code{\link{univDecomp}} and \code{\link{univExpansion}}. For
-#' two-dimensional tensor product splines, use \code{type = "splines2D"}.
-#' \item Spline basis functions (with smoothness penalty). Then
-#' \code{uniExpansions[[j]] = list(type = "splines1Dpen", bs, m, k)},
-#' where \code{bs,m,k} are passed to the functions
-#' \code{\link{univDecomp}} and \code{\link{univExpansion}}. Analogously
-#' to the unpenalized case, use \code{type = "splines2Dpen"} for 2D
-#' penalized tensor product splines. \item Cosine basis functions. Use
-#' \code{uniExpansions[[j]] = list(type = "DCT2D", qThresh, parallel)} for
-#' functions one two-dimensional domains (images) and \code{type =
+#' principal component analysis. \item Basis functions expansions from the
+#' package \pkg{fda}. Then \code{uniExpansions[[j]] = list(type = "fda",
+#' ...)}, where \code{...} are passed to
+#' \code{\link[funData]{funData2fd}}, which heavily builds on
+#' \code{\link[fda]{eval.fd}}. If \pkg{fda} is not available, a warning is
+#' thrown. \item Spline basis functions (not penalized). Then
+#' \code{uniExpansions[[j]] = list(type = "splines1D", bs, m, k)}, where
+#' \code{bs,m,k} are passed to the functions \code{\link{univDecomp}} and
+#' \code{\link{univExpansion}}. For two-dimensional tensor product
+#' splines, use \code{type = "splines2D"}. \item Spline basis functions
+#' (with smoothness penalty). Then \code{uniExpansions[[j]] = list(type =
+#' "splines1Dpen", bs, m, k)}, where \code{bs,m,k} are passed to the
+#' functions \code{\link{univDecomp}} and \code{\link{univExpansion}}.
+#' Analogously to the unpenalized case, use \code{type = "splines2Dpen"}
+#' for 2D penalized tensor product splines. \item Cosine basis functions.
+#' Use \code{uniExpansions[[j]] = list(type = "DCT2D", qThresh, parallel)}
+#' for functions one two-dimensional domains (images) and \code{type =
 #' "DCT3D"} for 3D images. The calculation is based on the discrete cosine
 #' transform (DCT) implemented in the C-library \code{fftw3}. If this
 #' library is not available, the function will throw  a warning.
 #' \code{qThresh} gives the quantile for hard thresholding the basis
 #' coefficients based on their absolute value. If \code{parallel = TRUE},
-#' the coefficients for different images are calcualated in parallel.} See
+#' the coefficients for different images are calculated in parallel.} See
 #' \code{\link{univDecomp}} and \code{\link{univExpansion}} for details.}
 #'
 #' @param mFData A  \code{\link[funData]{multiFunData}} object containing
@@ -231,11 +235,12 @@ calcBasisIntegrals <- function(basisFunctions, dimSupp, argvals)
 #' @export MFPCA
 #'
 #' @importFrom foreach %do%
+#' @importFrom utils packageVersion
 #'
 #' @references C. Happ, S. Greven (2018): Multivariate Functional
 #'   Principal Component Analysis for Data Observed on Different
 #'   (Dimensional) Domains. Journal of the American Statistical
-#'   Association. Advance online publication. DOI:
+#'   Association, 113(522): 649-659. DOI:
 #'   \doi{10.1080/01621459.2016.1273115}
 #'
 #' @seealso See \url{https://arxiv.org/abs/1707.02129} for a general
@@ -470,9 +475,15 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fi
 
   if(verbose)
     cat("Calculating MFPCA (", format(Sys.time(), "%T"), ")\n", sep = "")
+  
+  mArgvals <- if (utils::packageVersion("funData") <= "1.2") {
+    getArgvals(mFData)
+  } else {
+    funData::argvals(mFData)
+  }
 
   res <- calcMFPCA(N = N, p = p, Bchol = Bchol, M = M, type = type, weights = weights,
-                   npc = npc, argvals = getArgvals(mFData), uniBasis = uniBasis, fit = fit, approx.eigen = approx.eigen)
+                   npc = npc, argvals = mArgvals, uniBasis = uniBasis, fit = fit, approx.eigen = approx.eigen)
   
   res$meanFunction <- m # return mean function, too
   
@@ -548,7 +559,7 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fi
 
       # calculate MFPCA for bootstrap sample (Bchol has been updated for UMPCA)
       bootMFPCA <- calcMFPCA(N = N, p = p, Bchol = Bchol, M = M, type = type, weights = weights,
-                           npc = npcBoot, argvals = getArgvals(mFData), uniBasis = bootBasis, fit = FALSE, approx.eigen = approx.eigen)
+                           npc = npcBoot, argvals = mArgvals, uniBasis = bootBasis, fit = FALSE, approx.eigen = approx.eigen)
 
       # save eigenvalues
       booteVals[n,] <- bootMFPCA$values

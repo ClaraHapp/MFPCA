@@ -1,3 +1,10 @@
+# MFPCA 1.3
+
+## New features
+* New univariate expansion type `fda`, which allows to use all basis functions implemented in package **fda**.
+* Correct typos in documentation.
+* Theoretical paper is now finally published.
+
 # MFPCA 1.2-3
 
 ## New features

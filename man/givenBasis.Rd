@@ -22,7 +22,7 @@ K}. If not supplied, the scores are calculated as projection of each
 observation on the basis functions.}
 
 \item{ortho}{An optional parameter, specifying whether the given basis 
-functions are orthornomal (\code{ortho = TRUE}) or not (\code{ortho = 
+functions are orthonormal (\code{ortho = TRUE}) or not (\code{ortho = 
 FALSE}). If not supplied, the basis functions are considered as 
 non-orthonormal and their pairwise scalar product is calculated for 
 later use in the MFPCA.}
@@ -32,7 +32,7 @@ later use in the MFPCA.}
   containing the scalar product of all pairs of basis functions. This is
   \code{NULL}, if \code{ortho = TRUE}.}\item{ortho}{Logical, set to 
   \code{TRUE}, if basis functions are orthonormal.} \item{functions}{A 
-  functional data object containig the basis functions.}
+  functional data object containing the basis functions.}
  
  @keywords internal
 }
