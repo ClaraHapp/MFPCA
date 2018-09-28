@@ -14,3 +14,6 @@
 # autoreconf
 ^autom4te\.cache$
 ^aclocal.m4$
+
+# Unit tests
+./tests/testthat/Rplots.pdf
