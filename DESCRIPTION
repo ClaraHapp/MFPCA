@@ -30,7 +30,7 @@ Depends:
 Suggests:
     covr,
     fda,
-    testthat
+    testthat (>= 2.0.0)
 NeedsCompilation: yes
 SystemRequirements: libfftw3 (>= 3.3.4)
 RoxygenNote: 6.0.1
