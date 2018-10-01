@@ -13,7 +13,7 @@ multivExpansion <- function(multiFuns, scores)
     stop("Number of scores does not match number of eigenfunctions.")
   
   # calculate linear combination of multivariate basis functions
-  univExp <- foreach::foreach(j = 1:length(multiFuns)) %do% { # %do% might require extra loading
+  univExp <- foreach::foreach(j = seq_len(length(multiFuns))) %do% { # %do% might require extra loading
     univExpansion(type = "default", 
                   scores = scores,
                   functions = multiFuns[[j]])
