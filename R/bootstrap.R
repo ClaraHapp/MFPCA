@@ -22,7 +22,7 @@ stratSample <- function(f)
   if(!is.factor(f))
     stop("f has to be a factor variable.")
   
-  return( unlist(lapply(split(1:length(f), f), 
+  return( unlist(lapply(split(seq_len(length(f)), f), 
                         function(i){i[sample.int(length(i), replace = TRUE)]}), # use this in order to avoid surprises if length(i) = 1 (see sample help)
                  use.names = FALSE) )
 }
