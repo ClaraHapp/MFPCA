@@ -143,7 +143,7 @@ givenBasis <- function(funDataObject, functions, scores = NULL, ortho = NULL)
   
   # check if scores have to be calculated
   if(is.null(scores))
-    scores <- sapply(seq_len(nObs(functions)), function(i){ scalarProduct(funDataObject, extractObs(functions, i))})
+    scores <- vapply(seq_len(nObs(functions)), function(i){ scalarProduct(funDataObject, extractObs(functions, i))}, FUN.VALUE = rep(0, nObs(funDataObject)))
   
   # check if scores have correct dimensions
   if( ! isTRUE(all.equal(dim(scores), c(nObs(funDataObject), nObs(functions)))) )
@@ -430,11 +430,11 @@ fcptpaBasis <- function(funDataObject, npc, smoothingDegree = rep(2,2), alphaRan
   pca <-  FCP_TPA(X = funDataObject@X, K = npc, penMat = list(v = Dv, w = Dw), alphaRange = alphaRange)
     
   # reconstruct eigenimages, values and scores from FCP_TPA result
-  eigenImages <- sapply(seq_len(npc), function(i){pca$V[,i] %o% pca$W[,i]}, simplify = "array")
+  eigenImages <- vapply(seq_len(npc), function(i){as.numeric(pca$V[,i] %o% pca$W[,i])}, FUN.VALUE = array(0, dim = c(dim(pca$V)[1], dim(pca$W)[1])))
   functions <- funData(argvals = funDataObject@argvals, X = aperm(eigenImages, perm = c(3,1,2)))
   
-  values <- sapply(seq_len(npc), 
-                   function(m){crossprod(MFPCA::ttv(funDataObject@X, list(pca$V[,m], pca$W[,m]), dim = c(2,3)))/ nObs(funDataObject)}) 
+  values <- vapply(seq_len(npc), 
+                   function(m){crossprod(MFPCA::ttv(funDataObject@X, list(pca$V[,m], pca$W[,m]), dim = c(2,3)))/ nObs(funDataObject)}, FUN.VALUE = 0) 
   
   scores <-  sweep(pca$U, MARGIN=2, pca$d, "*")
   
@@ -697,7 +697,7 @@ splineBasis2D <- function(funDataObject, bs = "ps", m = NA, k = -1)
   # spline design matrix via gam
   g <- mgcv::gam(as.vector(funDataObject@X[1,,]) ~ te(coord$x, coord$y, bs = bs, m = m, k = k), data = coord, fit = FALSE)
   desMat <- g$X
-  k <- sapply(g$smooth[[1]]$margin, function(l){l$bs.dim})
+  k <- vapply(g$smooth[[1]]$margin, function(l){l$bs.dim}, FUN.VALUE = 0)
   m <- lapply(g$smooth[[1]]$margin, function(l){l$p.order})
   
   # weights via lm -> no penalization
@@ -746,7 +746,7 @@ splineBasis2Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
   
   # fit the last one extra in order to extract model matrix
   g <- mgcv::bam(as.vector(funDataObject@X[N, , ]) ~ te(coord$x, coord$y, bs = bs, m = m, k = k), data = coord, method = "REML")
-  k <- sapply(g$smooth[[1]]$margin, function(l){l$bs.dim})
+  k <- vapply(g$smooth[[1]]$margin, function(l){l$bs.dim}, FUN.VALUE = 0)
   m <- lapply(g$smooth[[1]]$margin, function(l){l$p.order})
   
   scores <- rbind(scores, g$coef)
@@ -902,7 +902,7 @@ dctBasis2D <- function(funDataObject, qThresh, parallel = FALSE)
                      .parallel = parallel)
   
   return(list(scores = Matrix::sparseMatrix(i = res$i, j = res$j, x = res$x),
-              B = Matrix::Diagonal(n = max(res$j), x = prod(sapply(funDataObject@argvals, function(l){diff(range(l))}))/pi^2),
+              B = Matrix::Diagonal(n = max(res$j), x = prod(vapply(funDataObject@argvals, function(l){diff(range(l))}, FUN.VALUE = 0))/pi^2),
               ortho = FALSE,
               functions = NULL
   ))
@@ -967,7 +967,7 @@ dctBasis3D <- function(funDataObject, qThresh, parallel = FALSE)
                      .parallel = parallel)
   
   return(list(scores = Matrix::sparseMatrix(i = res$i, j = res$j, x = res$x),
-              B = Matrix::Diagonal(n = max(res$j), x = prod(sapply(funDataObject@argvals, function(l){diff(range(l))}))/pi^3),
+              B = Matrix::Diagonal(n = max(res$j), x = prod(vapply(funDataObject@argvals, function(l){diff(range(l))}, FUN.VALUE = 0))/pi^3),
               ortho = FALSE,
               functions = NULL
   ))

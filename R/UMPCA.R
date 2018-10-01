@@ -266,7 +266,7 @@ ttv <- function(A, v, dim)
     stop("Parameter 'dim' must be passed as a vector of numerics.")
   
   # check input arguments
-  if(any(dim(A)[dim] != sapply(v, length)))
+  if(any(dim(A)[dim] != vapply(v, FUN = length, FUN.VALUE = 0)))
     stop("A and v have wrong dimensions!")
   
   if(length(dim) != length(v))

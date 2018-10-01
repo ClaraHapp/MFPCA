@@ -424,7 +424,7 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fi
   dimSupp <- dimSupp(mFData)
   
   # get type of univariate expansions
-  type <- sapply(uniExpansions, function(l){l$type})
+  type <- vapply(uniExpansions, function(l){l$type}, FUN.VALUE = "")
 
   # de-mean functions -> coefficients are also de-meaned!
   # do not de-mean in uFPCA, as PACE gives a smooth estimate of the mean (see below)
@@ -450,7 +450,7 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fi
   }
 
   # Multivariate FPCA
-  npc <- sapply(uniBasis, function(x){dim(x$scores)[2]}) # get number of univariate basis functions
+  npc <- vapply(uniBasis, function(x){dim(x$scores)[2]}, FUN.VALUE = 0) # get number of univariate basis functions
 
   if(M > sum(npc))
   {
@@ -497,7 +497,7 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fi
   
   # give correct names
   namesList <- lapply(mFData, names)
-  if(!all(sapply(namesList, is.null))) 
+  if(!all(vapply(namesList, FUN = is.null, FUN.VALUE = TRUE))) 
   {
     if(length(unique(namesList)) != 1)
       warning("Elements have different curve names. Use names of the first element for the results.")
@@ -518,7 +518,7 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fi
     booteFuns <- vector("list", p)
 
     for(j in seq_len(p))
-      booteFuns[[j]] <- array(NA, dim  = c(nBootstrap, M, sapply(mFData[[j]]@argvals, length)))
+      booteFuns[[j]] <- array(NA, dim  = c(nBootstrap, M, vapply(mFData[[j]]@argvals, FUN = length, FUN.VALUE = 0)))
     
     booteVals <- matrix(NA, nrow = nBootstrap, ncol = M)
 
@@ -552,7 +552,7 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fi
                                  settings = uniBasis[[j]]$settings)
       }
 
-      npcBoot <- sapply(bootBasis, function(x){dim(x$scores)[2]}) # get number of univariate basis functions
+      npcBoot <- vapply(bootBasis, function(x){dim(x$scores)[2]}, FUN.VALUE = 0) # get number of univariate basis functions
 
       if(M > sum(npcBoot))
         stop("Function MFPCA (bootstrap): total number of univariate basis functions must be greater or equal M!")

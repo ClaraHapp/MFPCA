@@ -509,7 +509,7 @@ splineFunction2Dpen <- function(scores, argvals, bs, m, k)
 dctFunction2D <- function(scores, argvals, parallel = FALSE)
 {
   # dimension of the image
-  dim <-sapply(argvals, length)
+  dim <- vapply(argvals, FUN = length, FUN.VALUE = 0)
 
   # get indices of sparse matrix
   scores <- methods::as(scores, "dgTMatrix") # uncompressed format
@@ -590,7 +590,7 @@ idct2D <- function(scores, ind, dim)
 dctFunction3D <- function(scores, argvals, parallel = FALSE)
 {
   # dimension of the image
-  dim <-sapply(argvals, length)
+  dim <- vapply(argvals, FUN = length, FUN.VALUE = 0)
 
   # get indices of sparse matrix
   scores <- methods::as(scores, "dgTMatrix") # uncompressed format
