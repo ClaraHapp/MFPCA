@@ -247,7 +247,7 @@ expandBasisFunction <- function(scores, argvals = functions@argvals, functions)
   {
     resX <- array(NA, dim = c(dim(scores)[1], d[-1]))
     
-    for(i in 1:d[2])
+    for(i in seq_len(d[2]))
       resX[,i,] <- scores %*% functions@X[,i,]
   }
   
@@ -255,8 +255,8 @@ expandBasisFunction <- function(scores, argvals = functions@argvals, functions)
   {
     resX <- array(NA, dim = c(dim(scores)[1], d[-1]))
     
-    for(i in 1:d[2])
-      for(j in 1:d[3])
+    for(i in seq_len(d[2]))
+      for(j in seq_len(d[3]))
           resX[,i,j,] <- scores %*% functions@X[,i,j,]
   }
     
@@ -264,7 +264,7 @@ expandBasisFunction <- function(scores, argvals = functions@argvals, functions)
   {
     resX <- aperm(plyr::aaply(.data = functions@X, .margins = 3:nd, 
                         .fun = function(x,y){y %*% x}, y = scores), 
-                  c(nd-1,nd, 1:(nd-2)))
+                  c(nd-1,nd, seq_len((nd-2))))
     dimnames(resX) <- NULL
   }  
   
