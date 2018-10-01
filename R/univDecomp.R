@@ -579,14 +579,14 @@ splineBasis1Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
   
   if(parallel)
   {
-    scores <- foreach::foreach(i = seq_len((N-1), .combine = "rbind")%dopar%{
+    scores <- foreach::foreach(i = seq_len(N-1), .combine = "rbind")%dopar%{
       g <- mgcv::gam(funDataObject@X[i, ] ~ s(x, bs = bs, m = m, k = k), method = "REML")
       g$coef
     }
   }
   else
   {
-    scores <- foreach::foreach(i = seq_len((N-1), .combine = "rbind")%do%{
+    scores <- foreach::foreach(i = seq_len(N-1), .combine = "rbind")%do%{
       g <- mgcv::gam(funDataObject@X[i, ] ~ s(x, bs = bs, m = m, k = k), method = "REML")
       g$coef
     }
