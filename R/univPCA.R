@@ -62,7 +62,7 @@
   mu = mgcv::predict.gam(gam0, newdata = data.frame(d.vec = X))
   Y.tilde = Y - matrix(mu, I, D, byrow = TRUE)
   cov.sum = cov.count = cov.mean = matrix(0, D, D)
-  for (i in 1:I) {
+  for (i in seq_len(I)) {
     obs.points = which(!is.na(Y[i, ]))
     cov.count[obs.points, obs.points] = cov.count[obs.points, obs.points] + 1
     cov.sum[obs.points, obs.points] = cov.sum[obs.points, obs.points] + tcrossprod(Y.tilde[i, obs.points])
@@ -99,7 +99,7 @@
   evalues = replace(evalues, which(evalues <= 0), 0)
   npc = ifelse(is.null(npc), min(which(cumsum(evalues)/sum(evalues) > pve)), npc)
   efunctions = matrix(Winvsqrt%*%eigen(V, symmetric = TRUE)$vectors[, seq(len = npc)], nrow = D, ncol = npc)
-  evalues = eigen(V, symmetric = TRUE, only.values = TRUE)$values[1:npc]  # use correct matrix for eigenvalue problem
+  evalues = eigen(V, symmetric = TRUE, only.values = TRUE)$values[seq_len(npc)]  # use correct matrix for eigenvalue problem
   cov.hat = efunctions %*% tcrossprod(diag(evalues, nrow = npc, ncol = npc), efunctions)
   ### numerical integration for estimation of sigma2
   T.len <- X[D] - X[1] # total interval length
@@ -116,7 +116,7 @@
   fit = matrix(0, nrow = I.pred, ncol = D)
   scores = matrix(NA, nrow = I.pred, ncol = npc)
   # no calculation of confidence bands, no variance matrix
-  for (i.subj in 1:I.pred) {
+  for (i.subj in seq_len(I.pred)) {
     obs.points = which(!is.na(Y.pred[i.subj, ]))
     if (sigma2 == 0 & length(obs.points) < npc) {
       stop("Measurement error estimated to be zero and there are fewer observed points than PCs; scores cannot be estimated.")
@@ -129,7 +129,7 @@
   }
   ret.objects = c("fit", "scores", "mu", "efunctions", "evalues",
                   "npc", "sigma2") # add sigma2 to output
-  ret = lapply(1:length(ret.objects), function(u) get(ret.objects[u]))
+  ret = lapply(seq_len(length(ret.objects)), function(u) get(ret.objects[u]))
   names(ret) = ret.objects
   ret$estVar <- diag(cov.hat)
   return(ret)
