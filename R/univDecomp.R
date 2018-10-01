@@ -143,7 +143,7 @@ givenBasis <- function(funDataObject, functions, scores = NULL, ortho = NULL)
   
   # check if scores have to be calculated
   if(is.null(scores))
-    scores <- sapply(1:nObs(functions), function(i){ scalarProduct(funDataObject, extractObs(functions, i))})
+    scores <- sapply(seq_len(nObs(functions)), function(i){ scalarProduct(funDataObject, extractObs(functions, i))})
   
   # check if scores have correct dimensions
   if( ! isTRUE(all.equal(dim(scores), c(nObs(funDataObject), nObs(functions)))) )
@@ -310,20 +310,20 @@ umpcaBasis <- function(funDataObject, npc)
   
   # calculate UMPCA
   # permute observed data s.t. the observations are saved in the last dimension
-  UMPCAres <- UMPCA(aperm(funDataObject@X, c(1+1:dimSupp(funDataObject), 1)), numP = npc)
+  UMPCAres <- UMPCA(aperm(funDataObject@X, c(1+seq_len(dimSupp(funDataObject)), 1)), numP = npc)
   
   # calculcate eigenfunctions  
   eigenImages <- array(NA, c(npc, nObsPoints(funDataObject)))
-  for(i in 1:npc)
+  for(i in seq_len(npc))
     eigenImages[UMPCAres$odrIdx[i],,] <- tcrossprod(UMPCAres$Us[[1]][,i], UMPCAres$Us[[2]][,i])
   
   eigenFunctions <- funData(argvals = funDataObject@argvals, X = eigenImages)
   
   # calculate scores
-  obsCent <- sweep(aperm(funDataObject@X, c(1+1:dimSupp(funDataObject), 1)), 1:2, UMPCAres$TXmean[,,1]) # demean images
+  obsCent <- sweep(aperm(funDataObject@X, c(1+seq_len(dimSupp(funDataObject)), 1)), 1:2, UMPCAres$TXmean[,,1]) # demean images
   scores <- array(NA, c(nObs(funDataObject), npc))
   
-  for(i in 1:npc)
+  for(i in seq_len(npc))
     scores[,UMPCAres$odrIdx[i]] <- ttv(obsCent, sapply(UMPCAres$Us, function(x){x[,i]}, simplify = FALSE), 1:2)
   
   return(list(scores = scores,
@@ -430,10 +430,10 @@ fcptpaBasis <- function(funDataObject, npc, smoothingDegree = rep(2,2), alphaRan
   pca <-  FCP_TPA(X = funDataObject@X, K = npc, penMat = list(v = Dv, w = Dw), alphaRange = alphaRange)
     
   # reconstruct eigenimages, values and scores from FCP_TPA result
-  eigenImages <- sapply(1:npc, function(i){pca$V[,i] %o% pca$W[,i]}, simplify = "array")
+  eigenImages <- sapply(seq_len(npc), function(i){pca$V[,i] %o% pca$W[,i]}, simplify = "array")
   functions <- funData(argvals = funDataObject@argvals, X = aperm(eigenImages, perm = c(3,1,2)))
   
-  values <- sapply(1:npc, 
+  values <- sapply(seq_len(npc), 
                    function(m){crossprod(MFPCA::ttv(funDataObject@X, list(pca$V[,m], pca$W[,m]), dim = c(2,3)))/ nObs(funDataObject)}) 
   
   scores <-  sweep(pca$U, MARGIN=2, pca$d, "*")
@@ -579,14 +579,14 @@ splineBasis1Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
   
   if(parallel)
   {
-    scores <- foreach::foreach(i = 1:(N-1), .combine = "rbind")%dopar%{
+    scores <- foreach::foreach(i = seq_len((N-1), .combine = "rbind")%dopar%{
       g <- mgcv::gam(funDataObject@X[i, ] ~ s(x, bs = bs, m = m, k = k), method = "REML")
       g$coef
     }
   }
   else
   {
-    scores <- foreach::foreach(i = 1:(N-1), .combine = "rbind")%do%{
+    scores <- foreach::foreach(i = seq_len((N-1), .combine = "rbind")%do%{
       g <- mgcv::gam(funDataObject@X[i, ] ~ s(x, bs = bs, m = m, k = k), method = "REML")
       g$coef
     }
@@ -731,14 +731,14 @@ splineBasis2Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
   
   if(parallel)
   {
-    scores <- foreach::foreach(i = 1:(N-1), .combine = "rbind")%dopar%{
+    scores <- foreach::foreach(i = seq_len(N-1), .combine = "rbind")%dopar%{
       g <- mgcv::bam(as.vector(funDataObject@X[i, , ]) ~ te(coord$x, coord$y, bs = bs, m = m, k = k), data = coord, method = "REML")
       g$coef
     }
   }
   else
   {
-    scores <- foreach::foreach(i = 1:(N-1), .combine = "rbind")%do%{
+    scores <- foreach::foreach(i = seq_len(N-1), .combine = "rbind")%do%{
       g <- mgcv::bam(as.vector(funDataObject@X[i, , ]) ~ te(coord$x, coord$y, bs = bs, m = m, k = k), data = coord, method = "REML")
       g$coef
     }
@@ -895,7 +895,7 @@ dctBasis2D <- function(funDataObject, qThresh, parallel = FALSE)
   if(dimSupp(funDataObject) != 2)
     stop("dctBasis2D can handle only functional data on two-dimensional domains.")
   
-  res <- plyr::ldply(1:nObs(funDataObject), 
+  res <- plyr::ldply(seq_len(nObs(funDataObject)), 
                      .fun = function(i, img){dct <- dct2D(img[i,,], qThresh)
                                              data.frame(i = rep(i, length(dct$ind)), j = dct$ind, x = dct$val)},
                      img = funDataObject@X,
@@ -960,7 +960,7 @@ dctBasis3D <- function(funDataObject, qThresh, parallel = FALSE)
   if(dimSupp(funDataObject) != 3)
     stop("dctBasis3D can handle only functional data on three-dimensional domains.")
   
-  res <- plyr::ldply(1:nObs(funDataObject), 
+  res <- plyr::ldply(seq_len(nObs(funDataObject)), 
                      .fun = function(i, img){dct <- dct3D(img[i,,,], qThresh)
                                              data.frame(i = rep(i, length(dct$ind)), j = dct$ind, x = dct$val)},
                      img = funDataObject@X,
