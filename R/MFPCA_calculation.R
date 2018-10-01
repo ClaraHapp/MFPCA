@@ -354,7 +354,7 @@ calcBasisIntegrals <- function(basisFunctions, dimSupp, argvals)
 #' 
 #' ### Compare to true eigenfunctions
 #' # flip to make results more clear
-#' pca$functions <- flipFuns(extractObs(sim$trueFuns, obs = 1:10), pca$functions)
+#' pca$functions <- flipFuns(sim$trueFuns[1:10], pca$functions)
 #' 
 #' par(mfrow = c(5,2), mar = rep(2,4))
 #' for(m in 2:6) # for m = 1, image.plot (used in plot(funData)) produces an error...
@@ -541,7 +541,7 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fi
       {
         if(!is.null(uniBasis[[j]]$functions)) # re-estimate scores AND functions
         {
-          bootBasis[[j]] <- do.call(univDecomp, c(list(funDataObject = extractObs(mFData, obs = bootObs)[[j]]), uniExpansions[[j]]))
+          bootBasis[[j]] <- do.call(univDecomp, c(list(funDataObject = (mFData[bootObs])[[j]]), uniExpansions[[j]]))
           
           # recalculate Bchol if necessary
           if(!bootBasis[[j]]$ortho)

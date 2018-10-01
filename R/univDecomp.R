@@ -143,7 +143,7 @@ givenBasis <- function(funDataObject, functions, scores = NULL, ortho = NULL)
   
   # check if scores have to be calculated
   if(is.null(scores))
-    scores <- vapply(seq_len(nObs(functions)), function(i){ scalarProduct(funDataObject, extractObs(functions, i))}, FUN.VALUE = rep(0, nObs(funDataObject)))
+    scores <- vapply(seq_len(nObs(functions)), function(i){ scalarProduct(funDataObject, functions[i])}, FUN.VALUE = rep(0, nObs(funDataObject)))
   
   # check if scores have correct dimensions
   if( ! isTRUE(all.equal(dim(scores), c(nObs(funDataObject), nObs(functions)))) )
@@ -219,7 +219,7 @@ givenBasis <- function(funDataObject, functions, scores = NULL, ortho = NULL)
 #' 
 #' # Flip if necessary
 #' plot(sim$trueFuns, obs = 1:5, main = "True eigenfunctions")
-#' plot(flipFuns(extractObs(sim$trueFuns, obs = 1:5), fpca$functions),
+#' plot(flipFuns(sim$trueFuns[1:5], fpca$functions),
 #'      main = "Estimated eigenfunctions\n(flipped)")
 #' 
 #' par(oldpar)
