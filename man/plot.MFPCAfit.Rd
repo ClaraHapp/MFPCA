@@ -4,7 +4,7 @@
 \alias{plot.MFPCAfit}
 \title{Plot MFPCA results}
 \usage{
-\method{plot}{MFPCAfit}(x, plotPCs = 1:nObs(x$functions),
+\method{plot}{MFPCAfit}(x, plotPCs = seq_len(nObs(x$functions)),
   stretchFactor = NULL, combined = FALSE, ...)
 }
 \arguments{

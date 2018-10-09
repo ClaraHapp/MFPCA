@@ -65,7 +65,7 @@ scoreplot.MFPCAfit <- function(PCAobject, choices = 1:2, scale = FALSE, ...)
   
   # check for labels, otherwise construct them TODO: rownames for scores in MFPCA
   lab <- {if(is.null(rownames(PCAobject$scores)))
-    1:NROW(PCAobject$scores)
+    seq_len(NROW(PCAobject$scores))
     else
       rownames(PCAobject$scores)}
   
@@ -149,17 +149,17 @@ screeplot.MFPCAfit <- function(x, npcs = min(10, length(x$values)), type = "line
     stop("Parameter 'main' must be either NULL or passed as a character.")
 
   ylab <- "Proportion of Variance Explained"
-  pve <- x$values[1:npcs]/sum(x$values)
+  pve <- x$values[seq_len(npcs)]/sum(x$values)
   
   if(is.null(ylim))
      ylim <- c(0,max(pve))
   
   switch(type,
-         "lines" = {plot(x = 1:npcs, y = pve, type = "b", ylim = ylim,
+         "lines" = {plot(x = seq_len(npcs), y = pve, type = "b", ylim = ylim,
                                    main = main, xlab = "PCs", ylab = ylab, xaxt = "n", ...)
-                    graphics::axis(1, at = 1:npcs)},
+                    graphics::axis(1, at = seq_len(npcs))},
          "barplot" = graphics::barplot(height = pve, main = main, ylim = ylim,
-                                       names.arg = paste("PC", 1:npcs), ylab = ylab, ...),
+                                       names.arg = paste("PC", seq_len(npcs)), ylab = ylab, ...),
          stop("Type ", type, " not defined in screeplot.")
   )
   
@@ -208,7 +208,7 @@ screeplot.MFPCAfit <- function(x, npcs = min(10, length(x$values)), type = "line
 #' 
 #' # Plot the results
 #' plot(PCA, combined = TRUE) # combine addition and subtraction in one plot
-plot.MFPCAfit <- function(x, plotPCs = 1:nObs(x$functions), stretchFactor = NULL, combined = FALSE, ...)
+plot.MFPCAfit <- function(x, plotPCs = seq_len(nObs(x$functions)), stretchFactor = NULL, combined = FALSE, ...)
 {
   if(!inherits(x, "MFPCAfit"))
     stop("Argument is not of class 'MFPCAfit'.")
@@ -255,9 +255,9 @@ plot.MFPCAfit <- function(x, plotPCs = 1:nObs(x$functions), stretchFactor = NULL
     PCplus <- x$meanFunction + stretchFactor * x$functions
     PCminus <- x$meanFunction - stretchFactor * x$functions
     
-    for(rows in 1:nRows)
+    for(rows in seq_len(nRows))
     {
-      for(i in 1:length(x$functions)) # for each element
+      for(i in seq_len(length(x$functions))) # for each element
       {
         yRange <- range(PCplus[[i]]@X, PCminus[[i]]@X)
         main <- paste("PC", ord, "(explains", round(x$values[ord]/sum(x$values)*100, 2), "% of total variability)")
@@ -390,7 +390,7 @@ summary.MFPCAfit <- function(object, ...)
   res <- rbind(`Eigenvalue` = vals, 
                `Proportion of variance explained` = vals/sum(vals),
                `Cumulative proportion` = cumsum(vals)/sum(vals))
-  colnames(res) <- paste("PC", 1:length(vals))
+  colnames(res) <- paste("PC", seq_len(length(vals)))
   
   attr(res, "npc") <- funData::nObs(object$functions)
   attr(res, "nel") <- length(object$functions)

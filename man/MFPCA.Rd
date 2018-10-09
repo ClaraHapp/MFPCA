@@ -297,7 +297,7 @@ scoreplot(pca) # plot the scores
 
 ### Compare to true eigenfunctions
 # flip to make results more clear
-pca$functions <- flipFuns(extractObs(sim$trueFuns, obs = 1:10), pca$functions)
+pca$functions <- flipFuns(sim$trueFuns[1:10], pca$functions)
 
 par(mfrow = c(5,2), mar = rep(2,4))
 for(m in 2:6) # for m = 1, image.plot (used in plot(funData)) produces an error...

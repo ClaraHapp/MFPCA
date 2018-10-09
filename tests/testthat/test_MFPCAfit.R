@@ -2,6 +2,8 @@
 
 context("Testing functions for MFPCAfit class")
 
+pdf(file=NULL) # do not save plots
+
 #### Calculate MFPCA once (see MFPCA help) ####
 set.seed(1)
 ### simulate data (one-dimensional domains)
@@ -152,3 +154,5 @@ test_that("Test screeplot function", {
   expect_null(screeplot(pca1D))
   expect_null(screeplot(pca2D))
 })
+
+dev.off()

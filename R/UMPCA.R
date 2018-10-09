@@ -62,7 +62,7 @@ UMPCA <- function(TX, numP)
   # TX: (N+1)-dimensional tensor Tensor Sample Dimension x NumSamples
   N <- length(dim(TX)) - 1 # the order of samples
   IsTX <- dim(TX)  
-  Is <- IsTX[1:N]  # the dimensions of the tensor
+  Is <- IsTX[seq_len(N)]  # the dimensions of the tensor
   
   #Please see Corollary 1 in the TNN paper: numP<= min(min(Is),M}
   if(numP > min(Is))
@@ -74,20 +74,20 @@ UMPCA <- function(TX, numP)
   
   #### Zero-Mean ####
   TXmean <- rowMeans(TX, dims = N) # the mean
-  for(n in 1:numSpl)
+  for(n in seq_len(numSpl))
     TX[,,n] <- TX[,,n] - TXmean # centering
   dim(TXmean) <- c(dim(TXmean), 1) # correct dimensions for output
   
   #### UMPCA parameters ####
   maxK <- 10 # maximum number of iterations, you can change this number
   Us <- vector("list", N) # N matrices
-  for(n in 1:N)
+  for(n in seq_len(N))
     Us[[n]] <- matrix(NA, nrow = Is[n], ncol = numP)
   Us0 <- vector("list", N) # N vectors
-  for(iP in 1:numP) # get each EMP one by one
+  for(iP in seq_len(numP)) # get each EMP one by one
   {
     #Initialization
-    for(n in 1:N)
+    for(n in seq_len(N))
     {
       if(iP == 1)
       {
@@ -100,15 +100,15 @@ UMPCA <- function(TX, numP)
     #End Initialization
     
     #Start iterations
-    for(k in 1:maxK)
+    for(k in seq_len(maxK))
     {
-      for(n in 1:N)
+      for(n in seq_len(N))
       {
-        idx <- (1:N)[-n]
+        idx <- seq_len(N)[-n]
         Ypn <- ttv(TX, sapply(Us[idx], function(x){x[,iP]}, simplify = FALSE), idx)
 
         ST <- rep(0, Is[n])  
-        for(i in 1:numSpl)
+        for(i in seq_len(numSpl))
         {
           YDiff <- Ypn[,i]
           ST <- ST + tcrossprod(YDiff, YDiff)   #Within-class Scatter
@@ -131,7 +131,7 @@ UMPCA <- function(TX, numP)
     }
     
     #### Projection ####
-    gp <- ttv(TX, sapply(Us, function(x){x[,iP]}, simplify = FALSE), 1:N)  
+    gp <- ttv(TX, sapply(Us, function(x){x[,iP]}, simplify = FALSE), seq_len(N))
     if (iP == 1)
       Gps <- gp  
     else
@@ -144,7 +144,7 @@ UMPCA <- function(TX, numP)
   Ymean <- rowMeans(vecYps)  #Should be zero
   TVars <- diag( tcrossprod(vecYps, vecYps) )  #Calculate variance
   odrIdx <- order(TVars, decreasing = TRUE)  
-  odrIdx <- odrIdx[1:numP] # take the first numP
+  odrIdx <- odrIdx[seq_len(numP)] # take the first numP
   
   return(list(Us = Us, TXmean = TXmean, odrIdx = odrIdx))
 }
@@ -266,7 +266,7 @@ ttv <- function(A, v, dim)
     stop("Parameter 'dim' must be passed as a vector of numerics.")
   
   # check input arguments
-  if(any(dim(A)[dim] != sapply(v, length)))
+  if(any(dim(A)[dim] != vapply(v, FUN = length, FUN.VALUE = 0)))
     stop("A and v have wrong dimensions!")
   
   if(length(dim) != length(v))
@@ -280,7 +280,7 @@ ttv <- function(A, v, dim)
     v <- v[dimOrd] # reorder v list
   }
   
-  for(d in 1:length(dim))
+  for(d in seq_len(length(dim)))
     A <- ttvCalculation(A, v[d], dim[d])
     
   return(A)

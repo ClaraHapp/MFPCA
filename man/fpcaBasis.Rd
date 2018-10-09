@@ -64,7 +64,7 @@ plot(fpca$functions, main = "Estimated eigenfunctions")
 
 # Flip if necessary
 plot(sim$trueFuns, obs = 1:5, main = "True eigenfunctions")
-plot(flipFuns(extractObs(sim$trueFuns, obs = 1:5), fpca$functions),
+plot(flipFuns(sim$trueFuns[1:5], fpca$functions),
      main = "Estimated eigenfunctions\\n(flipped)")
 
 par(oldpar)

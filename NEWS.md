@@ -1,9 +1,17 @@
+# MFPCA 1.3-1
+
+## New features
+* Consequent use of `seq_len(x)` instead of `1:x`.
+* Use of type-safe `vapply` instead of `sapply`, where applicable.
+
+
 # MFPCA 1.3
 
 ## New features
 * New univariate expansion type `fda`, which allows to use all basis functions implemented in package **fda**.
 * Correct typos in documentation.
 * Theoretical paper is now finally published.
+
 
 # MFPCA 1.2-3
 

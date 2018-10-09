@@ -130,7 +130,7 @@ FCP_TPA <- function(X, K, penMat, alphaRange, verbose = FALSE, tol = 1e-4, maxIt
   V <- matrix(NA, ncol = K, nrow = dimX[2])
   W <- matrix(NA, ncol = K, nrow = dimX[3])
   
-  for(k in 1:K)
+  for(k in seq_len(K))
   {
     if(verbose)
       cat("\nk = ", k, "\n")

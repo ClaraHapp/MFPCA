@@ -33,9 +33,9 @@ calcBasisIntegrals <- function(basisFunctions, dimSupp, argvals)
   {
     w <- funData:::.intWeights(argvals[[1]])
 
-    for(m in 1:npc)
+    for(m in seq_len(npc))
     {
-      for(n in 1:m)
+      for(n in seq_len(m))
         B[m, n] <- B[n, m] <- (basisFunctions[m, ]* basisFunctions[n, ])%*%w
     }
   }
@@ -44,9 +44,9 @@ calcBasisIntegrals <- function(basisFunctions, dimSupp, argvals)
     w1 <- t(funData:::.intWeights(argvals[[1]]))
     w2 <- funData:::.intWeights(argvals[[2]])
 
-    for(m in 1:npc)
+    for(m in seq_len(npc))
     {
-      for(n in 1:m)
+      for(n in seq_len(m))
         B[m, n] <- B[n, m] <-  w1 %*%(basisFunctions[m, , ]* basisFunctions[n, ,])%*%w2
     }
   }
@@ -354,7 +354,7 @@ calcBasisIntegrals <- function(basisFunctions, dimSupp, argvals)
 #' 
 #' ### Compare to true eigenfunctions
 #' # flip to make results more clear
-#' pca$functions <- flipFuns(extractObs(sim$trueFuns, obs = 1:10), pca$functions)
+#' pca$functions <- flipFuns(sim$trueFuns[1:10], pca$functions)
 #' 
 #' par(mfrow = c(5,2), mar = rep(2,4))
 #' for(m in 2:6) # for m = 1, image.plot (used in plot(funData)) produces an error...
@@ -424,12 +424,12 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fi
   dimSupp <- dimSupp(mFData)
   
   # get type of univariate expansions
-  type <- sapply(uniExpansions, function(l){l$type})
+  type <- vapply(uniExpansions, function(l){l$type}, FUN.VALUE = "")
 
   # de-mean functions -> coefficients are also de-meaned!
   # do not de-mean in uFPCA, as PACE gives a smooth estimate of the mean (see below)
   m <- meanFunction(mFData, na.rm = TRUE) # ignore NAs in data
-  for(j in 1:p)
+  for(j in seq_len(p))
   { 
     if(type[j] != "uFPCA")
       mFData[[j]] <- mFData[[j]] - m[[j]]
@@ -443,14 +443,14 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fi
                      expansion = uniExpansions, data = mFData, SIMPLIFY = FALSE)
 
   # for uFPCA: replace estimated mean in m
-  for(j in 1:p)
+  for(j in seq_len(p))
   {
     if(type[j] == "uFPCA")
       m[[j]] <- uniBasis[[j]]$meanFunction
   }
 
   # Multivariate FPCA
-  npc <- sapply(uniBasis, function(x){dim(x$scores)[2]}) # get number of univariate basis functions
+  npc <- vapply(uniBasis, function(x){dim(x$scores)[2]}, FUN.VALUE = 0) # get number of univariate basis functions
 
   if(M > sum(npc))
   {
@@ -459,7 +459,7 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fi
   } 
 
   # check if non-orthonormal basis functions used
-  if(all(foreach::foreach(j = 1:p, .combine = "c")%do%{uniBasis[[j]]$ortho}))
+  if(all(foreach::foreach(j = seq_len(p), .combine = "c")%do%{uniBasis[[j]]$ortho}))
     Bchol = NULL
   else
   {
@@ -497,7 +497,7 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fi
   
   # give correct names
   namesList <- lapply(mFData, names)
-  if(!all(sapply(namesList, is.null))) 
+  if(!all(vapply(namesList, FUN = is.null, FUN.VALUE = TRUE))) 
   {
     if(length(unique(namesList)) != 1)
       warning("Elements have different curve names. Use names of the first element for the results.")
@@ -505,7 +505,7 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fi
     row.names(res$scores) <- namesList[[1]]
     
     if(fit)
-      for(i in 1:p)
+      for(i in seq_len(p))
         names(res$fit[[i]]) <- namesList[[1]]
   }
 
@@ -517,12 +517,12 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fi
 
     booteFuns <- vector("list", p)
 
-    for(j in 1:p)
-      booteFuns[[j]] <- array(NA, dim  = c(nBootstrap, M, sapply(mFData[[j]]@argvals, length)))
+    for(j in seq_len(p))
+      booteFuns[[j]] <- array(NA, dim  = c(nBootstrap, M, vapply(mFData[[j]]@argvals, FUN = length, FUN.VALUE = 0)))
     
     booteVals <- matrix(NA, nrow = nBootstrap, ncol = M)
 
-    for(n in 1:nBootstrap)
+    for(n in seq_len(nBootstrap))
     {
       if(verbose)
       {
@@ -537,11 +537,11 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fi
 
       bootBasis <- vector("list", p)
 
-      for(j in 1:p)
+      for(j in seq_len(p))
       {
         if(!is.null(uniBasis[[j]]$functions)) # re-estimate scores AND functions
         {
-          bootBasis[[j]] <- do.call(univDecomp, c(list(funDataObject = extractObs(mFData, obs = bootObs)[[j]]), uniExpansions[[j]]))
+          bootBasis[[j]] <- do.call(univDecomp, c(list(funDataObject = (mFData[bootObs])[[j]]), uniExpansions[[j]]))
           
           # recalculate Bchol if necessary
           if(!bootBasis[[j]]$ortho)
@@ -552,7 +552,7 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fi
                                  settings = uniBasis[[j]]$settings)
       }
 
-      npcBoot <- sapply(bootBasis, function(x){dim(x$scores)[2]}) # get number of univariate basis functions
+      npcBoot <- vapply(bootBasis, function(x){dim(x$scores)[2]}, FUN.VALUE = 0) # get number of univariate basis functions
 
       if(M > sum(npcBoot))
         stop("Function MFPCA (bootstrap): total number of univariate basis functions must be greater or equal M!")
@@ -568,7 +568,7 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fi
       tmpFuns <- flipFuns(res$functions, bootMFPCA$functions)
 
       # save in booteFuns
-      for(j in 1:p)
+      for(j in seq_len(p))
       {
         if(dimSupp[j] == 1)
           booteFuns[[j]][n,,] <- tmpFuns[[j]]@X
@@ -582,7 +582,7 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fi
     CIvalues <- vector("list", length(bootstrapAlpha))
     CI <- vector("list", length(bootstrapAlpha))
    
-    for(alpha in 1:length(bootstrapAlpha))
+    for(alpha in seq_len(length(bootstrapAlpha)))
     {
       if(verbose)
         cat("Calculating bootstrap quantiles for alpha = ", bootstrapAlpha[alpha], " (", format(Sys.time(), "%T"), ")\n", sep = "")
@@ -592,7 +592,7 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fi
       names(CIvalues)[alpha] <- paste("alpha", bootstrapAlpha[alpha], sep = "_")
       
       bootCI_lower <- bootCI_upper <-  vector("list", p)
-      for(j in 1:p)
+      for(j in seq_len(p))
       {
         bootCI_lower[[j]] <- funData(mFData[[j]]@argvals, apply(booteFuns[[j]], 2:length(dim(booteFuns[[j]])),
                                                              quantile, bootstrapAlpha[alpha]/2))
@@ -627,10 +627,10 @@ MFPCA <- function(mFData, M, uniExpansions, weights = rep(1, length(mFData)), fi
 calcMFPCA <- function(N, p, Bchol, M, type, weights, npc, argvals, uniBasis, fit = FALSE, approx.eigen = FALSE)
 {
   # combine all scores
-  allScores <- foreach::foreach(j = 1:p, .combine = "cbind")%do%{uniBasis[[j]]$scores}
+  allScores <- foreach::foreach(j = seq_len(p), .combine = "cbind")%do%{uniBasis[[j]]$scores}
 
   # block vector of weights
-  allWeights <- foreach::foreach(j = 1:p, .combine = "c")%do%{rep(sqrt(weights[j]), npc[j])}
+  allWeights <- foreach::foreach(j = seq_len(p), .combine = "c")%do%{rep(sqrt(weights[j]), npc[j])}
 
   Z <- allScores %*% Matrix::Diagonal(x = allWeights) / sqrt(N-1)
   
@@ -650,7 +650,7 @@ calcMFPCA <- function(N, p, Bchol, M, type, weights, npc, argvals, uniBasis, fit
       tmpSVD <- irlba::irlba(as.matrix(Z), nv = M)
 
       vectors <- tmpSVD$v
-      values <- tmpSVD$d[1:M]^2
+      values <- tmpSVD$d[seq_len(M)]^2
     }
     else
     {
@@ -659,8 +659,8 @@ calcMFPCA <- function(N, p, Bchol, M, type, weights, npc, argvals, uniBasis, fit
 
       e <- eigen(stats::cov(allScores) * outer(allWeights, allWeights, "*"))
 
-      values <- e$values[1:M]
-      vectors <- e$vectors[,1:M]
+      values <- e$values[seq_len(M)]
+      vectors <- e$vectors[,seq_len(M)]
     }
   }
   else
@@ -670,7 +670,7 @@ calcMFPCA <- function(N, p, Bchol, M, type, weights, npc, argvals, uniBasis, fit
       tmpSVD <- irlba::irlba(as.matrix(Matrix::tcrossprod(Z, Bchol)), nv = M)
 
       vectors <- Matrix::crossprod(Bchol, tmpSVD$v)
-      values <- tmpSVD$d[1:M]^2
+      values <- tmpSVD$d[seq_len(M)]^2
     }
     else
     {
@@ -679,8 +679,8 @@ calcMFPCA <- function(N, p, Bchol, M, type, weights, npc, argvals, uniBasis, fit
 
       e <- eigen(Matrix::crossprod(Bchol) %*% (stats::cov(allScores) * outer(allWeights, allWeights, "*")))
 
-      values <- Re(e$values[1:M])
-      vectors <- Re(e$vectors[,1:M])
+      values <- Re(e$values[seq_len(M)])
+      vectors <- Re(e$vectors[,seq_len(M)])
     }
   }
 
@@ -695,9 +695,9 @@ calcMFPCA <- function(N, p, Bchol, M, type, weights, npc, argvals, uniBasis, fit
   npcCum <- cumsum(c(0, npc)) # indices for blocks (-1)
 
   tmpWeights <- as.matrix(Matrix::crossprod(Z, Z %*%vectors))
-  eFunctions <- foreach::foreach(j = 1:p) %do% {
+  eFunctions <- foreach::foreach(j = seq_len(p)) %do% {
     univExpansion(type = type[j],
-                  scores = 1/sqrt(weights[j] * values) * normFactors * t(tmpWeights[npcCum[j]+1:npc[j], , drop = FALSE]),
+                  scores = 1/sqrt(weights[j] * values) * normFactors * t(tmpWeights[npcCum[j]+seq_len(npc[j]), , drop = FALSE]),
                   argvals = argvals[[j]],
                   functions = uniBasis[[j]]$functions,
                   params = uniBasis[[j]]$settings)
