@@ -141,6 +141,8 @@ test_that("test MFPCA main function", {
   expect_equal(mixed$normFactors[1], 0.97475, tolerance = 1e-5)
   
   ### Test bootstrap
+  # suppress warnings in transition to new RNG, as proposed by CRAN maintainers
+  suppressWarnings(RNGversion("3.5.0")) 
   set.seed(2)
   splinesBoot <- MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "splines1D", k = 10),
                                                             list(type = "splines1D", k = 10)),
