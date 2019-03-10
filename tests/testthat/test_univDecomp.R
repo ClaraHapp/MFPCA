@@ -173,6 +173,8 @@ test_that("PACE function", {
   expect_equal(pcaPD$sigma2, 0.01102, tolerance = 1e-5)
   
   # test also for irregular data
+  # suppress warnings in transition to new RNG, as proposed by CRAN maintainers
+  suppressWarnings(RNGversion("3.5.0")) 
   set.seed(2)
   f1sparse <- sparsify(f1, minObs=  20, maxObs = 50)
   i1 <- irregFunData(argvals = apply(f1sparse@X,1, function(x){f1sparse@argvals[[1]][which(!is.na(x))]}), X = apply(f1sparse@X, 1, na.omit))
