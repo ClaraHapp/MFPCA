@@ -1,3 +1,9 @@
+# MFPCA 1.3-2
+
+## New features
+* Suppress warnings in unit tests with fixed seed caused by changing the default RNG in latest R development version.
+
+
 # MFPCA 1.3-1
 
 ## New features
