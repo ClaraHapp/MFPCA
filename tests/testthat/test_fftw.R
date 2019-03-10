@@ -102,6 +102,8 @@ test_that("test univariate DCT 3D", {
 ##### Inverse DCT #####
 
 test_that("Test fftw: IDCT", {
+  # suppress warnings in transition to new RNG, as proposed by CRAN maintainers
+  suppressWarnings(RNGversion("3.5.0")) 
   set.seed(4)
   scores <- rnorm(25, sd = 25:1/25)
   
