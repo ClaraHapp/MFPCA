@@ -145,16 +145,16 @@ test_that("test MFPCA main function", {
   suppressWarnings(RNGversion("3.5.0")) 
   set.seed(2)
   splinesBoot <- MFPCA(sim$simData, M = 5, uniExpansions = list(list(type = "splines1D", k = 10),
-                                                            list(type = "splines1D", k = 10)),
-                   approx.eigen = FALSE, bootstrap = TRUE, nBootstrap = 100, bootstrapAlpha = 0.05, verbose = FALSE)
+                                                                list(type = "splines1D", k = 10)),
+                       approx.eigen = FALSE, bootstrap = TRUE, nBootstrap = 100, bootstrapAlpha = 0.05, verbose = FALSE)
   expect_equal(splinesBoot$CIvalues$alpha_0.05$upper[1], 1.39716, tolerance = 1e-5)
   expect_equal(sum(splinesBoot$CIvalues$alpha_0.05$upper), 3.51558, tolerance = 1e-5)
   expect_equal(splinesBoot$CIvalues$alpha_0.05$lower[1], 0.82537, tolerance = 1e-5)
   expect_equal(sum(splinesBoot$CIvalues$alpha_0.05$lower), 2.24919, tolerance = 1e-5)
   expect_equal(nObs(splinesBoot$CI$alpha_0.05$upper), 5)
-  expect_equal(norm(splinesBoot$CI$alpha_0.05$upper)[1], 0.266934, tolerance = 1e-5)
   expect_equal(nObs(splinesBoot$CI$alpha_0.05$lower), 5)
-  expect_equal(norm(splinesBoot$CI$alpha_0.05$lower)[1], 2.02265, tolerance = 1e-5)
+  expect_equal(norm(splinesBoot$CI$alpha_0.05$upper - splinesBoot$CI$alpha_0.05$lower)[1], 0.980646, tolerance = 1e-5)
+  expect_equal(sum(norm(splinesBoot$CI$alpha_0.05$upper - splinesBoot$CI$alpha_0.05$lower)), 23.6923, tolerance = 1e-5)
   
   uFPCABoot <- MFPCA(sim$simData, M = 3, uniExpansions = list(list(type = "uFPCA", npc = 3),
                                                                 list(type = "uFPCA", npc = 3)),
