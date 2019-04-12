@@ -23,5 +23,5 @@ citEntry(
   issue = "522",
   pages = "649-659",
   doi =  "10.1080/01621459.2016.1273115",
-  textVersion = "C. Happ and S. Greven (2018). Multivariate Functional Principal Component Analysis for Data Observed on Different (Dimensional) Domains. Journal of the American Statistical Association, 113(522): 649-659. http://dx.doi.org/10.1080/01621459.2016.1273115."
+  textVersion = "C. Happ and S. Greven (2018). Multivariate Functional Principal Component Analysis for Data Observed on Different (Dimensional) Domains. Journal of the American Statistical Association, 113(522): 649-659. https://doi.org/10.1080/01621459.2016.1273115."
 )
