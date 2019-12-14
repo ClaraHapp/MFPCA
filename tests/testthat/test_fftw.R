@@ -13,7 +13,7 @@ test_that("Test fftw: DCT", {
   expect_error(MFPCA:::dct3D(image2D, qThresh = 0.9), "dct3D can handle only 3D images")
   
   fftw2D <- try(MFPCA:::dct2D(image2D, qThresh = 0.95), silent = TRUE)
-  if(class(fftw2D) == "try-error")
+  if(any(class(fftw2D) == "try-error"))
     expect_error(stop(fftw2D), "dctBasis2D requires C-library fftw3 to be installed. Check http://www.fftw.org/ for more information.")
   else
   {
@@ -26,7 +26,7 @@ test_that("Test fftw: DCT", {
   
   
   fftw3D <- try(MFPCA:::dct3D(image3D, qThresh = 0.95), silent = TRUE)
-  if(class(fftw3D) == "try-error")
+  if(any(class(fftw3D) == "try-error"))
     expect_error(stop(fftw3D), "dctBasis3D requires C-library fftw3 to be installed. Check http://www.fftw.org/ for more information.")
   else
   {
@@ -49,7 +49,7 @@ test_that("test univariate DCT 2D", {
                 X = aperm(replicate(10, outer(x1, cos(pi*x2))+matrix(rnorm(50*75, sd = 0.1), nrow = 50)), c(3,1,2)))
   
   dct2D <- try(MFPCA:::dctBasis2D(f2, qThresh = 0.95), silent = TRUE)
-  if(class(dct2D) == "try-error")
+  if(any(class(dct2D) == "try-error"))
     expect_error(stop(dct2D), "dctBasis2D requires C-library fftw3 to be installed. Check http://www.fftw.org/ for more information.")
   else
   {
@@ -79,7 +79,7 @@ test_that("test univariate DCT 3D", {
   f3 <- funData(argvals = list(x1, x2, x3), X = replicate(20, array(rnorm(10*40*30), dim = c(10, 40, 30))))
   
   dct3D <- try(MFPCA:::dctBasis3D(f3, qThresh = 0.95), silent = TRUE)
-  if(class(dct3D) == "try-error")
+  if(any(class(dct3D) == "try-error"))
     expect_error(stop(dct3D), "dctBasis3D requires C-library fftw3 to be installed. Check http://www.fftw.org/ for more information.")
   else
   {
@@ -118,7 +118,7 @@ test_that("Test fftw: IDCT", {
   expect_error(MFPCA:::idct3D(scores = scores, ind = 2000+0:24, dim = c(10, 20, 10)), "Index exceeds image dimensions.")
   
   idct2D <- try(MFPCA:::idct2D(scores = scores, ind = sample(200, 25), dim = c(10, 20)), silent = TRUE)
-  if(class(idct2D) == "try-error")
+  if(any(class(idct2D) == "try-error"))
     expect_error(stop(idct2D), "dctBasis2D requires C-library fftw3 to be installed. Check http://www.fftw.org/ for more information.")
   else
   {
@@ -134,7 +134,7 @@ test_that("Test fftw: IDCT", {
   
   
   idct3D <- try(MFPCA:::idct3D(scores = scores, ind = sample(2000, 25), dim = c(10, 20, 10)), silent = TRUE)
-  if(class(idct3D) == "try-error")
+  if(any(class(idct3D) == "try-error"))
     expect_error(stop(idct3D), "dctBasis3D requires C-library fftw3 to be installed. Check http://www.fftw.org/ for more information.")
   else 
   {
@@ -155,7 +155,7 @@ test_that("test univariate IDCT 2D", {
   argvals <- list(seq(0, 1, 0.01), seq(-1, 1, 0.02))
   
   dct2D <- try(MFPCA:::dctFunction2D(scores = scores, argvals = argvals), silent = TRUE)
-  if(class(dct2D) == "try-error")
+  if(any(class(dct2D) == "try-error"))
     expect_error(stop(dct2D), "dctBasis2D requires C-library fftw3 to be installed. Check http://www.fftw.org/ for more information.\"")
   else
   {
@@ -178,7 +178,7 @@ test_that("test univariate IDCT 3D", {
   argvals <- list(seq(0, 1, 0.01), seq(-1, 1, 0.02), seq(-0.5, 0.5, 0.05))
   
   dct3D <- try(MFPCA:::dctFunction3D(scores = scores, argvals = argvals), silent = TRUE)
-  if(class(dct3D) == "try-error")
+  if(any(class(dct3D) == "try-error"))
     expect_error(stop(dct3D), "dctBasis3D requires C-library fftw3 to be installed. Check http://www.fftw.org/ for more information.")
   else
   {
