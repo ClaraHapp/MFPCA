@@ -1,3 +1,8 @@
+# MFPCA 1.3-3
+
+## New features
+* Fix unit tests failing due to matrix / array objects having multiple classes in newest Rdevel version.
+
 # MFPCA 1.3-2
 
 ## New features
