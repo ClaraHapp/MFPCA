@@ -22,7 +22,7 @@ It implements various univariate bases:
 * Univariate functional PCA (only one-dimensional domains).
 * Spline bases (one- and two-dimensional domains; with optional smoothing penalty).
 * Cosine bases (two- and three-dimensional domains; fast implementation built on DCT).
-* Tensor PCA (two-dimensional domains; UMPCA approach from [Lu et al. (2009)](https://ieeexplore.ieee.org/xpl/articleDetails.jsp?arnumber=5272374) and FCP_TPA approach from [Allen (2013)](http://www.stat.rice.edu/~gallen/gallen_func_hopca_2013.pdf)).
+* Tensor PCA (two-dimensional domains; UMPCA approach from [Lu et al. (2009)](https://ieeexplore.ieee.org/xpl/articleDetails.jsp?arnumber=5272374) and FCP_TPA approach from [Allen (2013)](https://ieeexplore.ieee.org/document/6714047)).
 * Given basis functions, e.g. from a previous univariate PCA.
 
 The representation of the data is based on the object-oriented [`funData`](https://github.com/ClaraHapp/funData) package, hence all functionalities for plotting, arithmetics etc. included therein may be used.
