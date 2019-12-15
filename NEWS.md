@@ -1,3 +1,9 @@
+# MFPCA 1.3-4
+
+## New features
+* Update maintainer and link to Allen (2013) paper.
+
+
 # MFPCA 1.3-3
 
 ## New features
