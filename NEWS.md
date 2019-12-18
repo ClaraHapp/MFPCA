@@ -2,6 +2,7 @@
 
 ## New features
 * Update maintainer and link to Allen (2013) paper.
+* Don't use `funData`'s `.intWeight` method as an internal method with `:::`. Requires new `funData` version.
 
 
 # MFPCA 1.3-3
