@@ -31,7 +31,7 @@ calcBasisIntegrals <- function(basisFunctions, dimSupp, argvals)
 
   if(dimSupp == 1) # one-dimensional domain
   {
-    w <- funData:::.intWeights(argvals[[1]])
+    w <- funData::.intWeights(argvals[[1]])
 
     for(m in seq_len(npc))
     {
@@ -41,8 +41,8 @@ calcBasisIntegrals <- function(basisFunctions, dimSupp, argvals)
   }
   else # two-dimesional domain (otherwise function stops before!)
   {
-    w1 <- t(funData:::.intWeights(argvals[[1]]))
-    w2 <- funData:::.intWeights(argvals[[2]])
+    w1 <- t(funData::.intWeights(argvals[[1]]))
+    w2 <- funData::.intWeights(argvals[[2]])
 
     for(m in seq_len(npc))
     {
