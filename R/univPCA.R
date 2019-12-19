@@ -90,7 +90,7 @@
   }
   
   ### numerical integration for calculation of eigenvalues (see Ramsay & Silverman, Chapter 8)
-  w <- funData:::.intWeights(X, method = "trapezoidal")
+  w <- funData::.intWeights(X, method = "trapezoidal")
   Wsqrt <- diag(sqrt(w))
   Winvsqrt <- diag(1/(sqrt(w)))
   V <- Wsqrt %*% npc.0 %*% Wsqrt
@@ -107,7 +107,7 @@
   T1.max <- max(which(X <= X[D] - 0.25*T.len)) # right bound of narrower interval T1
   DIAG = (diag.G0 - diag(cov.hat))[T1.min :T1.max] # function values
   # weights
-  w <- funData:::.intWeights(X[T1.min:T1.max], method = "trapezoidal")
+  w <- funData::.intWeights(X[T1.min:T1.max], method = "trapezoidal")
   sigma2 <- max(1/(X[T1.max]-X[T1.min]) * sum(DIAG*w, na.rm = TRUE), 0) #max(1/T.len * sum(DIAG*w), 0)
   ####
   D.inv = diag(1/evalues, nrow = npc, ncol = npc)
