@@ -6,11 +6,11 @@ vers = paste('R package version', meta$Version)
 citEntry(
   entry = 'manual',
   title = paste('MFPCA:', meta$Title),
-  author = person("Clara", "Happ"),
+  author = person("Clara", "Happ-Kurz"),
   year = year,
   note = vers,
   url = meta$URL,
-  textVersion = paste('C. Happ (', year, '). MFPCA: ', meta$Title, '. ', vers, '.', sep = '')
+  textVersion = paste('C. Happ-Kurz (', year, '). MFPCA: ', meta$Title, '. ', vers, '.', sep = '')
 )
 
 citEntry(
