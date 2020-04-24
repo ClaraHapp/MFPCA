@@ -4,8 +4,15 @@
 \alias{PACE}
 \title{Univariate functional principal component analysis by smoothed covariance}
 \usage{
-PACE(funDataObject, predData = NULL, nbasis = 10, pve = 0.99,
-  npc = NULL, makePD = FALSE, cov.weight.type = "none")
+PACE(
+  funDataObject,
+  predData = NULL,
+  nbasis = 10,
+  pve = 0.99,
+  npc = NULL,
+  makePD = FALSE,
+  cov.weight.type = "none"
+)
 }
 \arguments{
 \item{funDataObject}{An object of class \code{\link[funData]{funData}} or 

@@ -8,8 +8,7 @@ two-dimensional domains}
 \usage{
 splineBasis2D(funDataObject, bs = "ps", m = NA, k = -1)
 
-splineBasis2Dpen(funDataObject, bs = "ps", m = NA, k = -1,
-  parallel = FALSE)
+splineBasis2Dpen(funDataObject, bs = "ps", m = NA, k = -1, parallel = FALSE)
 }
 \arguments{
 \item{funDataObject}{An object of class \code{\link[funData]{funData}} 

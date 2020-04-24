@@ -5,8 +5,14 @@
 \title{Calculate a functional principal component basis representation for 
 functional data on one-dimensional domains}
 \usage{
-fpcaBasis(funDataObject, nbasis = 10, pve = 0.99, npc = NULL,
-  makePD = FALSE, cov.weight.type = "none")
+fpcaBasis(
+  funDataObject,
+  nbasis = 10,
+  pve = 0.99,
+  npc = NULL,
+  makePD = FALSE,
+  cov.weight.type = "none"
+)
 }
 \arguments{
 \item{funDataObject}{An object of class \code{\link[funData]{funData}} 
@@ -65,7 +71,7 @@ plot(fpca$functions, main = "Estimated eigenfunctions")
 # Flip if necessary
 plot(sim$trueFuns, obs = 1:5, main = "True eigenfunctions")
 plot(flipFuns(sim$trueFuns[1:5], fpca$functions),
-     main = "Estimated eigenfunctions\\n(flipped)")
+     main = "Estimated eigenfunctions\n(flipped)")
 
 par(oldpar)
 }

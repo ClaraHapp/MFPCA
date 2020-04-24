@@ -4,8 +4,14 @@
 \alias{screeplot.MFPCAfit}
 \title{Screeplot for Multivariate Functional Principal Component Analysis}
 \usage{
-\method{screeplot}{MFPCAfit}(x, npcs = min(10, length(x$values)),
-  type = "lines", ylim = NULL, main = deparse(substitute(x)), ...)
+\method{screeplot}{MFPCAfit}(
+  x,
+  npcs = min(10, length(x$values)),
+  type = "lines",
+  ylim = NULL,
+  main = deparse(substitute(x)),
+  ...
+)
 }
 \arguments{
 \item{x}{An object of class MFPCAfit, typically returned by a call to

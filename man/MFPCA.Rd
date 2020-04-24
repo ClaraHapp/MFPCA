@@ -5,10 +5,19 @@
 \title{Multivariate functional principal component analysis for functions on
 different (dimensional) domains}
 \usage{
-MFPCA(mFData, M, uniExpansions, weights = rep(1, length(mFData)),
-  fit = FALSE, approx.eigen = FALSE, bootstrap = FALSE,
-  nBootstrap = NULL, bootstrapAlpha = 0.05, bootstrapStrat = NULL,
-  verbose = options()$verbose)
+MFPCA(
+  mFData,
+  M,
+  uniExpansions,
+  weights = rep(1, length(mFData)),
+  fit = FALSE,
+  approx.eigen = FALSE,
+  bootstrap = FALSE,
+  nBootstrap = NULL,
+  bootstrapAlpha = 0.05,
+  bootstrapStrat = NULL,
+  verbose = options()$verbose
+)
 }
 \arguments{
 \item{mFData}{A  \code{\link[funData]{multiFunData}} object containing
@@ -143,6 +152,7 @@ objects of the same structure as \code{mFData}. The confidence bands
 for the eigenvalues are returned in a list \code{CIvalues}, containing
 the upper and lower bounds for each significance level.}
 
+
 \subsection{Univariate Expansions}{The multivariate functional
 principal component analysis relies on a univariate basis expansion for
 each element \eqn{X^{(j)}}{X^(j)}. The univariate basis representation
@@ -227,20 +237,20 @@ uFPCA$functions <- flipFuns(sim$trueFuns, uFPCA$functions)
 splines$functions <- flipFuns(sim$trueFuns, splines$functions)
 
 par(mfrow = c(1,2))
-plot(sim$trueFuns[[1]], main = "Eigenfunctions\\n1st Element", lwd = 2)
+plot(sim$trueFuns[[1]], main = "Eigenfunctions\n1st Element", lwd = 2)
 plot(uFPCA$functions[[1]], lty = 2, add = TRUE)
 plot(splines$functions[[1]], lty = 3, add = TRUE)
 
-plot(sim$trueFuns[[2]], main = "Eigenfunctions\\n2nd Element", lwd = 2)
+plot(sim$trueFuns[[2]], main = "Eigenfunctions\n2nd Element", lwd = 2)
 plot(uFPCA$functions[[2]], lty = 2, add = TRUE)
 plot(splines$functions[[2]], lty = 3, add = TRUE)
 legend("bottomleft", c("True", "uFPCA", "splines"), lty = 1:3, lwd = c(2,1,1))
 
 # Test reconstruction for the first 10 observations
-plot(sim$simData[[1]], obs = 1:10, main = "Reconstruction\\n1st Element", lwd = 2)
+plot(sim$simData[[1]], obs = 1:10, main = "Reconstruction\n1st Element", lwd = 2)
 plot(splines$fit[[1]], obs = 1:10, lty = 2, col = 1, add = TRUE)
 
-plot(sim$simData[[2]], obs = 1:10, main = "Reconstruction\\n2nd Element", lwd = 2)
+plot(sim$simData[[2]], obs = 1:10, main = "Reconstruction\n2nd Element", lwd = 2)
 plot(splines$fit[[2]], obs = 1:10, lty = 2, col = 1, add = TRUE)
 legend("bottomleft", c("True", "Reconstruction"), lty = c(1,2), lwd = c(2,1))
 
@@ -319,9 +329,13 @@ C. Happ, S. Greven (2018): Multivariate Functional
   (Dimensional) Domains. Journal of the American Statistical
   Association, 113(522): 649-659. DOI:
   \doi{10.1080/01621459.2016.1273115}
+
+C. Happ-Kurz (2020): Object-Oriented Software for Functional
+  Data. Journal of Statistical Software, 93(5): 1-38. DOI:
+  \doi{10.18637/jss.v093.i05}
 }
 \seealso{
-See \url{https://arxiv.org/abs/1707.02129} for a general
+See Happ-Kurz (2020. \doi{10.18637/jss.v093.i05}) for a general
   introduction to the \pkg{funData} package and it's interplay with
   \pkg{MFPCA}. This file also includes a case study on how to use
   \code{MFPCA}. Useful functions: \code{\link[funData]{multiFunData}},
