@@ -5,8 +5,14 @@
 \title{Calculate a smooth PCA representation for functional data on two-dimensional 
 domains}
 \usage{
-fcptpaBasis(funDataObject, npc, smoothingDegree = rep(2, 2), alphaRange,
-  orderValues = TRUE, normalize = FALSE)
+fcptpaBasis(
+  funDataObject,
+  npc,
+  smoothingDegree = rep(2, 2),
+  alphaRange,
+  orderValues = TRUE,
+  normalize = FALSE
+)
 }
 \arguments{
 \item{funDataObject}{An object of class \code{\link[funData]{funData}} 

@@ -243,7 +243,11 @@ calcBasisIntegrals <- function(basisFunctions, dimSupp, argvals)
 #'   Association, 113(522): 649-659. DOI:
 #'   \doi{10.1080/01621459.2016.1273115}
 #'
-#' @seealso See \url{https://arxiv.org/abs/1707.02129} for a general
+#' @references C. Happ-Kurz (2020): Object-Oriented Software for Functional
+#'   Data. Journal of Statistical Software, 93(5): 1-38. DOI:
+#'   \doi{10.18637/jss.v093.i05}
+#'
+#' @seealso See Happ-Kurz (2020. \doi{10.18637/jss.v093.i05}) for a general
 #'   introduction to the \pkg{funData} package and it's interplay with
 #'   \pkg{MFPCA}. This file also includes a case study on how to use
 #'   \code{MFPCA}. Useful functions: \code{\link[funData]{multiFunData}},

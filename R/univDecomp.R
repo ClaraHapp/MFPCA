@@ -540,8 +540,6 @@ splineBasis1D <- function(funDataObject, bs = "ps", m = NA, k = -1)
   if(dimSupp(funDataObject) != 1)
     stop("splines1D is implemented for 1D functional data only.")
   
-  N <- nObs(funDataObject)
-  
   x <- funDataObject@argvals[[1]]
   
   # spline design matrix via gam
@@ -574,7 +572,6 @@ splineBasis1Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
     stop("splines1Dpen is implemented for 1D functional data only.")
   
   N <- nObs(funDataObject)
-  
   x <- funDataObject@argvals[[1]]
   
   if(parallel)

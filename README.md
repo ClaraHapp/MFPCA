@@ -50,6 +50,11 @@ The theoretical foundations of multivariate functional principal component analy
 
 C. Happ, S. Greven (2018): [Multivariate Functional Principal Component Analysis for Data Observed on Different (Dimensional) Domains.](https://doi.org/10.1080/01621459.2016.1273115)
     *Journal of the American Statistical Association*, 113(522): 649-659 .
+    
+For more details on the implementation, which is based on the [`funData`](https://CRAN.R-project.org/package=funData) package, and a case study, see:
+
+C. Happ-Kurz (2020): [Object-Oriented Software for Functional Data.](http://doi.org/10.18637/jss.v093.i05>) *Journal of
+Statistical Software*, 93(5): 1-38 .
 
 ## Bug reports ##
 

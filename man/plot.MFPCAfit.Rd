@@ -4,8 +4,13 @@
 \alias{plot.MFPCAfit}
 \title{Plot MFPCA results}
 \usage{
-\method{plot}{MFPCAfit}(x, plotPCs = seq_len(nObs(x$functions)),
-  stretchFactor = NULL, combined = FALSE, ...)
+\method{plot}{MFPCAfit}(
+  x,
+  plotPCs = seq_len(nObs(x$functions)),
+  stretchFactor = NULL,
+  combined = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{An object of class \code{MFPCAfit}, typically returned by the 

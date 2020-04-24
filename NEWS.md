@@ -1,3 +1,10 @@
+# MFPCA 1.3-5
+
+## New features
+* Add links to `funData` vignette.
+* Update documentation with newest roxygen2 version.
+* Clean up unused variables.
+
 # MFPCA 1.3-4
 
 ## New features

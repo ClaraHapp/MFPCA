@@ -322,8 +322,6 @@ expandBasisFunction <- function(scores, argvals = functions@argvals, functions)
 #' par(oldPar)
 splineFunction1D <- function(scores, argvals, bs, m, k)
 {
-  N <- nrow(scores)
-
   x <- argvals[[1]]
 
   # spline design matrix via gam

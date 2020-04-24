@@ -4,8 +4,16 @@
 \alias{FCP_TPA}
 \title{The functional CP-TPA algorithm}
 \usage{
-FCP_TPA(X, K, penMat, alphaRange, verbose = FALSE, tol = 1e-04,
-  maxIter = 15, adaptTol = TRUE)
+FCP_TPA(
+  X,
+  K,
+  penMat,
+  alphaRange,
+  verbose = FALSE,
+  tol = 1e-04,
+  maxIter = 15,
+  adaptTol = TRUE
+)
 }
 \arguments{
 \item{X}{The data tensor of dimensions \code{N x S1 x S2}.}

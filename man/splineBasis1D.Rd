@@ -8,8 +8,7 @@ domains}
 \usage{
 splineBasis1D(funDataObject, bs = "ps", m = NA, k = -1)
 
-splineBasis1Dpen(funDataObject, bs = "ps", m = NA, k = -1,
-  parallel = FALSE)
+splineBasis1Dpen(funDataObject, bs = "ps", m = NA, k = -1, parallel = FALSE)
 }
 \arguments{
 \item{funDataObject}{An object of class \code{\link[funData]{funData}} 

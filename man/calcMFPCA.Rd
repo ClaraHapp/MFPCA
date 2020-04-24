@@ -4,8 +4,19 @@
 \alias{calcMFPCA}
 \title{Internal function that implements the MFPCA algorithm for given univariate decompositions}
 \usage{
-calcMFPCA(N, p, Bchol, M, type, weights, npc, argvals, uniBasis, fit = FALSE,
-  approx.eigen = FALSE)
+calcMFPCA(
+  N,
+  p,
+  Bchol,
+  M,
+  type,
+  weights,
+  npc,
+  argvals,
+  uniBasis,
+  fit = FALSE,
+  approx.eigen = FALSE
+)
 }
 \description{
 Internal function that implements the MFPCA algorithm for given univariate decompositions
