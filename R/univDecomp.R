@@ -149,6 +149,10 @@ givenBasis <- function(funDataObject, functions, scores = NULL, ortho = NULL)
   if( ! isTRUE(all.equal(dim(scores), c(nObs(funDataObject), nObs(functions)))) )
     stop("Scores have wrong dimensions. Must be an N x K matrix with N the number of observations and K the number of basis functions.")
   
+  # check if scores have mean zero
+  if( ! isTRUE(all.equal(colMeans(scores), rep(0, nObs(functions)), tolerance = 2e-1)))
+    warning("Scores seem to be not demeaned. Please check.")
+  
   if(is.null(ortho))
     ortho <- FALSE
   

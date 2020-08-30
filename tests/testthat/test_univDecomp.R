@@ -65,6 +65,9 @@ test_that("test univariate decompositions 1D", {
   expect_error(MFPCA:::givenBasis(funDataObject = f1, functions = s1$trueFuns, scores = as.matrix(1:5)),
                "Scores have wrong dimensions. Must be an N x K matrix with N the number of observations and K the number of basis functions.", fixed = FALSE)
   
+  expect_warning(MFPCA:::givenBasis(funDataObject = f1, functions = s1$trueFuns, scores = 10*diag(10)),
+               "Scores seem to be not demeaned. Please check.")
+  
   given <- MFPCA:::givenBasis(funDataObject = f1, functions = s1$trueFuns)
   expect_equal(dim(given$scores), c(10,10))
   expect_equal(sum(given$scores), 8.029624)
