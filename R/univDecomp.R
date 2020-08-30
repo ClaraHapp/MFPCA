@@ -110,31 +110,31 @@ univDecomp <- function(type, funDataObject, ...)
 }
 
 #' Use given basis functions for univariate representation
-#' 
-#' @param funDataObject An object of class \code{\link[funData]{funData}} 
-#'   containing the observed functional data samples and for which the basis 
-#'   representation is to be calculated.
-#' @param functions A \code{funData} object that contains the basis 
-#'   functions.
-#' @param scores An optional matrix containing the scores or coefficients of 
-#'   the individual observations and each basis function. If \code{N} denotes
-#'   the number of observations and \code{K} denotes the number of basis 
-#'   functions, then \code{scores} must be a matrix of dimensions \code{N x 
-#'   K}. If not supplied, the scores are calculated as projection of each 
-#'   observation on the basis functions.
-#' @param ortho An optional parameter, specifying whether the given basis 
-#'   functions are orthonormal (\code{ortho = TRUE}) or not (\code{ortho = 
-#'   FALSE}). If not supplied, the basis functions are considered as 
-#'   non-orthonormal and their pairwise scalar product is calculated for 
-#'   later use in the MFPCA.
-#'   
-#' @return \item{scores}{The coefficient matrix.} \item{B}{A matrix
-#'   containing the scalar product of all pairs of basis functions. This is
-#'   \code{NULL}, if \code{ortho = TRUE}.}\item{ortho}{Logical, set to 
-#'   \code{TRUE}, if basis functions are orthonormal.} \item{functions}{A 
-#'   functional data object containing the basis functions.}
-#'  
-#'  @keywords internal
+#'
+#' @param funDataObject An object of class \code{\link[funData]{funData}}
+#'   containing the observed functional data samples and for which the basis
+#'   representation is to be calculated. The data is assumed to be demeaned.
+#' @param functions A \code{funData} object that contains the basis functions.
+#' @param scores An optional matrix containing the scores or coefficients of the
+#'   individual observations and each basis function. If \code{N} denotes the
+#'   number of observations and \code{K} denotes the number of basis functions,
+#'   then \code{scores} must be a matrix of dimensions \code{N x K}. As the data
+#'   is assumed to be demeaned, each column must have an average of
+#'   approximately 0. If not supplied, the scores are calculated as projection
+#'   of each observation on the basis functions.
+#' @param ortho An optional parameter, specifying whether the given basis
+#'   functions are orthonormal (\code{ortho = TRUE}) or not (\code{ortho =
+#'   FALSE}). If not supplied, the basis functions are considered as
+#'   non-orthonormal and their pairwise scalar product is calculated for later
+#'   use in the MFPCA.
+#'
+#' @return \item{scores}{The coefficient matrix.} \item{B}{A matrix containing
+#'   the scalar product of all pairs of basis functions. This is \code{NULL}, if
+#'   \code{ortho = TRUE}.}\item{ortho}{Logical, set to \code{TRUE}, if basis
+#'   functions are orthonormal.} \item{functions}{A functional data object
+#'   containing the basis functions.}
+#'
+#' @keywords internal
 givenBasis <- function(funDataObject, functions, scores = NULL, ortho = NULL)
 {
   # check if funDataObject and functions are defined on the same domain
