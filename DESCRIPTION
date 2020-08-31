@@ -2,8 +2,8 @@ Package: MFPCA
 Type: Package
 Title: Multivariate Functional Principal Component Analysis for Data Observed on
     Different Dimensional Domains
-Version: 1.3-5
-Date: 2020-04-23
+Version: 1.3-6
+Date: 2020-08-31
 Authors@R: person("Clara", "Happ-Kurz", email = "clara.happ@stat.uni-muenchen.de",
                   role = c("aut", "cre"), comment = c(ORCID = "0000-0003-4737-3835"))
 Maintainer: Clara Happ-Kurz <clara.happ@stat.uni-muenchen.de>
@@ -23,7 +23,7 @@ Imports:
     irlba,
     Matrix,
     methods,
-    mgcv,
+    mgcv (>= 1.8-33),
     plyr,
     stats
 Depends:

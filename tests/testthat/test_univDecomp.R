@@ -65,6 +65,9 @@ test_that("test univariate decompositions 1D", {
   expect_error(MFPCA:::givenBasis(funDataObject = f1, functions = s1$trueFuns, scores = as.matrix(1:5)),
                "Scores have wrong dimensions. Must be an N x K matrix with N the number of observations and K the number of basis functions.", fixed = FALSE)
   
+  expect_warning(MFPCA:::givenBasis(funDataObject = f1, functions = s1$trueFuns, scores = 10*diag(10)),
+               "Scores seem to be not demeaned. Please check.")
+  
   given <- MFPCA:::givenBasis(funDataObject = f1, functions = s1$trueFuns)
   expect_equal(dim(given$scores), c(10,10))
   expect_equal(sum(given$scores), 8.029624)
@@ -295,19 +298,19 @@ test_that("test univariate decompositions 2D", {
   
   # wrapper function
   decompSpline2D <- MFPCA:::univDecomp(type = "splines2D", funDataObject = f2, bs = "ps", m = c(2,3), k = c(8,10))
-  expect_equal(decompSpline2D, spline2D)
+  expect_equal(decompSpline2D, spline2D, tolerance = 1e-5)
   
   decompSpline2Dpen <- MFPCA:::univDecomp(type = "splines2Dpen", funDataObject = extractObs(f2,1:2), bs = "ps", m = c(2,3), k = c(8,10))
-  expect_equal(decompSpline2Dpen, spline2Dpen)
+  expect_equal(decompSpline2Dpen, spline2Dpen, tolerance = 1e-5)
   
   expect_warning(decompUMPCA2D <- MFPCA:::univDecomp(type = "UMPCA", funDataObject = f2, npc = 4))
-  expect_equal(decompUMPCA2D, umpca2D)
+  expect_equal(decompUMPCA2D, umpca2D, tolerance = 1e-5)
   
   set.seed(2)
   decompFCPTPA2D <- MFPCA:::univDecomp(type = "FCP_TPA", funDataObject = f2, npc = 4, alphaRange = list(v = c(1e-4, 1e4), w = c(1e-4, 1e4)))
-  expect_equal(decompFCPTPA2D, fcptpa2D)
+  expect_equal(decompFCPTPA2D, fcptpa2D, tolerance = 1e-5)
   
   set.seed(2)
   decompFCPTPA2Dnorm <- MFPCA:::univDecomp(type = "FCP_TPA", funDataObject = f2, npc = 4, alphaRange = list(v = c(1e-4, 1e4), w = c(1e-4, 1e4)), normalize = TRUE)
-  expect_equal(decompFCPTPA2Dnorm, fcptpa2Dnorm)
+  expect_equal(decompFCPTPA2Dnorm, fcptpa2Dnorm, tolerance = 1e-5)
 })
