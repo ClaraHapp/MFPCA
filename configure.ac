@@ -1,7 +1,7 @@
 # Run this file with autoreconf configure.ac to produce a configure file
 
 # Initialize
-AC_INIT([MFPCA], 1.3-5) dnl package name, version
+AC_INIT([MFPCA], 1.3-6) dnl package name, version
 
 # use the same C compiler as R CMD xxx
 if test -n "${R_HOME}"; then
