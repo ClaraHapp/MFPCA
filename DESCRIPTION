@@ -32,7 +32,6 @@ Depends:
 Suggests:
     covr,
     fda,
-    refund,
     testthat (>= 2.0.0)
 NeedsCompilation: yes
 SystemRequirements: libfftw3 (>= 3.3.4)

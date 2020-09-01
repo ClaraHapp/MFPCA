@@ -4,7 +4,6 @@
 * Add warning if scores for given basis are not centered.
 * Require latest `mgcv` version to work properly with MKL.
 * Fix URLs where pages have been moved from http to https.
-* Adding `refund` to list of suggested packages.
 
 # MFPCA 1.3-5
 

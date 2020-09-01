@@ -39,7 +39,7 @@ covariance estimate? Defaults to \code{FALSE}.}
 
 \item{cov.weight.type}{The type of weighting used for the smooth covariance
 estimate. Defaults to \code{"none"}, i.e. no weighting. Alternatively, 
-\code{"counts"} (corresponds to \code{\link[refund]{fpca.sc}} ) weights the pointwise estimates of the covariance function
+\code{"counts"} (corresponds to \code{fpca.sc} in \strong{refund}) weights the pointwise estimates of the covariance function
 by the number of observation points.}
 }
 \value{
@@ -54,7 +54,7 @@ by the number of observation points.}
 }
 \description{
 This function is a slightly adapted version of the 
-\code{\link[refund]{fpca.sc}} function in the \pkg{refund} package for 
+\code{fpca.sc} function in the \strong{refund} package for 
 calculating univariate functional principal components based on a smoothed 
 covariance function. The smoothing basis functions are penalized splines.
 }
@@ -66,6 +66,6 @@ Di, C., Crainiceanu, C., Caffo, B., and Punjabi, N. (2009).
   American Statistical Association, 100, 577--590.
 }
 \seealso{
-\code{\link[refund]{fpca.sc}}, \code{\link{PACE}}
+\code{\link{PACE}}
 }
 \keyword{internal}

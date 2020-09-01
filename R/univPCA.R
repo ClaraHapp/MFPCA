@@ -5,7 +5,7 @@
 #' Calculate univariate functional PCA
 #' 
 #' This function is a slightly adapted version of the 
-#' \code{\link[refund]{fpca.sc}} function in the \pkg{refund} package for 
+#' \code{fpca.sc} function in the \strong{refund} package for 
 #' calculating univariate functional principal components based on a smoothed 
 #' covariance function. The smoothing basis functions are penalized splines.
 #' 
@@ -25,7 +25,7 @@
 #'   covariance estimate? Defaults to \code{FALSE}.
 #' @param cov.weight.type The type of weighting used for the smooth covariance
 #'   estimate. Defaults to \code{"none"}, i.e. no weighting. Alternatively, 
-#'   \code{"counts"} (corresponds to \code{\link[refund]{fpca.sc}} ) weights the pointwise estimates of the covariance function
+#'   \code{"counts"} (corresponds to \code{fpca.sc} in \strong{refund}) weights the pointwise estimates of the covariance function
 #'   by the number of observation points.
 #'   
 #' @return \item{fit}{The approximation of \code{Y.pred} (if \code{NULL}, the 
@@ -37,7 +37,7 @@
 #'   were calculated.} \item{sigma2}{The estimated variance of the measurement 
 #'   error.}  \item{estVar}{The estimated smooth variance function of the data.}
 #'   
-#' @seealso \code{\link[refund]{fpca.sc}}, \code{\link{PACE}}
+#' @seealso \code{\link{PACE}}
 #'   
 #' @references Di, C., Crainiceanu, C., Caffo, B., and Punjabi, N. (2009). 
 #'   Multilevel functional principal component analysis. Annals of Applied 
@@ -139,7 +139,7 @@
 #' 
 #' This function calculates a univariate functional principal components 
 #' analysis by smoothed covariance based on code from 
-#' \code{\link[refund]{fpca.sc}} (package \pkg{refund}).
+#' \code{fpca.sc} in package \strong{refund}.
 #' 
 #' @section Warning: This function works only for univariate functional data 
 #'   observed on one-dimensional domains.
@@ -157,19 +157,19 @@
 #' @param nbasis An integer, representing the number of  B-spline basis 
 #'   functions used for estimation of the mean function and bivariate smoothing 
 #'   of the covariance surface. Defaults to \code{10} (cf. 
-#'   \code{\link[refund]{fpca.sc}}).
+#'   \code{fpca.sc} in \strong{refund}).
 #' @param pve A numeric value between 0 and 1, the proportion of variance 
 #'   explained: used to choose the number of principal components. Defaults to 
-#'   \code{0.99} (cf. \code{\link[refund]{fpca.sc}}).
+#'   \code{0.99} (cf. \code{fpca.sc} in \strong{refund}).
 #' @param npc An integer, giving a prespecified value for the number of 
 #'   principal components. Defaults to \code{NULL}. If given, this overrides 
-#'   \code{pve} (cf. \code{\link[refund]{fpca.sc}}).
+#'   \code{pve} (cf. \code{fpca.sc} in \strong{refund}).
 #' @param makePD Logical: should positive definiteness be enforced for the 
 #'   covariance surface estimate? Defaults to \code{FALSE} (cf. 
-#'   \code{\link[refund]{fpca.sc}}).
+#'   \code{fpca.sc} in \strong{refund}).
 #' @param cov.weight.type The type of weighting used for the smooth covariance 
 #'   estimate. Defaults to \code{"none"}, i.e. no weighting. Alternatively, 
-#'   \code{"counts"} (corresponds to \code{\link[refund]{fpca.sc}} ) weights the
+#'   \code{"counts"} (corresponds to \code{fpca.sc} in \strong{refund}) weights the
 #'   pointwise estimates of the covariance function by the number of observation
 #'   points.
 #'   
@@ -186,12 +186,12 @@
 #'   (if \code{predData} is \code{NULL}).} \item{npc}{The number of functional 
 #'   principal components: either the supplied \code{npc}, or the minimum number
 #'   of basis functions needed to explain proportion \code{pve} of the variance 
-#'   in the observed curves (cf. \code{\link[refund]{fpca.sc}}).} 
+#'   in the observed curves (cf. \code{fpca.sc} in \strong{refund}).} 
 #'   \item{sigma2}{The estimated measurement error variance (cf. 
-#'   \code{\link[refund]{fpca.sc}}).} \item{estVar}{The estimated smooth
+#'   \code{fpca.sc} in \strong{refund}).} \item{estVar}{The estimated smooth
 #'   variance function of the data.}
 #'   
-#' @seealso \code{\link[funData]{funData}}, \code{\link[refund]{fpca.sc}}, 
+#' @seealso \code{\link[funData]{funData}}, 
 #'   \code{\link{fpcaBasis}}, \code{\link{univDecomp}}
 #'   
 #' @export PACE

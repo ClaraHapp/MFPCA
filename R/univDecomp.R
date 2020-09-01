@@ -174,7 +174,7 @@ givenBasis <- function(funDataObject, functions, scores = NULL, ortho = NULL)
 #' This function calculates a functional principal component basis
 #' representation for functional data on one-dimensional domains. The FPCA is
 #' calculated via the \code{\link{PACE}} function, which is built on
-#' \link[refund]{fpca.sc} in the \pkg{refund} package.
+#' \code{fpca.sc} in the \strong{refund} package.
 #' 
 #' @param funDataObject An object of class \code{\link[funData]{funData}} 
 #'   containing the observed functional data samples and for which the FPCA is 
@@ -182,19 +182,19 @@ givenBasis <- function(funDataObject, functions, scores = NULL, ortho = NULL)
 #' @param nbasis An integer, representing the number of  B-spline basis 
 #'   functions used for estimation of the mean function and bivariate smoothing 
 #'   of the covariance surface. Defaults to \code{10} (cf. 
-#'   \code{\link[refund]{fpca.sc}}).
+#'   \code{fpca.sc} in \strong{refund}).
 #' @param pve A numeric value between 0 and 1, the proportion of variance 
 #'   explained: used to choose the number of principal components. Defaults to 
-#'   \code{0.99} (cf. \code{\link[refund]{fpca.sc}}).
+#'   \code{0.99} (cf. \code{fpca.sc} in \strong{refund}).
 #' @param npc An integer, giving a prespecified value for the number of 
 #'   principal components. Defaults to \code{NULL}. If given, this overrides 
-#'   \code{pve} (cf. \code{\link[refund]{fpca.sc}}).
+#'   \code{pve} (cf. \code{fpca.sc} in \strong{refund}).
 #' @param makePD Logical: should positive definiteness be enforced for the 
 #'   covariance surface estimate? Defaults to \code{FALSE} (cf. 
-#'   \code{\link[refund]{fpca.sc}}).
+#'   \code{fpca.sc} in \strong{refund}).
 #' @param cov.weight.type The type of weighting used for the smooth covariance
 #'   estimate in \code{\link{PACE}}. Defaults to \code{"none"}, i.e. no weighting. Alternatively, 
-#'   \code{"counts"} (corresponds to \code{\link[refund]{fpca.sc}} ) weights the pointwise estimates of the covariance function
+#'   \code{"counts"} (corresponds to \code{fpca.sc} in \strong{refund}) weights the pointwise estimates of the covariance function
 #'   by the number of observation points.
 #'   
 #' @return \item{scores}{A matrix of scores (coefficients) with dimension 
