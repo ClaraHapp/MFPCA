@@ -53,7 +53,7 @@ C. Happ, S. Greven (2018): [Multivariate Functional Principal Component Analysis
     
 For more details on the implementation, which is based on the [`funData`](https://CRAN.R-project.org/package=funData) package, and a case study, see:
 
-C. Happ-Kurz (2020): [Object-Oriented Software for Functional Data.](http://doi.org/10.18637/jss.v093.i05) *Journal of
+C. Happ-Kurz (2020): [Object-Oriented Software for Functional Data.](https://doi.org/10.18637/jss.v093.i05) *Journal of
 Statistical Software*, 93(5): 1-38 .
 
 ## Bug reports ##

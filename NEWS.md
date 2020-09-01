@@ -1,3 +1,10 @@
+# MFPCA 1.3-6
+
+## New features
+* Add warning if scores for given basis are not centered.
+* Require latest `mgcv` version to work properly with MKL.
+* Fix URLs where pages have been moved from http to https.
+
 # MFPCA 1.3-5
 
 ## New features
