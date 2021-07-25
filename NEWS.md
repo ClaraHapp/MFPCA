@@ -1,3 +1,8 @@
+# MFPCA 1.3-7
+
+## New features
+* Fix test that was failing on MKL.
+
 # MFPCA 1.3-6
 
 ## New features
