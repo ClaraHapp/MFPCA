@@ -1,3 +1,8 @@
+# MFPCA 1.3-8
+
+## New features
+* Change of email address.
+
 # MFPCA 1.3-7
 
 ## New features
