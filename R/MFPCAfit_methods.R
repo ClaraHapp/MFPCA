@@ -5,6 +5,8 @@
 #' @param PCAobject A principal component object
 #' @param ... Arguments passed from or to other methods
 #' 
+#' @return A bivariate plot of scores.
+#' 
 #' @export
 scoreplot <- function(PCAobject, ...) UseMethod("scoreplot", PCAobject)
 scoreplot.default <- function(PCAobject, ...) graphics::plot.default(PCAobject, ...)
