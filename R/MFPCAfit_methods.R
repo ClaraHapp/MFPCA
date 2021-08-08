@@ -355,6 +355,8 @@ predict.MFPCAfit <- function(object, scores = object$scores, ...)
 #' @param x An object of class \code{MFPCAfit}, usually returned by a
 #'   call to \link{MFPCA}.
 #' @param ... Arguments passed to or from other methods.
+#' 
+#' @return No return value, called for side effects
 #'   
 #' @export
 print.MFPCAfit <- function(x, ...)
