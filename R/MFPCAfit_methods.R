@@ -112,6 +112,8 @@ scoreplot.MFPCAfit <- function(PCAobject, choices = 1:2, scale = FALSE, ...)
 #' @param ... Other graphic parameters passed to
 #'   \code{\link[graphics]{plot.default}} (for \code{type = "lines"}) or
 #'   \code{\link[graphics]{barplot}} (for \code{type = "barplot"}).
+#'   
+#' @return A screeplot, showing the decrease of the principal component score.
 #'
 #' @seealso \code{\link{MFPCA}}, \code{\link[stats]{screeplot}}
 #'
