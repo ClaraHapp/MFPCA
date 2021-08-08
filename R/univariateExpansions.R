@@ -187,50 +187,50 @@ univExpansion <- function(type, scores, argvals = ifelse(!is.null(functions), fu
 #' 
 #' @keywords internal
 #' 
-#' @examples
-#' # set seed
-#' set.seed(1234)
-#' 
-#' ### functions on one-dimensional domains ###
-#' 
-#' N <- 12 # 12 observations
-#' K <- 10 # 10 basis functions
-#' 
-#' # Use the first 10 Fourier basis functions on [0,1]
-#' x <- seq(0,1,0.01)
-#' b <- eFun(argvals = x, M = K, type = "Fourier")
-#' 
-#' # generate N x K score matrix
-#' scores <- t(replicate(N, rnorm(K, sd = 1 / (1:10))))
-#' 
-#' # calculate basis expansion
-#' f <- MFPCA:::expandBasisFunction(scores = scores, functions = b) # default value for argvals
-#' 
-#' oldpar <- par(no.readonly = TRUE)
-#' 
-#' par(mfrow = c(1,2))
-#' plot(b, main = "Basis functions")
-#' plot(f, main = "Linear combination")
-#' par(mfrow = c(1,1))
-#' 
-#' ### functions on two-dimensional domains (images) ###
-#' 
-#' # use the same score matrix as for the one-dimensional example
-#' dim(scores)
-#' 
-#' # Define basis functions
-#' x1 <- seq(0, 1, 0.01)
-#' x2 <- seq(-pi, pi, 0.05)
-#' b <- funData(argvals = list(x1, x2), X = 1:K %o% exp(x1) %o% sin(x2))
-#' 
-#' # calculate PCA expansion
-#' f <- MFPCA:::expandBasisFunction(scores = scores, functions = b)
-#' 
-#' # plot the resulting observations
-#' for(i in 1:4)
-#'  plot(f, obs = i, zlim = range(f@@X))
-#' 
-#' par(oldpar)
+# @examples
+# # set seed
+# set.seed(1234)
+# 
+# ### functions on one-dimensional domains ###
+# 
+# N <- 12 # 12 observations
+# K <- 10 # 10 basis functions
+# 
+# # Use the first 10 Fourier basis functions on [0,1]
+# x <- seq(0,1,0.01)
+# b <- eFun(argvals = x, M = K, type = "Fourier")
+# 
+# # generate N x K score matrix
+# scores <- t(replicate(N, rnorm(K, sd = 1 / (1:10))))
+# 
+# # calculate basis expansion
+# f <- MFPCA:::expandBasisFunction(scores = scores, functions = b) # default value for argvals
+# 
+# oldpar <- par(no.readonly = TRUE)
+# 
+# par(mfrow = c(1,2))
+# plot(b, main = "Basis functions")
+# plot(f, main = "Linear combination")
+# par(mfrow = c(1,1))
+# 
+# ### functions on two-dimensional domains (images) ###
+# 
+# # use the same score matrix as for the one-dimensional example
+# dim(scores)
+# 
+# # Define basis functions
+# x1 <- seq(0, 1, 0.01)
+# x2 <- seq(-pi, pi, 0.05)
+# b <- funData(argvals = list(x1, x2), X = 1:K %o% exp(x1) %o% sin(x2))
+# 
+# # calculate PCA expansion
+# f <- MFPCA:::expandBasisFunction(scores = scores, functions = b)
+# 
+# # plot the resulting observations
+# for(i in 1:4)
+#  plot(f, obs = i, zlim = range(f@@X))
+# 
+# par(oldpar)
 expandBasisFunction <- function(scores, argvals = functions@argvals, functions)
 {
   if(dim(scores)[2] != nObs(functions))
@@ -301,25 +301,25 @@ expandBasisFunction <- function(scores, argvals = functions@argvals, functions)
 #' 
 #' @keywords internal
 #' 
-#' @examples  
-#' set.seed(1234)
-#' 
-#' # simulate coefficients (scores) for 10 observations and 8 basis functions
-#' N <- 10
-#' K <- 8
-#' scores <- t(replicate(n = N, rnorm(K, sd = (K:1)/K)))
-#' dim(scores)
-#' 
-#' # expand spline basis on [0,1]
-#' funs <- MFPCA:::splineFunction1D(scores = scores, argvals = list(seq(0,1,0.01)),
-#'                          bs = "ps", m = 2, k = K) # params for mgcv
-#'                          
-#' oldPar <- par(no.readonly = TRUE)
-#' par(mfrow = c(1,1))                        
-#' 
-#' plot(funs, main = "Spline reconstruction")
-#' 
-#' par(oldPar)
+# @examples  
+# set.seed(1234)
+# 
+# # simulate coefficients (scores) for 10 observations and 8 basis functions
+# N <- 10
+# K <- 8
+# scores <- t(replicate(n = N, rnorm(K, sd = (K:1)/K)))
+# dim(scores)
+# 
+# # expand spline basis on [0,1]
+# funs <- MFPCA:::splineFunction1D(scores = scores, argvals = list(seq(0,1,0.01)),
+#                          bs = "ps", m = 2, k = K) # params for mgcv
+# 
+# oldPar <- par(no.readonly = TRUE)
+# par(mfrow = c(1,1))
+# 
+# plot(funs, main = "Spline reconstruction")
+# 
+# par(oldPar)
 splineFunction1D <- function(scores, argvals, bs, m, k)
 {
   x <- argvals[[1]]
@@ -375,29 +375,29 @@ splineFunction1D <- function(scores, argvals, bs, m, k)
 #'
 #' @keywords internal
 #'
-#' @examples
-#' set.seed(1234)
-#'
-#' ### Spline basis ###
-#' # simulate coefficients (scores) for N = 4 observations and K = 7*8 basis functions
-#' N <- 4
-#' K <- 7*8
-#' scores <- t(replicate(n = N, rnorm(K, sd = (K:1)/K)))
-#' dim(scores)
-#'
-#' # expand spline basis on [0,1] x [-0.5, 0.5]
-#' funs <- MFPCA:::splineFunction2D(scores = scores,
-#'                      argvals = list(seq(0,1,0.01), seq(-0.5, 0.5, 0.01)),
-#'                      bs = "ps", m = 2, k = c(7,8)) # params for mgcv
-#'
-#' oldPar <- par(no.readonly = TRUE)
-#' par(mfrow = c(1,1))
-#'
-#' # plot all observations
-#' for(i in 1:4)
-#'  plot(funs, obs = i, main = "Spline reconstruction")
-#'
-#' par(oldPar)
+# @examples
+# set.seed(1234)
+# 
+# ### Spline basis ###
+# # simulate coefficients (scores) for N = 4 observations and K = 7*8 basis functions
+# N <- 4
+# K <- 7*8
+# scores <- t(replicate(n = N, rnorm(K, sd = (K:1)/K)))
+# dim(scores)
+# 
+# # expand spline basis on [0,1] x [-0.5, 0.5]
+# funs <- MFPCA:::splineFunction2D(scores = scores,
+#                      argvals = list(seq(0,1,0.01), seq(-0.5, 0.5, 0.01)),
+#                      bs = "ps", m = 2, k = c(7,8)) # params for mgcv
+# 
+# oldPar <- par(no.readonly = TRUE)
+# par(mfrow = c(1,1))
+# 
+# # plot all observations
+# for(i in 1:4)
+#  plot(funs, obs = i, main = "Spline reconstruction")
+# 
+# par(oldPar)
 splineFunction2D <- function(scores, argvals, bs, m, k)
 {
   N <- nrow(scores)
@@ -480,30 +480,30 @@ splineFunction2Dpen <- function(scores, argvals, bs, m, k)
 #'
 #' @keywords internal
 #'
-#' @examples
-#' # set seed
-#' set.seed(12345)
-#'
-#' # generate sparse 10 x 15 score matrix (i.e. 10 observations) with 30 entries
-#' # smoothness assumption: higher order basis functions (high column index) have lower probability
-#' scores <- Matrix::sparseMatrix(i = sample(1:10, 30, replace = TRUE), # sample row indices
-#'      j = sample(1:15, 30, replace = TRUE, prob = 1/(1:15)), # sample column indices
-#'      x = rnorm(30)) # sample values
-#' scores
-#'
-#' \dontrun{
-#' # calculate basis expansion on [0,1] x [0,1]
-#' f <- MFPCA:::dctFunction2D(scores = scores, argvals = list(seq(0,1,0.01), seq(0,1,0.01)))
-#' nObs(f) # f has 10 observations
-#'
-#' oldPar <- par(no.readonly = TRUE)
-#' par(mfrow = c(1,1))
-#'
-#' plot(f, obs = 1) # plot first observation
-#' plot(f, obs = 2) # plot second observation
-#'
-#' par(oldPar)
-#' }
+# @examples
+# # set seed
+# set.seed(12345)
+# 
+# # generate sparse 10 x 15 score matrix (i.e. 10 observations) with 30 entries
+# # smoothness assumption: higher order basis functions (high column index) have lower probability
+# scores <- Matrix::sparseMatrix(i = sample(1:10, 30, replace = TRUE), # sample row indices
+#      j = sample(1:15, 30, replace = TRUE, prob = 1/(1:15)), # sample column indices
+#      x = rnorm(30)) # sample values
+# scores
+# 
+# \dontrun{
+# # calculate basis expansion on [0,1] x [0,1]
+# f <- MFPCA:::dctFunction2D(scores = scores, argvals = list(seq(0,1,0.01), seq(0,1,0.01)))
+# nObs(f) # f has 10 observations
+# 
+# oldPar <- par(no.readonly = TRUE)
+# par(mfrow = c(1,1))
+# 
+# plot(f, obs = 1) # plot first observation
+# plot(f, obs = 2) # plot second observation
+# 
+# par(oldPar)
+# }
 dctFunction2D <- function(scores, argvals, parallel = FALSE)
 {
   # dimension of the image

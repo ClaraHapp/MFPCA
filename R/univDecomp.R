@@ -209,24 +209,24 @@ givenBasis <- function(funDataObject, functions, scores = NULL, ortho = NULL)
 #' 
 #' @keywords internal
 #' 
-#' @examples
-#' # simulate N = 100 observations of functional data based on polynomial eigenfunctions on [0,1]
-#' sim <- simFunData(argvals = seq(0,1,0.01), M = 5, eFunType = "Poly", eValType = "linear", N = 100)
-#' 
-#' # estimate the first 5 functional principal components from the data
-#' fpca <- MFPCA:::fpcaBasis(sim$simData, npc = 5)
-#' 
-#' oldpar <- par(no.readonly = TRUE)
-#' par(mfrow = c(1,2))
-#' plot(sim$trueFuns, obs = 1:5, main = "True eigenfunctions")
-#' plot(fpca$functions, main = "Estimated eigenfunctions")
-#' 
-#' # Flip if necessary
-#' plot(sim$trueFuns, obs = 1:5, main = "True eigenfunctions")
-#' plot(flipFuns(sim$trueFuns[1:5], fpca$functions),
-#'      main = "Estimated eigenfunctions\n(flipped)")
-#' 
-#' par(oldpar)
+# @examples
+# # simulate N = 100 observations of functional data based on polynomial eigenfunctions on [0,1]
+# sim <- simFunData(argvals = seq(0,1,0.01), M = 5, eFunType = "Poly", eValType = "linear", N = 100)
+# 
+# # estimate the first 5 functional principal components from the data
+# fpca <- MFPCA:::fpcaBasis(sim$simData, npc = 5)
+# 
+# oldpar <- par(no.readonly = TRUE)
+# par(mfrow = c(1,2))
+# plot(sim$trueFuns, obs = 1:5, main = "True eigenfunctions")
+# plot(fpca$functions, main = "Estimated eigenfunctions")
+# 
+# # Flip if necessary
+# plot(sim$trueFuns, obs = 1:5, main = "True eigenfunctions")
+# plot(flipFuns(sim$trueFuns[1:5], fpca$functions),
+#      main = "Estimated eigenfunctions\n(flipped)")
+# 
+# par(oldpar)
 fpcaBasis <- function(funDataObject, nbasis = 10, pve = 0.99, npc = NULL, makePD = FALSE, cov.weight.type = "none")
 {
   FPCA <- PACE(funDataObject, predData = NULL, nbasis, pve, npc, makePD, cov.weight.type)
@@ -279,29 +279,29 @@ fpcaBasis <- function(funDataObject, nbasis = 10, pve = 0.99, npc = NULL, makePD
 #'
 #' @keywords internal
 #'
-#' @examples
-#' # simulate image data for N = 100 observations
-#' N <- 100
-#' b1 <- eFun(seq(0,1,0.01), M = 7, type = "Poly")
-#' b2 <- eFun(seq(-pi, pi, 0.03), M = 8, type = "Fourier")
-#' b <- tensorProduct(b1,b2) # 2D basis functions
-#' scores <- matrix(rnorm(N*56), nrow = N)
-#'
-#' # calculate observations (= linear combination of basis functions)
-#' f <- MFPCA:::expandBasisFunction(scores = scores, functions = b)
-#'
-#' # calculate basis functions based on UMPCA algorithm (needs some time)
-#' \donttest{
-#' # throws warning as the function aims more at  uncorrelated features than at
-#' # optimal data reconstruction (see help)
-#' umpca <- MFPCA:::umpcaBasis(f, npc = 5)
-#'
-#' oldpar <- par(no.readonly = TRUE)
-#'
-#' for(i in 1:5) # plot all 5 basis functions
-#' plot(umpca$functions, obs = i, main = paste("Basis function", i)) # plot first basis function
-#'
-#' par(oldpar)}
+# @examples
+# # simulate image data for N = 100 observations
+# N <- 100
+# b1 <- eFun(seq(0,1,0.01), M = 7, type = "Poly")
+# b2 <- eFun(seq(-pi, pi, 0.03), M = 8, type = "Fourier")
+# b <- tensorProduct(b1,b2) # 2D basis functions
+# scores <- matrix(rnorm(N*56), nrow = N)
+# 
+# # calculate observations (= linear combination of basis functions)
+# f <- MFPCA:::expandBasisFunction(scores = scores, functions = b)
+# 
+# # calculate basis functions based on UMPCA algorithm (needs some time)
+# \donttest{
+# # throws warning as the function aims more at  uncorrelated features than at
+# # optimal data reconstruction (see help)
+# umpca <- MFPCA:::umpcaBasis(f, npc = 5)
+# 
+# oldpar <- par(no.readonly = TRUE)
+# 
+# for(i in 1:5) # plot all 5 basis functions
+# plot(umpca$functions, obs = i, main = paste("Basis function", i)) # plot first basis function
+# 
+# par(oldpar)}
 umpcaBasis <- function(funDataObject, npc)
 {
   if(dimSupp(funDataObject) != 2)
@@ -398,28 +398,27 @@ makeDiffOp <- function(degree, dim){
 #'  Adaptive Processing, 2013.
 #'  
 #' @keywords internal
-#'  
-#' @examples
-#' # simulate image data for N = 100 observations
-#' N <- 100
-#' b1 <- eFun(seq(0,1,0.01), M = 7, type = "Poly")
-#' b2 <- eFun(seq(-pi, pi, 0.03), M = 8, type = "Fourier")
-#' b <- tensorProduct(b1,b2) # 2D basis functions
-#' scores <- matrix(rnorm(N*56), nrow = N)
-#' 
-#' # calculate observations (= linear combination of basis functions)
-#' f <- MFPCA:::expandBasisFunction(scores = scores, functions = b)
-#' 
-#' # calculate basis functions based on FCP_TPA algorithm (needs some time)
-#' \donttest{
-#' fcptpa <- MFPCA:::fcptpaBasis(f, npc = 5, alphaRange = list(v = c(1e-5, 1e5), w = c(1e-5, 1e5)))
-#' 
-#' oldpar <- par(no.readonly = TRUE)
-#' 
-#' for(i in 1:5) # plot all 5 basis functions
-#' plot(fcptpa$functions, obs = i, main = paste("Basis function", i)) # plot first basis function
-#' 
-#' par(oldpar)}
+# @examples
+# # simulate image data for N = 100 observations
+# N <- 100
+# b1 <- eFun(seq(0,1,0.01), M = 7, type = "Poly")
+# b2 <- eFun(seq(-pi, pi, 0.03), M = 8, type = "Fourier")
+# b <- tensorProduct(b1,b2) # 2D basis functions
+# scores <- matrix(rnorm(N*56), nrow = N)
+# 
+# # calculate observations (= linear combination of basis functions)
+# f <- MFPCA:::expandBasisFunction(scores = scores, functions = b)
+# 
+# # calculate basis functions based on FCP_TPA algorithm (needs some time)
+# \donttest{
+# fcptpa <- MFPCA:::fcptpaBasis(f, npc = 5, alphaRange = list(v = c(1e-5, 1e5), w = c(1e-5, 1e5)))
+# 
+# oldpar <- par(no.readonly = TRUE)
+# 
+# for(i in 1:5) # plot all 5 basis functions
+# plot(fcptpa$functions, obs = i, main = paste("Basis function", i)) # plot first basis function
+# 
+# par(oldpar)}
 fcptpaBasis <- function(funDataObject, npc, smoothingDegree = rep(2,2), alphaRange, orderValues = TRUE, normalize = FALSE)
 {
   if(dimSupp(funDataObject) != 2)
@@ -520,25 +519,25 @@ fcptpaBasis <- function(funDataObject, npc, smoothingDegree = rep(2,2), alphaRan
 #'   
 #' @keywords internal
 #' 
-#' @examples
-#' # generate some data
-#' dat <- simFunData(argvals = seq(0,1,0.01), M = 5, 
-#'                   eFunType = "Poly", eValType = "linear", N = 100)$simData
-#'                   
-#'  # calculate spline basis decomposition
-#'  dataDec <- MFPCA:::splineBasis1D(dat) # use mgcv's default parameters
-#'  str(dataDec)
-#'  
-#'  # add some noise to the data
-#'  noisyDat <- addError(dat, sd = 0.5)
-#'  
-#'  # calculate spline basis decomposition with penalization to reduce noise
-#'  noisyDataDec <- MFPCA:::splineBasis1Dpen(dat) # use mgcv's default parameters
-#'  str(noisyDataDec)
-#'  
-#'  # check if noise has been filtered out by penalization
-#'  all.equal(noisyDataDec$scores, dataDec$scores, check.attributes = FALSE)
-#'  # -> have almost the same coefficients
+# @examples
+# # generate some data
+# dat <- simFunData(argvals = seq(0,1,0.01), M = 5,
+#                   eFunType = "Poly", eValType = "linear", N = 100)$simData
+# 
+#  # calculate spline basis decomposition
+#  dataDec <- MFPCA:::splineBasis1D(dat) # use mgcv's default parameters
+#  str(dataDec)
+# 
+#  # add some noise to the data
+#  noisyDat <- addError(dat, sd = 0.5)
+# 
+#  # calculate spline basis decomposition with penalization to reduce noise
+#  noisyDataDec <- MFPCA:::splineBasis1Dpen(dat) # use mgcv's default parameters
+#  str(noisyDataDec)
+# 
+#  # check if noise has been filtered out by penalization
+#  all.equal(noisyDataDec$scores, dataDec$scores, check.attributes = FALSE)
+#  # -> have almost the same coefficients
 splineBasis1D <- function(funDataObject, bs = "ps", m = NA, k = -1)
 {
   if(dimSupp(funDataObject) != 1)
@@ -661,31 +660,31 @@ splineBasis1Dpen <- function(funDataObject, bs = "ps", m = NA, k = -1, parallel 
 #'   
 #' @keywords internal
 #' 
-#' @examples
-#' # simulate image data for N = 100 observations
-#' N <- 100
-#' b1 <- eFun(seq(0,1,0.01), M = 7, type = "Poly")
-#' b2 <- eFun(seq(-pi, pi, 0.03), M = 8, type = "Fourier")
-#' b <- tensorProduct(b1,b2) # 2D basis functions
-#' scores <- matrix(rnorm(N*56), nrow = N)
-#' 
-#' # calculate observations (= linear combination of basis functions)
-#' dat <- MFPCA:::expandBasisFunction(scores = scores, functions = b)
-#' 
-#' # calculate 2D spline basis decomposition (needs some time)
-#' \donttest{
-#' # use 5 basis functions in each direction
-#' dataDec <- MFPCA:::splineBasis2D(dat, k = c(5,5)) 
-#' }
-#' 
-#' # add some noise to the data
-#' noisyDat <- addError(dat, sd = 0.5)
-#' 
-#' # calculate 2D spline basis decomposition with penalization (needs A LOT more time)
-#' \donttest{
-#' # use 5 basis functions in each direction
-#' noisyDataDec <- MFPCA:::splineBasis2Dpen(noisyDat, k = c(5,5)) 
-#' }
+# @examples
+# # simulate image data for N = 100 observations
+# N <- 100
+# b1 <- eFun(seq(0,1,0.01), M = 7, type = "Poly")
+# b2 <- eFun(seq(-pi, pi, 0.03), M = 8, type = "Fourier")
+# b <- tensorProduct(b1,b2) # 2D basis functions
+# scores <- matrix(rnorm(N*56), nrow = N)
+# 
+# # calculate observations (= linear combination of basis functions)
+# dat <- MFPCA:::expandBasisFunction(scores = scores, functions = b)
+# 
+# # calculate 2D spline basis decomposition (needs some time)
+# \donttest{
+# # use 5 basis functions in each direction
+# dataDec <- MFPCA:::splineBasis2D(dat, k = c(5,5))
+# }
+# 
+# # add some noise to the data
+# noisyDat <- addError(dat, sd = 0.5)
+# 
+# # calculate 2D spline basis decomposition with penalization (needs A LOT more time)
+# \donttest{
+# # use 5 basis functions in each direction
+# noisyDataDec <- MFPCA:::splineBasis2Dpen(noisyDat, k = c(5,5))
+# }
 splineBasis2D <- function(funDataObject, bs = "ps", m = NA, k = -1)
 {
   if(dimSupp(funDataObject) != 2)
@@ -874,23 +873,23 @@ fdaBasis <- function(funDataObject, ...)
 #'   \code{\link{dct3D}}
 #'
 #' @keywords internal
-#'
-#' @examples
-#' # Simulate data with 10 observations on two-dimensional domain (images)
-#' x1 <- seq(0, 1, length.out = 50)
-#' x2 <- seq(-1, 1, length.out = 75)
-#' f2 <- funData(argvals = list(x1, x2),
-#'               X = aperm(replicate(10, x1 %o% cos(pi*x2) +
-#'                                   matrix(rnorm(50*75, sd = 0.1), nrow = 50)),
-#'                        c(3,1,2)))
-#'
-#' # Calculate basis functions: This will throw an error if fftw3 is not installed.
-#' \dontrun{
-#' dct2D <- MFPCA:::dctBasis2D(f2, qThresh = 0.95)
-#'
-#' # verify that scores are saved in a sparse matrix
-#' dct2D$scores[,1:25] # the first 25 scores for each observation
-#' }
+#' 
+# @examples
+# # Simulate data with 10 observations on two-dimensional domain (images)
+# x1 <- seq(0, 1, length.out = 50)
+# x2 <- seq(-1, 1, length.out = 75)
+# f2 <- funData(argvals = list(x1, x2),
+#               X = aperm(replicate(10, x1 %o% cos(pi*x2) +
+#                                   matrix(rnorm(50*75, sd = 0.1), nrow = 50)),
+#                        c(3,1,2)))
+# 
+# # Calculate basis functions: This will throw an error if fftw3 is not installed.
+# \dontrun{
+# dct2D <- MFPCA:::dctBasis2D(f2, qThresh = 0.95)
+# 
+# # verify that scores are saved in a sparse matrix
+# dct2D$scores[,1:25] # the first 25 scores for each observation
+# }
 dctBasis2D <- function(funDataObject, qThresh, parallel = FALSE)
 {
   if(dimSupp(funDataObject) != 2)

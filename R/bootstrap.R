@@ -9,14 +9,14 @@
 #'   
 #' @keywords internal
 #'   
-#' @examples
-#' 
-#' # create factor variable
-#' f <- as.factor(c(1,1,1,2,4,4,4,4,6,6))
-#' table(f)
-#' 
-#' sampleInd <- MFPCA:::stratSample(f)
-#' table(f[sampleInd])
+# @examples
+# 
+# # create factor variable
+# f <- as.factor(c(1,1,1,2,4,4,4,4,6,6))
+# table(f)
+# 
+# sampleInd <- MFPCA:::stratSample(f)
+# table(f[sampleInd])
 stratSample <- function(f)
 {
   if(!is.factor(f))

@@ -49,26 +49,6 @@ These functions calculate a penalized or unpenalized spline basis
 decomposition for functional data on one-dimensional domains based on the 
 \link[mgcv]{gam} function in the \pkg{mgcv} package.
 }
-\examples{
-# generate some data
-dat <- simFunData(argvals = seq(0,1,0.01), M = 5, 
-                  eFunType = "Poly", eValType = "linear", N = 100)$simData
-                  
- # calculate spline basis decomposition
- dataDec <- MFPCA:::splineBasis1D(dat) # use mgcv's default parameters
- str(dataDec)
- 
- # add some noise to the data
- noisyDat <- addError(dat, sd = 0.5)
- 
- # calculate spline basis decomposition with penalization to reduce noise
- noisyDataDec <- MFPCA:::splineBasis1Dpen(dat) # use mgcv's default parameters
- str(noisyDataDec)
- 
- # check if noise has been filtered out by penalization
- all.equal(noisyDataDec$scores, dataDec$scores, check.attributes = FALSE)
- # -> have almost the same coefficients
-}
 \seealso{
 \code{\link{univDecomp}}, \code{\link[mgcv]{gam}},
   \code{\link[foreach]{foreach}}
