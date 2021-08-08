@@ -383,6 +383,8 @@ print.MFPCAfit <- function(x, ...)
 #' @param object An object of class \code{MFPCAfit}, usually returned by a
 #'   call to \link{MFPCA}.
 #' @param ... Arguments passed to or from other methods.
+#' 
+#' @return An object of class \code{summary.MFPCAfit}
 #'   
 #' @export 
 #' @method summary MFPCAfit

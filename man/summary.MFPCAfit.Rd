@@ -12,6 +12,9 @@ call to \link{MFPCA}.}
 
 \item{...}{Arguments passed to or from other methods.}
 }
+\value{
+An object of class \code{summary.MFPCAfit}
+}
 \description{
 A \code{summary} method for class \code{MFPCAfit}
 }
