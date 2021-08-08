@@ -2,6 +2,8 @@
 
 ## New features
 * Change of email address.
+* Add return value in documentation of all functions, including internal functions or functions without return value, as required by CRAN.
+* Removing examples from documentation of internal functions, as required by CRAN.
 
 # MFPCA 1.3-7
 
