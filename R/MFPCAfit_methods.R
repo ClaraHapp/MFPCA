@@ -410,6 +410,8 @@ summary.MFPCAfit <- function(object, ...)
 #' @param x An object of class \code{MFPCAfit.summary}, usually returned by a
 #'   call to \code{MFPCAfit.summary}.
 #' @param ... Arguments passed to or from other methods.
+#' 
+#' @return No return value, called for side effects
 #'   
 #' @export
 #' @method print summary.MFPCAfit
