@@ -218,6 +218,8 @@ FCP_TPA <- function(X, K, penMat, alphaRange, verbose = FALSE, tol = 1e-4, maxIt
 
 #' Check input of FCP TPA function
 #' 
+#' @return No return value, called for side effects
+#' 
 #' @keywords internal
 check_FCP_TPA_input <- function(X, K, penMat, alphaRange, verbose, tol, maxIter, adaptTol)
 {
