@@ -46,31 +46,6 @@ on two- or three-dimensional domains using the C-library \code{fftw3}
   ATLAS/MKL/OpenBLAS.
 }
 
-\examples{
-# set seed
-set.seed(12345)
-
-# generate sparse 10 x 15 score matrix (i.e. 10 observations) with 30 entries
-# smoothness assumption: higher order basis functions (high column index) have lower probability
-scores <- Matrix::sparseMatrix(i = sample(1:10, 30, replace = TRUE), # sample row indices
-     j = sample(1:15, 30, replace = TRUE, prob = 1/(1:15)), # sample column indices
-     x = rnorm(30)) # sample values
-scores
-
-\dontrun{
-# calculate basis expansion on [0,1] x [0,1]
-f <- MFPCA:::dctFunction2D(scores = scores, argvals = list(seq(0,1,0.01), seq(0,1,0.01)))
-nObs(f) # f has 10 observations
-
-oldPar <- par(no.readonly = TRUE)
-par(mfrow = c(1,1))
-
-plot(f, obs = 1) # plot first observation
-plot(f, obs = 2) # plot second observation
-
-par(oldPar)
-}
-}
 \seealso{
 \code{\link{univExpansion}}, \code{\link{idct2D}},
   \code{\link{idct3D}}, \code{\link{dctBasis2D}},

@@ -11,6 +11,9 @@ scoreplot(PCAobject, ...)
 
 \item{...}{Arguments passed from or to other methods}
 }
+\value{
+A bivariate plot of scores.
+}
 \description{
 Redirects to \code{\link[graphics]{plot.default}}
 }

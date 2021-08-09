@@ -37,6 +37,9 @@ components to be plotted.}
 \code{\link[graphics]{plot.default}} (for \code{type = "lines"}) or
 \code{\link[graphics]{barplot}} (for \code{type = "barplot"}).}
 }
+\value{
+A screeplot, showing the decrease of the principal component score.
+}
 \description{
 This function plots the proportion of variance explained by the leading
 eigenvalues in an MFPCA against the number of the principal component.

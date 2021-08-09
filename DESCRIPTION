@@ -2,11 +2,11 @@ Package: MFPCA
 Type: Package
 Title: Multivariate Functional Principal Component Analysis for Data Observed on
     Different Dimensional Domains
-Version: 1.3-6
-Date: 2020-08-31
-Authors@R: person("Clara", "Happ-Kurz", email = "clara.happ@stat.uni-muenchen.de",
+Version: 1.3-8
+Date: 2021-08-04
+Authors@R: person("Clara", "Happ-Kurz", email = "chk_R@gmx.de",
                   role = c("aut", "cre"), comment = c(ORCID = "0000-0003-4737-3835"))
-Maintainer: Clara Happ-Kurz <clara.happ@stat.uni-muenchen.de>
+Maintainer: Clara Happ-Kurz <chk_R@gmx.de>
 Description: Calculate a multivariate functional principal component analysis
     for data observed on different dimensional domains. The estimation algorithm
     relies on univariate basis expansions for each element of the multivariate

@@ -6,6 +6,9 @@
 \usage{
 check_FCP_TPA_input(X, K, penMat, alphaRange, verbose, tol, maxIter, adaptTol)
 }
+\value{
+No return value, called for side effects
+}
 \description{
 Check input of FCP TPA function
 }

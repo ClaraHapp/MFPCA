@@ -18,6 +18,57 @@ calcMFPCA(
   approx.eigen = FALSE
 )
 }
+\arguments{
+\item{N}{Number of observations.}
+
+\item{p}{Number of elements in multivariate functional data.}
+
+\item{Bchol}{Cholesky decomposition of B = block diagonal of Cholesky decompositions.}
+
+\item{M}{The number of multivariate functional principal components to
+calculate.}
+
+\item{type}{Vector of univariate decompositions to use.}
+
+\item{weights}{Vector of weights.}
+
+\item{npc}{Vector giving the number of univariate basis functions used.}
+
+\item{argvals}{List of argument values for each of the univariate basis functions.}
+
+\item{uniBasis}{List of univariate basis functions.}
+
+\item{fit}{Logical. If \code{TRUE}, a truncated multivariate Karhunen-Loeve
+representation for the data is calculated based on the estimated scores and
+eigenfunctions.}
+
+\item{approx.eigen}{Logical. If \code{TRUE}, the eigenanalysis problem for
+the estimated covariance matrix is solved approximately using the
+\pkg{irlba} package, which is much faster. If the number \code{M} of
+eigenvalues to calculate is high with respect to the number of observations
+in \code{mFData} or the number of estimated univariate eigenfunctions, the
+approximation may be inappropriate. In this case, approx.eigen is set to
+\code{FALSE} and the function throws a warning. Defaults to \code{FALSE}.}
+}
+\value{
+A list containing the following
+  components: \item{values}{A vector of estimated eigenvalues \eqn{\hat \nu_1
+  , \ldots , \hat \nu_M}.} \item{functions}{A
+  \code{\link[funData]{multiFunData}} object containing the estimated
+  multivariate functional principal components \eqn{\hat \psi_1, \ldots, \hat
+  \psi_M}.} \item{scores}{ A matrix of dimension \code{N x M} containing the
+  estimated scores \eqn{\hat \rho_{im}}.} \item{vectors}{A matrix
+  representing the eigenvectors associated with the combined univariate score
+  vectors. This might be helpful for calculating predictions.}
+  \item{normFactors}{The normalizing factors used for calculating the
+  multivariate eigenfunctions and scores. This might be helpful when
+  calculation predictions.} \item{meanFunction}{A multivariate functional
+  data object, corresponding to the mean function. The MFPCA is applied to
+  the de-meaned functions in \code{mFData}.}\item{fit}{A
+  \code{\link[funData]{multiFunData}} object containing estimated
+  trajectories for each observation based on the truncated Karhunen-Loeve
+  representation and the estimated scores and eigenfunctions.}
+}
 \description{
 Internal function that implements the MFPCA algorithm for given univariate decompositions
 }

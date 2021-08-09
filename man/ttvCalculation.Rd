@@ -6,6 +6,16 @@
 \usage{
 ttvCalculation(A, v, dim)
 }
+\arguments{
+\item{A}{Tensor}
+
+\item{v}{Vector}
+
+\item{dim}{Dimension}
+}
+\value{
+Result of tensor times vector calculation
+}
 \description{
 Internal function for the Tensor times Vector calculation
 }

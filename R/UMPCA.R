@@ -195,6 +195,12 @@ maxeig <- function(A)
 
 #' Internal function for the Tensor times Vector calculation
 #' 
+#' @param A Tensor
+#' @param v Vector
+#' @param dim Dimension
+#' 
+#' @return Result of tensor times vector calculation
+#' 
 #' @seealso \code{\link{ttv}}
 #'  
 #' @importFrom plyr alply

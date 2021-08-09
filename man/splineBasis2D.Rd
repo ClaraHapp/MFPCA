@@ -58,32 +58,6 @@ If the basis representation is calculated without penalization
 penalization (\code{splineBasis2Dpen}), the function \code{\link[mgcv]{bam}}
 (for large GAMs) is used instead.
 }
-\examples{
-# simulate image data for N = 100 observations
-N <- 100
-b1 <- eFun(seq(0,1,0.01), M = 7, type = "Poly")
-b2 <- eFun(seq(-pi, pi, 0.03), M = 8, type = "Fourier")
-b <- tensorProduct(b1,b2) # 2D basis functions
-scores <- matrix(rnorm(N*56), nrow = N)
-
-# calculate observations (= linear combination of basis functions)
-dat <- MFPCA:::expandBasisFunction(scores = scores, functions = b)
-
-# calculate 2D spline basis decomposition (needs some time)
-\donttest{
-# use 5 basis functions in each direction
-dataDec <- MFPCA:::splineBasis2D(dat, k = c(5,5)) 
-}
-
-# add some noise to the data
-noisyDat <- addError(dat, sd = 0.5)
-
-# calculate 2D spline basis decomposition with penalization (needs A LOT more time)
-\donttest{
-# use 5 basis functions in each direction
-noisyDataDec <- MFPCA:::splineBasis2Dpen(noisyDat, k = c(5,5)) 
-}
-}
 \seealso{
 \code{\link{univDecomp}}, \code{\link{splineBasis1D}}, 
   \code{\link[mgcv]{gam}}, \code{\link[mgcv]{bam}}, 

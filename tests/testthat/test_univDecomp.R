@@ -112,7 +112,14 @@ test_that("test univariate decompositions 1D", {
   expect_equal(decompSpline1Dpen, spline1Dpen)
   
   decompFPCA1D <- MFPCA:::univDecomp(type = "uFPCA", funDataObject = f1, pve = 0.95)
-  expect_equal(decompFPCA1D, fpca)
+  # cannot check equality because of random signs
+  expect_equal(dim(decompFPCA1D$scores), c(10,5))
+  expect_equal(mean(abs(decompFPCA1D$scores)), 0.71489, tolerance = 1e-5) 
+  expect_null(decompFPCA1D$B) 
+  expect_true(decompFPCA1D$ortho)  
+  expect_false(is.null(decompFPCA1D$functions))  
+  expect_equal(nObs(decompFPCA1D$functions), 5)
+  expect_equal(norm(decompFPCA1D$functions), rep(1,5))
   
   decompGiven <- MFPCA:::univDecomp(type = "given", funDataObject = f1, functions = s1$trueFuns)
   expect_equal(decompGiven, given)

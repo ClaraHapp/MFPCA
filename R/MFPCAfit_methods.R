@@ -5,6 +5,8 @@
 #' @param PCAobject A principal component object
 #' @param ... Arguments passed from or to other methods
 #' 
+#' @return A bivariate plot of scores.
+#' 
 #' @export
 scoreplot <- function(PCAobject, ...) UseMethod("scoreplot", PCAobject)
 scoreplot.default <- function(PCAobject, ...) graphics::plot.default(PCAobject, ...)
@@ -110,6 +112,8 @@ scoreplot.MFPCAfit <- function(PCAobject, choices = 1:2, scale = FALSE, ...)
 #' @param ... Other graphic parameters passed to
 #'   \code{\link[graphics]{plot.default}} (for \code{type = "lines"}) or
 #'   \code{\link[graphics]{barplot}} (for \code{type = "barplot"}).
+#'   
+#' @return A screeplot, showing the decrease of the principal component score.
 #'
 #' @seealso \code{\link{MFPCA}}, \code{\link[stats]{screeplot}}
 #'
@@ -355,6 +359,8 @@ predict.MFPCAfit <- function(object, scores = object$scores, ...)
 #' @param x An object of class \code{MFPCAfit}, usually returned by a
 #'   call to \link{MFPCA}.
 #' @param ... Arguments passed to or from other methods.
+#' 
+#' @return No return value, called for side effects
 #'   
 #' @export
 print.MFPCAfit <- function(x, ...)
@@ -377,6 +383,8 @@ print.MFPCAfit <- function(x, ...)
 #' @param object An object of class \code{MFPCAfit}, usually returned by a
 #'   call to \link{MFPCA}.
 #' @param ... Arguments passed to or from other methods.
+#' 
+#' @return An object of class \code{summary.MFPCAfit}
 #'   
 #' @export 
 #' @method summary MFPCAfit
@@ -408,6 +416,8 @@ summary.MFPCAfit <- function(object, ...)
 #' @param x An object of class \code{MFPCAfit.summary}, usually returned by a
 #'   call to \code{MFPCAfit.summary}.
 #' @param ... Arguments passed to or from other methods.
+#' 
+#' @return No return value, called for side effects
 #'   
 #' @export
 #' @method print summary.MFPCAfit

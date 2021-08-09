@@ -12,6 +12,9 @@ call to \code{MFPCAfit.summary}.}
 
 \item{...}{Arguments passed to or from other methods.}
 }
+\value{
+No return value, called for side effects
+}
 \description{
 A \code{print} method for class \code{MFPCAfit.summary}
 }

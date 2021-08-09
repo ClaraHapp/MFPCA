@@ -12,6 +12,9 @@ call to \link{MFPCA}.}
 
 \item{...}{Arguments passed to or from other methods.}
 }
+\value{
+No return value, called for side effects
+}
 \description{
 A \code{print} function for class \code{MFPCAfit}.
 }
