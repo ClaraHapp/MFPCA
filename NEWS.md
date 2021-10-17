@@ -1,3 +1,8 @@
+# MFPCA 1.3-9
+
+## New features
+* Fix autoreconf issue
+
 # MFPCA 1.3-8
 
 ## New features
