@@ -216,7 +216,7 @@ ttvCalculation <- function(A, v, dim)
 #' Tensor times vector calculation
 #' 
 #' Functionality adapted from the MATLAB tensor toolbox 
-#' (\url{http://www.sandia.gov/~tgkolda/TensorToolbox/index-2.6.html}).
+#' (\url{https://www.tensortoolbox.org/}).
 #' 
 #' Let \code{A} be a tensor with dimensions \eqn{d_1 \times d_2 \times \ldots 
 #' \times d_p}{d_1 x d_2 x \ldots x d_p} and let \code{v} be a vector of length 
