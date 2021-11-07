@@ -1,3 +1,9 @@
+# MFPCA 1.3-9
+
+## New features
+* Fix autoreconf issue
+* Update link to MATLAB tensor toolbox
+
 # MFPCA 1.3-8
 
 ## New features

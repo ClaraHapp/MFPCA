@@ -18,7 +18,7 @@ An array, the result of the multiplication.
 }
 \description{
 Functionality adapted from the MATLAB tensor toolbox 
-(\url{http://www.sandia.gov/~tgkolda/TensorToolbox/index-2.6.html}).
+(\url{https://www.tensortoolbox.org/}).
 }
 \details{
 Let \code{A} be a tensor with dimensions \eqn{d_1 \times d_2 \times \ldots 

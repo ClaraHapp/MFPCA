@@ -1,7 +1,7 @@
 # Run this file with autoreconf configure.ac to produce a configure file
 
 # Initialize
-AC_INIT([MFPCA], 1.3-8) dnl package name, version
+AC_INIT([MFPCA],[1.3-9]) dnl package name, version
 
 # use the same C compiler as R CMD xxx
 if test -n "${R_HOME}"; then
@@ -35,4 +35,5 @@ AC_SUBST(CFLAGS)
 AC_SUBST(LIBS)
 
 # write output to Makevars
-AC_OUTPUT(src/Makevars)
+AC_CONFIG_FILES([src/Makevars])
+AC_OUTPUT
