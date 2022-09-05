@@ -21,7 +21,7 @@ Imports:
     abind,
     foreach,
     irlba,
-    Matrix( >= 1.4-2),
+    Matrix(>= 1.4-2),
     methods,
     mgcv (>= 1.8-33),
     plyr,
@@ -35,4 +35,4 @@ Suggests:
     testthat (>= 2.0.0)
 NeedsCompilation: yes
 SystemRequirements: libfftw3 (>= 3.3.4)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.1
