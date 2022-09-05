@@ -1,3 +1,9 @@
+# MFPCA 1.3-10
+
+## New features
+* Fix coercion methods for dgT matrices as used by the DCT expansions (due to Matrix package update)
+
+
 # MFPCA 1.3-9
 
 ## New features
