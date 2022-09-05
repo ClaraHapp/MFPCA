@@ -124,7 +124,7 @@ univExpansion <- function(type, scores, argvals = ifelse(!is.null(functions), fu
   }
   else
   {
-    if(class(functions) != "funData")
+    if(!inherits(functions, "funData"))
       stop("Parameter 'functions' must be a funData object.")
     
     # check interaction with other parameters
