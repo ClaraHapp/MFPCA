@@ -510,7 +510,7 @@ dctFunction2D <- function(scores, argvals, parallel = FALSE)
   dim <- vapply(argvals, FUN = length, FUN.VALUE = 0)
 
   # get indices of sparse matrix
-  scores <- methods::as(scores, "dgTMatrix") # uncompressed format
+  scores <- as(as(scores, "dMatrix"), "TsparseMatrix") # uncompressed format
 
   if(parallel)
     res <- foreach::foreach(i = 0:max(scores@i), .combine = function(x,y){abind(x,y, along = 3)}) %dopar%{
@@ -591,7 +591,7 @@ dctFunction3D <- function(scores, argvals, parallel = FALSE)
   dim <- vapply(argvals, FUN = length, FUN.VALUE = 0)
 
   # get indices of sparse matrix
-  scores <- methods::as(scores, "dgTMatrix") # uncompressed format
+  scores <- as(as(scores, "dMatrix"), "TsparseMatrix") # uncompressed format
 
   if(parallel)
     res <- foreach::foreach(i = 0:max(scores@i), .combine = function(x,y){abind(x,y, along = 4)}) %dopar%{
