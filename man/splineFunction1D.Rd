@@ -35,7 +35,7 @@ spline basis functions on one-dimensional domains based on the
 \link[mgcv]{gam} function in the \pkg{mgcv} package.
 }
 \seealso{
-\code{\link{univExpansion}}, \code{\link{gam}},
+\code{\link{univExpansion}}, \code{\link[mgcv]{gam}},
   \code{\link{splineBasis1D}}
 }
 \keyword{internal}

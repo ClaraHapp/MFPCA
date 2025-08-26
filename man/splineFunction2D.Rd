@@ -51,7 +51,7 @@ via \link[mgcv]{bam} (\code{splineFunction2Dpen}).
 }
 
 \seealso{
-\code{\link{univExpansion}},  \code{\link{gam}},
+\code{\link{univExpansion}},  \code{\link[mgcv]{gam}},
   \code{\link{splineBasis2D}}
 }
 \keyword{internal}

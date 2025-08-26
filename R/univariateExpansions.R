@@ -294,7 +294,7 @@ expandBasisFunction <- function(scores, argvals = functions@argvals, functions)
 #'   \code{argvals}, corresponding to the linear combination of spline basis 
 #'   functions.
 #'   
-#' @seealso \code{\link{univExpansion}}, \code{\link{gam}},
+#' @seealso \code{\link{univExpansion}}, \code{\link[mgcv]{gam}},
 #'   \code{\link{splineBasis1D}}
 #'   
 #' @importFrom mgcv gam s
@@ -368,7 +368,7 @@ splineFunction1D <- function(scores, argvals, bs, m, k)
 #'   the two-dimensional domain specified by \code{argvals}, corresponding
 #'   to the linear combination of spline basis functions.
 #'
-#' @seealso \code{\link{univExpansion}},  \code{\link{gam}},
+#' @seealso \code{\link{univExpansion}},  \code{\link[mgcv]{gam}},
 #'   \code{\link{splineBasis2D}}
 #'
 #' @importFrom mgcv gam te
