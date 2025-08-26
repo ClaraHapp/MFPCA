@@ -46,9 +46,9 @@ criterion using the function \code{\link[stats]{optimize}}.
 }
 \section{Functions}{
 \itemize{
-\item \code{findAlphaWopt}: 
-}}
+\item \code{findAlphaWopt()}: 
 
+}}
 \references{
 G. I. Allen (2013), "Multi-way Functional Principal Components 
   Analysis", IEEE International Workshop on Computational Advances in 
