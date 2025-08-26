@@ -66,7 +66,7 @@ univDecomp <- function(type, funDataObject, ...)
       stop("Parameter 'type' must be a character string. See ?univDecomp for details.")
   } 
   
-  if(class(funDataObject) != "funData")
+  if(!inherits(funDataObject, "funData"))
     stop("Parameter 'funDataObject' must be a funData object.")
   
   
@@ -83,7 +83,7 @@ univDecomp <- function(type, funDataObject, ...)
   if(is.null(funDataObject))
     stop("univDecomp: must specify 'funDataObject'.")
   
-  if(class(funDataObject) != "funData")
+  if(!inherits(funDataObject, "funData"))
     stop("univDecomp: 'funDataObject' must be of class funData.")
   
   params$funDataObject <- funDataObject # add funDataObject (-> make sure is evaluated in correct env.)

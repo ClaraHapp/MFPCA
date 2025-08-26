@@ -1,3 +1,10 @@
+# MFPCA 1.3-10
+
+## New features
+* Fix coercion methods for `dgTMatrix` objects as used by the DCT expansions (due to Matrix package update)
+* Change class checks for `funData` objects to use the `inherits()` functionality.
+
+
 # MFPCA 1.3-9
 
 ## New features
