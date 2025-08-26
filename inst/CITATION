@@ -13,7 +13,7 @@ bibentry(
   textVersion = paste('C. Happ-Kurz (', year, '). MFPCA: ', meta$Title, '. ', vers, '.', sep = '')
 )
 
-citEntry(
+bibentry(
   entry = "Article",
   author = c(person("Clara", "Happ"), person("Sonja", "Greven")),
   title = "Multivariate Functional Principal Component Analysis for Data Observed on Different (Dimensional) Domains",
