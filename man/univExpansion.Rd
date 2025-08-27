@@ -21,7 +21,7 @@ based on the given basis functions.}
 
 \item{argvals}{A list, representing the domain of the basis functions.
 If \code{functions} is not \code{NULL}, the usual default is
-\code{functions@argvals}. See \linkS4class{funData} and the
+\code{functions@argvals}. See \link[funData]{funData} and the
 underlying expansion functions for details.}
 
 \item{functions}{A functional data object, representing the basis
