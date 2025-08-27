@@ -14,7 +14,7 @@ bibentry(
 )
 
 bibentry(
-  entry = "Article",
+  bibtype = "Article",
   author = c(person("Clara", "Happ"), person("Sonja", "Greven")),
   title = "Multivariate Functional Principal Component Analysis for Data Observed on Different (Dimensional) Domains",
   journal = "Journal of the American Statistical Association",
