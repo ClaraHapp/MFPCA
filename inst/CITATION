@@ -3,8 +3,8 @@ citHeader("To cite the 'MFPCA' package in publications use:")
 year =  sub("-.*", "", meta$Date)
 vers = paste('R package version', meta$Version)
 
-citEntry(
-  entry = 'manual',
+bibentry(
+  bibtype = 'Manual',
   title = paste('MFPCA:', meta$Title),
   author = person("Clara", "Happ-Kurz"),
   year = year,
@@ -13,8 +13,8 @@ citEntry(
   textVersion = paste('C. Happ-Kurz (', year, '). MFPCA: ', meta$Title, '. ', vers, '.', sep = '')
 )
 
-citEntry(
-  entry = "article",
+bibentry(
+  bibtype = "Article",
   author = c(person("Clara", "Happ"), person("Sonja", "Greven")),
   title = "Multivariate Functional Principal Component Analysis for Data Observed on Different (Dimensional) Domains",
   journal = "Journal of the American Statistical Association",
